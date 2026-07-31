@@ -41,6 +41,7 @@ fun TimetableScreenRoot(
             onBookmarkClick = { screenChannel.send(TimetableScreenAction.Bookmark(it)) },
             onDayClick = { screenChannel.send(TimetableScreenAction.SelectDay(it)) },
             onItemClick = onNavigateToDetail,
+            onToggleRawResponseClick = { screenChannel.send(TimetableScreenAction.ToggleRawResponse) },
         )
     }
 }

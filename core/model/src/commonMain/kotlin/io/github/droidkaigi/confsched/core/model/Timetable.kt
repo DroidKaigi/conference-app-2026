@@ -29,6 +29,7 @@ data class TimetableItem(
 data class Timetable(
     val items: PersistentList<TimetableItem>,
     val bookmarks: PersistentSet<TimetableItemId> = persistentSetOf(),
+    val rawResponse: String = "",
 ) {
     fun itemsOn(day: DroidKaigi2026Day): PersistentList<TimetableItem> =
         items.filter { it.day == day }.toPersistentList()

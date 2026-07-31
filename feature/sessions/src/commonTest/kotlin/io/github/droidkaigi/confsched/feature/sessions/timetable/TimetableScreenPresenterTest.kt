@@ -42,6 +42,7 @@ class TimetableScreenPresenterTest {
             TimetableItem(TimetableItemId("d2a"), "Day2 A", "Room1", "Sp3", DroidKaigi2026Day.Day2, "10:00", "10:40"),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a")),
+        rawResponse = """{ "sessions": [] }""",
     )
 
     @Test
@@ -67,6 +68,28 @@ class TimetableScreenPresenterTest {
 
             send(TimetableScreenAction.Bookmark(TimetableItemId("d2a")))
             assertEquals(TimetableItemId("d2a"), mutateInvocations.receive())
+        }
+    }
+
+    @Test
+    fun toggling_raw_response_flips_expansion_and_carries_the_payload() {
+        val favoriteKey: FavoriteTimetableItemIdMutationKey = buildMutationKey(
+            id = MutationId("test-favorite-raw"),
+            mutate = { },
+        )
+        runPresenterTest(
+            presenterContext = TimetablePresenterContext(favoriteTimetableItemIdMutationKey = favoriteKey),
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            val initial = uiStates.awaitItem()
+            assertEquals("""{ "sessions": [] }""", initial.rawResponse)
+            assertEquals(false, initial.isRawResponseExpanded)
+
+            send(TimetableScreenAction.ToggleRawResponse)
+            assertEquals(true, uiStates.awaitItem().isRawResponseExpanded)
+
+            send(TimetableScreenAction.ToggleRawResponse)
+            assertEquals(false, uiStates.awaitItem().isRawResponseExpanded)
         }
     }
 

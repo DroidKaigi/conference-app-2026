@@ -7,6 +7,10 @@ import io.github.droidkaigi.confsched.core.model.SoilIds
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.serialization.json.Json
+
+// Separate from persistedQueryJson, whose output is the persisted cache format: pretty printing is display-only.
+private val rawResponseJson = Json { prettyPrint = true }
 
 @Inject
 @ContributesBinding(AppScope::class)
@@ -18,5 +22,10 @@ class DefaultTimetableQueryKey(
     persistKey = "timetable",
     fileStorage = fileStorage,
     fetchResponse = { api.getTimetable() },
-    transformToDomainModel = { response -> Timetable(items = response.toTimetableItems().toPersistentList()) },
+    transformToDomainModel = { response ->
+        Timetable(
+            items = response.toTimetableItems().toPersistentList(),
+            rawResponse = rawResponseJson.encodeToString(response),
+        )
+    },
 )

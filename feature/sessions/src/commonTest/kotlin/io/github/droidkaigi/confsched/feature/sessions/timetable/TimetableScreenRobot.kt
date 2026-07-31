@@ -87,4 +87,17 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     fun checkSessionDoesNotExist(title: String) {
         composeUiTest.onNodeWithText(title).assertDoesNotExist()
     }
+
+    fun clickRawResponseHeader() {
+        composeUiTest.onNodeWithText("Raw response").performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun checkRawResponseDisplayed(rawResponse: String) {
+        composeUiTest.onNodeWithText(rawResponse).assertIsDisplayed()
+    }
+
+    fun checkRawResponseDoesNotExist(rawResponse: String) {
+        composeUiTest.onNodeWithText(rawResponse).assertDoesNotExist()
+    }
 }

@@ -21,11 +21,13 @@ fun timetableScreenPresenter(
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
+    var isRawResponseExpanded by retain { mutableStateOf(false) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
             is TimetableScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
             is TimetableScreenAction.SelectDay -> selectedDay = action.day
+            is TimetableScreenAction.ToggleRawResponse -> isRawResponseExpanded = !isRawResponseExpanded
         }
     }
 
@@ -38,5 +40,7 @@ fun timetableScreenPresenter(
         day = selectedDay,
         sessions = timetable.itemsOn(selectedDay),
         bookmarks = timetable.bookmarks,
+        rawResponse = timetable.rawResponse,
+        isRawResponseExpanded = isRawResponseExpanded,
     )
 }

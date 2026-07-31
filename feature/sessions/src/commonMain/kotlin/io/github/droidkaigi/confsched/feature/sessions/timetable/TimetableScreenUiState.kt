@@ -10,4 +10,6 @@ data class TimetableScreenUiState(
     val day: DroidKaigi2026Day,
     val sessions: PersistentList<TimetableItem>,
     val bookmarks: PersistentSet<TimetableItemId>,
+    val rawResponse: String,
+    val isRawResponseExpanded: Boolean,
 )
