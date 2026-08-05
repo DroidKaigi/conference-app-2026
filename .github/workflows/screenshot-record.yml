@@ -1,0 +1,48 @@
+name: Screenshot record
+
+# Records the preview screenshots for every commit on main. `screenshots/` is git-ignored, so this
+# artifact is the only baseline a pull request has to compare against — which is why the workflow
+# carries no path filter and no cancellation: a commit without an artifact is a commit no pull
+# request based on it can be compared against.
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: screenshot-record-${{ github.sha }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Record preview screenshots
+        run: ./gradlew recordRoborazziJvm
+
+      # upload-artifact rewrites paths relative to the least common ancestor of what it matches, so
+      # the tree is archived here and restored at the repository root by the comparison workflow.
+      - name: Archive screenshots
+        run: |
+          set -euo pipefail
+          find . -type d -name screenshots -not -path './.git/*' -not -path '*/build/*' -print0 \
+            | tar -czf screenshots.tar.gz --null -T -
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: screenshots
+          path: screenshots.tar.gz
+          retention-days: 30

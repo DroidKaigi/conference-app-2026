@@ -1,0 +1,124 @@
+name: Screenshot comparison comment
+
+# A pull request comment cannot embed a workflow artifact, so the diff images are pushed to an
+# orphan `companion_<branch>` branch and the comment links to them from there. This runs on
+# workflow_run because a pull request from a fork gets a read-only token.
+on:
+  workflow_run:
+    workflows:
+      - Screenshot comparison
+    types:
+      - completed
+
+concurrency:
+  group: screenshot-comparison-comment-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  comment:
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      actions: read # download the comparison run's artifacts
+      contents: write # push the diff images to the companion branch
+      pull-requests: write # comment on the pull request
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      # Everything below treats the artifact contents as untrusted: they are produced by a workflow
+      # run whose head branch and file names a fork can choose.
+      - name: Download the comparison artifacts
+        id: download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          gh run download "$RUN_ID" --name pr --dir pr-artifact
+          pr_number=$(tr -d '[:space:]' < pr-artifact/NR)
+          case "$pr_number" in
+            ''|*[!0-9]*) echo "Refusing a non-numeric pull request number" >&2; exit 1 ;;
+          esac
+          echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
+          gh run download "$RUN_ID" --name screenshot-diff-reports --dir screenshot-diff-reports || true
+
+      - name: Collect the diff images
+        id: collect
+        run: |
+          set -euo pipefail
+          : > diff-files.txt
+          if [ -d screenshot-diff-reports ]; then
+            # Only names that survive this allowlist reach `git add` or a markdown link.
+            find screenshot-diff-reports -type f -name '*_compare.png' \
+              | grep -E '^[-0-9A-Za-z_./]+$' >> diff-files.txt || true
+          fi
+          count=$(wc -l < diff-files.txt | tr -d ' ')
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Push the diff images to the companion branch
+        if: steps.collect.outputs.count != '0'
+        env:
+          BRANCH_NAME: companion_${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+          git checkout --orphan "$BRANCH_NAME"
+          git rm -rq --cached . || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          tr '\n' '\0' < diff-files.txt | xargs -0 git add --
+          git commit -qm "Screenshot diff for ${GITHUB_REPOSITORY}"
+          git push -f origin "HEAD:$BRANCH_NAME"
+
+      - name: Build the comment body
+        id: body
+        env:
+          BRANCH_NAME: companion_${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+          delimiter="$(openssl rand -hex 16)"
+          {
+            echo "body<<${delimiter}"
+            echo "## Snapshot diff report"
+            echo
+            if [ "${{ steps.collect.outputs.count }}" = "0" ]; then
+              echo "No screenshot differences against the base commit."
+            else
+              echo "| File name | Image |"
+              echo "| --- | --- |"
+              while IFS= read -r file; do
+                name=$(basename "$file")
+                url="https://github.com/${GITHUB_REPOSITORY}/blob/${BRANCH_NAME}/${file}"
+                echo "| [${name}](${url}) | ![](${url}?raw=true) |"
+              done < diff-files.txt
+            fi
+            echo "${delimiter}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Find the existing comment
+        id: find
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
+        with:
+          issue-number: ${{ steps.download.outputs.pr_number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Snapshot diff report
+
+      # With no differences and no existing comment there is nothing to say, so a clean pull request
+      # stays free of bot noise; an existing report is still corrected to "no differences".
+      - name: Add or update the comment
+        if: steps.collect.outputs.count != '0' || steps.find.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ steps.download.outputs.pr_number }}
+          body: ${{ steps.body.outputs.body }}
+          edit-mode: replace

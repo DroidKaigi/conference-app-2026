@@ -79,7 +79,7 @@ Previews live in `commonMain`, and `CommonComposablePreviewScanner` (the `:commo
 | `:feature:sessions:verifyRoborazziAndroidHostTest` | Render and fail on any pixel diff against the committed goldens. |
 | `:feature:sessions:compareRoborazziAndroidHostTest` | Render, compare, and emit diff images (no build failure). |
 
-Goldens are written to `feature/sessions/screenshots/` but no longer committed (`screenshots/` is gitignored); a CI golden store is an open decision. Because previews already inject sample data and a `PreviewImageResolver`, the screenshots are deterministic and need no network — see [Preview image enum generation](./preview-image-enum.md).
+Goldens are written to `feature/sessions/screenshots/` and not committed (`screenshots/` is gitignored) — the baseline a pull request compares against is the artifact CI recorded for its base commit, described under [Continuous integration](#continuous-integration). Because previews already inject sample data and a `PreviewImageResolver`, the screenshots are deterministic and need no network — see [Preview image enum generation](./preview-image-enum.md).
 
 ## Desktop and iOS
 
@@ -92,10 +92,25 @@ The same previews are captured on desktop and iOS. Classpath scanning does not e
 
 The shared robot/presenter tests in `commonTest` also run on desktop (`jvmTest`) and iOS (`iosSimulatorArm64Test`). The Android host-test task is filtered to the Roborazzi-generated preview tests only — the shared tests expect a plain JVM or native environment and fail under Robolectric.
 
+## Continuous integration
+
+Three workflows turn a visual change into a pull request comment. They run the desktop capture, which needs neither the Android SDK nor Robolectric on the runner.
+
+| Workflow | Trigger | Role |
+| --- | --- | --- |
+| `screenshot-record` | push to `main` | Runs `recordRoborazziJvm` and uploads the goldens as the `screenshots` artifact for that commit. |
+| `screenshot-comparison` | pull request | Restores the base commit's artifact, runs `compareRoborazziJvm`, and uploads the `*_compare.png` images. |
+| `screenshot-comparison-comment` | completion of the above | Pushes those images to an orphan `companion_<branch>` branch and posts the diff table on the pull request. |
+
+A pull request comment cannot embed an artifact, which is why the images take the detour through a branch. The comment workflow runs on `workflow_run` because a pull request from a fork gets a read-only token; it treats the artifact's file names as untrusted and drops any name outside `[-0-9A-Za-z_./]`.
+
+A visual difference fails the Roborazzi assertion, and the comparison job deliberately carries on: the difference is the report, and whether it is intended is the reviewer's call.
+
 ## Scope / limitations
 
 - Web (wasmJs) is not covered: Roborazzi has no wasm artifact.
 - Only `:feature:sessions` is wired today; other feature modules opt in by applying `droidkaigi.primitive.screenshot-test`.
 - The `:common` scanner artifact is deprecated upstream; see the note above.
+- `testAndroidHostTest` does not discover the Robolectric tests the Roborazzi plugin generates — the class compiles into `build/classes/kotlin/android/hostTest/` but the task reports `No tests found`. The Android tasks in the table above therefore capture nothing, and CI reports the desktop images.
 
 Related: [Preview & sample assets](./preview.md) · [Testing overview](./testing.md) · [Convention plugins](./build-convention-plugins.md)

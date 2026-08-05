@@ -1,0 +1,92 @@
+name: Screenshot comparison
+
+on:
+  pull_request:
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.toml'
+      - '**/*.properties'
+      - '**/src/**/resources/**'
+      - 'gradle/wrapper/**'
+      - '.github/workflows/screenshot-comparison.yml'
+
+concurrency:
+  group: screenshot-comparison-${{ github.head_ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Restore the base commit's screenshots
+        id: baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          runs_api="repos/$GITHUB_REPOSITORY/actions/workflows/screenshot-record.yml/runs"
+          run_id=""
+          # The base commit's record run may still be in flight when the pull request opens.
+          for _ in $(seq 1 60); do
+            run_id=$(gh api "$runs_api?head_sha=$BASE_SHA&status=success" --jq '.workflow_runs[0].id // empty')
+            if [ -n "$run_id" ]; then break; fi
+            pending=$(gh api "$runs_api?head_sha=$BASE_SHA" --jq '[.workflow_runs[] | select(.status != "completed")] | length')
+            if [ "$pending" = "0" ]; then break; fi
+            sleep 20
+          done
+          if [ -z "$run_id" ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No successful screenshot-record run for base commit \`$BASE_SHA\`, so there is nothing to compare against." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          gh run download "$run_id" --name screenshots --dir .
+          tar -xzf screenshots.tar.gz
+          rm screenshots.tar.gz
+          echo "found=true" >> "$GITHUB_OUTPUT"
+
+      # A visual difference fails the Roborazzi assertion. Here the difference is the report rather
+      # than a build error, so the job carries on and the comment workflow publishes it.
+      - name: Compare against the base screenshots
+        if: steps.baseline.outputs.found == 'true'
+        continue-on-error: true
+        run: ./gradlew compareRoborazziJvm
+
+      - name: Upload diff images
+        if: steps.baseline.outputs.found == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: screenshot-diff-reports
+          path: '**/build/outputs/roborazzi/*_compare.png'
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # The comment workflow runs on workflow_run, where the pull request number is not in the
+      # event payload.
+      - name: Save the pull request number
+        if: steps.baseline.outputs.found == 'true'
+        run: |
+          mkdir -p pr
+          echo "${{ github.event.number }}" > pr/NR
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: steps.baseline.outputs.found == 'true'
+        with:
+          name: pr
+          path: pr/
+          retention-days: 7
