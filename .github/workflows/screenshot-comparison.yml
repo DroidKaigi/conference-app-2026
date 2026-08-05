@@ -42,24 +42,25 @@ jobs:
         run: |
           set -euo pipefail
           runs_api="repos/$GITHUB_REPOSITORY/actions/workflows/screenshot-record.yml/runs"
+          # A missing baseline is an ordinary outcome — the workflow may not be on the default
+          # branch yet, or the artifact may have expired — so every lookup below stays non-fatal.
           run_id=""
           # The base commit's record run may still be in flight when the pull request opens.
           for _ in $(seq 1 60); do
-            run_id=$(gh api "$runs_api?head_sha=$BASE_SHA&status=success" --jq '.workflow_runs[0].id // empty')
+            run_id=$(gh api "$runs_api?head_sha=$BASE_SHA&status=success" --jq '.workflow_runs[0].id // empty' 2>/dev/null) || run_id=""
             if [ -n "$run_id" ]; then break; fi
-            pending=$(gh api "$runs_api?head_sha=$BASE_SHA" --jq '[.workflow_runs[] | select(.status != "completed")] | length')
-            if [ "$pending" = "0" ]; then break; fi
+            pending=$(gh api "$runs_api?head_sha=$BASE_SHA" --jq '[.workflow_runs[] | select(.status != "completed")] | length' 2>/dev/null) || pending=0
+            if [ "${pending:-0}" = "0" ]; then break; fi
             sleep 20
           done
-          if [ -z "$run_id" ]; then
+          if [ -n "$run_id" ] && gh run download "$run_id" --name screenshots --dir . 2>/dev/null; then
+            tar -xzf screenshots.tar.gz
+            rm screenshots.tar.gz
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
             echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "No successful screenshot-record run for base commit \`$BASE_SHA\`, so there is nothing to compare against." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
+            echo "No screenshots recorded for base commit \`$BASE_SHA\`, so there is nothing to compare against." >> "$GITHUB_STEP_SUMMARY"
           fi
-          gh run download "$run_id" --name screenshots --dir .
-          tar -xzf screenshots.tar.gz
-          rm screenshots.tar.gz
-          echo "found=true" >> "$GITHUB_OUTPUT"
 
       # A visual difference fails the Roborazzi assertion. Here the difference is the report rather
       # than a build error, so the job carries on and the comment workflow publishes it.
