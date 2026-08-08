@@ -11,13 +11,15 @@ import dev.zacsweers.metro.SingleIn
  *
  * Use this for server-derived caches; user-owned data (settings, profile images) should keep
  * using the unscoped [FileStorage].
+ *
+ * `clear` is delegated rather than scoped, so it clears every environment's entries.
  */
 @Inject
 @SingleIn(AppScope::class)
 class ServerEnvironmentScopedFileStorage(
     private val fileStorage: FileStorage,
     private val serverEnvironmentStore: ServerEnvironmentStore,
-) : FileStorage {
+) : FileStorage by fileStorage {
     private fun scopedKey(key: String): String =
         "${serverEnvironmentStore.environment.value.name}/$key"
 
@@ -26,7 +28,4 @@ class ServerEnvironmentScopedFileStorage(
     override suspend fun put(key: String, bytes: ByteArray) = fileStorage.put(scopedKey(key), bytes)
 
     override suspend fun delete(key: String) = fileStorage.delete(scopedKey(key))
-
-    /** Clears every environment's entries, not just the current one. */
-    override suspend fun clear() = fileStorage.clear()
 }

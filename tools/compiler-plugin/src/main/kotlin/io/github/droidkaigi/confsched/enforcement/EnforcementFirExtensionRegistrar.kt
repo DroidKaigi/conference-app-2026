@@ -30,6 +30,7 @@ class EnforcementFirExtensionRegistrar : FirExtensionRegistrar() {
             CallbackArgumentErrors,
             ComposableTrailingLambdaErrors,
             RememberBindingErrors,
+            ForwardingMemberErrors,
         )
     }
 }

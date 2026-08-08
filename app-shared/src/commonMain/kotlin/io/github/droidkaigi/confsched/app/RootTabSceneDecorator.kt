@@ -71,11 +71,7 @@ private class RootTabScene(
     private val delegate: Scene<NavKey>,
     private val currentTab: RootTab,
     private val onSelectTab: (RootTab) -> Unit,
-) : Scene<NavKey> {
-    override val key: Any get() = delegate.key
-    override val entries get() = delegate.entries
-    override val previousEntries get() = delegate.previousEntries
-
+) : Scene<NavKey> by delegate {
     override val content: @Composable () -> Unit = {
         Scaffold(
             bottomBar = {

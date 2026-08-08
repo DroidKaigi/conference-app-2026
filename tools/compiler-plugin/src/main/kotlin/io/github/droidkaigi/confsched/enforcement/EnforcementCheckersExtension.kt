@@ -39,6 +39,7 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             MutationKeyMustCarryTagChecker,
             NavigatorConfinedToNavEntryClassChecker,
             ScreenContextMustNotBePresenterContextChecker,
+            ForwardingMemberMustDelegateChecker,
         )
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
             NavigatorConfinedToNavEntryFunctionChecker,

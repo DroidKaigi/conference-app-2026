@@ -48,6 +48,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | A feature UI composable reads every property of the state it takes | FIR `UiComponentTakesWhatItReads` |
 | A callback does not report back a value its own composable was given | FIR `NoCallerSuppliedCallbackArgument` |
 | A remembered value is bound to a local before it is used | FIR `RememberResultMustBeBound` |
+| A member that only forwards to a held value is written as interface delegation | FIR `ForwardingMemberMustDelegate` |
 
 > All implemented FIR checkers live in `:tools:compiler-plugin` and are applied to every module. **Roles are identified by the context-parameter type together with `*Presenter`/`*ScreenRoot` naming, not by annotations.**
 
@@ -430,6 +431,36 @@ Why: a call written directly as a receiver reads as a computation performed at t
 The subject is the family that remembers a **value**: `remember`, `rememberSaveable`, `rememberSerializable`, `rememberUpdatedState`, and `retain` — matched by resolved callable id, so every overload of each name qualifies and a same-named function in another package does not. A call that returns a **handle** whose immediate use is the idiomatic form is not in the family, which is why `rememberCoroutineScope().launch { … }` compiles. The Soil reads (`rememberQuery`, `rememberMutation`, `rememberSubscription`) and the `remember*`/`retain*` factories that produce navigation and scroll infrastructure are left out on the same ground.
 
 Only the receiver position is in scope. Argument position is idiomatic and stays out, which also leaves `with(remember { … }) { … }` and every other paraphrase that passes the value as an argument alone; closing those would take a list of scoping functions, which [the principles above](#principles-priority-order-of-enforcement-mechanisms) reserve for review. The receiver position itself is read from the resolved call, so a receiver reached through `?.`, through an index access, or as the subject of a `for` loop counts, and so does a scoping call written as a receiver (`remember { … }.let { … }`).
+
+### `ForwardingMemberMustDelegate`
+
+```kotlin
+private class RootTabScene(
+    private val delegate: Scene<NavKey>,
+    private val currentTab: RootTab,
+) : Scene<NavKey> {
+    override val key: Any get() = delegate.key                 // ERROR
+    override val entries get() = delegate.entries              // ERROR
+    override val content: @Composable () -> Unit = { … }       // OK: wraps delegate.content
+}
+
+// OK: the language writes the forwards
+private class RootTabScene(
+    private val delegate: Scene<NavKey>,
+    private val currentTab: RootTab,
+) : Scene<NavKey> by delegate {
+    override val content: @Composable () -> Unit = { … }
+}
+```
+
+Why: a hand-written forward repeats what `by` generates, one member at a time, so every member the interface gains later has to be written out again before the class compiles. A member is rejected when its class declares an interface supertype **without** a `by` clause, holds an immutable value of that interface, overrides a member declared in it, and its body is nothing but the same callable applied to the member's own value parameters in order. The diagnostic names the supertype and the held value, so the fix is one clause on the class header and a deletion.
+
+Anything past that shape stays out, because `by` cannot express it: a forward to a differently named callable (`override fun debug(message: () -> String) = logger.d(message = message)`) is an adapter, and a body that adapts an argument, adds a statement, or wraps the result is the class's own logic.
+
+Two further exclusions are about behaviour rather than shape:
+
+- The held value must be a `val` bound to a constructor argument. `by` evaluates its expression once at construction, while a hand-written forward reads its source at every call, so rewriting a forward to a `var` — or to a property with a `get()` — would change behaviour. A `val` initialized from anything other than a constructor parameter is left out on the same ground.
+- `equals`, `hashCode` and `toString` are never reported. Interface delegation generates no member for them unless the delegated interface declares one abstract, so a hand-written forward is the only way to route them to the held value.
 
 ## Review + tests (fuzzy)
 
