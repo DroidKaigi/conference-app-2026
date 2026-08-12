@@ -39,7 +39,22 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-          cache: gradle
+      # Replaces actions/setup-java's cache: gradle, whose cache key is an exact hash of every
+      # *.gradle* file and has no restore-keys fallback: in this monorepo those files change on
+      # most commits, so the cache missed on nearly every run. setup-gradle's Enhanced Caching
+      # restores from a prefix match instead, and the two mechanisms are not meant to be combined.
+      - uses: gradle/actions/setup-gradle@67621b124fd2e251c5e8a0e6e3b91318f2287669 # v6.3.0
+      # The Kotlin/Native compiler and platform libraries live outside Gradle User Home, so
+      # setup-gradle's cache does not cover them; a cold ~/.konan otherwise re-downloads them on
+      # every run. restore-keys falls back to the newest cache for the OS when the Kotlin version
+      # in the exact key has moved on, since ~/.konan holds one subdirectory per compiler version.
+      - name: Cache Kotlin/Native tooling
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            konan-${{ runner.os }}-
       # The system appearance an app gets is decided by the SDK it links against, so the iOS 26 SDK
       # is what makes the tab bar render as Liquid Glass; the image's default Xcode may predate it.
       # Betas are excluded: linking iOS or syncing Gradle under a beta Xcode fails with exit 65, and
@@ -76,10 +91,16 @@ jobs:
       # SWIFT_INCLUDE_PATHS is deliberately left unset here: Xcode exports it to the pre-build
       # script, which unsets it again for the nested Gradle build, and a value inherited from the
       # environment would reach that build through a path the script does not cover.
+      # xcbeautify is preinstalled on the macos-latest image. --preserve-unbeautified keeps the
+      # Run Script phase's output (the nested Gradle/Kotlin build) intact instead of dropping it,
+      # since xcbeautify only knows how to reformat xcodebuild's own native build steps.
+      # pipefail is required so a xcodebuild failure still fails the job once piped through xcbeautify.
       - name: Build the iOS app
         run: |
-          xcodebuild build \
+          set -o pipefail
+          NSUnbufferedIO=YES xcodebuild build \
             -project app-ios/KaigiApp.xcodeproj \
             -scheme KaigiApp \
             -configuration Debug \
-            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}"
+            -destination "platform=iOS Simulator,id=${{ steps.simulator.outputs.udid }}" \
+            | xcbeautify --renderer github-actions --preserve-unbeautified
