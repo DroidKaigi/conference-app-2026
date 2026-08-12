@@ -4,7 +4,7 @@ This repository is a Kotlin Multiplatform / Compose Multiplatform application th
 
 ## Do not report compilation failure
 
-Do not claim that code "will not compile", that a symbol is unresolved, or that an import is missing. A review sees a diff, not the compilation: source sets, generated sources, and default imports are all outside it, and the build is the authority. Compilation is already covered — the test workflow runs `test jvmTest` across every module, the iOS build workflow builds the iOS application, and the format check runs Spotless.
+Do not claim that code "will not compile", that a symbol is unresolved, or that an import is missing. A review sees a diff, not the compilation: source sets, generated sources, and default imports are all outside it, and the build is the authority. Compilation is already covered — the test workflow runs `test jvmTest` across every module, the iOS build workflow compiles the Kotlin, the Swift it exports and the app's Swift sources, and the format check runs Spotless.
 
 Two shapes that are correct here and have been reported as errors:
 

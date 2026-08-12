@@ -26,11 +26,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Drives the whole iOS build the way a developer does: Xcode's pre-build script runs Gradle's
-  # Swift Export, and Xcode then compiles the generated Swift, links it and packages the app. A
-  # Gradle-only check would cover neither the generated Swift sources nor the real build settings.
+  # What a pull request gets: Swift Export runs, the Swift package it generates is compiled, and the
+  # app's own Swift sources are type-checked against the exported module. That covers every source
+  # file the boundary is made of while leaving out the Kotlin/Native link, the longest step of the
+  # build and the reason the full job below is too slow to run on every push.
   # Kotlin/Native needs an Apple host to compile Apple targets, hence macos-latest instead of ubuntu.
+  swift-export:
+    if: github.event_name == 'pull_request'
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      # Betas are excluded: syncing Gradle under a beta Xcode fails with exit 65, and the images
+      # carry a beta alongside the release for months.
+      - name: Select the newest installed release Xcode
+        run: |
+          newest=$(ls -d /Applications/Xcode_*.app 2>/dev/null | grep -iv beta | sort -V | tail -1)
+          if [ -n "$newest" ]; then sudo xcode-select --switch "$newest/Contents/Developer"; fi
+          xcodebuild -version
+      - name: Check Swift Export and the app's Swift sources
+        run: app-ios/scripts/check-swift-export.sh
+
+  # Drives the whole iOS build the way a developer does: Xcode's pre-build script runs Gradle's
+  # Swift Export, and Xcode then compiles the generated Swift, links it and packages the app. The
+  # Kotlin/Native link and the app link only run here, so a change that breaks either surfaces once
+  # it reaches main rather than on the pull request that carries it.
   xcodebuild:
+    if: github.event_name == 'push'
     runs-on: macos-latest
     timeout-minutes: 25
     steps:
