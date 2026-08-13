@@ -21,16 +21,35 @@ fun ProfileCardScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(uiState.title, style = MaterialTheme.typography.headlineSmall)
+        when (uiState) {
+            is ProfileCardScreenUiState.Form -> Text("Form", style = MaterialTheme.typography.headlineSmall)
+            is ProfileCardScreenUiState.Card -> Text(uiState.nickName, style = MaterialTheme.typography.headlineSmall)
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ProfileCardScreenPreview(
+private fun ProfileCardScreenFormPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardScreen(uiState = ProfileCardScreenUiState(title = "Profile card"))
+        ProfileCardScreen(uiState = ProfileCardScreenUiState.Form())
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileCardScreenCardPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            uiState = ProfileCardScreenUiState.Card(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com",
+            ),
+        )
     }
 }
