@@ -1,3 +1,5 @@
 package io.github.droidkaigi.confsched.core.common
 
-interface Navigator
+interface Navigator {
+    fun back()
+}
