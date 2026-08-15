@@ -4,6 +4,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.common.AppNavigator
+import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.LicensesScreenScope
 import io.github.droidkaigi.confsched.feature.about.LicensesScreenNavigator
 
@@ -11,5 +12,5 @@ import io.github.droidkaigi.confsched.feature.about.LicensesScreenNavigator
 @SingleIn(LicensesScreenScope::class)
 @ContributesBinding(LicensesScreenScope::class)
 class DefaultLicensesScreenNavigator(
-    @Suppress("unused") private val appNavigator: AppNavigator,
-) : LicensesScreenNavigator
+    appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator), LicensesScreenNavigator
