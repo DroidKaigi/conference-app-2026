@@ -11,6 +11,8 @@ import io.github.droidkaigi.confsched.core.model.MutationTag
 interface DebugScreenGraph {
     val screenContext: DebugScreenContext
 
+    val navigator: DebugScreenNavigator
+
     @Provides
     private fun provideMutationTag(): MutationTag = MutationTag("DebugScreen")
 
