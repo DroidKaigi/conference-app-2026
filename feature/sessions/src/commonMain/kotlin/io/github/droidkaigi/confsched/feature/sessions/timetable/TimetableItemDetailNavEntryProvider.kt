@@ -14,8 +14,8 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetailScreenScope
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@ContributesIntoSet(UiScope::class)
 @Inject
-@ContributesIntoSet(TimetableItemDetailScreenScope::class)
 class TimetableItemDetailNavEntryProvider(
     private val screenGraphFactory: TimetableItemDetailScreenGraph.Factory,
 ) : NavEntryProvider {

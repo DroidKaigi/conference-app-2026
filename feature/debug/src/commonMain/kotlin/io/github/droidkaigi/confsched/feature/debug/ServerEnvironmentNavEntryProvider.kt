@@ -11,7 +11,7 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.ServerEnvironmentScreenScope
 
 @Inject
-@ContributesIntoSet(ServerEnvironmentScreenScope::class)
+@ContributesIntoSet(UiScope::class)
 class ServerEnvironmentNavEntryProvider(
     private val screenGraphFactory: ServerEnvironmentScreenGraph.Factory,
 ) : NavEntryProvider {
