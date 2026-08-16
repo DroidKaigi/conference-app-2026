@@ -306,19 +306,20 @@ private fun railAnchors(columnWidthPx: Float): DraggableAnchors<RailValue> = Dra
 private fun railWidthPx(state: AnchoredDraggableState<RailValue>, columnWidthPx: Float): Float =
     (columnWidthPx + state.offset).coerceIn(0f, columnWidthPx)
 
-/** The drawn handle's center: flush with the boundary's inner side, clamped so the handle stays on screen at width zero. */
-private fun Density.handleCenterPx(
+/**
+ * The hit area's start edge before the on-screen clamp: the area is centered on the drawn handle,
+ * which sits flush with the boundary's inner side and stays on screen at width zero.
+ */
+private fun Density.unclampedHitAreaStartPx(
     state: AnchoredDraggableState<RailValue>,
     columnWidthPx: Float,
     handleWidth: Dp,
 ): Float {
     val handleHalfWidthPx = handleWidth.toPx() / 2
-    return (railWidthPx(state, columnWidthPx) - handleHalfWidthPx).coerceAtLeast(handleHalfWidthPx)
+    val handleCenterPx = (railWidthPx(state, columnWidthPx) - handleHalfWidthPx)
+        .coerceAtLeast(handleHalfWidthPx)
+    return handleCenterPx - RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2
 }
-
-/** The hit area's start edge: centered on the drawn handle, clamped so the area and its gesture exclusion stay fully on screen. */
-private fun Density.hitAreaStartPx(handleCenterPx: Float): Float =
-    (handleCenterPx - RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2).coerceAtLeast(0f)
 
 /** The pane-boundary affordance whose drag collapses and restores the rail. */
 @Composable
@@ -339,8 +340,9 @@ private fun RootTabRailDragHandle(
     Box(
         modifier = modifier
             .offset {
-                val handleCenterPx = handleCenterPx(state, columnWidthPx, handleSize.width)
-                IntOffset(hitAreaStartPx(handleCenterPx).roundToInt(), 0)
+                // Clamped so the hit area and its gesture exclusion stay fully on screen.
+                val startPx = unclampedHitAreaStartPx(state, columnWidthPx, handleSize.width)
+                IntOffset(startPx.coerceAtLeast(0f).roundToInt(), 0)
             }
             .size(
                 width = RootTabRailDragHandleDefaults.hitAreaWidth,
@@ -376,13 +378,11 @@ private fun RootTabRailDragHandle(
     ) {
         VerticalDragHandle(
             interactionSource = interactionSource,
-            // The drawn handle sits at the hit area's center, where its minimum interactive size
-            // pins it; this shifts it to its own center once the two no longer coincide.
+            // Shifted by whatever the clamp trimmed off the hit area, so the drawn handle keeps
+            // its place at the boundary while the hit area stays on screen.
             modifier = Modifier.offset {
-                val handleCenterPx = handleCenterPx(state, columnWidthPx, handleSize.width)
-                val hitAreaCenterPx = hitAreaStartPx(handleCenterPx) +
-                    RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2
-                IntOffset((handleCenterPx - hitAreaCenterPx).roundToInt(), 0)
+                val startPx = unclampedHitAreaStartPx(state, columnWidthPx, handleSize.width)
+                IntOffset(startPx.coerceAtMost(0f).roundToInt(), 0)
             },
         )
     }
