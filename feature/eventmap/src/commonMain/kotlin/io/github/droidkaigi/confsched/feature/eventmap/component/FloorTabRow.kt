@@ -3,7 +3,6 @@ package io.github.droidkaigi.confsched.feature.eventmap.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +23,6 @@ internal fun FloorTabRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
             .selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(FloorTabRowDefaults.spacing),
     ) {

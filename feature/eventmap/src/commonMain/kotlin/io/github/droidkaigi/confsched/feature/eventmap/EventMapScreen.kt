@@ -1,13 +1,18 @@
 package io.github.droidkaigi.confsched.feature.eventmap
 
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -17,14 +22,14 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
+import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
+import io.github.droidkaigi.confsched.feature.eventmap.component.EventItem
+import io.github.droidkaigi.confsched.feature.eventmap.component.FloorMapCard
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorTabRow
+import io.github.droidkaigi.confsched.feature.eventmap.component.StampRallyCard
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_1f
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_b1f
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_content_description
+import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_introducing
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_title
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -38,23 +43,57 @@ fun EventMapScreen(
         },
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            FloorTabRow(selectedFloor = uiState.selectedFloor, onFloorClick = onFloorClick)
-
-            Crossfade(targetState = uiState.selectedFloor) { floor ->
-                Image(
-                    painter = painterResource(floor.mapImage()),
-                    contentDescription = stringResource(Res.string.event_map_content_description, floor.label),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        LazyColumn(
+            contentPadding = PaddingValues(16.dp).plus(PaddingValues(bottom = 122.dp)),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            item {
+                Text(
+                    text = stringResource(Res.string.event_map_introducing),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+            item {
+                FloorTabRow(
+                    selectedFloor = uiState.selectedFloor,
+                    onFloorClick = onFloorClick,
+                )
+            }
+            item {
+                FloorMapCard(
+                    selectedFloor = uiState.selectedFloor,
+                )
+            }
+            item {
+                StampRallyCard(
+                    onLearnMoreClick = { /*TODO*/ },
+                )
+            }
+            itemsIndexed(uiState.eventMapItems) { index, event ->
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                ) {
+                    EventItem(
+                        event = event,
+                        seed = index,
+                    )
+                    if (event != uiState.eventMapItems.last()) {
+                        SketchHorizontalDivider(
+                            seed = index + 100,
+                            thickness = 1.3.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant,
+                            modifier = Modifier
+                                .height(5.dp),
+                        )
+                    }
+                }
             }
         }
     }
-}
-
-private fun EventMapFloor.mapImage(): DrawableResource = when (this) {
-    EventMapFloor.Ground -> Res.drawable.event_map_1f
-    EventMapFloor.Basement -> Res.drawable.event_map_b1f
 }
 
 @LocalePreviews
@@ -63,8 +102,12 @@ private fun EventMapScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
+        val selectedFloor = EventMapFloor.Ground
         EventMapScreen(
-            uiState = EventMapScreenUiState(selectedFloor = EventMapFloor.Ground),
+            uiState = EventMapScreenUiState(
+                selectedFloor = selectedFloor,
+                eventMapItems = EventMapScreenUiState.mock(selectedFloor),
+            ),
             onFloorClick = {},
         )
     }
