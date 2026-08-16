@@ -1,0 +1,4 @@
+<resources>
+    <string name="expand_navigation_rail">ナビゲーションレールを展開</string>
+    <string name="collapse_navigation_rail">ナビゲーションレールを折りたたみ</string>
+</resources>

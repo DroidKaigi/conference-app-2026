@@ -53,6 +53,9 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
 import androidx.window.core.layout.WindowSizeClass
+import io.github.droidkaigi.confsched.app_shared.generated.resources.Res
+import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_navigation_rail
+import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBar
@@ -68,6 +71,7 @@ import io.github.droidkaigi.confsched.feature.favorites.FavoritesNavKey
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
 // Public and free of UI types so the iOS shell can drive tab selection through RootTabNavigator.
@@ -328,6 +332,9 @@ private fun RootTabRailDragHandle(
     val interactionSource = remember(::MutableInteractionSource)
     val animationScope = rememberCoroutineScope()
     val collapsed = state.settledValue == RailValue.Collapsed
+    val accessibilityActionLabel = stringResource(
+        if (collapsed) Res.string.expand_navigation_rail else Res.string.collapse_navigation_rail,
+    )
     val handleSize = VerticalDragHandleDefaults.sizes().size
     Box(
         modifier = modifier
@@ -356,7 +363,7 @@ private fun RootTabRailDragHandle(
             .semantics {
                 customActions = listOf(
                     CustomAccessibilityAction(
-                        label = if (collapsed) "Expand navigation rail" else "Collapse navigation rail",
+                        label = accessibilityActionLabel,
                     ) {
                         animationScope.launch {
                             state.animateTo(if (collapsed) RailValue.Expanded else RailValue.Collapsed)
