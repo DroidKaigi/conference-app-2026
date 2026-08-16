@@ -14,14 +14,13 @@ import io.github.droidkaigi.confsched.core.common.context
 @Inject
 class SoilErrorsNavEntryProvider(
     private val screenGraphFactory: SoilErrorsScreenGraph.Factory,
-    private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<SoilErrorsNavKey> {
             val graph = retain(screenGraphFactory::createSoilErrorsScreenGraph)
             context(graph.screenContext) {
                 SoilErrorsScreenRoot(
-                    onNavigateBack = appNavigator::back,
+                    onNavigateBack = graph.screenNavigator::back,
                 )
             }
         }
