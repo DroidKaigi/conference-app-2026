@@ -1,4 +1,15 @@
 <resources>
     <string name="event_map_title">会場マップ</string>
     <string name="event_map_content_description">%1$s のマップ</string>
+    <string name="event_map_introducing">DroidKaigiでは、セッション以外にも参加者が楽しめるイベントを開催。コミュニケーションや技術交流を通じてカンファレンスを満喫しましょう！</string>
+    <string name="event_map_stamp_title">スタンプラリー</string>
+    <string name="event_map_stamp_description">スタンプを集めて景品と交換しましょう！</string>
+    <string name="event_map_learn_more_button_label">詳しく見る</string>
+    <string name="event_map_meetup_title">Meetup（ランチタイム）</string>
+    <string name="event_map_meetup_description">様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。</string>
+    <string name="event_map_meetup_message">※こちらのイベントは時間が変更されました</string>
+    <string name="event_map_career_title">キャリア相談会</string>
+    <string name="event_map_career_description">様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。</string>
+    <string name="event_map_communication_title">コミュニケーションエリア</string>
+    <string name="event_map_communication_description">様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。</string>
 </resources>
