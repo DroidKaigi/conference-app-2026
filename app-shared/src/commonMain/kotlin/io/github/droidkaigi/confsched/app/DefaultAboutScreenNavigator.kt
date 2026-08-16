@@ -16,13 +16,14 @@ import io.github.droidkaigi.confsched.feature.staff.StaffNavKey
 
 @Inject
 @ContributesBinding(
-    scope =AboutScreenScope::class,
+    scope = AboutScreenScope::class,
     binding = binding<AboutScreenNavigator>(),
 )
 class DefaultAboutScreenNavigator(
     private val appNavigator: AppNavigator,
     private val debugNavKeyProvider: DebugNavKeyProvider,
-) : DefaultScreenNavigator(appNavigator), AboutScreenNavigator {
+) : DefaultScreenNavigator(appNavigator),
+    AboutScreenNavigator {
     override fun openSponsors() {
         appNavigator.goTo(SponsorsNavKey)
     }

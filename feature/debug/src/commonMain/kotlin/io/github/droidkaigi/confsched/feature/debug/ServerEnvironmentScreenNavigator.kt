@@ -23,7 +23,8 @@ interface ServerEnvironmentScreenNavigator : Navigator {
 )
 class DefaultServerEnvironmentScreenNavigator(
     private val appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), ServerEnvironmentScreenNavigator {
+) : DefaultScreenNavigator(appNavigator),
+    ServerEnvironmentScreenNavigator {
     override fun openTimetable() {
         appNavigator.goTo(TimetableNavKey)
     }

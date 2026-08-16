@@ -11,9 +11,11 @@ import io.github.droidkaigi.confsched.core.model.SoilErrorsScreenScope
 
 @Inject
 @SingleIn(SoilErrorsScreenScope::class)
-@ContributesBinding(scope = SoilErrorsScreenScope::class,
-    binding = binding<SoilErrorsScreenNavigator>()
+@ContributesBinding(
+    scope = SoilErrorsScreenScope::class,
+    binding = binding<SoilErrorsScreenNavigator>(),
 )
 class DefaultSoilErrorsScreenNavigator(
-    appNavigator: AppNavigator
-) : DefaultScreenNavigator(appNavigator), SoilErrorsScreenNavigator
+    appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    SoilErrorsScreenNavigator

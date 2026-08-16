@@ -13,8 +13,9 @@ import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenNavig
 @SingleIn(ProfileCardScreenScope::class)
 @ContributesBinding(
     scope = ProfileCardScreenScope::class,
-    binding = binding<ProfileCardScreenNavigator>()
+    binding = binding<ProfileCardScreenNavigator>(),
 )
 class DefaultProfileCardScreenNavigator(
     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), ProfileCardScreenNavigator
+) : DefaultScreenNavigator(appNavigator),
+    ProfileCardScreenNavigator

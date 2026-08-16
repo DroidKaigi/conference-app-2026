@@ -13,8 +13,9 @@ import io.github.droidkaigi.confsched.feature.contributors.ContributorsScreenNav
 @SingleIn(ContributorsScreenScope::class)
 @ContributesBinding(
     scope = ContributorsScreenScope::class,
-    binding = binding <ContributorsScreenNavigator>(),
+    binding = binding<ContributorsScreenNavigator>(),
 )
 class DefaultContributorsScreenNavigator(
     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), ContributorsScreenNavigator
+) : DefaultScreenNavigator(appNavigator),
+    ContributorsScreenNavigator

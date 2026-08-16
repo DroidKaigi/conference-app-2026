@@ -11,8 +11,11 @@ import io.github.droidkaigi.confsched.feature.sponsors.SponsorsScreenNavigator
 
 @Inject
 @SingleIn(SponsorsScreenScope::class)
-@ContributesBinding(scope = SponsorsScreenScope::class,
-    binding = binding<SponsorsScreenNavigator>())
+@ContributesBinding(
+    scope = SponsorsScreenScope::class,
+    binding = binding<SponsorsScreenNavigator>(),
+)
 class DefaultSponsorsScreenNavigator(
-     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), SponsorsScreenNavigator
+    appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    SponsorsScreenNavigator

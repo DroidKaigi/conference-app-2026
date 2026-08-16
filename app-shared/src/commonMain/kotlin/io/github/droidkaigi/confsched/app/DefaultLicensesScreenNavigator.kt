@@ -11,9 +11,11 @@ import io.github.droidkaigi.confsched.feature.about.LicensesScreenNavigator
 
 @Inject
 @SingleIn(LicensesScreenScope::class)
-@ContributesBinding(scope = LicensesScreenScope::class,
-    binding = binding<LicensesScreenNavigator>()
+@ContributesBinding(
+    scope = LicensesScreenScope::class,
+    binding = binding<LicensesScreenNavigator>(),
 )
 class DefaultLicensesScreenNavigator(
     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), LicensesScreenNavigator
+) : DefaultScreenNavigator(appNavigator),
+    LicensesScreenNavigator

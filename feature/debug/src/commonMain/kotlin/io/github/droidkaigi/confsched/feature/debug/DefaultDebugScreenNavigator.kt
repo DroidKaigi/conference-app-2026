@@ -15,8 +15,9 @@ import io.github.droidkaigi.confsched.core.model.DebugScreenScope
     binding = binding<DebugScreenNavigator>(),
 )
 class DefaultDebugScreenNavigator(
-    private val appNavigator: AppNavigator
-) : DefaultScreenNavigator(appNavigator), DebugScreenNavigator {
+    private val appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    DebugScreenNavigator {
     override fun openSoilErrors() {
         appNavigator.goTo(SoilErrorsNavKey)
     }

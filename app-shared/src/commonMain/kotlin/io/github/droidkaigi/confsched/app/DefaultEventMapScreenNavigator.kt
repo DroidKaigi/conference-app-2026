@@ -13,8 +13,9 @@ import io.github.droidkaigi.confsched.feature.eventmap.EventMapScreenNavigator
 @SingleIn(EventMapScreenScope::class)
 @ContributesBinding(
     scope = EventMapScreenScope::class,
-    binding = binding<EventMapScreenNavigator>()
+    binding = binding<EventMapScreenNavigator>(),
 )
 class DefaultEventMapScreenNavigator(
     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), EventMapScreenNavigator
+) : DefaultScreenNavigator(appNavigator),
+    EventMapScreenNavigator

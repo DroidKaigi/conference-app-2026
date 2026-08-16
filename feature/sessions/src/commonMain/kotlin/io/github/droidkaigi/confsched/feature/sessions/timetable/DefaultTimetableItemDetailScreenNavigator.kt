@@ -14,5 +14,6 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemDetailScreenScope
     binding = binding<TimetableItemDetailScreenNavigator>(),
 )
 class DefaultTimetableItemDetailScreenNavigator(
-    appNavigator: AppNavigator
-) : DefaultScreenNavigator(appNavigator), TimetableItemDetailScreenNavigator
+    appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    TimetableItemDetailScreenNavigator

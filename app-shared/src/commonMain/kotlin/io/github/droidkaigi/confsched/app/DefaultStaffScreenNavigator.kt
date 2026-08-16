@@ -11,8 +11,11 @@ import io.github.droidkaigi.confsched.feature.staff.StaffScreenNavigator
 
 @Inject
 @SingleIn(StaffScreenScope::class)
-@ContributesBinding(scope = StaffScreenScope::class,
-    binding = binding<StaffScreenNavigator>())
+@ContributesBinding(
+    scope = StaffScreenScope::class,
+    binding = binding<StaffScreenNavigator>(),
+)
 class DefaultStaffScreenNavigator(
     appNavigator: AppNavigator,
-) : DefaultScreenNavigator(appNavigator), StaffScreenNavigator
+) : DefaultScreenNavigator(appNavigator),
+    StaffScreenNavigator

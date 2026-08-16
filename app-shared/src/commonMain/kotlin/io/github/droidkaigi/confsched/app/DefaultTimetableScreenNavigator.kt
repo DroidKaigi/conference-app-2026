@@ -13,11 +13,14 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableScreen
 
 @Inject
 @SingleIn(TimetableScreenScope::class)
-@ContributesBinding(scope = TimetableScreenScope::class,
-   binding = binding<TimetableScreenNavigator>() )
+@ContributesBinding(
+    scope = TimetableScreenScope::class,
+    binding = binding<TimetableScreenNavigator>(),
+)
 class DefaultTimetableScreenNavigator(
-    private val appNavigator: AppNavigator
-) : DefaultScreenNavigator(appNavigator), TimetableScreenNavigator {
+    private val appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    TimetableScreenNavigator {
     override fun openSessionDetail(id: TimetableItemId) {
         appNavigator.goTo(TimetableItemDetailNavKey(id))
     }
