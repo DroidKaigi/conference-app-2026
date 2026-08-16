@@ -14,13 +14,12 @@ import io.github.droidkaigi.confsched.core.common.context
 @Inject
 class LicensesNavEntryProvider(
     private val screenGraphFactory: LicensesScreenGraph.Factory,
-    private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<LicensesNavKey> {
             val graph = retain(screenGraphFactory::createLicensesScreenGraph)
             context(graph.screenContext) {
-                LicensesScreenRoot(onNavigateBack = appNavigator::back)
+                LicensesScreenRoot(onNavigateBack = graph.screenNavigator::back)
             }
         }
     }
