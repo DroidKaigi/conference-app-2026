@@ -43,6 +43,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
@@ -249,20 +251,10 @@ private fun RootTabRailLayout(
             }
         }
         if (collapsible) {
-            val handleWidth = VerticalDragHandleDefaults.sizes().size.width
             RootTabRailDragHandle(
                 state = railDragState,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset {
-                        val handleHalfWidthPx = handleWidth.toPx() / 2
-                        // Flush with the boundary's inner side, clamped so the handle stays on
-                        // screen at width zero.
-                        val handleCenterPx = (railWidthPx(railDragState, columnWidthPx) - handleHalfWidthPx)
-                            .coerceAtLeast(handleHalfWidthPx)
-                        val hitAreaHalfWidthPx = RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2
-                        IntOffset((handleCenterPx - hitAreaHalfWidthPx).roundToInt(), 0)
-                    },
+                columnWidthPx = columnWidthPx,
+                modifier = Modifier.align(Alignment.CenterStart),
             )
         }
     }
@@ -310,10 +302,25 @@ private fun railAnchors(columnWidthPx: Float): DraggableAnchors<RailValue> = Dra
 private fun railWidthPx(state: AnchoredDraggableState<RailValue>, columnWidthPx: Float): Float =
     (columnWidthPx + state.offset).coerceIn(0f, columnWidthPx)
 
+/** The drawn handle's center: flush with the boundary's inner side, clamped so the handle stays on screen at width zero. */
+private fun Density.handleCenterPx(
+    state: AnchoredDraggableState<RailValue>,
+    columnWidthPx: Float,
+    handleWidth: Dp,
+): Float {
+    val handleHalfWidthPx = handleWidth.toPx() / 2
+    return (railWidthPx(state, columnWidthPx) - handleHalfWidthPx).coerceAtLeast(handleHalfWidthPx)
+}
+
+/** The hit area's start edge: centered on the drawn handle, clamped so the area and its gesture exclusion stay fully on screen. */
+private fun Density.hitAreaStartPx(handleCenterPx: Float): Float =
+    (handleCenterPx - RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2).coerceAtLeast(0f)
+
 /** The pane-boundary affordance whose drag collapses and restores the rail. */
 @Composable
 private fun RootTabRailDragHandle(
     state: AnchoredDraggableState<RailValue>,
+    columnWidthPx: Float,
     modifier: Modifier = Modifier,
 ) {
     // Shared with the surrounding box's gesture so the handle renders the Material pressed
@@ -321,11 +328,16 @@ private fun RootTabRailDragHandle(
     val interactionSource = remember(::MutableInteractionSource)
     val animationScope = rememberCoroutineScope()
     val collapsed = state.settledValue == RailValue.Collapsed
+    val handleSize = VerticalDragHandleDefaults.sizes().size
     Box(
         modifier = modifier
+            .offset {
+                val handleCenterPx = handleCenterPx(state, columnWidthPx, handleSize.width)
+                IntOffset(hitAreaStartPx(handleCenterPx).roundToInt(), 0)
+            }
             .size(
                 width = RootTabRailDragHandleDefaults.hitAreaWidth,
-                height = VerticalDragHandleDefaults.sizes().size.height,
+                height = handleSize.height,
             )
             .then(
                 // Only the collapsed handle sits inside Android's back-gesture edge inset, where
@@ -355,7 +367,17 @@ private fun RootTabRailDragHandle(
             },
         contentAlignment = Alignment.Center,
     ) {
-        VerticalDragHandle(interactionSource = interactionSource)
+        VerticalDragHandle(
+            interactionSource = interactionSource,
+            // The drawn handle sits at the hit area's center, where its minimum interactive size
+            // pins it; this shifts it to its own center once the two no longer coincide.
+            modifier = Modifier.offset {
+                val handleCenterPx = handleCenterPx(state, columnWidthPx, handleSize.width)
+                val hitAreaCenterPx = hitAreaStartPx(handleCenterPx) +
+                    RootTabRailDragHandleDefaults.hitAreaWidth.toPx() / 2
+                IntOffset((handleCenterPx - hitAreaCenterPx).roundToInt(), 0)
+            },
+        )
     }
 }
 
