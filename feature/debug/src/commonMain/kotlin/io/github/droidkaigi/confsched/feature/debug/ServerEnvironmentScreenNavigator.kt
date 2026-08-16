@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.debug
 
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.common.Navigator
@@ -16,7 +17,10 @@ interface ServerEnvironmentScreenNavigator : Navigator {
 // Lives in-feature, unlike other Default*Navigators: feature:debug is dev-only tooling and is the
 // one module exempt from cross-feature isolation, so it may reference TimetableNavKey directly.
 @Inject
-@ContributesBinding(ServerEnvironmentScreenScope::class)
+@ContributesBinding(
+    scope = ServerEnvironmentScreenScope::class,
+    binding = binding<ServerEnvironmentScreenNavigator>(),
+)
 class DefaultServerEnvironmentScreenNavigator(
     private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator), ServerEnvironmentScreenNavigator {

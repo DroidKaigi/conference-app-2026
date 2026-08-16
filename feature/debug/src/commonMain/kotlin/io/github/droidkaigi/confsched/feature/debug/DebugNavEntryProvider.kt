@@ -9,9 +9,10 @@ import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.DebugScreenScope
 
-@ContributesIntoSet(UiScope::class)
 @Inject
+@ContributesIntoSet(DebugScreenScope::class)
 class DebugNavEntryProvider(
     private val screenGraphFactory: DebugScreenGraph.Factory,
 ) : NavEntryProvider {
