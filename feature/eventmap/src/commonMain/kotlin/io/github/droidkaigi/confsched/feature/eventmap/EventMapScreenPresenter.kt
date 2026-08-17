@@ -28,6 +28,6 @@ fun eventMapScreenPresenter(
 
     return EventMapScreenUiState(
         selectedFloor = selectedFloor,
-        eventMapItems = eventMapItems,
+        projects = eventMapItems,
     )
 }

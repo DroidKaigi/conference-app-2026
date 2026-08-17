@@ -12,23 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.MultiLangText
+import io.github.droidkaigi.confsched.core.model.Project
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiOutlinedButton
 import io.github.droidkaigi.confsched.core.ui.RoomChip
-import io.github.droidkaigi.confsched.feature.eventmap.EventMapItem
+import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_learn_more_button_label
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_meetup_description
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_meetup_message
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_meetup_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun EventItem(
-    event: EventMapItem,
+    event: Project,
     seed: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -44,19 +43,19 @@ internal fun EventItem(
         ) {
             RoomChip(room = event.room, seed = seed)
             Text(
-                text = stringResource(event.title),
+                text = event.title.current(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
         Text(
-            text = stringResource(event.description),
+            text = event.description.current(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         event.note?.let {
             Text(
-                text = stringResource(it),
+                text = it.current(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -84,11 +83,11 @@ private fun EventItemPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         EventItem(
-            event = EventMapItem(
-                title = Res.string.event_map_meetup_title,
-                description = Res.string.event_map_meetup_description,
+            event = Project(
+                title = MultiLangText(ja = "Meetup", en = "Meetup"),
+                description = MultiLangText(ja = "Description", en = "Description"),
                 room = Room.NARWHAL,
-                note = Res.string.event_map_meetup_message,
+                note = MultiLangText(ja = "Note", en = "Note"),
                 detailPage = "https://droidkaigi.jp/2026/",
             ),
             seed = 1,

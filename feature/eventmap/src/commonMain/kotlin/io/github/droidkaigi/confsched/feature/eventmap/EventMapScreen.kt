@@ -73,7 +73,7 @@ fun EventMapScreen(
                     onLearnMoreClick = { /*TODO*/ },
                 )
             }
-            itemsIndexed(uiState.eventMapItems) { index, event ->
+            itemsIndexed(uiState.projects) { index, event ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
@@ -81,7 +81,7 @@ fun EventMapScreen(
                         event = event,
                         seed = index,
                     )
-                    if (event != uiState.eventMapItems.last()) {
+                    if (index != uiState.projects.lastIndex) {
                         SketchHorizontalDivider(
                             seed = index + 100,
                             thickness = 1.3.dp,
@@ -106,7 +106,7 @@ private fun EventMapScreenPreview(
         EventMapScreen(
             uiState = EventMapScreenUiState(
                 selectedFloor = selectedFloor,
-                eventMapItems = EventMapScreenUiState.mock(selectedFloor),
+                projects = EventMapScreenUiState.mock(selectedFloor),
             ),
             onFloorClick = {},
         )
