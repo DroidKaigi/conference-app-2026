@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -29,12 +30,15 @@ internal fun TimetableItemDetailHeadline(
     room: String,
     title: String,
     speaker: String,
+    startInset: Dp,
     modifier: Modifier = Modifier,
 ) {
     Column(
+        // The inset sits inside the background so the band still runs to the pane boundary.
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(start = startInset)
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -88,6 +92,7 @@ private fun TimetableItemDetailHeadlinePreview(
             room = "NARWHAL",
             title = "Sample Session A",
             speaker = "Speaker A",
+            startInset = 0.dp,
         )
     }
 }
