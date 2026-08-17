@@ -43,8 +43,6 @@ fun TimetableItemDetailScreen(
     onBookmarkClick: () -> Unit,
     onBack: () -> Unit,
 ) {
-    // As the detail pane of a list-detail layout, the screen's backgrounds run to the pane
-    // boundary and this inset keeps the content clear of it.
     val isListDetailPane = LocalListDetailSceneScope.current != null
     val paneSpacerInset = if (isListDetailPane) {
         LocalPanePartitionSpacerSize.current
@@ -56,7 +54,7 @@ fun TimetableItemDetailScreen(
             KaigiTopAppBar(
                 title = "",
                 navigationIcon = {
-                    if (LocalListDetailSceneScope.current != null) {
+                    if (isListDetailPane) {
                         IconButton(
                             onClick = onBack,
                             modifier = Modifier.padding(start = paneSpacerInset),

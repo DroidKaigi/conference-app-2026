@@ -55,10 +55,7 @@ internal fun <T : Any> rememberKaigiListDetailSceneStrategy(): ListDetailSceneSt
     )
 }
 
-// The state itself clamps dragging only to [0, layout width], which lets a pane collapse while
-// the pointer is down; this rubber-bands the seam at the edge anchors instead: the delta portion
-// past a bound is damped harder with distance and dies out at PaneMaxOvershoot, while movement
-// back toward the bounds always passes through so the release animation is unaffected.
+// Rubber-bands dragging at the edge anchors; the state itself clamps only to [0, layout width].
 // Positions are LTR window coordinates, matching PaneExpansionState's offset space.
 private class PaneExpansionDragBounds {
     var seamPosition = Float.NaN
