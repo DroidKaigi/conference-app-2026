@@ -34,7 +34,6 @@ internal fun TimetableItemDetailHeadline(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        // The inset sits inside the background so the band still runs to the pane boundary.
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surfaceVariant)
