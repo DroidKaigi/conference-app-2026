@@ -76,20 +76,22 @@ private class PaneExpansionDragBounds {
                 val overshoot = (seamPosition - maxBound).coerceAtLeast(0f)
                 inBounds + (delta - inBounds) * resistanceAt(overshoot)
             }
+
             delta < 0 && seamPosition + delta < minBound -> {
                 val inBounds = (seamPosition - minBound).coerceIn(0f, -delta)
                 val overshoot = (minBound - seamPosition).coerceAtLeast(0f)
                 -(inBounds + (-delta - inBounds) * resistanceAt(overshoot))
             }
+
             else -> delta
         }
     }
 
     private fun resistanceAt(overshoot: Float): Float =
-        (PaneOvershootResistance * (1f - overshoot / maxOvershoot)).coerceAtLeast(0f)
+        (PANE_OVERSHOOT_RESISTANCE * (1f - overshoot / maxOvershoot)).coerceAtLeast(0f)
 }
 
-private const val PaneOvershootResistance = 0.3f
+private const val PANE_OVERSHOOT_RESISTANCE = 0.3f
 private val PaneMaxOvershoot = 48.dp
 
 // Dragging settles onto one of the anchors above, so the edge anchors keep either pane from
@@ -136,7 +138,7 @@ private fun ThreePaneScaffoldScope.PaneExpansionDragHandle(
                 .background(
                     Brush.horizontalGradient(
                         0f to Color.Transparent,
-                        1f to MaterialTheme.colorScheme.scrim.copy(alpha = PaneShadowMaxAlpha),
+                        1f to MaterialTheme.colorScheme.scrim.copy(alpha = PANE_SHADOW_MAX_ALPHA),
                     ),
                 ),
         )
@@ -150,4 +152,4 @@ private fun ThreePaneScaffoldScope.PaneExpansionDragHandle(
 }
 
 private val PaneShadowWidth = 8.dp
-private const val PaneShadowMaxAlpha = 0.1f
+private const val PANE_SHADOW_MAX_ALPHA = 0.1f
