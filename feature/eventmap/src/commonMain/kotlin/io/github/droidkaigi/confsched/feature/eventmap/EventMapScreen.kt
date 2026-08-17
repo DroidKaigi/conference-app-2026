@@ -73,12 +73,16 @@ fun EventMapScreen(
                     onLearnMoreClick = { /*TODO*/ },
                 )
             }
-            itemsIndexed(uiState.projects) { index, event ->
+            itemsIndexed(uiState.projects) { index, project ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     EventItem(
-                        event = event,
+                        title = project.title,
+                        i18nDesc = project.i18nDesc,
+                        room = project.room,
+                        message = project.message,
+                        moreDetailsUrl = project.moreDetailsUrl,
                         seed = index,
                     )
                     if (index != uiState.projects.lastIndex) {

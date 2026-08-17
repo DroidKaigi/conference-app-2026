@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Project
+import io.github.droidkaigi.confsched.core.model.ProjectId
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -27,7 +27,11 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun EventItem(
-    event: Project,
+    title: MultiLangText,
+    i18nDesc: MultiLangText,
+    room: Room,
+    message: MultiLangText?,
+    moreDetailsUrl: String?,
     seed: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -41,26 +45,26 @@ internal fun EventItem(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            RoomChip(room = event.room, seed = seed)
+            RoomChip(room = room, seed = seed)
             Text(
-                text = event.title.current(),
+                text = title.current(),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
         Text(
-            text = event.description.current(),
+            text = i18nDesc.current(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        event.note?.let {
+        message?.let {
             Text(
                 text = it.current(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
         }
-        event.detailPage?.let {
+        moreDetailsUrl?.let {
             KaigiOutlinedButton(
                 onClick = { /* TODO */ },
                 seed = 872 + seed,
@@ -83,13 +87,11 @@ private fun EventItemPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         EventItem(
-            event = Project(
-                title = MultiLangText(ja = "Meetup", en = "Meetup"),
-                description = MultiLangText(ja = "Description", en = "Description"),
-                room = Room.NARWHAL,
-                note = MultiLangText(ja = "Note", en = "Note"),
-                detailPage = "https://droidkaigi.jp/2026/",
-            ),
+            title = MultiLangText(ja = "Meetup", en = "Meetup"),
+            i18nDesc = MultiLangText(ja = "Description", en = "Description"),
+            room = Room.NARWHAL,
+            message = MultiLangText(ja = "Note", en = "Note"),
+            moreDetailsUrl = "https://droidkaigi.jp/2026/",
             seed = 1,
         )
     }
