@@ -57,7 +57,11 @@ internal fun ContributorsCountText(
         } else {
             displayedCount.animateTo(
                 targetValue = count,
-                animationSpec = tween(durationMillis = ContributorsCountTextDefaults.countUpDurationMillis, easing = EaseOut),
+                animationSpec = tween(
+                    durationMillis = ContributorsCountTextDefaults.countUpDurationMillis,
+                    delayMillis = ContributorsCountTextDefaults.countUpStartDelayMillis,
+                    easing = EaseOut,
+                ),
             )
             hasCountedUp = true
         }
@@ -213,6 +217,9 @@ private const val ORNAMENT_STROKE_WIDTH = 2f
 
 private object ContributorsCountTextDefaults {
     val textSpacing = 8.dp
+
+    /** Lets the screen's enter transition become visible before the count starts moving. */
+    const val countUpStartDelayMillis = 200
 
     const val countUpDurationMillis = 600
 
