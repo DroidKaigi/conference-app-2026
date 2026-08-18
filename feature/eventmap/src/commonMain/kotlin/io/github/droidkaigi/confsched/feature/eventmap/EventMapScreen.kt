@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Projects
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
@@ -110,7 +112,7 @@ private fun EventMapScreenPreview(
         EventMapScreen(
             uiState = EventMapScreenUiState(
                 selectedFloor = selectedFloor,
-                projects = EventMapScreenUiState.mock(selectedFloor),
+                projects = Projects.fake().items,
             ),
             onFloorClick = {},
         )

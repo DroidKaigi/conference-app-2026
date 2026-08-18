@@ -3,22 +3,19 @@ package io.github.droidkaigi.confsched.feature.eventmap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.model.Projects
 
 @Composable
 context(_: EventMapPresenterContext)
 fun eventMapScreenPresenter(
     screenChannel: ScreenChannel<EventMapScreenAction, Nothing>,
+    projects: Projects,
 ): EventMapScreenUiState {
     var selectedFloor by retain { mutableStateOf(EventMapFloor.Ground) }
-
-    val eventMapItems = remember(selectedFloor) {
-        EventMapScreenUiState.mock(selectedFloor)
-    }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -28,6 +25,6 @@ fun eventMapScreenPresenter(
 
     return EventMapScreenUiState(
         selectedFloor = selectedFloor,
-        projects = eventMapItems,
+        projects = projects.items,
     )
 }
