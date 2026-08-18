@@ -7,9 +7,9 @@ import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.data.DefaultProjectsApiProvider
 import io.github.droidkaigi.confsched.core.data.FakeProjectsApi
 import io.github.droidkaigi.confsched.core.data.KtorfitFactory
+import io.github.droidkaigi.confsched.core.data.ProjectListResponse
 import io.github.droidkaigi.confsched.core.data.ProjectsApi
 import io.github.droidkaigi.confsched.core.data.ProjectsApiProvider
-import io.github.droidkaigi.confsched.core.data.ProjectListResponse
 import io.github.droidkaigi.confsched.core.data.ServerEnvironment
 import io.github.droidkaigi.confsched.core.data.ServerEnvironmentStore
 import io.github.droidkaigi.confsched.core.data.createProjectsApi
