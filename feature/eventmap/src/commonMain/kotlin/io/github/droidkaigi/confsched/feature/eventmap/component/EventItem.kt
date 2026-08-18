@@ -13,10 +13,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.ProjectId
+import io.github.droidkaigi.confsched.core.model.Projects
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiOutlinedButton
 import io.github.droidkaigi.confsched.core.ui.RoomChip
@@ -86,12 +87,13 @@ private fun EventItemPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
+        val project = Projects.fake().items.first()
         EventItem(
-            title = MultiLangText(ja = "Meetup", en = "Meetup"),
-            i18nDesc = MultiLangText(ja = "Description", en = "Description"),
-            room = Room.NARWHAL,
-            message = MultiLangText(ja = "Note", en = "Note"),
-            moreDetailsUrl = "https://droidkaigi.jp/2026/",
+            title = project.title,
+            i18nDesc = project.i18nDesc,
+            room = project.room,
+            message = project.message,
+            moreDetailsUrl = project.moreDetailsUrl,
             seed = 1,
         )
     }
