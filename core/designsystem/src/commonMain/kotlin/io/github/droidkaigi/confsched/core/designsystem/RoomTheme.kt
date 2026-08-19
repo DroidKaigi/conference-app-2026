@@ -37,41 +37,43 @@ data class RoomTheme(
  */
 @Composable
 @ReadOnlyComposable
-fun roomTheme(room: Room): RoomTheme {
-    val dark = LocalSchemeIsDark.current
+fun roomTheme(room: Room): RoomTheme = roomTheme(room, isDark = LocalSchemeIsDark.current)
+
+/** The palette for [room] under a scheme of the given darkness, for callers outside a composition such as widgets. */
+fun roomTheme(room: Room, isDark: Boolean): RoomTheme {
     return when (room) {
         Room.NARWHAL -> RoomTheme(
             container = Color(0xFFE2DCFE),
             onContainer = Color(0xFF3F2296),
-            accent = if (dark) Color(0xFFB8A3E4) else Color(0xFF7B58CB),
+            accent = if (isDark) Color(0xFFB8A3E4) else Color(0xFF7B58CB),
             shape = RoomShape.Circle,
         )
 
         Room.OTTER -> RoomTheme(
             container = Color(0xFFF0DCF8),
             onContainer = Color(0xFF6A1B9A),
-            accent = if (dark) Color(0xFFD18ADE) else Color(0xFFA341BD),
+            accent = if (isDark) Color(0xFFD18ADE) else Color(0xFFA341BD),
             shape = RoomShape.Star,
         )
 
         Room.PANDA -> RoomTheme(
             container = Color(0xFFE3E9FB),
             onContainer = Color(0xFF3949AB),
-            accent = if (dark) Color(0xFF9AA7E0) else Color(0xFF5566C4),
+            accent = if (isDark) Color(0xFF9AA7E0) else Color(0xFF5566C4),
             shape = RoomShape.Square,
         )
 
         Room.QUAIL -> RoomTheme(
             container = Color(0xFFD8F6E8),
             onContainer = Color(0xFF1B5E20),
-            accent = if (dark) Color(0xFF66BB6A) else Color(0xFF2E7D32),
+            accent = if (isDark) Color(0xFF66BB6A) else Color(0xFF2E7D32),
             shape = RoomShape.Triangle,
         )
 
         Room.MEERKAT -> RoomTheme(
             container = Color(0xFFDCF9FD),
             onContainer = Color(0xFF005A63),
-            accent = if (dark) Color(0xFF4DD0E0) else Color(0xFF00838F),
+            accent = if (isDark) Color(0xFF4DD0E0) else Color(0xFF00838F),
             shape = RoomShape.Diamond,
         )
 
@@ -80,7 +82,7 @@ fun roomTheme(room: Room): RoomTheme {
         Room.UNKNOWN -> RoomTheme(
             container = Color(0xFFE6E6EA),
             onContainer = Color(0xFF3F3F46),
-            accent = if (dark) Color(0xFFB4B4BE) else Color(0xFF5A5A63),
+            accent = if (isDark) Color(0xFFB4B4BE) else Color(0xFF5A5A63),
             shape = null,
         )
     }
