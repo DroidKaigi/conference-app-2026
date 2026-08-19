@@ -1,13 +1,21 @@
 package io.github.droidkaigi.confsched.core.designsystem
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.Res
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_mono_regular
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_medium
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_regular
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import org.jetbrains.compose.resources.Font
 
 // Palettes come from the Figma file's `DroidKaigi 2026 Material Theme` collection.
 // Tokens that collection leaves undefined keep their existing values, among them the
@@ -200,6 +208,45 @@ val KaigiColorScheme.isDark: Boolean
         KaigiColorScheme.CampfireNight -> true
     }
 
+// The bundled families merge the design's Latin faces with Noto Sans JP so Japanese text
+// keeps the design's sans face on every target: Compose Multiplatform has no public API to
+// direct per-glyph fallback to a bundled font, and the skiko targets consult system fonts
+// first, so fallback must be resolved inside the font binaries themselves.
+@Composable
+private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
+    val display = FontFamily(Font(Res.font.kaigi_mono_regular, FontWeight.Normal))
+    val standard = FontFamily(
+        Font(Res.font.kaigi_sans_regular, FontWeight.Normal),
+        Font(Res.font.kaigi_sans_medium, FontWeight.Medium),
+    )
+    return display to standard
+}
+
+// Role-to-family mapping from the design file's text styles; sizes, line heights, and
+// letter spacing keep the Material defaults.
+@Composable
+private fun kaigiTypography(): Typography {
+    val (display, standard) = kaigiFontFamilies()
+    val defaults = Typography()
+    return Typography(
+        displayLarge = defaults.displayLarge.copy(fontFamily = display),
+        displayMedium = defaults.displayMedium.copy(fontFamily = display),
+        displaySmall = defaults.displaySmall.copy(fontFamily = display),
+        headlineLarge = defaults.headlineLarge.copy(fontFamily = display),
+        headlineMedium = defaults.headlineMedium.copy(fontFamily = display),
+        headlineSmall = defaults.headlineSmall.copy(fontFamily = display),
+        titleLarge = defaults.titleLarge.copy(fontFamily = standard),
+        titleMedium = defaults.titleMedium.copy(fontFamily = standard),
+        titleSmall = defaults.titleSmall.copy(fontFamily = standard),
+        bodyLarge = defaults.bodyLarge.copy(fontFamily = standard),
+        bodyMedium = defaults.bodyMedium.copy(fontFamily = standard),
+        bodySmall = defaults.bodySmall.copy(fontFamily = standard),
+        labelLarge = defaults.labelLarge.copy(fontFamily = standard),
+        labelMedium = defaults.labelMedium.copy(fontFamily = standard),
+        labelSmall = defaults.labelSmall.copy(fontFamily = standard),
+    )
+}
+
 @Composable
 fun KaigiTheme(
     colorScheme: KaigiColorScheme,
@@ -212,6 +259,7 @@ fun KaigiTheme(
     ) {
         MaterialTheme(
             colorScheme = colorScheme.toMaterialColorScheme(),
+            typography = kaigiTypography(),
             content = content,
         )
     }
