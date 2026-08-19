@@ -58,8 +58,8 @@ internal fun ContributorsCountText(
             displayedCount.animateTo(
                 targetValue = count,
                 animationSpec = tween(
-                    durationMillis = ContributorsCountTextDefaults.countUpDurationMillis,
-                    delayMillis = ContributorsCountTextDefaults.countUpStartDelayMillis,
+                    durationMillis = ContributorsCountTextDefaults.COUNT_UP_DURATION_MILLIS,
+                    delayMillis = ContributorsCountTextDefaults.COUNT_UP_START_DELAY_MILLIS,
                     easing = EaseOut,
                 ),
             )
@@ -92,7 +92,7 @@ internal fun ContributorsCountText(
                 Text(
                     text = displayedCount.value.toString(),
                     style = MaterialTheme.typography.headlineMedium.copy(
-                        fontFeatureSettings = ContributorsCountTextDefaults.tabularFiguresFeature,
+                        fontFeatureSettings = ContributorsCountTextDefaults.TABULAR_FIGURES_FEATURE,
                     ),
                     modifier = Modifier
                         .width(ContributorsCountTextDefaults.countDigitsWidth)
@@ -219,12 +219,12 @@ private object ContributorsCountTextDefaults {
     val textSpacing = 8.dp
 
     /** Skips the fade-in's near-invisible first stretch, so the count doesn't move unseen. */
-    const val countUpStartDelayMillis = 200
+    const val COUNT_UP_START_DELAY_MILLIS = 200
 
-    const val countUpDurationMillis = 600
+    const val COUNT_UP_DURATION_MILLIS = 600
 
     /** Tabular figures keep each digit the same width, so the count does not jitter while it animates. */
-    const val tabularFiguresFeature = "tnum"
+    const val TABULAR_FIGURES_FEATURE = "tnum"
 
     /** Wide enough for the total to reach three digits without the surrounding marks shifting. */
     val countDigitsWidth = 48.dp
