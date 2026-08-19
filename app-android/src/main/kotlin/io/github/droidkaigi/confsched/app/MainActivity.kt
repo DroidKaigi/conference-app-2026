@@ -26,6 +26,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun submitDeepLink(intent: Intent) {
-        intent.toDeepLink()?.let(appGraph.deepLinkStore::submit)
+        val link = intent.toDeepLink() ?: return
+        // Recreation redelivers the activity's intent; dropping the data marks the link consumed
+        // so a configuration change does not submit it again.
+        setIntent(intent.setData(null))
+        appGraph.deepLinkStore.submit(link)
     }
 }

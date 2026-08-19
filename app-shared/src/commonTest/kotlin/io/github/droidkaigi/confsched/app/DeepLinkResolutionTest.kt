@@ -23,12 +23,13 @@ class DeepLinkResolutionTest {
     }
 
     @Test
-    fun a_link_on_a_dev_override_initial_stack_still_wins() {
-        val resolution = resolveDeepLink(DeepLink.SessionDetail("abc"), listOf(OtherNavKey))
+    fun a_link_on_a_dev_stack_with_server_select_beneath_pushes_the_detail() {
+        val resolution = resolveDeepLink(
+            DeepLink.SessionDetail("abc"),
+            listOf(OtherNavKey, TimetableNavKey),
+        )
         assertEquals(
-            DeepLinkResolution.ReplaceStack(
-                listOf(TimetableNavKey, TimetableItemDetailNavKey(TimetableItemId("abc"))),
-            ),
+            DeepLinkResolution.Push(TimetableItemDetailNavKey(TimetableItemId("abc"))),
             resolution,
         )
     }

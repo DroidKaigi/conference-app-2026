@@ -34,12 +34,12 @@ DeepLinkEffect(
 
 ## Back-stack synthesis
 
-`resolveDeepLink(link, backStack)` decides how a link lands; the rule is pure and unit-tested:
+`DeepLinkEffect` holds each link until `TimetableNavKey` is on the stack, then `resolveDeepLink(link, backStack)` decides how it lands; the rule is pure and unit-tested:
 
-- **Cold start** — the stack still holds a single entry (the launch has not navigated yet, including a dev build sitting on its server-select override): the stack is **replaced** with `[TimetableNavKey, TimetableItemDetailNavKey(id)]`, so back from the detail lands on the timetable.
+- **Cold start** — the stack still holds a single entry (the launch has not navigated yet): the stack is **replaced** with `[TimetableNavKey, TimetableItemDetailNavKey(id)]`, so back from the detail lands on the timetable.
 - **Warm** — any deeper stack: the detail is **pushed**; existing history stays intact.
 
-A single-entry stack is the cold-start signal rather than an intent flag, so the rule stays platform-neutral and the dev server-select launch yields to the link for that launch.
+A single-entry stack is the cold-start signal rather than an intent flag, so the rule stays platform-neutral. Waiting for the timetable root lets a dev build run its server-select flow first — that flow is what restores the persisted server environment, and the picker auto-skips when the preference says so — and the deep link then arrives as a push above the restored environment's timetable.
 
 ## Widget trigger
 
