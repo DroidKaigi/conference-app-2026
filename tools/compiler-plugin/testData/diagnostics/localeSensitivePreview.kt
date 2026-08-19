@@ -5,6 +5,7 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.preview.KaigiPreviewWrapper
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -43,6 +44,13 @@ private fun SingleLocaleParameterPreview() {
 @PreviewWrapper(wrapper = KaigiPreviewWrapper::class)
 @Composable
 private fun EveryLocalePreview() {
+    SessionTitle()
+}
+
+@LocaleScreenPreviews
+@PreviewWrapper(wrapper = KaigiPreviewWrapper::class)
+@Composable
+private fun EveryLocaleScreenPreview() {
     SessionTitle()
 }
 

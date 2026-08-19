@@ -57,7 +57,7 @@ jobs:
           if_no_artifact_found: fail
 
       - name: Render this pull request and compare
-        run: ./gradlew compareRoborazziAndroidHostTest --continue
+        run: ./gradlew compareRoborazziJvm --continue
 
       - name: Upload diff reports
         if: always()

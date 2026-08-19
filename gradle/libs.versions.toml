@@ -50,11 +50,10 @@ aboutlibraries = "15.0.4"
 openapiGenerator = "7.14.0"
 # YAML parser used by the trimOpenApiSpec convention task (gradle-conventions only).
 kaml = "0.104.0"
-# Preview screenshot-test stack (Android host tests only — see docs/testing-preview-screenshot.md).
-# Roborazzi renders @Preview composables headlessly via Robolectric; ComposablePreviewScanner
+# Preview screenshot-test stack (JVM target — see docs/testing-preview-screenshot.md).
+# Roborazzi renders @Preview composables on the Compose Desktop (JVM) target; ComposablePreviewScanner
 # discovers them.
-roborazzi = "1.67.0"
-robolectric = "4.16.1"
+roborazzi = "1.70.0"
 composablePreviewScanner = "0.9.1"
 junit = "4.13.2"
 # Formatting: Spotless drives ktlint. The ktlint version is pinned here rather than left to
@@ -147,17 +146,12 @@ jetwhaleHostComposeFoundation = { module = "org.jetbrains.compose.foundation:fou
 jetwhaleHostComposeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetwhaleHostCompose" }
 jetwhaleHostComposeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version = "1.11.0-alpha07" }
 firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
-roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
-roborazziCompose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
-roborazziJunitRule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
-roborazziPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-preview-scanner-support", version.ref = "roborazzi" }
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+roborazziComposeDesktop = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop", version.ref = "roborazzi" }
+roborazziDesktopPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop-preview-scanner-support", version.ref = "roborazzi" }
 # The :android artifact scans androidx.compose.ui.tooling.preview.Preview, which is the annotation
 # Compose Multiplatform previews carry.
 composablePreviewScannerAndroid = { module = "io.github.sergio-sastre.ComposablePreviewScanner:android", version.ref = "composablePreviewScanner" }
 junit = { module = "junit:junit", version.ref = "junit" }
-composeUiTestJunit4 = { module = "org.jetbrains.compose.ui:ui-test-junit4", version.ref = "jetbrainsCompose" }
-androidxTestExtJunit = { module = "androidx.test.ext:junit", version = "1.2.1" }
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

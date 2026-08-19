@@ -6,7 +6,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.v2.runComposeUiTest
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +52,7 @@ fun <R : Robot> runRobotTest(
     check(leaves.isNotEmpty()) { "Robot scenario has no itShould blocks" }
     for (leaf in leaves) {
         try {
-            runComposeUiTest {
+            runRobotComposeUiTest {
                 val robot = robotFactory()
                 leaf.setups.forEach { step -> step(robot) }
                 leaf.check(robot)
