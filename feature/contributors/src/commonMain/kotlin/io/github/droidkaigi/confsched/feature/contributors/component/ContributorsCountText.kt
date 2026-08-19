@@ -218,7 +218,7 @@ private const val ORNAMENT_STROKE_WIDTH = 2f
 private object ContributorsCountTextDefaults {
     val textSpacing = 8.dp
 
-    /** Lets the screen's enter transition become visible before the count starts moving. */
+    /** Skips the fade-in's near-invisible first stretch, so the count doesn't move unseen. */
     const val countUpStartDelayMillis = 200
 
     const val countUpDurationMillis = 600
