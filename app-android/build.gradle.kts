@@ -34,6 +34,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
+    testOptions {
+        unitTests {
+            // The widget drawable render test rasterizes res/drawable vectors under Robolectric.
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -44,4 +51,6 @@ dependencies {
     implementation(libs.androidxGlanceAppwidget)
     implementation(libs.androidxDatastorePreferencesCore)
     implementation(libs.okio)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
 }
