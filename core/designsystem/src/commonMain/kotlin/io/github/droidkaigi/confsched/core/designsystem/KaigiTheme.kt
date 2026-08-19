@@ -208,10 +208,8 @@ val KaigiColorScheme.isDark: Boolean
         KaigiColorScheme.CampfireNight -> true
     }
 
-// The bundled families merge the design's Latin faces with Noto Sans JP so Japanese text
-// keeps the design's sans face on every target: Compose Multiplatform has no public API to
-// direct per-glyph fallback to a bundled font, and the skiko targets consult system fonts
-// first, so fallback must be resolved inside the font binaries themselves.
+// Each bundled binary merges its Latin face with Noto Sans JP, because Compose offers no
+// way to direct per-glyph fallback to a bundled font.
 @Composable
 private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
     val display = FontFamily(Font(Res.font.kaigi_mono_regular, FontWeight.Normal))
@@ -222,8 +220,8 @@ private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
     return display to standard
 }
 
-// Role-to-family mapping from the design file's text styles; sizes, line heights, and
-// letter spacing keep the Material defaults.
+// Only the family changes per role; sizes, line heights, and letter spacing must keep
+// the Material defaults the design file records.
 @Composable
 private fun kaigiTypography(): Typography {
     val (display, standard) = kaigiFontFamilies()

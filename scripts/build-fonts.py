@@ -115,7 +115,8 @@ def build(latin: TTFont, jp: TTFont, family: str, subfamily: str, out_name: str)
     # font, falling back silently to the platform default; a re-serialization through
     # pyftsubset does not repair it. Horizontal UI text loses only optional substitutions
     # (fi ligatures and the like) — GPOS kerning and GDEF survive.
-    del merged["GSUB"]
+    if "GSUB" in merged:
+        del merged["GSUB"]
     rename(merged, family, subfamily)
     out_path = OUT_DIR / out_name
     merged.save(out_path)
