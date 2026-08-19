@@ -21,6 +21,19 @@ private fun submitDeepLink(intent: Intent) {
 }
 ```
 
+The launch intent is consumed only on fresh creation (`savedInstanceState == null`): recreation — a configuration change or process death — redelivers the task's original intent while the restored back stack already reflects the link.
+
+## Launch scenarios
+
+`MainActivity` is the app's only activity and runs as `singleTask`, so every launch path resolves to the one existing task:
+
+| Scenario | Behavior | Guaranteed by |
+| --- | --- | --- |
+| Widget tap while the app is backgrounded | The existing task comes to the front; the link arrives through `onNewIntent` as a push | `singleTask`; Glance builds the `PendingIntent` with `FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT` and no activity flags, and the session URI keeps each row's `PendingIntent` distinct |
+| Deep link fired while another app is foreground | The system hops to the app's own task; the other app's task is untouched | `singleTask` |
+| Widget tap while the app sits in a split-screen pair | The same task routing applies; the system offers no second-instance affordance | `singleTask`; no `documentLaunchMode` or multi-instance attribute is set |
+| Launcher or recents relaunch after process death of a deep-linked task | The app boots through its normal flow; the task's original `VIEW` intent is not resubmitted | the `savedInstanceState` guard |
+
 `DeepLinkEffect` (app-shared, wired in `KaigiApp` beside [`NavigatorEffect`](./navigation-navigator.md)) is the single consumer. Warm navigation goes through the navigator as a lambda, keeping `Navigator` types out of composable signatures per [enforcement](./enforcement.md):
 
 ```kotlin

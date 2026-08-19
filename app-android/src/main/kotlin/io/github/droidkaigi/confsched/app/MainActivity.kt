@@ -12,7 +12,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        submitDeepLink(intent)
+        // Recreation — a configuration change or process death — always delivers a non-null
+        // savedInstanceState and redelivers the task's original intent; the restored back stack
+        // already reflects the link, so only a fresh creation consumes it.
+        if (savedInstanceState == null) {
+            submitDeepLink(intent)
+        }
         setContent {
             context(appGraph) {
                 KaigiApp()
@@ -26,10 +31,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun submitDeepLink(intent: Intent) {
-        val link = intent.toDeepLink() ?: return
-        // Recreation redelivers the activity's intent; dropping the data marks the link consumed
-        // so a configuration change does not submit it again.
-        setIntent(intent.setData(null))
-        appGraph.deepLinkStore.submit(link)
+        intent.toDeepLink()?.let(appGraph.deepLinkStore::submit)
     }
 }
