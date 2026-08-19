@@ -41,6 +41,7 @@ dependencies {
     "devImplementation"(project(":feature:debug"))
     "prodImplementation"(libs.firebaseCrashlytics)
     implementation(libs.androidxActivityCompose)
+    implementation(libs.androidxGlanceAppwidget)
     implementation(libs.androidxDatastorePreferencesCore)
     implementation(libs.okio)
 }
