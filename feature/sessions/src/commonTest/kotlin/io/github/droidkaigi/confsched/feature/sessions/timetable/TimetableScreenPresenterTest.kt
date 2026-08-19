@@ -54,13 +54,18 @@ class TimetableScreenPresenterTest {
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day1, initial.day)
+            assertEquals(TimetableViewMode.List, initial.viewMode)
             assertEquals(listOf("d1a", "d1b"), initial.timetableListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
+            assertEquals(listOf("d1a", "d1b"), initial.timetableGridSection.sessions.map { it.id.value })
+            assertEquals(600, initial.timetableGridSection.nowMinute)
             assertEquals(setOf(TimetableItemId("d1a")), initial.timetableListSection.bookmarks)
 
             send(TimetableScreenAction.SelectDay(DroidKaigi2026Day.Day2))
             val onDay2 = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day2, onDay2.day)
             assertEquals(listOf("d2a"), onDay2.timetableListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
+            assertEquals(listOf("d2a"), onDay2.timetableGridSection.sessions.map { it.id.value })
+            assertEquals(null, onDay2.timetableGridSection.nowMinute)
 
             send(TimetableScreenAction.Bookmark(TimetableItemId("d2a")))
             assertEquals(TimetableItemId("d2a"), graph.favoriteMutationKey.invocations.receive())
@@ -88,15 +93,18 @@ class TimetableScreenPresenterTest {
     }
 
     @Test
-    fun switching_to_the_grid_view_only_logs_until_the_grid_exists() {
+    fun toggling_view_mode_switches_between_list_and_grid() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
         ) {
             uiStates.awaitItem()
 
-            send(TimetableScreenAction.SwitchToGridView)
-            assertEquals("TODO: render the grid view", graph.logger.debugMessages.receive())
+            send(TimetableScreenAction.ToggleViewMode)
+            assertEquals(TimetableViewMode.Grid, uiStates.awaitItem().viewMode)
+
+            send(TimetableScreenAction.ToggleViewMode)
+            assertEquals(TimetableViewMode.List, uiStates.awaitItem().viewMode)
         }
     }
 

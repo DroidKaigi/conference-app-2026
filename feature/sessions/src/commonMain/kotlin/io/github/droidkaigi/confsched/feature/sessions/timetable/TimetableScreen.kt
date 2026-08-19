@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableGridSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableHeader
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSection
 
@@ -34,11 +35,18 @@ fun TimetableScreen(
                 onSearchClick = onSearchClick,
                 onUiTypeChangeClick = onUiTypeChangeClick,
             )
-            TimetableListSection(
-                uiState = uiState.timetableListSection,
-                onBookmarkClick = onBookmarkClick,
-                onItemClick = onItemClick,
-            )
+            when (uiState.viewMode) {
+                TimetableViewMode.List -> TimetableListSection(
+                    uiState = uiState.timetableListSection,
+                    onBookmarkClick = onBookmarkClick,
+                    onItemClick = onItemClick,
+                )
+
+                TimetableViewMode.Grid -> TimetableGridSection(
+                    uiState = uiState.timetableGridSection,
+                    onItemClick = onItemClick,
+                )
+            }
         }
     }
 }
@@ -51,6 +59,23 @@ private fun TimetableScreenPreview(
     KaigiPreviewTheme(colorScheme) {
         TimetableScreen(
             uiState = TimetableScreenUiState.fake(),
+            onBookmarkClick = {},
+            onDayClick = {},
+            onItemClick = {},
+            onSearchClick = {},
+            onUiTypeChangeClick = {},
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun TimetableScreenGridPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        TimetableScreen(
+            uiState = TimetableScreenUiState.fake().copy(viewMode = TimetableViewMode.Grid),
             onBookmarkClick = {},
             onDayClick = {},
             onItemClick = {},
