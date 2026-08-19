@@ -59,6 +59,7 @@ fun KaigiNavigationBar(
     modifier: Modifier = Modifier,
     content: @Composable KaigiNavigationBarScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(outlineSeed)
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -77,7 +78,7 @@ fun KaigiNavigationBar(
                 .height(KaigiNavigationBarDefaults.height)
                 .clip(
                     SketchRoundRectShape(
-                        seed = outlineSeed,
+                        seed = combinedSeed,
                         roughness = KaigiNavigationBarDefaults.roughness,
                         tremor = KaigiNavigationBarDefaults.tremor,
                         cornerRadius = KaigiNavigationBarDefaults.cornerRadius,
@@ -126,6 +127,7 @@ fun KaigiNavigationRail(
     modifier: Modifier = Modifier,
     content: @Composable KaigiNavigationRailScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(outlineSeed)
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -140,7 +142,7 @@ fun KaigiNavigationRail(
                 .width(KaigiNavigationRailDefaults.width)
                 .clip(
                     SketchRoundRectShape(
-                        seed = outlineSeed,
+                        seed = combinedSeed,
                         roughness = KaigiNavigationBarDefaults.roughness,
                         tremor = KaigiNavigationBarDefaults.tremor,
                         cornerRadius = KaigiNavigationBarDefaults.cornerRadius,
@@ -239,6 +241,7 @@ private fun KaigiNavigationItemIcon(
     indicatorSeed: Int,
     icon: @Composable () -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(indicatorSeed)
     Box(
         modifier = Modifier
             .size(KaigiNavigationBarDefaults.indicatorSize)
@@ -247,7 +250,7 @@ private fun KaigiNavigationItemIcon(
                     Modifier
                         .clip(
                             SketchRoundRectShape(
-                                seed = indicatorSeed,
+                                seed = combinedSeed,
                                 roughness = KaigiNavigationBarDefaults.roughness,
                                 tremor = KaigiNavigationBarDefaults.tremor,
                                 cornerRadius = KaigiNavigationBarDefaults.indicatorSize / 2,

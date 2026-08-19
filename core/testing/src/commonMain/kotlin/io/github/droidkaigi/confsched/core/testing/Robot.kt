@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
+import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,6 +34,7 @@ abstract class Robot(protected val composeUiTest: ComposeUiTest) {
             SwrClientProvider(client = client) {
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHostState,
+                    LocalSketchBaseSeed provides 0,
                     content = content,
                 )
             }

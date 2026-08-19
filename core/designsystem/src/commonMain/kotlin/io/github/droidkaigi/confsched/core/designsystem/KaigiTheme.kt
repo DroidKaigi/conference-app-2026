@@ -177,6 +177,11 @@ private fun KaigiColorScheme.toMaterialColorScheme() = when (this) {
     KaigiColorScheme.CampfireNight -> CampfireNight
 }
 
+/** The app-wide base seed combined with each sketch element's stable seed. */
+val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
+    error("LocalSketchBaseSeed must be provided")
+}
+
 /**
  * Whether the scheme in force is a dark one.
  *
@@ -198,9 +203,13 @@ val KaigiColorScheme.isDark: Boolean
 @Composable
 fun KaigiTheme(
     colorScheme: KaigiColorScheme,
+    sketchBaseSeed: Int,
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalSchemeIsDark provides colorScheme.isDark) {
+    CompositionLocalProvider(
+        LocalSchemeIsDark provides colorScheme.isDark,
+        LocalSketchBaseSeed provides sketchBaseSeed,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme.toMaterialColorScheme(),
             content = content,

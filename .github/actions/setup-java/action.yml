@@ -1,0 +1,41 @@
+name: Setup JDK
+description: setup JDK and gradle caching
+
+inputs:
+  java-version:
+    description: Java version. Just for DRY inside of this file.
+    default: '21'
+
+runs:
+  using: composite
+  steps:
+    - name: Validate Gradle Wrapper
+      uses: gradle/actions/wrapper-validation@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
+
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+
+    # Better than caching and/or extensions of actions/setup-java
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
+
+    - name: set konan cache key
+      id: konan-cache-key
+      shell: bash
+      run: |
+        kotlin=$(grep -m1 -E '^kotlin[[:space:]]*=' gradle/libs.versions.toml | cut -d'"' -f2)
+        if [ -z "$kotlin" ]; then
+          echo "No kotlin version found in gradle/libs.versions.toml" >&2
+          exit 1
+        fi
+        echo "KOTLIN_VERSION=$kotlin" >> "$GITHUB_OUTPUT"
+
+    - name: cache Konan
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: |
+          ~/.konan
+        key: v1-konan-${{ runner.os }}-${{ steps.konan-cache-key.outputs.KOTLIN_VERSION }}

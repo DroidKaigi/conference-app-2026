@@ -19,6 +19,9 @@ import io.github.droidkaigi.confsched.core.ui.SetupRemoteImageLoader
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import soil.query.compose.SwrClientProvider
 import soil.query.compose.rememberSubscription
+import kotlin.random.Random
+
+private val appSketchBaseSeed = Random.nextInt()
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -36,7 +39,10 @@ fun KaigiApp() {
         SoilDataBoundary(
             state = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
         ) { colorScheme ->
-            KaigiTheme(colorScheme = colorScheme) {
+            KaigiTheme(
+                colorScheme = colorScheme,
+                sketchBaseSeed = appSketchBaseSeed,
+            ) {
                 NavigatorEffect(
                     navigator = uiGraph.appNavigator,
                     backStack = backStack,

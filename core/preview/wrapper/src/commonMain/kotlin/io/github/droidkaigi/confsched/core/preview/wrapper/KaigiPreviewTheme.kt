@@ -24,6 +24,10 @@ fun KaigiPreviewTheme(
 ) {
     val resolver = remember { createGraph<PreviewGraph>().previewImageResolver }
     CompositionLocalProvider(LocalPreviewImageResolver provides resolver) {
-        KaigiTheme(colorScheme = colorScheme, content = content)
+        KaigiTheme(
+            colorScheme = colorScheme,
+            sketchBaseSeed = 0,
+            content = content,
+        )
     }
 }

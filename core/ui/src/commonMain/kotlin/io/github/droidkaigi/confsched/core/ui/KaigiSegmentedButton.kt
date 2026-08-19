@@ -57,8 +57,9 @@ fun KaigiSingleChoiceSegmentedButtonRow(
     borderColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
     content: @Composable KaigiSingleChoiceSegmentedButtonRowScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(outlineSeed)
     val shape = SketchRoundRectShape(
-        seed = outlineSeed,
+        seed = combinedSeed,
         roughness = KaigiSegmentedButtonDefaults.roughness,
         tremor = KaigiSegmentedButtonDefaults.tremor,
         cornerRadius = KaigiSegmentedButtonDefaults.cornerRadius,
@@ -108,12 +109,14 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
     contentColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
     label: @Composable () -> Unit,
 ) {
+    val combinedDividerSeed = if (dividerSeed != null) combineSketchSeed(dividerSeed) else null
+    val combinedLeadingDividerSeed = if (leadingDividerSeed != null) combineSketchSeed(leadingDividerSeed) else null
     Box(
         modifier = modifier
             .weight(1f)
             .fillMaxHeight()
             .drawWithCache {
-                val trailingClip: Path? = if (selected && dividerSeed != null) {
+                val trailingClip: Path? = if (selected && combinedDividerSeed != null) {
                     sketchVerticalFillPath(
                         width = size.width,
                         height = size.height,
@@ -122,13 +125,13 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
                         tremor = KaigiSegmentedButtonDefaults.dividerTremor,
                         sweepWavelength = KaigiSegmentedButtonDefaults.dividerSweepWavelength,
                         tremorWavelength = KaigiSegmentedButtonDefaults.dividerTremorWavelength,
-                        seed = dividerSeed,
+                        seed = combinedDividerSeed,
                         fillLeft = true,
                     )
                 } else {
                     null
                 }
-                val leadingClip: Path? = if (selected && leadingDividerSeed != null) {
+                val leadingClip: Path? = if (selected && combinedLeadingDividerSeed != null) {
                     sketchVerticalFillPath(
                         width = size.width,
                         height = size.height,
@@ -137,7 +140,7 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
                         tremor = KaigiSegmentedButtonDefaults.dividerTremor,
                         sweepWavelength = KaigiSegmentedButtonDefaults.dividerSweepWavelength,
                         tremorWavelength = KaigiSegmentedButtonDefaults.dividerTremorWavelength,
-                        seed = leadingDividerSeed,
+                        seed = combinedLeadingDividerSeed,
                         fillLeft = false,
                     )
                 } else {
