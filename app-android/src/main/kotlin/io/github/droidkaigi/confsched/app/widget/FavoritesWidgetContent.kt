@@ -41,7 +41,9 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.app.MainActivity
-import io.github.droidkaigi.confsched.app.sessionDeepLinkIntent
+import io.github.droidkaigi.confsched.app.aboutDeepLinkIntent
+import io.github.droidkaigi.confsched.app.favoriteSessionDeepLinkIntent
+import io.github.droidkaigi.confsched.app.favoritesDeepLinkIntent
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetRow
@@ -70,14 +72,19 @@ private const val MAX_MEDIUM_ROWS = 3
 
 @Composable
 internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
-    // Live rows carry their own droidkaigi2026://session/{id} action; every other tap opens the
-    // app at its start destination.
-    // TODO: Route favorites and about taps once those deep-link targets exist.
+    val context = LocalContext.current
+    // Session rows carry their own favorites/session/{id} action.
+    // TODO: Route the empty state to search once the search screen exists.
+    val backgroundAction = when (state) {
+        is FavoritesWidgetState.Schedule -> actionStartActivityIntent(favoritesDeepLinkIntent(context))
+        FavoritesWidgetState.PostConference -> actionStartActivityIntent(aboutDeepLinkIntent(context))
+        else -> actionStartActivity<MainActivity>()
+    }
     Box(
         modifier = GlanceModifier.fillMaxSize()
             .background(ColorProvider(colors.surface))
             .cornerRadius(16.dp)
-            .clickable(actionStartActivity<MainActivity>()),
+            .clickable(backgroundAction),
     ) {
         SketchBorder(colors)
         Box(modifier = GlanceModifier.fillMaxSize().padding(InsetBleed + InsetFrame)) {
@@ -337,7 +344,7 @@ private fun SmallLiveBody(slot: FavoritesWidgetSlot, colors: FavoritesWidgetColo
     Box(
         // A shared slot leaves the session choice open, so only a lone live session deep-links.
         modifier = if (slot.sessions.size == 1) {
-            bandModifier.clickable(actionStartActivityIntent(sessionDeepLinkIntent(context, session.id)))
+            bandModifier.clickable(actionStartActivityIntent(favoriteSessionDeepLinkIntent(context, session.id)))
         } else {
             bandModifier
         },
@@ -436,7 +443,7 @@ private fun SessionRow(row: FavoritesWidgetRow.Session, colors: FavoritesWidgetC
     val rowModifier = GlanceModifier.fillMaxWidth().height(RowHeight).padding(horizontal = InsetRow)
     Row(
         modifier = if (row.isLive) {
-            rowModifier.clickable(actionStartActivityIntent(sessionDeepLinkIntent(context, row.session.id)))
+            rowModifier.clickable(actionStartActivityIntent(favoriteSessionDeepLinkIntent(context, row.session.id)))
         } else {
             rowModifier
         },

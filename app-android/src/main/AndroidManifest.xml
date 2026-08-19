@@ -20,6 +20,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="droidkaigi2026" android:host="session" />
+                <data android:scheme="droidkaigi2026" android:host="favorites" />
+                <data android:scheme="droidkaigi2026" android:host="about" />
             </intent-filter>
         </activity>
         <receiver

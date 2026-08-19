@@ -4,11 +4,16 @@ A deep link is a navigation request arriving from outside the app's own UI — t
 
 ## URI scheme
 
+The path names the surfaces a reader would have walked through, so the synthesized history follows from the URI alone:
+
 | URI | Destination |
 | --- | --- |
 | `droidkaigi2026://session/{id}` | Session detail for the `TimetableItemId` `{id}` |
+| `droidkaigi2026://favorites` | The favorites tab |
+| `droidkaigi2026://favorites/session/{id}` | Session detail reached through the favorites surface |
+| `droidkaigi2026://about` | The about tab |
 
-`MainActivity` declares the matching `VIEW`/`BROWSABLE` intent-filter. It runs as `singleTask`, so a link tapped while the app is alive brings the existing task forward through `onNewIntent` instead of stacking a second activity.
+`DeepLink.parse` (`core:common`) is the grammar's one home; platform entry points hand it the raw URL string. `MainActivity` declares the matching `VIEW`/`BROWSABLE` intent-filter. It runs as `singleTask`, so a link tapped while the app is alive brings the existing task forward through `onNewIntent` instead of stacking a second activity.
 
 ## DeepLinkStore and DeepLinkEffect
 
@@ -41,21 +46,30 @@ DeepLinkEffect(
     deepLinkStore = uiGraph.deepLinkStore,
     backStack = backStack,
     logger = uiGraph.logger,
-    onNavigate = uiGraph.appNavigator::goTo,
+    onNavigate = uiGraph.appNavigator::moveToTop,
 )
 ```
 
 ## Back-stack synthesis
 
-`DeepLinkEffect` holds each link until `TimetableNavKey` is on the stack, then `resolveDeepLink(link, backStack)` decides how it lands; the rule is pure and unit-tested:
+`DeepLinkEffect` holds each link until no `StartupNavKey` remains on the stack, then lands it; `buildSyntheticBackStack(link)` is pure and unit-tested — `[TimetableNavKey, TimetableItemDetailNavKey(id)]` for a plain session link, `[TimetableNavKey, FavoritesNavKey]` for the favorites tab, `[TimetableNavKey, AboutNavKey]` for the about tab, `[TimetableNavKey, FavoritesNavKey, TimetableItemDetailNavKey(id)]` for a favorites session link:
 
-- **Cold start** — the stack still holds a single entry (the launch has not navigated yet): the stack is **replaced** with `[TimetableNavKey, TimetableItemDetailNavKey(id)]`, so back from the detail lands on the timetable.
-- **Warm** — any deeper stack: the detail is **pushed**; existing history stays intact.
+- **Cold start** — the stack still holds a single entry (the launch has not navigated yet): the stack is **replaced** with the synthetic stack, so back walks the named surfaces down to the timetable. On a two-pane scene the favorites list stays on screen beside the detail.
+- **Warm** — any deeper stack keeps its history: the synthetic root is already beneath every stack, and the remaining entries land through **move-to-top**, so the same order forms on top — a favorites session link raises (or pushes) the favorites tab, then the detail above it.
 
-A single-entry stack is the cold-start signal rather than an intent flag, so the rule stays platform-neutral. Waiting for the timetable root lets a dev build run its server-select flow first — that flow is what restores the persisted server environment, and the picker auto-skips when the preference says so — and the deep link then arrives as a push above the restored environment's timetable.
+A single-entry stack is the cold-start signal rather than an intent flag, so the rule stays platform-neutral. `StartupNavKey` marks destinations that host startup flow and leave the stack when done — the dev server picker implements it, restores the persisted server environment (auto-skipping when the preference says so), and replaces itself with the timetable; the deep link resolves only after that.
 
 ## Widget trigger
 
-The favorites widget deep-links only from a **live favorited session row** during the conference: each live schedule row (and the small widget's live band when the slot holds exactly one session) carries `droidkaigi2026://session/{id}`. A shared slot leaves the session choice open, so it — like every other state — launches the app plainly at its start destination.
+The favorites widget routes taps by its state:
+
+| Widget state | Tap target | URI |
+| --- | --- | --- |
+| Schedule / live — a session row, or the small widget's live band holding exactly one session | That session through the favorites surface | `droidkaigi2026://favorites/session/{id}` |
+| Schedule — the widget background | The favorites tab | `droidkaigi2026://favorites` |
+| Post-conference — any tap | The about tab | `droidkaigi2026://about` |
+| Countdown, empty — any tap | Plain launch at the start destination | — |
+
+A shared slot leaves the session choice open, so its live band launches like the background. The empty state routes to search once the search screen exists.
 
 Related: [Navigation overview](./navigation.md) · [Navigator](./navigation-navigator.md)

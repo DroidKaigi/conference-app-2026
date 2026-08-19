@@ -29,7 +29,7 @@ class DeepLinkIntentsTest {
     fun foreign_schemes_and_hosts_do_not_parse() {
         assertNull(viewIntent("https://session/abc").toDeepLink())
         assertNull(viewIntent("droidkaigi://session/abc").toDeepLink())
-        assertNull(viewIntent("droidkaigi2026://about").toDeepLink())
+        assertNull(viewIntent("droidkaigi2026://staff").toDeepLink())
         assertNull(viewIntent("droidkaigi2026://session/").toDeepLink())
         assertNull(Intent(Intent.ACTION_VIEW).toDeepLink())
     }
@@ -37,7 +37,13 @@ class DeepLinkIntentsTest {
     @Test
     fun the_widget_intent_round_trips_through_the_parser() {
         val context = RuntimeEnvironment.getApplication()
-        val intent = sessionDeepLinkIntent(context, TimetableItemId("abc123"))
-        assertEquals(DeepLink.SessionDetail("abc123"), intent.toDeepLink())
+        val intent = favoriteSessionDeepLinkIntent(context, TimetableItemId("abc123"))
+        assertEquals(DeepLink.FavoriteSessionDetail("abc123"), intent.toDeepLink())
+    }
+
+    @Test
+    fun the_widget_background_intent_round_trips_through_the_parser() {
+        val context = RuntimeEnvironment.getApplication()
+        assertEquals(DeepLink.Favorites, favoritesDeepLinkIntent(context).toDeepLink())
     }
 }
