@@ -48,6 +48,12 @@ fun KaigiApp() {
                     backStack = backStack,
                     logger = uiGraph.logger,
                 )
+                DeepLinkEffect(
+                    deepLinkStore = uiGraph.deepLinkStore,
+                    backStack = backStack,
+                    logger = uiGraph.logger,
+                    onNavigate = uiGraph.appNavigator::goTo,
+                )
                 IosTabBarSyncEffect(
                     backStack = backStack,
                     rootTabNavigator = appGraph.rootTabNavigator,

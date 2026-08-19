@@ -41,6 +41,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.app.MainActivity
+import io.github.droidkaigi.confsched.app.sessionDeepLinkIntent
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetRow
@@ -49,6 +50,7 @@ import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.toFavoritesWidgetRows
+import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityIntent
 
 // Spacing follows the widget spec's five-step scale on a 4dp base.
 private val InsetBleed = 8.dp
@@ -68,9 +70,9 @@ private const val MAX_MEDIUM_ROWS = 3
 
 @Composable
 internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
-    // TODO: Per-row deep links (droidkaigi://session/{id} etc.) need a data intent-filter on
-    // MainActivity plus an InitialNavKeyOverrideProvider fed from the intent; until then every
-    // tap opens the app at its start destination.
+    // Live rows carry their own droidkaigi://session/{id} action; every other tap opens the
+    // app at its start destination.
+    // TODO: Route favorites and about taps once those deep-link targets exist.
     Box(
         modifier = GlanceModifier.fillMaxSize()
             .background(ColorProvider(colors.surface))
@@ -328,11 +330,17 @@ private fun SmallNextBody(slot: FavoritesWidgetSlot, colors: FavoritesWidgetColo
 private fun SmallLiveBody(slot: FavoritesWidgetSlot, colors: FavoritesWidgetColors) {
     val context = LocalContext.current
     val session = slot.sessions.first()
+    val bandModifier = GlanceModifier.fillMaxWidth()
+        .background(ColorProvider(colors.primary))
+        .cornerRadius(8.dp)
+        .padding(InsetRow)
     Box(
-        modifier = GlanceModifier.fillMaxWidth()
-            .background(ColorProvider(colors.primary))
-            .cornerRadius(8.dp)
-            .padding(InsetRow),
+        // A shared slot leaves the session choice open, so only a lone live session deep-links.
+        modifier = if (slot.sessions.size == 1) {
+            bandModifier.clickable(actionStartActivityIntent(sessionDeepLinkIntent(context, session.id)))
+        } else {
+            bandModifier
+        },
     ) {
         Column {
             Text(
@@ -425,8 +433,13 @@ private fun ScheduleRow(row: FavoritesWidgetRow, colors: FavoritesWidgetColors) 
 private fun SessionRow(row: FavoritesWidgetRow.Session, colors: FavoritesWidgetColors) {
     val context = LocalContext.current
     val ink = if (row.isLive) colors.onPrimary else colors.onSurface
+    val rowModifier = GlanceModifier.fillMaxWidth().height(RowHeight).padding(horizontal = InsetRow)
     Row(
-        modifier = GlanceModifier.fillMaxWidth().height(RowHeight).padding(horizontal = InsetRow),
+        modifier = if (row.isLive) {
+            rowModifier.clickable(actionStartActivityIntent(sessionDeepLinkIntent(context, row.session.id)))
+        } else {
+            rowModifier
+        },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
