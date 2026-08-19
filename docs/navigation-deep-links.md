@@ -6,7 +6,7 @@ A deep link is a navigation request arriving from outside the app's own UI — t
 
 | URI | Destination |
 | --- | --- |
-| `droidkaigi://session/{id}` | Session detail for the `TimetableItemId` `{id}` |
+| `droidkaigi2026://session/{id}` | Session detail for the `TimetableItemId` `{id}` |
 
 `MainActivity` declares the matching `VIEW`/`BROWSABLE` intent-filter. It runs as `singleTask`, so a link tapped while the app is alive brings the existing task forward through `onNewIntent` instead of stacking a second activity.
 
@@ -43,6 +43,6 @@ A single-entry stack is the cold-start signal rather than an intent flag, so the
 
 ## Widget trigger
 
-The favorites widget deep-links only from a **live favorited session row** during the conference: each live schedule row (and the small widget's live band when the slot holds exactly one session) carries `droidkaigi://session/{id}`. A shared slot leaves the session choice open, so it — like every other state — launches the app plainly at its start destination.
+The favorites widget deep-links only from a **live favorited session row** during the conference: each live schedule row (and the small widget's live band when the slot holds exactly one session) carries `droidkaigi2026://session/{id}`. A shared slot leaves the session choice open, so it — like every other state — launches the app plainly at its start destination.
 
 Related: [Navigation overview](./navigation.md) · [Navigator](./navigation-navigator.md)

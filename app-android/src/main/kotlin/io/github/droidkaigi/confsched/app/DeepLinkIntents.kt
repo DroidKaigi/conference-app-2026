@@ -6,7 +6,8 @@ import androidx.core.net.toUri
 import io.github.droidkaigi.confsched.core.common.DeepLink
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
-internal const val DEEP_LINK_SCHEME = "droidkaigi"
+// Year-scoped so next year's app never captures this year's links.
+internal const val DEEP_LINK_SCHEME = "droidkaigi2026"
 internal const val DEEP_LINK_SESSION_HOST = "session"
 
 internal fun Intent.toDeepLink(): DeepLink? {

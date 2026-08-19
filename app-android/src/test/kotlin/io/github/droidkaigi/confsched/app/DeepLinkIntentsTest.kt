@@ -21,15 +21,16 @@ class DeepLinkIntentsTest {
     fun a_session_uri_parses_to_its_session_id() {
         assertEquals(
             DeepLink.SessionDetail("abc123"),
-            viewIntent("droidkaigi://session/abc123").toDeepLink(),
+            viewIntent("droidkaigi2026://session/abc123").toDeepLink(),
         )
     }
 
     @Test
     fun foreign_schemes_and_hosts_do_not_parse() {
         assertNull(viewIntent("https://session/abc").toDeepLink())
-        assertNull(viewIntent("droidkaigi://about").toDeepLink())
-        assertNull(viewIntent("droidkaigi://session/").toDeepLink())
+        assertNull(viewIntent("droidkaigi://session/abc").toDeepLink())
+        assertNull(viewIntent("droidkaigi2026://about").toDeepLink())
+        assertNull(viewIntent("droidkaigi2026://session/").toDeepLink())
         assertNull(Intent(Intent.ACTION_VIEW).toDeepLink())
     }
 

@@ -70,7 +70,7 @@ private const val MAX_MEDIUM_ROWS = 3
 
 @Composable
 internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
-    // Live rows carry their own droidkaigi://session/{id} action; every other tap opens the
+    // Live rows carry their own droidkaigi2026://session/{id} action; every other tap opens the
     // app at its start destination.
     // TODO: Route favorites and about taps once those deep-link targets exist.
     Box(
