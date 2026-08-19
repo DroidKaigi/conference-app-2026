@@ -12,6 +12,8 @@ sealed interface NavCommand {
     data object Pop : NavCommand
 
     data class MoveToTop(val key: NavKey) : NavCommand
+
+    data class ReplaceTop(val key: NavKey) : NavCommand
 }
 
 @Inject
@@ -33,5 +35,10 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
     fun moveToTop(key: NavKey) {
         logger.debug { "moveToTop $key" }
         commandChannel.trySend(NavCommand.MoveToTop(key))
+    }
+
+    fun replaceTop(key: NavKey) {
+        logger.debug { "replaceTop $key" }
+        commandChannel.trySend(NavCommand.ReplaceTop(key))
     }
 }
