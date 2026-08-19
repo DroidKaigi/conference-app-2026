@@ -53,4 +53,5 @@ dependencies {
     implementation(libs.okio)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinxCoroutinesTest)
 }

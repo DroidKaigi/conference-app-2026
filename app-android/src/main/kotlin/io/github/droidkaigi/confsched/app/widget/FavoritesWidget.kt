@@ -1,14 +1,13 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import android.content.Context
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import io.github.droidkaigi.confsched.core.model.Timetable
-import io.github.droidkaigi.confsched.core.model.computeFavoritesWidgetState
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.first
 
 class FavoritesWidget : GlanceAppWidget() {
@@ -16,18 +15,13 @@ class FavoritesWidget : GlanceAppWidget() {
     override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val dependencies = context.widgetDependencies
-        val colorScheme = dependencies.themeStore.colorScheme().first()
-        val timetable = dependencies.persistedTimetableReader.read() ?: Timetable(items = persistentListOf())
-        val favoriteIds = dependencies.favoritesStore.favoriteIds().first()
-        val state = computeFavoritesWidgetState(
-            now = dependencies.kaigiClock.now(),
-            timetable = timetable,
-            favoriteIds = favoriteIds,
-        )
-        val colors = colorScheme.toFavoritesWidgetColors()
+        val renders = context.widgetDependencies.favoritesWidgetRenders()
+        // The composition has to start with a value, so the first render is awaited here; the
+        // collection inside provideContent is what keeps a live session on the current state.
+        val initial = renders.first()
         provideContent {
-            FavoritesWidgetContent(state, colors)
+            val render by renders.collectAsState(initial)
+            FavoritesWidgetContent(render.state, render.colors)
         }
     }
 }
