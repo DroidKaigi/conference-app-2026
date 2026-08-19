@@ -1,34 +1,43 @@
-"""Builds the font binaries bundled in core/designsystem.
+#!/usr/bin/env bash
+# Builds the font binaries bundled in core/designsystem.
+#
+# The design sets Courier Prime for the display voice and Noto Sans for everything else,
+# but neither family carries Japanese glyphs, and Compose Multiplatform offers no API to
+# direct per-glyph fallback to a bundled font (the skiko targets consult system fonts
+# first). The fallback is therefore resolved inside the binaries: each bundled font
+# merges the design's Latin face with Noto Sans JP, Latin glyphs winning where coverage
+# overlaps.
+#
+# All three inputs are licensed under the SIL Open Font License 1.1. The merged fonts
+# are renamed because a Modified Version must not use a Reserved Font Name (Noto Sans JP
+# reserves "Source").
+#
+# The merge itself needs fontTools, a Python library with no shell equivalent, so the
+# script provisions a throwaway virtual environment for the embedded Python below.
+set -euo pipefail
 
-The design sets Courier Prime for the display voice and Noto Sans for everything else,
-but neither family carries Japanese glyphs, and Compose Multiplatform offers no API to
-direct per-glyph fallback to a bundled font (the skiko targets consult system fonts
-first). The fallback is therefore resolved inside the binaries: each bundled font merges
-the design's Latin face with Noto Sans JP, Latin glyphs winning where coverage overlaps.
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+venv_dir="$(mktemp -d)"
+trap 'rm -rf "$venv_dir"' EXIT
 
-All three inputs are licensed under the SIL Open Font License 1.1. The merged fonts are
-renamed because a Modified Version must not use a Reserved Font Name (Noto Sans JP
-reserves "Source").
+python3 -m venv "$venv_dir/venv"
+"$venv_dir/venv/bin/pip" --quiet install fonttools==4.63.0
 
-Usage:
-    python3 -m venv .venv && .venv/bin/pip install fonttools==4.63.0
-    .venv/bin/python scripts/build-fonts.py
-"""
-
+OUT_DIR="$script_dir/../core/designsystem/src/commonMain/composeResources/font" \
+    "$venv_dir/venv/bin/python" - <<'PYTHON'
 import io
 import os
-import sys
 import urllib.request
 from pathlib import Path
-
-# fontTools stamps save time into the head table; pin it so reruns are byte-identical.
-os.environ["SOURCE_DATE_EPOCH"] = "0"
 
 from fontTools import subset
 from fontTools.merge import Merger
 from fontTools.ttLib import TTFont
 from fontTools.ttLib.scaleUpem import scale_upem
 from fontTools.varLib.instancer import instantiateVariableFont
+
+# fontTools stamps save time into the head table; pin it so reruns are byte-identical.
+os.environ["SOURCE_DATE_EPOCH"] = "0"
 
 GOOGLE_FONTS_COMMIT = "e1118da94a8cb00cf6d06cdac9ef13eb1e5c6ab7"
 SOURCE_BASE = f"https://raw.githubusercontent.com/google/fonts/{GOOGLE_FONTS_COMMIT}/ofl"
@@ -38,7 +47,7 @@ SOURCES = {
     "noto_sans_jp": f"{SOURCE_BASE}/notosansjp/NotoSansJP%5Bwght%5D.ttf",
 }
 
-OUT_DIR = Path(__file__).parent.parent / "core/designsystem/src/commonMain/composeResources/font"
+OUT_DIR = Path(os.environ["OUT_DIR"])
 
 COPYRIGHT = (
     "Merged from Courier Prime (Copyright 2015 The Courier Prime Project Authors), "
@@ -127,33 +136,29 @@ def build(latin: TTFont, jp: TTFont, family: str, subfamily: str, out_name: str)
     print(f"built {out_name}: {out_path.stat().st_size / 1024 / 1024:.2f} MB")
 
 
-def main() -> None:
-    courier = download(SOURCES["courier_prime"])
-    noto_sans_vf = SOURCES["noto_sans"]
-    noto_sans_jp_vf = SOURCES["noto_sans_jp"]
+courier = download(SOURCES["courier_prime"])
+noto_sans_vf = SOURCES["noto_sans"]
+noto_sans_jp_vf = SOURCES["noto_sans_jp"]
 
-    build(
-        latin=courier,
-        jp=instance(download(noto_sans_jp_vf), {"wght": 400}),
-        family="Kaigi Mono",
-        subfamily="Regular",
-        out_name="kaigi_mono_regular.ttf",
-    )
-    build(
-        latin=instance(download(noto_sans_vf), {"wght": 400, "wdth": 100}),
-        jp=instance(download(noto_sans_jp_vf), {"wght": 400}),
-        family="Kaigi Sans",
-        subfamily="Regular",
-        out_name="kaigi_sans_regular.ttf",
-    )
-    build(
-        latin=instance(download(noto_sans_vf), {"wght": 500, "wdth": 100}),
-        jp=instance(download(noto_sans_jp_vf), {"wght": 500}),
-        family="Kaigi Sans",
-        subfamily="Medium",
-        out_name="kaigi_sans_medium.ttf",
-    )
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+build(
+    latin=courier,
+    jp=instance(download(noto_sans_jp_vf), {"wght": 400}),
+    family="Kaigi Mono",
+    subfamily="Regular",
+    out_name="kaigi_mono_regular.ttf",
+)
+build(
+    latin=instance(download(noto_sans_vf), {"wght": 400, "wdth": 100}),
+    jp=instance(download(noto_sans_jp_vf), {"wght": 400}),
+    family="Kaigi Sans",
+    subfamily="Regular",
+    out_name="kaigi_sans_regular.ttf",
+)
+build(
+    latin=instance(download(noto_sans_vf), {"wght": 500, "wdth": 100}),
+    jp=instance(download(noto_sans_jp_vf), {"wght": 500}),
+    family="Kaigi Sans",
+    subfamily="Medium",
+    out_name="kaigi_sans_medium.ttf",
+)
+PYTHON
