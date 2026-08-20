@@ -3,7 +3,7 @@
     <string name="widget_description">お気に入りセッションの予定をホーム画面で確認できます</string>
     <string name="widget_countdown_prefix">あと</string>
     <string name="widget_countdown_unit">日</string>
-    <string name="widget_countdown_dates">2026.9.2 – 9.3</string>
+    <string name="widget_countdown_dates">2026.%1$d.%2$d – %3$d.%4$d</string>
     <string name="widget_countdown_note">会場でお会いしましょう</string>
     <string name="widget_next_label">次のお気に入り</string>
     <string name="widget_live_small_label">開催中</string>

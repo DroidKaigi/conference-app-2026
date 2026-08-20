@@ -46,12 +46,14 @@ import io.github.droidkaigi.confsched.app.favoriteSessionDeepLinkIntent
 import io.github.droidkaigi.confsched.app.favoritesDeepLinkIntent
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
+import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetRow
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetSlot
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.toFavoritesWidgetRows
+import kotlinx.datetime.number
 import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityIntent
 
 // Spacing follows the widget spec's five-step scale on a 4dp base.
@@ -179,7 +181,13 @@ private fun CountdownFigures(
         }
         Spacer(modifier = GlanceModifier.height(GapTight))
         Text(
-            text = context.getString(R.string.widget_countdown_dates),
+            text = context.getString(
+                R.string.widget_countdown_dates,
+                DroidKaigi2026Day.Day1.date.month.number,
+                DroidKaigi2026Day.Day1.date.day,
+                DroidKaigi2026Day.Day2.date.month.number,
+                DroidKaigi2026Day.Day2.date.day,
+            ),
             style = monoStyle(colors.onSurfaceVariant, 12.sp, FontWeight.Bold),
         )
         if (medium) {
