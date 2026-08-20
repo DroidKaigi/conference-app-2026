@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Projects
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -37,7 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun EventMapScreen(
     uiState: EventMapScreenUiState,
-    onFloorClick: (EventMapFloor) -> Unit,
+    onFloorClick: (Floor) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -108,7 +109,7 @@ private fun EventMapScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        val selectedFloor = EventMapFloor.Ground
+        val selectedFloor = Floor.Ground
         EventMapScreen(
             uiState = EventMapScreenUiState(
                 selectedFloor = selectedFloor,
