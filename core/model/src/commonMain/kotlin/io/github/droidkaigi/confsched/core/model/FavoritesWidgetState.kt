@@ -77,6 +77,7 @@ fun computeFavoritesWidgetState(
  * remaining count.
  */
 fun List<FavoritesWidgetSlot>.toFavoritesWidgetRows(maxRows: Int): List<FavoritesWidgetRow> {
+    require(maxRows > 0) { "maxRows must be positive but was $maxRows" }
     val sessionRows = flatMap { slot ->
         slot.sessions.mapIndexed { index, session ->
             FavoritesWidgetRow.Session(
