@@ -61,7 +61,7 @@ fun KaigiApp() {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     NavDisplay(
                         backStack = backStack,
-                        onBack = uiGraph.appNavigator::back,
+                        onBack = { uiGraph.appNavigator.back() },
                         entryDecorators = listOf(
                             rememberSaveableStateHolderNavEntryDecorator(),
                             retainNavEntryDecorator(),

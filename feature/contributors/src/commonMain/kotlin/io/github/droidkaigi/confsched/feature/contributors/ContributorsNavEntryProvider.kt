@@ -18,12 +18,12 @@ class ContributorsNavEntryProvider(
     private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<ContributorsNavKey> {
+        entry<ContributorsNavKey> { key ->
             val graph = retain(screenGraphFactory::createContributorsScreenGraph)
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 ContributorsScreenRoot(
-                    onNavigateBack = appNavigator::back,
+                    onNavigateBack = { appNavigator.back(origin = key) },
                     onNavigateToContributorProfile = uriHandler::openUri,
                 )
             }
