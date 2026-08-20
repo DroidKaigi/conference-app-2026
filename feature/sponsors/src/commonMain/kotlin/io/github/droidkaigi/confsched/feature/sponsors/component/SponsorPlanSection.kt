@@ -1,22 +1,26 @@
 package io.github.droidkaigi.confsched.feature.sponsors.component
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.SponsorGroup
 import io.github.droidkaigi.confsched.core.model.SponsorPlan
 
-// The column count and the per-plan spans belong together: a span is a column count out of this total.
 internal const val SPONSOR_GRID_COLUMNS = 6
+
+// Extra spacing to meet the design's required heading-to-content vertical gap.
+private val HEADING_EXTRA_SPACING = 20.dp
 
 internal fun LazyGridScope.sponsorPlanSection(
     group: SponsorGroup,
@@ -25,44 +29,62 @@ internal fun LazyGridScope.sponsorPlanSection(
     // The payload does not guarantee a unique sponsorName and a duplicate key throws in a lazy
     // layout, so this grid stays on positional keys.
     item(span = { GridItemSpan(maxLineSpan) }) {
-        Text(
-            text = group.plan.sectionTitle,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = group.plan.headingExtraTopSpacing, bottom = HEADING_EXTRA_SPACING),
+            contentAlignment = Alignment.Center,
+        ) {
+            SponsorHeadingDecoration(plan = group.plan)
+        }
     }
     items(
         items = group.sponsors,
-        span = { GridItemSpan(group.plan.columnSpan) },
+        span = { GridItemSpan(group.plan.itemColumnSpan) },
     ) { sponsor ->
         SponsorItem(
             name = sponsor.name,
             logoUrl = sponsor.logoUrl,
             onSponsorClick = { onSponsorClick(sponsor.link) },
+            shape = group.plan.itemShape,
+            contentPadding = group.plan.itemContentPadding,
             modifier = Modifier.fillMaxWidth().height(group.plan.itemHeight),
         )
     }
 }
 
-private val SponsorPlan.sectionTitle: String
-    get() = when (this) {
-        SponsorPlan.Platinum -> "Platinum Sponsors"
-        SponsorPlan.Gold -> "Gold Sponsors"
-        SponsorPlan.Supporter -> "Supporters"
-    }
-
-// Provisional proportions until the sponsor wall design lands.
-private val SponsorPlan.columnSpan: Int
+private val SponsorPlan.itemColumnSpan: Int
     get() = when (this) {
         SponsorPlan.Platinum -> SPONSOR_GRID_COLUMNS
-        SponsorPlan.Gold -> 3
-        SponsorPlan.Supporter -> 2
+        SponsorPlan.Gold -> SPONSOR_GRID_COLUMNS / 2
+        SponsorPlan.Supporter -> SPONSOR_GRID_COLUMNS / 3
     }
 
 private val SponsorPlan.itemHeight: Dp
     get() = when (this) {
-        SponsorPlan.Platinum -> 110.dp
-        SponsorPlan.Gold -> 88.dp
-        SponsorPlan.Supporter -> 72.dp
+        SponsorPlan.Platinum -> 80.dp
+        SponsorPlan.Gold -> 80.dp
+        SponsorPlan.Supporter -> 60.dp
+    }
+
+private val SponsorPlan.itemShape: Shape
+    get() = when (this) {
+        SponsorPlan.Platinum -> RoundedCornerShape(16.dp)
+        SponsorPlan.Gold -> RoundedCornerShape(12.dp)
+        SponsorPlan.Supporter -> RoundedCornerShape(8.dp)
+    }
+
+private val SponsorPlan.itemContentPadding: PaddingValues
+    get() = when (this) {
+        SponsorPlan.Platinum -> PaddingValues(16.dp)
+        SponsorPlan.Gold -> PaddingValues(12.dp)
+        SponsorPlan.Supporter -> PaddingValues(8.dp)
+    }
+
+// Extra top spacing applied before Gold and Supporter headings.
+private val SponsorPlan.headingExtraTopSpacing: Dp
+    get() = when (this) {
+        SponsorPlan.Platinum -> 0.dp
+        SponsorPlan.Gold -> HEADING_EXTRA_SPACING
+        SponsorPlan.Supporter -> HEADING_EXTRA_SPACING
     }

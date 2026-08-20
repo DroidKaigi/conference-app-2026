@@ -60,8 +60,9 @@ fun KaigiFilterChip(
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     borderColor: Color = MaterialTheme.colorScheme.outline,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchEllipseShape(
-        seed = seed,
+        seed = combinedSeed,
         roughness = KaigiFilterChipDefaults.roughness,
         tremor = KaigiFilterChipDefaults.tremor,
         borderThickness = KaigiFilterChipDefaults.borderThickness,

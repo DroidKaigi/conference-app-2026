@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.sponsors
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,7 +13,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.feature.sponsors.component.SPONSOR_GRID_COLUMNS
@@ -38,7 +39,8 @@ fun SponsorsScreen(
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(SPONSOR_GRID_COLUMNS),
-                modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                contentPadding = PaddingValues(start = 24.dp, top = 20.dp, end = 24.dp, bottom = 72.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -50,7 +52,7 @@ fun SponsorsScreen(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun SponsorsScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

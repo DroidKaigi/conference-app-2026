@@ -36,9 +36,9 @@ class SponsorsScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("show a section per plan present in the payload") {
-                checkPlanSectionDisplayed("Platinum Sponsors")
-                checkPlanSectionDisplayed("Supporters")
-                checkPlanSectionDoesNotExist("Gold Sponsors")
+                checkPlanSectionDisplayed("PLATINUM SPONSORS")
+                checkPlanSectionDisplayed("SPONSORS")
+                checkPlanSectionDoesNotExist("GOLD SPONSORS")
             }
             itShould("show each sponsor under its plan") {
                 checkSponsorDisplayed("Sponsor A")
@@ -80,7 +80,7 @@ class SponsorsScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("render both instead of failing on a duplicate key") {
-                checkPlanSectionDisplayed("Gold Sponsors")
+                checkPlanSectionDisplayed("GOLD SPONSORS")
                 checkSponsorCount("Sponsor D", expected = 2)
             }
         }
@@ -92,7 +92,7 @@ class SponsorsScreenRobotTest : RobotTest() {
             }
             itShould("show the loading fallback") {
                 checkLoadingDisplayed()
-                checkPlanSectionDoesNotExist("Platinum Sponsors")
+                checkPlanSectionDoesNotExist("PLATINUM SPONSORS")
             }
             describe("and they arrive") {
                 doIt {
@@ -121,7 +121,7 @@ class SponsorsScreenRobotTest : RobotTest() {
             }
             itShould("show the empty state") {
                 checkEmptyStateDisplayed()
-                checkPlanSectionDoesNotExist("Platinum Sponsors")
+                checkPlanSectionDoesNotExist("PLATINUM SPONSORS")
             }
         }
     }

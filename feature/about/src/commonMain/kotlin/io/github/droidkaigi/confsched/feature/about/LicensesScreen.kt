@@ -8,7 +8,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
@@ -35,7 +35,7 @@ fun LicensesScreen(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun LicensesScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

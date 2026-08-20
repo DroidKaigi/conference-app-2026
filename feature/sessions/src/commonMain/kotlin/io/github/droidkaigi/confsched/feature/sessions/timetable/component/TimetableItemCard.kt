@@ -30,6 +30,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.RoomChip
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.add_favorite
@@ -52,8 +53,9 @@ internal fun TimetableItemCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
-        seed = seed,
+        seed = combinedSeed,
         cornerRadius = TimetableItemCardDefaults.cornerRadius,
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,

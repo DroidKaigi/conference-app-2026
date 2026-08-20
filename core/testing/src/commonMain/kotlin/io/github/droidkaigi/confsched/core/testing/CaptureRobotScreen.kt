@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 
 /**
- * Records what a scenario left on screen. Only the Android host tests capture today; the other
+ * Records what a scenario left on screen. Only the JVM target captures today; the other
  * targets run the same scenarios for their assertions alone.
  */
 @OptIn(ExperimentalTestApi::class)
