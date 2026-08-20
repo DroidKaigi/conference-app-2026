@@ -104,8 +104,6 @@ private fun stickyTimeRangeTranslationY(
 ): Float {
     val layoutInfo = listState.layoutInfo
     val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == itemIndex } ?: return 0f
-    // Derived per frame rather than fixed at zero so a collapsing header above the list moves the
-    // pin line with it.
     val pinLinePx = layoutInfo.viewportStartOffset + layoutInfo.beforeContentPadding
     val maxTranslationPx = (itemInfo.size - timeRangeHeightPx).coerceAtLeast(0f)
     return (pinLinePx - itemInfo.offset).toFloat().coerceIn(0f, maxTranslationPx)
