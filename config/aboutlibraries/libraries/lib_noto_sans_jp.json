@@ -1,0 +1,14 @@
+{
+  "uniqueId": "font.noto-sans-jp",
+  "name": "Noto Sans JP",
+  "description": "Bundled font",
+  "website": "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
+  "developers": [
+    {
+      "name": "Adobe"
+    }
+  ],
+  "licenses": [
+    "ofl-1.1-noto-sans-jp"
+  ]
+}

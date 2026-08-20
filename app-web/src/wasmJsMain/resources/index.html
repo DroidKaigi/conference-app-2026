@@ -7,6 +7,11 @@
     <style>
         html, body { margin: 0; padding: 0; height: 100%; }
     </style>
+    <!-- Fonts load asynchronously on the web target, so the first frames render in a fallback
+         face; preloading at the browser level shortens that window. -->
+    <link rel="preload" href="./composeResources/io.github.droidkaigi.confsched.core.designsystem.generated.resources/font/kaigi_mono_regular.ttf" as="fetch" type="font/ttf" crossorigin/>
+    <link rel="preload" href="./composeResources/io.github.droidkaigi.confsched.core.designsystem.generated.resources/font/kaigi_sans_regular.ttf" as="fetch" type="font/ttf" crossorigin/>
+    <link rel="preload" href="./composeResources/io.github.droidkaigi.confsched.core.designsystem.generated.resources/font/kaigi_sans_medium.ttf" as="fetch" type="font/ttf" crossorigin/>
 </head>
 <body>
 <!-- Compose Multiplatform/wasmJs binaries.executable() emits <moduleName>.js. The module name is the
