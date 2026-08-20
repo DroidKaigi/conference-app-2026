@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -108,8 +108,8 @@ private fun ThreePaneScaffoldScope.PaneExpansionDragHandle(
             .fillMaxHeight()
             // The handle is placed centered on the seam, so its own coordinates are where the
             // seam position for drag clamping is read from.
-            .onGloballyPositioned { coordinates ->
-                val scaffold = coordinates.parentLayoutCoordinates ?: return@onGloballyPositioned
+            .onPlaced { coordinates ->
+                val scaffold = coordinates.parentLayoutCoordinates ?: return@onPlaced
                 val minWidthPx = with(density) { PaneMinWidth.toPx() }
                 dragBounds.seamPosition = coordinates.positionInParent().x + coordinates.size.width / 2f
                 dragBounds.minBound = minWidthPx
