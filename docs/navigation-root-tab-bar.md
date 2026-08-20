@@ -21,7 +21,9 @@ The wrapper `RootTabScene` overrides `content` — the delegate's content with t
 
 ## Bar or rail
 
-`RootTabScene` reads the window width: from the EXPANDED breakpoint — 840dp and up — a vertical `KaigiNavigationRail` down the leading edge carries the destinations, and anything narrower shows a bottom-aligned `KaigiNavigationBar` (both from `:core:ui`, drawn as the same hand-drawn pill). The switch follows the window width alone, never how many panes the scene draws: a wide window with no detail open still shows the rail. The rail is always shown; nothing collapses it.
+`RootTabScene` reads the window width: from the EXPANDED breakpoint — 840dp and up — a vertical `KaigiNavigationRail` down the leading edge carries the destinations, and anything narrower shows a bottom-aligned `KaigiNavigationBar` (both from `:core:ui`, drawn as the same hand-drawn pill). The switch follows the window width alone, never how many panes the scene draws: a wide window with no detail open still shows the rail.
+
+While the scene draws two panes, a drag handle on the pane boundary — at the right edge of the rail column, centred on the window height — collapses the rail: the column tracks the finger from its full width to zero and settles on release, and the freed width goes to the panes. The handle stays visible while the rail is collapsed, since nothing else brings the rail back, and it leaves the screen with the second pane, so leaving the two-pane layout restores the rail. Whether the rail is collapsed survives a configuration change.
 
 The two occupy space differently:
 
