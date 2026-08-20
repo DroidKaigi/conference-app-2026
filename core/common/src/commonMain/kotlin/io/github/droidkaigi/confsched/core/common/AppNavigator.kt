@@ -25,7 +25,7 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
         commandChannel.trySend(NavCommand.Push(key))
     }
 
-    fun back() {
+    override fun back() {
         logger.debug { "back" }
         commandChannel.trySend(NavCommand.Pop)
     }

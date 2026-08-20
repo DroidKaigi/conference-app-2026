@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.app
+package io.github.droidkaigi.confsched.feature.debug
 
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
@@ -7,15 +7,15 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.LicensesScreenScope
-import io.github.droidkaigi.confsched.feature.about.LicensesScreenNavigator
+import io.github.droidkaigi.confsched.core.model.SoilErrorsScreenScope
 
 @Inject
-@SingleIn(LicensesScreenScope::class)
+@SingleIn(SoilErrorsScreenScope::class)
 @ContributesBinding(
-    scope = LicensesScreenScope::class,
-    binding = binding<LicensesScreenNavigator>(),
+    scope = SoilErrorsScreenScope::class,
+    binding = binding<SoilErrorsScreenNavigator>(),
 )
-class DefaultLicensesScreenNavigator(
+class DefaultSoilErrorsScreenNavigator(
     appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
-    LicensesScreenNavigator
+    SoilErrorsScreenNavigator

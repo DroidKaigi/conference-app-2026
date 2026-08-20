@@ -15,7 +15,6 @@ import io.github.droidkaigi.confsched.core.common.context
 @Inject
 class SponsorsNavEntryProvider(
     private val screenGraphFactory: SponsorsScreenGraph.Factory,
-    private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<SponsorsNavKey> {
@@ -23,7 +22,7 @@ class SponsorsNavEntryProvider(
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 SponsorsScreenRoot(
-                    onNavigateBack = appNavigator::back,
+                    onNavigateBack = graph.screenNavigator::back,
                     onNavigateToSponsorSite = uriHandler::openUri,
                 )
             }

@@ -9,20 +9,20 @@ import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.DebugScreenScope
 
 @ContributesIntoSet(UiScope::class)
 @Inject
 class DebugNavEntryProvider(
     private val screenGraphFactory: DebugScreenGraph.Factory,
-    private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<DebugNavKey> {
             val graph = retain(screenGraphFactory::createDebugScreenGraph)
             context(graph.screenContext) {
                 DebugScreenRoot(
-                    onNavigateToSoilErrors = { appNavigator.goTo(SoilErrorsNavKey) },
-                    onNavigateBack = appNavigator::back,
+                    onNavigateToSoilErrors = graph.navigator::openSoilErrors,
+                    onNavigateBack = graph.navigator::back,
                 )
             }
         }
