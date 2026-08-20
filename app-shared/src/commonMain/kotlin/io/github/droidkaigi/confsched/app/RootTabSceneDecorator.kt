@@ -14,12 +14,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Icon
 import androidx.compose.material3.VerticalDragHandle
 import androidx.compose.material3.VerticalDragHandleDefaults
@@ -58,6 +52,12 @@ import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_na
 import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
+import io.github.droidkaigi.confsched.core.designsystem.icon.Favorite
+import io.github.droidkaigi.confsched.core.designsystem.icon.Info
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Map
+import io.github.droidkaigi.confsched.core.designsystem.icon.ProfileCard
+import io.github.droidkaigi.confsched.core.designsystem.icon.Timetable
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBar
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarItem
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRail
@@ -86,11 +86,11 @@ enum class RootTab(internal val key: NavKey, val label: String) {
 
 private val RootTab.icon: ImageVector
     get() = when (this) {
-        RootTab.Timetable -> Icons.Filled.DateRange
-        RootTab.EventMap -> Icons.Filled.Map
-        RootTab.Favorites -> Icons.Filled.Favorite
-        RootTab.About -> Icons.Filled.Info
-        RootTab.ProfileCard -> Icons.Filled.AccountCircle
+        RootTab.Timetable -> KaigiIcons.Default.Timetable
+        RootTab.EventMap -> KaigiIcons.Default.Map
+        RootTab.Favorites -> KaigiIcons.Default.Favorite
+        RootTab.About -> KaigiIcons.Default.Info
+        RootTab.ProfileCard -> KaigiIcons.Default.ProfileCard
     }
 
 private val rootTabsByKey: Map<NavKey, RootTab> = RootTab.entries.associateBy(RootTab::key)

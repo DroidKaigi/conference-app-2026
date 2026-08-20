@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Search
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -84,10 +84,10 @@ private fun KaigiIconButtonPreview(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             KaigiIconButton(seed = 777, onClick = {}) {
-                Icon(Icons.Filled.Search, contentDescription = null)
+                Icon(KaigiIcons.Default.Search, contentDescription = null)
             }
             KaigiIconButton(seed = 778, onClick = {}) {
-                Icon(Icons.Filled.DateRange, contentDescription = null)
+                Icon(KaigiIcons.Default.GridView, contentDescription = null)
             }
         }
     }
