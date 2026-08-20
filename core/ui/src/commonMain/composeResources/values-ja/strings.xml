@@ -1,6 +1,10 @@
 <resources>
     <string name="back">戻る</string>
+    <string name="close">閉じる</string>
     <string name="failed_to_load">読み込みに失敗しました</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
+    <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
+    <string name="show_in_japanese">日本語で表示</string>
+    <string name="show_in_english">英語で表示</string>
 </resources>
