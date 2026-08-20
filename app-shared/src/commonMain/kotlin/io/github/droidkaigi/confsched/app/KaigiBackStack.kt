@@ -10,11 +10,17 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 
 @Composable
 context(uiGraph: UiGraph)
-internal fun rememberKaigiBackStack(): NavBackStack<NavKey> = rememberNavBackStack(
-    configuration = remember(uiGraph.navKeySerializersProvider) {
-        SavedStateConfiguration {
-            serializersModule = uiGraph.navKeySerializersProvider.serializersModule
-        }
-    },
-    remember { uiGraph.initialNavKeyOverrideProvider.initialNavKeyOverride ?: TimetableNavKey },
-)
+internal fun rememberKaigiBackStack(): NavBackStack<NavKey> {
+    val initialStack = remember {
+        uiGraph.initialNavKeyOverrideProvider.initialNavStackOverride
+            ?: listOf(TimetableNavKey)
+    }
+    return rememberNavBackStack(
+        configuration = remember(uiGraph.navKeySerializersProvider) {
+            SavedStateConfiguration {
+                serializersModule = uiGraph.navKeySerializersProvider.serializersModule
+            }
+        },
+        *initialStack.toTypedArray(),
+    )
+}

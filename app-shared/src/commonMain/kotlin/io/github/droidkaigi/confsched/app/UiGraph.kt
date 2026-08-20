@@ -4,6 +4,7 @@ import dev.zacsweers.metro.GraphExtension
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.BackStackDebuggingEffect
 import io.github.droidkaigi.confsched.core.common.ClockOverlay
+import io.github.droidkaigi.confsched.core.common.HistorySyncEffect
 import io.github.droidkaigi.confsched.core.common.InitialNavKeyOverrideProvider
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.MergedNavKeySerializersProvider
@@ -18,6 +19,7 @@ interface UiGraph {
     val appNavigator: AppNavigator
     val appEntryProvider: AppEntryProvider
 
+    val historySyncEffect: HistorySyncEffect
     val initialNavKeyOverrideProvider: InitialNavKeyOverrideProvider
     val navKeySerializersProvider: MergedNavKeySerializersProvider
 
