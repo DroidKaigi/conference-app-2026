@@ -22,6 +22,12 @@ class DeepLinkParseTest {
     }
 
     @Test
+    fun a_session_url_with_extra_segments_does_not_parse() {
+        assertNull(DeepLink.parse("droidkaigi2026://session/abc/extra"))
+        assertNull(DeepLink.parse("droidkaigi2026://favorites/session/abc/extra"))
+    }
+
+    @Test
     fun a_favorites_session_url_parses_to_the_favorites_route() {
         assertEquals(
             DeepLink.FavoriteSessionDetail("abc123"),

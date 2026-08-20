@@ -56,7 +56,7 @@ sealed interface DeepLink {
         }
 
         private fun sessionId(segments: List<String>): String? =
-            segments.lastOrNull(String::isNotEmpty)
+            segments.dropLastWhile(String::isEmpty).singleOrNull()
     }
 }
 
