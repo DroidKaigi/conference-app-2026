@@ -5,7 +5,10 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import io.github.droidkaigi.confsched.core.model.sessionUrl
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
 import soil.query.compose.rememberQuery
 import soil.query.compose.rememberSubscription
 
@@ -13,14 +16,18 @@ import soil.query.compose.rememberSubscription
 context(screenContext: TimetableItemDetailScreenContext)
 fun TimetableItemDetailScreenRoot(
     onNavigateBack: () -> Unit,
+    onNavigateToSession: (TimetableItemId) -> Unit,
+    onOpenUrl: (String) -> Unit,
+    onShareText: (String) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(
             key = screenContext.timetableQueryKey,
-            select = { timetable -> timetable.items.first { it.id == screenContext.timetableItemId } },
+            select = { timetable -> timetable.detailOf(screenContext.timetableItemId) },
         ),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
-    ) { item, favoriteIds ->
+        state3 = rememberSubscription(screenContext.sessionMemosSubscriptionKey),
+    ) { detail, favoriteIds, memos ->
         val screenChannel =
             retainScreenChannel<TimetableItemDetailScreenAction, TimetableItemDetailScreenActionResult>()
 
@@ -34,16 +41,26 @@ fun TimetableItemDetailScreenRoot(
         val uiState = context(screenContext.presenterContext) {
             timetableItemDetailScreenPresenter(
                 screenChannel = screenChannel,
-                item = item,
-                isFavorite = screenContext.timetableItemId in favoriteIds,
+                detail = detail,
+                favoriteIds = favoriteIds,
+                memo = memos[screenContext.timetableItemId].orEmpty(),
+                initialDisplayLanguage = currentDisplayLanguage(),
             )
         }
+        val shareText = "${uiState.item.title.of(uiState.displayLanguage)}\n${sessionUrl(uiState.item.id)}\n$CONFERENCE_HASHTAG"
         TimetableItemDetailScreen(
             uiState = uiState,
-            onBookmarkClick = {
-                screenChannel.send(TimetableItemDetailScreenAction.Bookmark(uiState.item.id))
-            },
+            onBookmarkClick = { screenChannel.send(TimetableItemDetailScreenAction.Bookmark(it)) },
+            onDescriptionToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDescription) },
+            onLanguageToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDisplayLanguage) },
+            onMemoCommit = { screenChannel.send(TimetableItemDetailScreenAction.SaveMemo(it)) },
+            onArchiveClick = onOpenUrl,
+            onCalendarClick = { onOpenUrl(calendarUrl(uiState.item)) },
+            onShareClick = { onShareText(shareText) },
+            onSessionClick = onNavigateToSession,
             onBack = onNavigateBack,
         )
     }
 }
+
+private const val CONFERENCE_HASHTAG = "#DroidKaigi"
