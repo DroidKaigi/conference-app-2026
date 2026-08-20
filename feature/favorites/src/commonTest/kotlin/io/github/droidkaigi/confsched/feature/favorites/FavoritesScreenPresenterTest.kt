@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
+import io.github.droidkaigi.confsched.core.testing.testTimetableItem
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
@@ -21,10 +22,10 @@ class FavoritesScreenPresenterTest {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.MIXED, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, "Sp2", Language.MIXED, DroidKaigi2026Day.Day1, "11:00", "11:40"),
-            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, "Sp3", Language.MIXED, DroidKaigi2026Day.Day2, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d2b"), MultiLangText(ja = "Day2 B", en = "Day2 B"), Room.OTTER, "Sp4", Language.MIXED, DroidKaigi2026Day.Day2, "11:00", "11:40"),
+            testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1b", title = "Day1 B", room = Room.OTTER, speaker = "Sp2", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+            testTimetableItem(id = "d2a", title = "Day2 A", room = Room.NARWHAL, speaker = "Sp3", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d2b", title = "Day2 B", room = Room.OTTER, speaker = "Sp4", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "11:00", endsAt = "11:40"),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a"), TimetableItemId("d2a"), TimetableItemId("d2b")),
     )

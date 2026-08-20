@@ -18,11 +18,24 @@ class FavoritesWidgetStateTest {
         id = TimetableItemId(id),
         title = MultiLangText(ja = "セッション $id", en = "Session $id"),
         room = room,
-        speaker = "Speaker A",
+        speakers = persistentListOf(
+            TimetableSpeaker(
+                id = TimetableSpeakerId("speaker-$id"),
+                name = "Speaker A",
+                tagLine = "",
+                iconUrl = null,
+            ),
+        ),
         language = Language.JAPANESE,
         day = day,
         startsAt = startsAt,
         endsAt = endsAt,
+        description = MultiLangText(ja = "", en = ""),
+        targetAudience = MultiLangText(ja = "", en = ""),
+        category = null,
+        asset = TimetableItemAsset.Empty,
+        hasInterpretation = false,
+        isCancelled = false,
     )
 
     private fun timetable(vararg items: TimetableItem) = Timetable(items = items.toList().toPersistentList())
