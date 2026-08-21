@@ -5,5 +5,25 @@
     <string name="search_initial_title">Search sessions</string>
     <string name="search_initial_description">Find a session by its title or speaker</string>
     <string name="search_no_match_title">No sessions found</string>
-    <string name="search_no_match_description">Try another word</string>
+    <string name="search_no_match_description">Try another word or filter</string>
+
+    <string name="search_filter_date">Date</string>
+    <string name="search_filter_category">Category</string>
+    <string name="search_filter_session_type">Session type</string>
+    <string name="search_filter_language">Language</string>
+    <string name="search_filter_with_count">%1$s (%2$d)</string>
+
+    <string name="session_type_normal">Session</string>
+    <string name="session_type_welcome_talk">Welcome talk</string>
+    <string name="session_type_reserved">Reserved</string>
+    <string name="session_type_codelabs">Codelabs</string>
+    <string name="session_type_fireside_chat">Fireside chat</string>
+    <string name="session_type_lunch">Lunch</string>
+    <string name="session_type_break">Break</string>
+    <string name="session_type_after_party">After party</string>
+    <string name="session_type_recap">Recap</string>
+
+    <string name="language_japanese">Japanese</string>
+    <string name="language_english">English</string>
+    <string name="language_mixed">Japanese and English</string>
 </resources>

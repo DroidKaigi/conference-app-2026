@@ -5,5 +5,25 @@
     <string name="search_initial_title">セッションを検索</string>
     <string name="search_initial_description">タイトルや登壇者から探せます</string>
     <string name="search_no_match_title">セッションが見つかりません</string>
-    <string name="search_no_match_description">別の言葉で試してください</string>
+    <string name="search_no_match_description">別の言葉や絞り込みで試してください</string>
+
+    <string name="search_filter_date">日付</string>
+    <string name="search_filter_category">カテゴリ</string>
+    <string name="search_filter_session_type">セッション種別</string>
+    <string name="search_filter_language">言語</string>
+    <string name="search_filter_with_count">%1$s (%2$d)</string>
+
+    <string name="session_type_normal">セッション</string>
+    <string name="session_type_welcome_talk">ウェルカムトーク</string>
+    <string name="session_type_reserved">予約枠</string>
+    <string name="session_type_codelabs">コードラボ</string>
+    <string name="session_type_fireside_chat">ファイヤーサイドチャット</string>
+    <string name="session_type_lunch">ランチ</string>
+    <string name="session_type_break">休憩</string>
+    <string name="session_type_after_party">アフターパーティー</string>
+    <string name="session_type_recap">ふりかえり</string>
+
+    <string name="language_japanese">日本語</string>
+    <string name="language_english">英語</string>
+    <string name="language_mixed">日本語と英語</string>
 </resources>

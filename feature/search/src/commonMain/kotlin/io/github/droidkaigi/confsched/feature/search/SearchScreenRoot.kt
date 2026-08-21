@@ -40,6 +40,10 @@ fun SearchScreenRoot(
         SearchScreen(
             uiState = uiState,
             onQueryChange = { screenChannel.send(SearchScreenAction.ChangeQueryText(it)) },
+            onDayClick = { screenChannel.send(SearchScreenAction.SelectDay(it)) },
+            onCategoryClick = { screenChannel.send(SearchScreenAction.ToggleCategory(it)) },
+            onSessionTypeClick = { screenChannel.send(SearchScreenAction.ToggleSessionType(it)) },
+            onLanguageClick = { screenChannel.send(SearchScreenAction.ToggleLanguage(it)) },
             onBookmarkClick = { screenChannel.send(SearchScreenAction.Bookmark(it)) },
             onItemClick = onNavigateToDetail,
             onBackClick = onNavigateBack,
