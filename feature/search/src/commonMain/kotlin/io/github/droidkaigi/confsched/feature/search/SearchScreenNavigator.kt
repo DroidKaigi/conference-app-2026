@@ -1,10 +1,8 @@
-package io.github.droidkaigi.confsched.feature.sessions.timetable
+package io.github.droidkaigi.confsched.feature.search
 
 import io.github.droidkaigi.confsched.core.common.Navigator
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
-interface TimetableScreenNavigator : Navigator {
+interface SearchScreenNavigator : Navigator {
     fun openSessionDetail(id: TimetableItemId)
-
-    fun openSearch()
 }
