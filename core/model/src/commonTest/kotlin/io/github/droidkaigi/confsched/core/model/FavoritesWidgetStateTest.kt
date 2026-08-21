@@ -23,6 +23,7 @@ class FavoritesWidgetStateTest {
         day = day,
         startsAt = startsAt,
         endsAt = endsAt,
+        sessionType = SessionType.NORMAL,
     )
 
     private fun timetable(vararg items: TimetableItem) = Timetable(items = items.toList().toPersistentList())

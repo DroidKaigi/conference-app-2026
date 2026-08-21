@@ -18,5 +18,10 @@ class DefaultTimetableQueryKey(
     persistKey = TIMETABLE_PERSIST_KEY,
     fileStorage = fileStorage,
     fetchResponse = { api.getTimetable() },
-    transformToDomainModel = { response -> Timetable(items = response.toTimetableItems().toPersistentList()) },
+    transformToDomainModel = { response ->
+        Timetable(
+            items = response.toTimetableItems().toPersistentList(),
+            categories = response.toSessionCategories().toPersistentList(),
+        )
+    },
 )

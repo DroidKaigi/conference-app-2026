@@ -8,7 +8,7 @@ class FakeTimetableApi : TimetableApi {
         return TimetableResponse(
             status = HttpStatusResponse.OK,
             sessions = listOf(
-                fakeSession("s1", LocaledResponse(ja = "サンプルセッションA", en = "Sample Session A"), 81669L, "sp1", LanguageResponse.JAPANESE, "2026-09-02T10:00:00+09:00", "2026-09-02T10:40:00+09:00"),
+                fakeSession("s1", LocaledResponse(ja = "サンプルセッションA", en = "Sample Session A"), 81669L, "sp1", LanguageResponse.JAPANESE, "2026-09-02T10:00:00+09:00", "2026-09-02T10:40:00+09:00", SessionTypeResponse.NORMAL, 11L),
                 fakeSession(
                     "s2",
                     LocaledResponse(
@@ -20,8 +20,10 @@ class FakeTimetableApi : TimetableApi {
                     LanguageResponse.ENGLISH,
                     "2026-09-02T11:00:00+09:00",
                     "2026-09-02T11:40:00+09:00",
+                    SessionTypeResponse.NORMAL,
+                    12L,
                 ),
-                fakeSession("s3", LocaledResponse(ja = "サンプルセッションC", en = "Sample Session C"), 81669L, "sp3", LanguageResponse.MIXED, "2026-09-03T10:00:00+09:00", "2026-09-03T10:40:00+09:00"),
+                fakeSession("s3", LocaledResponse(ja = "サンプルセッションC", en = "Sample Session C"), 81669L, "sp3", LanguageResponse.MIXED, "2026-09-03T10:00:00+09:00", "2026-09-03T10:40:00+09:00", SessionTypeResponse.CODELABS, 11L),
                 fakeSession(
                     "s4",
                     LocaledResponse(
@@ -33,6 +35,8 @@ class FakeTimetableApi : TimetableApi {
                     LanguageResponse.ENGLISH,
                     "2026-09-03T11:00:00+09:00",
                     "2026-09-03T11:40:00+09:00",
+                    SessionTypeResponse.FIRESIDE_CHAT,
+                    null,
                 ),
             ),
             rooms = listOf(
@@ -44,7 +48,17 @@ class FakeTimetableApi : TimetableApi {
                 fakeSpeaker("sp2", "Speaker B"),
                 fakeSpeaker("sp3", "Speaker C"),
             ),
-            categories = emptyList(),
+            categories = listOf(
+                CategoryResponse(
+                    id = 1L,
+                    title = LocaledResponse(ja = "カテゴリ", en = "Category"),
+                    sort = 1,
+                    items = listOf(
+                        CategoryItemResponse(id = 11L, name = LocaledResponse(ja = "サンプル分類1", en = "Sample Category 1"), sort = 1),
+                        CategoryItemResponse(id = 12L, name = LocaledResponse(ja = "サンプル分類2", en = "Sample Category 2"), sort = 2),
+                    ),
+                ),
+            ),
         )
     }
 
@@ -56,6 +70,8 @@ class FakeTimetableApi : TimetableApi {
         language: LanguageResponse,
         startsAt: String,
         endsAt: String,
+        sessionType: SessionTypeResponse,
+        categoryItemId: Long?,
     ) = SessionResponse(
         id = id,
         title = title,
@@ -65,11 +81,12 @@ class FakeTimetableApi : TimetableApi {
         language = language,
         roomId = roomId,
         lengthInMinutes = 40,
-        sessionType = SessionTypeResponse.NORMAL,
+        sessionType = sessionType,
         noShow = false,
         targetAudience = LocaledResponse(ja = "全員", en = "All"),
         interpretationTarget = false,
         asset = SessionAssetResponse(),
+        sessionCategoryItemId = categoryItemId,
     )
 
     private fun fakeSpeaker(id: String, fullName: String) = SpeakerResponse(

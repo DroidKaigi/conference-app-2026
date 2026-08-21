@@ -6,6 +6,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
@@ -35,6 +36,7 @@ class FavoritesWidgetRenderTest {
                 day = DroidKaigi2026Day.Day1,
                 startsAt = "10:00",
                 endsAt = "10:40",
+                sessionType = SessionType.NORMAL,
             ),
         ),
     )
