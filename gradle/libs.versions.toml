@@ -179,6 +179,7 @@ jetwhaleHost = { id = "com.kitakkun.jetwhale.host", version.ref = "jetwhale" }
 # includeBuild substitution wins — but the catalog schema requires one.
 droidkaigiPrimitiveKmp = { id = "droidkaigi.primitive.kmp", version = "unspecified" }
 droidkaigiPrimitiveOpenapi = { id = "droidkaigi.primitive.openapi", version = "unspecified" }
+droidkaigiPrimitiveIcons = { id = "droidkaigi.primitive.icons", version = "unspecified" }
 droidkaigiPrimitiveKmpCompose = { id = "droidkaigi.primitive.kmp.compose", version = "unspecified" }
 droidkaigiPrimitiveBuildkonfig = { id = "droidkaigi.primitive.buildkonfig", version = "unspecified" }
 droidkaigiPrimitiveSpotless = { id = "droidkaigi.primitive.spotless", version = "unspecified" }
