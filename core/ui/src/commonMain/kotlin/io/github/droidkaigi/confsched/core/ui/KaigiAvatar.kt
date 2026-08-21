@@ -91,8 +91,9 @@ fun KaigiPlaceholderAvatar(
     borderColor: Color = MaterialTheme.colorScheme.outline,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
-        seed = seed,
+        seed = combinedSeed,
         roughness = KaigiAvatarDefaults.roughness,
         tremor = KaigiAvatarDefaults.tremor,
         cornerRadius = size * KaigiAvatarDefaults.CORNER_RADIUS_RATIO,

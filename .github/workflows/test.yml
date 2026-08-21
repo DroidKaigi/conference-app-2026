@@ -31,8 +31,8 @@ concurrency:
 
 jobs:
   # Everything that runs on a host JVM: the JVM-only modules, every multiplatform module's JVM
-  # target, and :app-android's unit-test variants. The feature modules' androidHostTest source set
-  # holds the preview screenshot tests, which the screenshot-goldens job below drives instead.
+  # target, and :app-android's unit-test variants. The preview screenshot tests also live in the
+  # feature modules' jvmTest, but recording goldens is the screenshot-goldens job's task below.
   unit-test:
     runs-on: ubuntu-latest
     steps:
@@ -71,7 +71,7 @@ jobs:
           java-version: '21'
           cache: gradle
       - name: Record preview screenshots
-        run: ./gradlew recordRoborazziAndroidHostTest --continue
+        run: ./gradlew recordRoborazziJvm --continue
       - name: Upload goldens
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

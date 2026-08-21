@@ -1,0 +1,4 @@
+<resources>
+    <string name="expand_navigation_rail">Expand navigation rail</string>
+    <string name="collapse_navigation_rail">Collapse navigation rail</string>
+</resources>

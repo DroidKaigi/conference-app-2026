@@ -54,10 +54,11 @@ fun KaigiIconButton(
     contentColor: Color = MaterialTheme.colorScheme.inverseSurface,
     content: @Composable () -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .size(size)
-            .clip(SketchRoundRectShape(seed = seed, cornerRadius = size / 2))
+            .clip(SketchRoundRectShape(seed = combinedSeed, cornerRadius = size / 2))
             .background(containerColor)
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,

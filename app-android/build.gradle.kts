@@ -36,6 +36,12 @@ android {
     }
 }
 
+aboutLibraries {
+    // Assets outside the dependency graph — the bundled fonts — enter the export as the
+    // custom libraries defined here.
+    collect.configPath = rootDir.resolve("config/aboutlibraries")
+}
+
 dependencies {
     implementation(project(":app-shared"))
     "devImplementation"(project(":feature:debug"))

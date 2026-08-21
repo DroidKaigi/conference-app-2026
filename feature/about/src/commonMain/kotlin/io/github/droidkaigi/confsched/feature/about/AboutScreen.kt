@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
@@ -178,7 +178,7 @@ fun AboutScreen(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun AboutScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -202,7 +202,7 @@ private fun AboutScreenPreview(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun AboutScreenWithoutDebugMenuPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

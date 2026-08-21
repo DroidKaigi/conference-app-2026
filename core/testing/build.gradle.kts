@@ -22,13 +22,7 @@ kotlin {
         }
         jvmMain.dependencies {
             api(compose.desktop.currentOs)
-        }
-        androidMain.dependencies {
-            api(libs.roborazzi)
-            api(libs.roborazziCompose)
-            api(libs.roborazziPreviewScannerSupport)
-            api(libs.composeUiTestJunit4)
-            api(libs.androidxTestExtJunit)
+            api(libs.roborazziComposeDesktop)
         }
     }
 }

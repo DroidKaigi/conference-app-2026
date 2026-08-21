@@ -25,9 +25,16 @@ internal object LocaleSensitiveNames {
         Name.identifier("LocaleSensitive"),
     )
 
-    val LOCALE_PREVIEWS_CLASS_ID = ClassId(
-        FqName("io.github.droidkaigi.confsched.core.preview"),
-        Name.identifier("LocalePreviews"),
+    // Both render one preview per translated locale; LocaleScreenPreviews adds a phone-sized frame.
+    val EVERY_LOCALE_PREVIEW_CLASS_IDS: Set<ClassId> = setOf(
+        ClassId(
+            FqName("io.github.droidkaigi.confsched.core.preview"),
+            Name.identifier("LocalePreviews"),
+        ),
+        ClassId(
+            FqName("io.github.droidkaigi.confsched.core.preview"),
+            Name.identifier("LocaleScreenPreviews"),
+        ),
     )
 
     // Every value of these types is resolved against the active locale, so referencing one makes a
@@ -63,7 +70,7 @@ internal object LocaleSensitivePreviewChecker : FirSimpleFunctionChecker(MppChec
         val body = declaration.body ?: return
         if (!analysis.isReachedFrom(body)) return
 
-        if (symbol.hasAnnotation(LocaleSensitiveNames.LOCALE_PREVIEWS_CLASS_ID, session)) return
+        if (LocaleSensitiveNames.EVERY_LOCALE_PREVIEW_CLASS_IDS.any { symbol.hasAnnotation(it, session) }) return
         reporter.reportOn(
             declaration.source,
             LocaleSensitiveErrors.LOCALE_SENSITIVE_PREVIEW_REQUIRES_EVERY_LOCALE,
@@ -87,7 +94,8 @@ object LocaleSensitiveErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             LocaleSensitiveErrors.LOCALE_SENSITIVE_PREVIEW_REQUIRES_EVERY_LOCALE,
             "This preview renders @LocaleSensitive content, so it must be previewed under every " +
-                "locale the app translates: replace `@Preview` with `@LocalePreviews`.",
+                "locale the app translates: replace `@Preview` with `@LocalePreviews` " +
+                "(`@LocaleScreenPreviews` for a screen-level preview).",
         )
     }
 }

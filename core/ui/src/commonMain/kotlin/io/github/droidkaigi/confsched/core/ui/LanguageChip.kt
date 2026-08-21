@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.sessions.timetable.component
+package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -9,8 +9,6 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiChip
-import io.github.droidkaigi.confsched.core.ui.KaigiChipDefaults
 
 /** The language a session is delivered in. */
 @Composable

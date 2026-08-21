@@ -17,12 +17,12 @@ class DebugNavEntryProvider(
     private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<DebugNavKey> {
+        entry<DebugNavKey> { key ->
             val graph = retain(screenGraphFactory::createDebugScreenGraph)
             context(graph.screenContext) {
                 DebugScreenRoot(
                     onNavigateToSoilErrors = { appNavigator.goTo(SoilErrorsNavKey) },
-                    onNavigateBack = appNavigator::back,
+                    onNavigateBack = { appNavigator.back(origin = key) },
                 )
             }
         }

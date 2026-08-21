@@ -22,10 +22,11 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBarBackButton
+import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.add_favorite
@@ -42,13 +43,22 @@ fun TimetableItemDetailScreen(
     onBookmarkClick: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val isListDetailPane = LocalListDetailSceneScope.current != null
+    val paneSpacerInset = if (isListDetailPane) {
+        LocalPanePartitionSpacerSize.current
+    } else {
+        0.dp
+    }
     Scaffold(
         topBar = {
             KaigiTopAppBar(
                 title = "",
                 navigationIcon = {
-                    if (LocalListDetailSceneScope.current != null) {
-                        IconButton(onClick = onBack) {
+                    if (isListDetailPane) {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier.padding(start = paneSpacerInset),
+                        ) {
                             Icon(Icons.Filled.Close, contentDescription = stringResource(Res.string.close))
                         }
                     } else {
@@ -78,6 +88,7 @@ fun TimetableItemDetailScreen(
                     room = uiState.item.room.name,
                     title = uiState.item.title.current(),
                     speaker = uiState.item.speaker,
+                    startInset = paneSpacerInset,
                 )
             }
             item {
@@ -86,7 +97,9 @@ fun TimetableItemDetailScreen(
                     startsAt = uiState.item.startsAt,
                     endsAt = uiState.item.endsAt,
                     room = uiState.item.room.name,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+                    modifier = Modifier
+                        .padding(start = paneSpacerInset)
+                        .padding(horizontal = 8.dp, vertical = 16.dp),
                 )
             }
         }
@@ -97,7 +110,7 @@ private object TimetableItemDetailScreenDefaults {
     val floatingActionButtonClearance = 88.dp
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun TimetableItemDetailScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

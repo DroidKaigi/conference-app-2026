@@ -18,6 +18,8 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
+import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
+import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
 
 @Composable

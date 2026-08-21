@@ -15,6 +15,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 @Composable
@@ -25,12 +26,14 @@ internal fun SketchCard(
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     content: @Composable (() -> Unit) = {},
 ) {
+    val combinedShape = shape.copy(seed = combineSketchSeed(shape.seed))
+
     Surface(
-        shape = shape,
+        shape = combinedShape,
         color = color,
         modifier = modifier
             .sketchBorder(
-                shape = shape,
+                shape = combinedShape,
                 color = borderColor,
             ),
         content = content,

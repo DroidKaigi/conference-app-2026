@@ -34,7 +34,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | `@Preview` requires a sanctioned wrapper | FIR `PreviewRequiresWrapper` |
 | Nav-only click not routed through the presenter | FIR `NoForwardOnlyAction` |
 | Theme-dependent previews use `@PreviewParameter` | FIR read + IR `@ThemeSensitive` metadata |
-| Locale-dependent previews use `@LocalePreviews` | FIR read + IR `@LocaleSensitive` metadata |
+| Locale-dependent previews use `@LocalePreviews` / `@LocaleScreenPreviews` | FIR read + IR `@LocaleSensitive` metadata |
 | Argument-forwarding lambdas use callable references | FIR `LambdaCanBeCallableReference` |
 | Pass-through lambdas pass the function value itself | FIR `LambdaCanBePassedDirectly` |
 | A `@Composable` lambda literal at the last parameter is trailing | FIR `ComposableLambdaMustBeTrailing` |
