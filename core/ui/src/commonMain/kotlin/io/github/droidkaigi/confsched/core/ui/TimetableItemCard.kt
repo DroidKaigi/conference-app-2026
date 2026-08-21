@@ -61,6 +61,7 @@ fun TimetableItemCard(
     isCancelled: Boolean,
     seed: Int,
     onBookmarkClick: () -> Unit,
+    onRoomClick: (() -> Unit)? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,6 +88,7 @@ fun TimetableItemCard(
             language = language,
             isCancelled = isCancelled,
             seed = seed,
+            onRoomClick = onRoomClick,
             modifier = Modifier.clickable(onClick = onClick),
         )
         if (isFavorite) {
@@ -125,6 +127,7 @@ private fun CardBody(
     language: Language,
     isCancelled: Boolean,
     seed: Int,
+    onRoomClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -134,7 +137,12 @@ private fun CardBody(
         if (isCancelled) {
             CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
         }
-        ChipRow(room = room, language = language, seed = seed)
+        ChipRow(
+            room = room,
+            language = language,
+            seed = seed,
+            onRoomClick = onRoomClick,
+        )
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -162,9 +170,14 @@ private fun CancelledBanner(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ChipRow(room: Room, language: Language, seed: Int) {
+private fun ChipRow(
+    room: Room,
+    language: Language,
+    seed: Int,
+    onRoomClick: (() -> Unit)?,
+) {
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        RoomChip(room = room, seed = seed + 1)
+        RoomChip(room = room, seed = seed + 1, onRoomClick = onRoomClick)
         LanguageChip(language = language, seed = seed + 2)
     }
 }
@@ -260,6 +273,7 @@ private fun TimetableItemCardSamples() {
             isCancelled = false,
             seed = 100,
             onBookmarkClick = {},
+            onRoomClick = {},
             onClick = {},
         )
         TimetableItemCard(
@@ -271,6 +285,7 @@ private fun TimetableItemCardSamples() {
             isCancelled = true,
             seed = 200,
             onBookmarkClick = {},
+            onRoomClick = {},
             onClick = {},
         )
         TimetableItemCard(
@@ -282,6 +297,7 @@ private fun TimetableItemCardSamples() {
             isCancelled = false,
             seed = 300,
             onBookmarkClick = {},
+            onRoomClick = {},
             onClick = {},
         )
     }

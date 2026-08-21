@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Category
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Language
 import io.github.droidkaigi.confsched.core.designsystem.icon.LocationOn
+import io.github.droidkaigi.confsched.core.designsystem.icon.Map
 import io.github.droidkaigi.confsched.core.designsystem.icon.Schedule
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -53,6 +55,7 @@ internal fun SessionInfoCard(
     hasInterpretation: Boolean,
     category: String?,
     seed: Int,
+    onOpenEventMapDialog: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val shape = SketchRoundRectShape(
@@ -71,7 +74,16 @@ internal fun SessionInfoCard(
                 imageVector = KaigiIcons.Default.Schedule,
                 text = scheduleText(day = day, startsAt = startsAt, endsAt = endsAt),
             )
-            InfoRow(imageVector = KaigiIcons.Default.LocationOn, text = room.locationText())
+            InfoRow(
+                imageVector = KaigiIcons.Default.LocationOn,
+                text = room.locationText(),
+                action = onOpenEventMapDialog?.let {
+                    InfoRowAction(
+                        KaigiIcons.Default.Map,
+                        it,
+                    )
+                },
+            )
             InfoRow(
                 imageVector = KaigiIcons.Default.Language,
                 text = languageText(language = language, hasInterpretation = hasInterpretation),
@@ -85,10 +97,15 @@ internal fun SessionInfoCard(
 }
 
 @Composable
-private fun InfoRow(imageVector: ImageVector, text: String) {
+private fun InfoRow(
+    imageVector: ImageVector,
+    text: String,
+    action: InfoRowAction? = null,
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
+        modifier = if (action == null) Modifier else Modifier.clickable(onClick = action.onClick),
     ) {
         Icon(
             imageVector = imageVector,
@@ -101,6 +118,14 @@ private fun InfoRow(imageVector: ImageVector, text: String) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
+        if (action != null) {
+            Icon(
+                imageVector = action.actionIconImageVector,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(SessionInfoCardDefaults.iconSize),
+            )
+        }
     }
 }
 
@@ -131,10 +156,16 @@ private fun SessionLanguage.labelResource() = when (this) {
 }
 
 private object SessionInfoCardDefaults {
+
     val cornerRadius = 20.dp
     val borderThickness = 2.dp
     val iconSize = 20.dp
 }
+
+private data class InfoRowAction(
+    val actionIconImageVector: ImageVector,
+    val onClick: () -> Unit,
+)
 
 @LocalePreviews
 @Composable
@@ -152,6 +183,7 @@ private fun SessionInfoCardPreview(
             hasInterpretation = item.hasInterpretation,
             category = item.category?.current(),
             seed = 620,
+            onOpenEventMapDialog = {},
             modifier = Modifier.padding(24.dp),
         )
     }
