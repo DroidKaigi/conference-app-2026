@@ -1,6 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
-import dev.zacsweers.metro.createGraph
+import dev.zacsweers.metro.createGraphFactory
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
@@ -18,7 +18,8 @@ import kotlin.test.assertTrue
 
 class TimetableItemDetailScreenPresenterTest {
 
-    private val graph = createGraph<TimetableItemDetailScreenTestGraph>()
+    private val graph = createGraphFactory<TimetableItemDetailScreenTestGraph.Factory>()
+        .create(TimetableItemId("d1a"))
 
     private val timetable = Timetable(
         items = persistentListOf(
