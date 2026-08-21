@@ -1,0 +1,26 @@
+name: Request Copilot review
+
+# The ruleset's automatic Copilot review is attributed to the pull request author and is skipped
+# when the author has no Copilot access, which is the case for every fork. pull_request_target runs
+# with the base repository's token, so the request is made on the repository's behalf instead.
+# The pull request's code is never checked out here: this job only calls the API.
+on:
+  pull_request_target:
+    types: [opened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  request:
+    if: github.event.pull_request.head.repo.full_name != github.repository && !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Add Copilot as a reviewer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh api --method POST
+          "/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers"
+          -f 'reviewers[]=copilot-pull-request-reviewer[bot]'
