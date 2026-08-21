@@ -54,7 +54,6 @@ import org.jetbrains.compose.resources.stringResource
  * @param scrollBehavior how the bar answers the content scrolling under it.
  * @param actions the controls trailing the title.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KaigiTopAppBar(
     title: String,
@@ -66,8 +65,47 @@ fun KaigiTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    TopAppBar(
+    KaigiTopAppBar(
         title = { BarTitle(title) },
+        modifier = modifier,
+        navigationIcon = navigationIcon,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        windowInsets = windowInsets,
+        scrollBehavior = scrollBehavior,
+        actions = actions,
+    )
+}
+
+/**
+ * The bar at the top of a screen, with a composable where the title would go.
+ *
+ * Reach for this where that slot carries a control rather than text — a search field, most often.
+ * A screen naming itself in text takes the [String] overload.
+ *
+ * @param title the content filling the slot the title would occupy.
+ * @param modifier the [Modifier] applied to the bar.
+ * @param navigationIcon the control leading [title], most often a [KaigiTopAppBarBackButton].
+ * @param containerColor the colour filling the band.
+ * @param contentColor the colour [navigationIcon] and [actions] draw in.
+ * @param windowInsets the insets the bar holds its content clear of.
+ * @param scrollBehavior how the bar answers the content scrolling under it.
+ * @param actions the controls trailing [title].
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun KaigiTopAppBar(
+    title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.inverseSurface,
+    contentColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
+    TopAppBar(
+        title = title,
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = { Actions(actions) },
