@@ -103,10 +103,10 @@ jobs:
       - id: report
         name: Build the report
         if: steps.collect.outputs.count != '0' || steps.existing.outputs.comment-id != ''
-        # A comment body over 65536 characters is rejected by the API, so a wide-reaching change
-        # lists this many renders and leaves the rest to the companion branch.
+        # A comment body over 65536 characters is rejected by the API, and the longest screenshot
+        # ids run a row to some 800 characters.
         env:
-          MAX_ROWS: 50
+          MAX_ROWS: 60
         run: |
           {
             echo "Snapshot diff report"
@@ -116,23 +116,52 @@ jobs:
             echo "No preview renders differ from the base branch." >> comment.md
           else
             mapfile -t files < files.txt
+            rows=("${files[@]}")
+            if [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
+              # A @PreviewParameter fans one preview out into a render per value, numbered from
+              # zero, and a change to a shared component moves every one of them. Past the cap the
+              # report keeps value zero of each complete run, so a wide-reaching change still names
+              # every preview it touched instead of spending the table on the first few. A trailing
+              # number that is not such a run — a @Preview whose name ends in a digit — is left as
+              # its own row.
+              mapfile -t rows < <(awk '
+                function idxof(s,   t) {
+                  t = s
+                  if (!match(t, /_[0-9]+_compare\.png$/)) return -1
+                  t = substr(t, RSTART + 1); sub(/_compare\.png$/, "", t); return t + 0
+                }
+                function setof(s,   t) { t = s; sub(/_[0-9]+_compare\.png$/, "", t); return t }
+                NR == FNR { i = idxof($0); if (i >= 0) { s = setof($0); n[s]++; if (i > mx[s]) mx[s] = i } next }
+                { i = idxof($0); if (i < 0) { print; next }
+                  s = setof($0)
+                  if (n[s] < 2 || n[s] != mx[s] + 1) { print; next }
+                  if (i == 0) print }
+              ' files.txt files.txt)
+            fi
             {
               echo "| File name | Image |"
               echo "|-------|-------|"
             } >> comment.md
             # Screenshot ids are built from the qualified function name, so a path needs no escaping.
-            for file in "${files[@]:0:MAX_ROWS}"; do
+            for file in "${rows[@]:0:MAX_ROWS}"; do
               # Long ids overflow the column, so the name wraps every 20 characters.
               name=$(basename "$file" | sed -r 's/(.{20})/\1<br>/g')
               url="https://github.com/${{ github.repository }}/blob/$COMPANION_BRANCH/$file"
               echo "| [$name]($url) | ![]($url?raw=true) |" >> comment.md
             done
-            if [ "${#files[@]}" -gt "$MAX_ROWS" ]; then
-              tree="https://github.com/${{ github.repository }}/tree/$COMPANION_BRANCH"
+            if [ "${#rows[@]}" -lt "${#files[@]}" ] || [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
               echo >> comment.md
+              if [ "${#rows[@]}" -lt "${#files[@]}" ]; then
+                printf 'Renders that differ only by preview parameter are folded into one row each, %d rows for %d renders. ' \
+                  "${#rows[@]}" "${#files[@]}" >> comment.md
+              fi
+              if [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
+                printf 'The first %d are listed. ' "$MAX_ROWS" >> comment.md
+              fi
               # The branch name is the pull request author's, so it stays inside the link target
               # rather than becoming label text that could carry markdown of its own.
-              echo "$(( ${#files[@]} - MAX_ROWS )) further renders differ. [Browse them on the companion branch]($tree)." >> comment.md
+              printf 'Every render is on the [companion branch](%s).\n' \
+                "https://github.com/${{ github.repository }}/tree/$COMPANION_BRANCH" >> comment.md
             fi
           fi
 
