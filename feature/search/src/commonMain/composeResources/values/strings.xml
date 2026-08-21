@@ -2,16 +2,18 @@
     <string name="search">Search</string>
     <string name="search_hint">Search sessions</string>
     <string name="search_clear">Clear</string>
-    <string name="search_initial_title">Search sessions</string>
-    <string name="search_initial_description">Find a session by its title or speaker</string>
-    <string name="search_no_match_title">No sessions found</string>
-    <string name="search_no_match_description">Try another word or filter</string>
+    <string name="search_initial_title">Take a look around</string>
+    <string name="search_initial_description">Search by session name, speaker or room</string>
+    <string name="search_no_match_title">Nothing found.</string>
+    <string name="search_no_match_description">Removing a filter may turn something up</string>
+    <string name="search_clear_filters">Clear filters</string>
+    <string name="search_result_count">%1$d sessions</string>
 
     <string name="search_filter_date">Date</string>
     <string name="search_filter_category">Category</string>
     <string name="search_filter_session_type">Session type</string>
-    <string name="search_filter_language">Language</string>
-    <string name="search_filter_with_count">%1$s (%2$d)</string>
+    <string name="search_filter_language">Supported language</string>
+    <string name="search_filter_with_count">%1$s %2$d</string>
 
     <string name="session_type_normal">Session</string>
     <string name="session_type_welcome_talk">Welcome talk</string>

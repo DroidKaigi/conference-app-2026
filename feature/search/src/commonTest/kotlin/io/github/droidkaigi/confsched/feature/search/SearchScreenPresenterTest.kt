@@ -64,7 +64,7 @@ class SearchScreenPresenterTest {
 
             send(SearchScreenAction.ChangeQueryText("Compose"))
             val found = assertIs<SearchResultUiState.Found>(uiStates.awaitItem().result)
-            assertEquals(listOf("compose"), found.items.map { it.id.value })
+            assertEquals(listOf("compose"), found.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
         }
     }
 
@@ -78,7 +78,7 @@ class SearchScreenPresenterTest {
 
             send(SearchScreenAction.ChangeQueryText("Speaker B"))
             val found = assertIs<SearchResultUiState.Found>(uiStates.awaitItem().result)
-            assertEquals(listOf("kmp"), found.items.map { it.id.value })
+            assertEquals(listOf("kmp"), found.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
         }
     }
 
@@ -92,7 +92,7 @@ class SearchScreenPresenterTest {
 
             send(SearchScreenAction.ChangeQueryText("実践"))
             val found = assertIs<SearchResultUiState.Found>(uiStates.awaitItem().result)
-            assertEquals(listOf("kmp"), found.items.map { it.id.value })
+            assertEquals(listOf("kmp"), found.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
         }
     }
 
@@ -165,7 +165,7 @@ class SearchScreenPresenterTest {
             send(SearchScreenAction.SelectDay(DroidKaigi2026Day.Day2))
             val state = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day2, state.filterRow.selectedDay)
-            assertEquals(listOf("kmp"), assertIs<SearchResultUiState.Found>(state.result).items.map { it.id.value })
+            assertEquals(listOf("kmp"), assertIs<SearchResultUiState.Found>(state.result).timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
         }
     }
 
@@ -179,7 +179,7 @@ class SearchScreenPresenterTest {
 
             send(SearchScreenAction.ToggleLanguage(Language.ENGLISH))
             val state = uiStates.awaitItem()
-            assertEquals(listOf("kmp"), assertIs<SearchResultUiState.Found>(state.result).items.map { it.id.value })
+            assertEquals(listOf("kmp"), assertIs<SearchResultUiState.Found>(state.result).timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
         }
     }
 
@@ -226,6 +226,45 @@ class SearchScreenPresenterTest {
             assertEquals(
                 listOf(SessionType.NORMAL, SessionType.CODELABS),
                 uiStates.awaitItem().filterRow.sessionTypes,
+            )
+        }
+    }
+
+    @Test
+    fun a_room_name_matches_as_well_as_a_title() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+
+            send(SearchScreenAction.ChangeQueryText("NARWHAL"))
+            val found = assertIs<SearchResultUiState.Found>(uiStates.awaitItem().result)
+            assertEquals(2, found.matchCount)
+        }
+    }
+
+    @Test
+    fun clearing_the_filters_keeps_the_word_typed() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+
+            send(SearchScreenAction.ChangeQueryText("Compose"))
+            uiStates.awaitItem()
+            send(SearchScreenAction.ToggleSessionType(SessionType.CODELABS))
+            assertEquals(SearchResultUiState.Empty.NoMatch, uiStates.awaitItem().result)
+
+            send(SearchScreenAction.ClearFilters)
+            val cleared = uiStates.awaitItem()
+            assertEquals("Compose", cleared.query)
+            assertEquals(emptySet(), cleared.filterRow.selectedSessionTypes)
+            assertEquals(
+                listOf("compose"),
+                assertIs<SearchResultUiState.Found>(cleared.result)
+                    .timeSlots.flatMap { slot -> slot.items.map { it.id.value } },
             )
         }
     }

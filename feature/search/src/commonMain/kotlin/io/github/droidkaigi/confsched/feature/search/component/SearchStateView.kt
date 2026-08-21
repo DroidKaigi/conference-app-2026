@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Info
@@ -23,6 +25,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_clear_filters
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_initial_description
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_initial_title
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_no_match_description
@@ -36,7 +39,11 @@ import org.jetbrains.compose.resources.stringResource
  * can drift into a layout of its own.
  */
 @Composable
-internal fun SearchStateView(state: SearchResultUiState.Empty, modifier: Modifier = Modifier) {
+internal fun SearchStateView(
+    state: SearchResultUiState.Empty,
+    onClearFiltersClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,6 +77,17 @@ internal fun SearchStateView(state: SearchResultUiState.Empty, modifier: Modifie
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
+            // Only the no-match state offers a way out; the opening state has nothing to undo.
+            if (state == SearchResultUiState.Empty.NoMatch) {
+                Text(
+                    text = stringResource(Res.string.search_clear_filters),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.clickable(onClick = onClearFiltersClick),
+                )
+            }
         }
     }
 }
@@ -85,7 +103,7 @@ private fun SearchStateViewInitialPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        SearchStateView(state = SearchResultUiState.Empty.Initial)
+        SearchStateView(state = SearchResultUiState.Empty.Initial, onClearFiltersClick = {})
     }
 }
 
@@ -95,6 +113,6 @@ private fun SearchStateViewNoMatchPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        SearchStateView(state = SearchResultUiState.Empty.NoMatch)
+        SearchStateView(state = SearchResultUiState.Empty.NoMatch, onClearFiltersClick = {})
     }
 }

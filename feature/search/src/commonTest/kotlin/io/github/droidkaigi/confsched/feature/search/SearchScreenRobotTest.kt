@@ -46,6 +46,9 @@ class SearchScreenRobotTest : RobotTest() {
                     checkSessionDisplayed("Day1 A")
                     checkSessionDoesNotExist("Day2 A")
                 }
+                itShould("count what it found") {
+                    checkResultCountShows(1)
+                }
                 describe("and the query is cleared") {
                     doIt {
                         clearQuery()
@@ -61,6 +64,24 @@ class SearchScreenRobotTest : RobotTest() {
                 }
                 itShould("show the no-match state") {
                     checkNoMatchStateDisplayed()
+                }
+            }
+            describe("and a filter leaves nothing to show") {
+                doIt {
+                    typeQuery("Day1")
+                    openDayFilter()
+                    pickFilterOption(DroidKaigi2026Day.Day2.label)
+                }
+                itShould("show the no-match state") {
+                    checkNoMatchStateDisplayed()
+                }
+                describe("and the filters are cleared from it") {
+                    doIt {
+                        clearFilters()
+                    }
+                    itShould("keep the word typed and bring the match back") {
+                        checkSessionDisplayed("Day1 A")
+                    }
                 }
             }
             describe("and a day is picked with nothing typed") {

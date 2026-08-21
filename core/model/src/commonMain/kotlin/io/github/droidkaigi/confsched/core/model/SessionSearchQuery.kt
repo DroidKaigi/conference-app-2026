@@ -39,7 +39,7 @@ data class SessionSearchQuery(
     fun toggleLanguage(language: Language): SessionSearchQuery = copy(languages = languages.toggle(language))
 
     /**
-     * Whether [item] answers the word typed.
+     * Whether [item] answers the word typed, across its title, its speaker and its room.
      *
      * Both sides of a title are matched, so a word typed in either language finds the session
      * whichever language the app is running in.
@@ -47,7 +47,8 @@ data class SessionSearchQuery(
     private fun matchesText(item: TimetableItem): Boolean = text.isBlank() ||
         item.title.ja.contains(text, ignoreCase = true) ||
         item.title.en.contains(text, ignoreCase = true) ||
-        item.speaker.contains(text, ignoreCase = true)
+        item.speaker.contains(text, ignoreCase = true) ||
+        item.room.name.contains(text, ignoreCase = true)
 }
 
 private fun <T> PersistentSet<T>.toggle(value: T): PersistentSet<T> =

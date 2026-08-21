@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.model.SessionSearchQuery
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.feature.search.component.SearchFilterRowUiState
 import io.github.droidkaigi.confsched.feature.search.component.SearchResultUiState
+import io.github.droidkaigi.confsched.feature.search.component.toSearchTimeSlots
 import kotlinx.collections.immutable.toPersistentList
 import soil.query.compose.rememberMutation
 
@@ -29,11 +30,19 @@ fun searchScreenPresenter(
     ActionEffect(screenChannel) { action ->
         when (action) {
             is SearchScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+
             is SearchScreenAction.ChangeQueryText -> query = query.copy(text = action.text)
+
             is SearchScreenAction.SelectDay -> query = query.copy(day = action.day)
+
             is SearchScreenAction.ToggleCategory -> query = query.toggleCategory(action.id)
+
             is SearchScreenAction.ToggleSessionType -> query = query.toggleSessionType(action.sessionType)
+
             is SearchScreenAction.ToggleLanguage -> query = query.toggleLanguage(action.language)
+
+            // The word typed is what the person is looking for; only the filters go.
+            SearchScreenAction.ClearFilters -> query = SessionSearchQuery(text = query.text)
         }
     }
 
@@ -61,8 +70,14 @@ fun searchScreenPresenter(
         ),
         result = when {
             query.isEmpty -> SearchResultUiState.Empty.Initial
+
             matches.isEmpty() -> SearchResultUiState.Empty.NoMatch
-            else -> SearchResultUiState.Found(items = matches, bookmarks = timetable.bookmarks)
+
+            else -> SearchResultUiState.Found(
+                matchCount = matches.size,
+                timeSlots = matches.toSearchTimeSlots(),
+                bookmarks = timetable.bookmarks,
+            )
         },
     )
 }

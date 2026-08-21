@@ -12,4 +12,5 @@ sealed interface SearchScreenAction {
     data class ToggleCategory(val id: Long) : SearchScreenAction
     data class ToggleSessionType(val sessionType: SessionType) : SearchScreenAction
     data class ToggleLanguage(val language: Language) : SearchScreenAction
+    data object ClearFilters : SearchScreenAction
 }

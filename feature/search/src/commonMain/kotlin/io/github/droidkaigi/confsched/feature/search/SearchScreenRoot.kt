@@ -44,6 +44,7 @@ fun SearchScreenRoot(
             onCategoryClick = { screenChannel.send(SearchScreenAction.ToggleCategory(it)) },
             onSessionTypeClick = { screenChannel.send(SearchScreenAction.ToggleSessionType(it)) },
             onLanguageClick = { screenChannel.send(SearchScreenAction.ToggleLanguage(it)) },
+            onClearFiltersClick = { screenChannel.send(SearchScreenAction.ClearFilters) },
             onBookmarkClick = { screenChannel.send(SearchScreenAction.Bookmark(it)) },
             onItemClick = onNavigateToDetail,
             onBackClick = onNavigateBack,

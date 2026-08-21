@@ -30,6 +30,7 @@ fun SearchScreen(
     onCategoryClick: (Long) -> Unit,
     onSessionTypeClick: (SessionType) -> Unit,
     onLanguageClick: (Language) -> Unit,
+    onClearFiltersClick: () -> Unit,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     onBackClick: () -> Unit,
@@ -47,6 +48,7 @@ fun SearchScreen(
             when (val result = uiState.result) {
                 is SearchResultUiState.Empty -> SearchStateView(
                     state = result,
+                    onClearFiltersClick = onClearFiltersClick,
                     modifier = Modifier.weight(1f),
                 )
 
@@ -74,6 +76,7 @@ private fun SearchScreenPreview(
             onCategoryClick = {},
             onSessionTypeClick = {},
             onLanguageClick = {},
+            onClearFiltersClick = {},
             onBookmarkClick = {},
             onItemClick = {},
             onBackClick = {},

@@ -31,8 +31,7 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun typeQuery(text: String) {
-        // The query field is the screen's only editable node, and its hint reads the same as the
-        // opening state's headline, so the semantics find it where the text would not.
+        // The field is the screen's only editable node, which finds it without depending on its hint.
         composeUiTest.onNode(hasSetTextAction()).performTextInput(text)
         composeUiTest.waitForIdle()
     }
@@ -61,11 +60,20 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkInitialStateDisplayed() {
-        composeUiTest.onNodeWithText(INITIAL_DESCRIPTION).assertIsDisplayed()
+        composeUiTest.onNodeWithText(INITIAL_TITLE).assertIsDisplayed()
     }
 
     fun checkNoMatchStateDisplayed() {
         composeUiTest.onNodeWithText(NO_MATCH_TITLE).assertIsDisplayed()
+    }
+
+    fun clearFilters() {
+        composeUiTest.onNodeWithText(CLEAR_FILTERS).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun checkResultCountShows(count: Int) {
+        composeUiTest.onNodeWithText("$count sessions").assertIsDisplayed()
     }
 
     fun checkDayFilterShows(label: String) {
@@ -77,9 +85,8 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         const val CLEAR_DESCRIPTION = "Clear"
         const val DATE_LABEL = "Date"
 
-        // The opening state's headline reads the same as the field's hint, so its supporting line
-        // is what tells the state apart.
-        const val INITIAL_DESCRIPTION = "Find a session by its title or speaker"
-        const val NO_MATCH_TITLE = "No sessions found"
+        const val INITIAL_TITLE = "Take a look around"
+        const val NO_MATCH_TITLE = "Nothing found."
+        const val CLEAR_FILTERS = "Clear filters"
     }
 }

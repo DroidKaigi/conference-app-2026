@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -17,8 +18,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowDropDown
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
@@ -123,7 +126,12 @@ internal fun SearchFilterRow(
     }
 }
 
-/** One filter: a chip carrying what is picked, and the options it opens. */
+/**
+ * One filter: a chip carrying what is picked, and the options it opens.
+ *
+ * The caret turns while the menu is open, so a chip reads as a control that opens rather than one
+ * that toggles.
+ */
 @Composable
 private fun SearchFilterChip(
     label: String,
@@ -133,7 +141,20 @@ private fun SearchFilterChip(
 ) {
     var expanded by remember { mutableStateOf(false) }
     Box {
-        KaigiFilterChip(selected = selected, onClick = { expanded = true }, label = label, seed = seed)
+        KaigiFilterChip(
+            selected = selected,
+            onClick = { expanded = true },
+            label = label,
+            seed = seed,
+        ) {
+            Icon(
+                imageVector = KaigiIcons.Default.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(SearchFilterRowDefaults.caretSize)
+                    .rotate(if (expanded) SearchFilterRowDefaults.CARET_OPEN_ROTATION else 0f),
+            )
+        }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             menuContent { expanded = false }
         }
@@ -154,12 +175,16 @@ private fun FilterMenuItem(label: String, selected: Boolean, onClick: () -> Unit
     )
 }
 
+/** A multi-pick chip keeps its label and appends what is picked, as `Category 2`. */
 @Composable
 private fun countedLabel(label: String, count: Int): String =
     if (count == 0) label else stringResource(Res.string.search_filter_with_count, label, count)
 
 private object SearchFilterRowDefaults {
     val spacing = 8.dp
+    val caretSize = 13.dp
+
+    const val CARET_OPEN_ROTATION = 180f
 
     // The favorites day filter draws its row from 821; a different start keeps these pills from
     // repeating those outlines.
