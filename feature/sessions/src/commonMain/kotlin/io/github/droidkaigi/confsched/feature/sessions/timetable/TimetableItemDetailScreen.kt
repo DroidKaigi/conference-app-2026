@@ -12,6 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -35,6 +39,7 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Sessi
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionDescriptionSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionDetailToolbar
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionEventMapDialog
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionHeaderView
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionInfoCard
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionMemoField
@@ -59,6 +64,8 @@ fun TimetableItemDetailScreen(
     val language = uiState.displayLanguage
     val isListDetailPane = LocalListDetailSceneScope.current != null
     val paneSpacerInset = if (isListDetailPane) LocalPanePartitionSpacerSize.current else 0.dp
+    var isEventMapDialogOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             KaigiTopAppBar(
@@ -121,6 +128,7 @@ fun TimetableItemDetailScreen(
                     hasInterpretation = item.hasInterpretation,
                     category = item.category?.of(language),
                     seed = TimetableItemDetailScreenDefaults.INFO_CARD_SEED,
+                    onOpenEventMapDialog = if (item.room.floor == null) null else { -> isEventMapDialogOpen = true },
                     modifier = Modifier
                         .padding(start = paneSpacerInset)
                         .padding(
@@ -202,6 +210,11 @@ fun TimetableItemDetailScreen(
                 }
             }
         }
+        SessionEventMapDialog(
+            room = item.room,
+            isOpen = isEventMapDialogOpen,
+            onDismiss = { isEventMapDialogOpen = false },
+        )
     }
 }
 
