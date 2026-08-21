@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">お気に入りセッションの予定をホーム画面で確認できます</string>
+    <string name="widget_countdown_prefix">あと</string>
+    <string name="widget_countdown_unit">日</string>
+    <string name="widget_countdown_dates">2026.%1$d.%2$d – %3$d.%4$d</string>
+    <string name="widget_countdown_note">会場でお会いしましょう</string>
+    <string name="widget_next_label">次のお気に入り</string>
+    <string name="widget_live_small_label">開催中</string>
+    <string name="widget_schedule_label">お気に入りの予定</string>
+    <string name="widget_favorites_label">お気に入り</string>
+    <string name="widget_empty_small">お気に入りに登録すると、次の予定がここに出ます。</string>
+    <string name="widget_empty_medium">お気に入りに登録したセッションが、開始時刻とともにここに並びます。</string>
+    <string name="widget_empty_hint">タップしてセッションを探す</string>
+    <string name="widget_post_message">ご参加ありがとうございました。またお会いしましょう。</string>
+    <string name="widget_same_slot_more_small">ほか%1$d件</string>
+    <string name="widget_same_slot_more_row">ほか %1$d 件</string>
+</resources>

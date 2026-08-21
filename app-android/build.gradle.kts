@@ -44,9 +44,15 @@ aboutLibraries {
 
 dependencies {
     implementation(project(":app-shared"))
+    implementation(project(":core:preview:api"))
     "devImplementation"(project(":feature:debug"))
     "prodImplementation"(libs.firebaseCrashlytics)
     implementation(libs.androidxActivityCompose)
+    implementation(libs.androidxGlanceAppwidget)
+    implementation(libs.androidxGlancePreview)
+    debugImplementation(libs.androidxGlanceAppwidgetPreview)
     implementation(libs.androidxDatastorePreferencesCore)
     implementation(libs.okio)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinxCoroutinesTest)
 }

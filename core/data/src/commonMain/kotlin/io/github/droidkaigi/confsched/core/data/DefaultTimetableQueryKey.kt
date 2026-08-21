@@ -15,7 +15,7 @@ class DefaultTimetableQueryKey(
     private val fileStorage: ServerEnvironmentScopedFileStorage,
 ) : TimetableQueryKey by buildPersistedQueryKey(
     id = SoilIds.timetableQuery,
-    persistKey = "timetable",
+    persistKey = TIMETABLE_PERSIST_KEY,
     fileStorage = fileStorage,
     fetchResponse = { api.getTimetable() },
     transformToDomainModel = { response -> Timetable(items = response.toTimetableItems().toPersistentList()) },
