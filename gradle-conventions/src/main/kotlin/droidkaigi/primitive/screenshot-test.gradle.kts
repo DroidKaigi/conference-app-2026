@@ -25,6 +25,13 @@ configure<RoborazziExtension> {
     }
 }
 
+// A golden must not change with the host's locale, and a Robot scenario asserts the English
+// base strings, so the test JVM runs under one locale rather than the machine's.
+tasks.withType<Test>().configureEach {
+    systemProperty("user.language", "en")
+    systemProperty("user.country", "US")
+}
+
 kotlin {
     sourceSets.named("commonTest") {
         dependencies {
