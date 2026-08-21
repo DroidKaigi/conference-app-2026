@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
+import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -18,6 +19,7 @@ class TimetableScreenRobotTest : RobotTest() {
     private val sampleTimetable = Timetable(
         items = persistentListOf(
             testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1b", title = "Day1 B", room = Room.UNKNOWN, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
             testTimetableItem(id = "d2a", title = "Day2 A", room = Room.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
         ),
         bookmarks = persistentSetOf(),
@@ -40,6 +42,17 @@ class TimetableScreenRobotTest : RobotTest() {
             }
             itShould("offer the search and grid view actions") {
                 checkTopBarActionsDisplayed()
+            }
+            itShould("name a room the app knows no floor for without offering its map") {
+                checkRoomChipOffersNoMap(Room.UNKNOWN)
+            }
+            describe("and the room chip of a session is tapped") {
+                doIt {
+                    clickRoomChip(Room.NARWHAL)
+                }
+                itShould("show the map of the floor that room is on") {
+                    checkEventMapDisplayed(Floor.Ground)
+                }
             }
             describe("and the Day2 tab is tapped") {
                 doIt {
