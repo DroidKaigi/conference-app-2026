@@ -90,7 +90,7 @@ composeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrainsCo
 composeComponentsResources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrainsCompose" }
 composeUiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrainsCompose" }
 composeUiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "jetbrainsCompose" }
-# Material3 and material-icons-extended are versioned independently of the Compose Multiplatform release.
+# Material3 is versioned independently of the Compose Multiplatform release.
 composeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version = "1.12.0-alpha03" }
 androidxDatastoreCore = { module = "androidx.datastore:datastore-core", version.ref = "androidxDatastore" }
 androidxDatastorePreferencesCore = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDatastore" }

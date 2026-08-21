@@ -52,7 +52,7 @@ import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_na
 import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
-import io.github.droidkaigi.confsched.core.designsystem.icon.Favorite
+import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteBorder
 import io.github.droidkaigi.confsched.core.designsystem.icon.Info
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Map
@@ -88,7 +88,7 @@ private val RootTab.icon: ImageVector
     get() = when (this) {
         RootTab.Timetable -> KaigiIcons.Default.Timetable
         RootTab.EventMap -> KaigiIcons.Default.Map
-        RootTab.Favorites -> KaigiIcons.Default.Favorite
+        RootTab.Favorites -> KaigiIcons.Default.FavoriteBorder
         RootTab.About -> KaigiIcons.Default.Info
         RootTab.ProfileCard -> KaigiIcons.Default.ProfileCard
     }
