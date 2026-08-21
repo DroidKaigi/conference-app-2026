@@ -79,13 +79,25 @@ private fun fakeItem(
     day: DroidKaigi2026Day,
     startsAt: String,
     endsAt: String,
-) = TimetableItem(
-    id = TimetableItemId(id),
-    title = title,
-    room = room,
-    speaker = speaker,
-    language = language,
-    day = day,
-    startsAt = startsAt,
-    endsAt = endsAt,
-)
+): TimetableItem {
+    // Unlike the data layer which parses full ISO-8601 strings, we construct Instants manually here.
+    // This allows us to keep the mock data definitions simple and readable (e.g., startsAt = "10:00")
+    // without requiring full timestamp strings for every fake item.
+    val startHour = startsAt.substringBefore(':').toInt()
+    val startMinute = startsAt.substringAfter(':').toInt()
+    val endHour = endsAt.substringBefore(':').toInt()
+    val endMinute = endsAt.substringAfter(':').toInt()
+
+    return TimetableItem(
+        id = TimetableItemId(id),
+        title = title,
+        room = room,
+        speaker = speaker,
+        language = language,
+        day = day,
+        startsAt = startsAt,
+        endsAt = endsAt,
+        startsAtInstant = day.at(hour = startHour, minute = startMinute),
+        endsAtInstant = day.at(hour = endHour, minute = endMinute),
+    )
+}
