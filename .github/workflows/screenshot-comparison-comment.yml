@@ -101,35 +101,42 @@ jobs:
       - id: report
         name: Build the report
         if: steps.collect.outputs.count != '0' || steps.existing.outputs.comment-id != ''
+        # A comment body over 65536 characters is rejected by the API, so a wide-reaching change
+        # lists this many renders and leaves the rest to the companion branch.
+        env:
+          MAX_ROWS: 50
         run: |
-          delimiter="$(openssl rand -hex 8)"
           {
-            echo "body<<${delimiter}"
             echo "Snapshot diff report"
             echo
-          } >> "$GITHUB_OUTPUT"
+          } > comment.md
           if [ "${{ steps.collect.outputs.count }}" = "0" ]; then
-            echo "No preview renders differ from the base branch." >> "$GITHUB_OUTPUT"
+            echo "No preview renders differ from the base branch." >> comment.md
           else
             mapfile -t files < files.txt
             {
               echo "| File name | Image |"
               echo "|-------|-------|"
-            } >> "$GITHUB_OUTPUT"
+            } >> comment.md
             # Screenshot ids are built from the qualified function name, so a path needs no escaping.
-            for file in "${files[@]}"; do
+            for file in "${files[@]:0:MAX_ROWS}"; do
               # Long ids overflow the column, so the name wraps every 20 characters.
               name=$(basename "$file" | sed -r 's/(.{20})/\1<br>/g')
               url="https://github.com/${{ github.repository }}/blob/$COMPANION_BRANCH/$file"
-              echo "| [$name]($url) | ![]($url?raw=true) |" >> "$GITHUB_OUTPUT"
+              echo "| [$name]($url) | ![]($url?raw=true) |" >> comment.md
             done
+            if [ "${#files[@]}" -gt "$MAX_ROWS" ]; then
+              tree="https://github.com/${{ github.repository }}/tree/$COMPANION_BRANCH"
+              echo >> comment.md
+              echo "$(( ${#files[@]} - MAX_ROWS )) further renders differ. Browse them on [$COMPANION_BRANCH]($tree)." >> comment.md
+            fi
           fi
-          echo "${delimiter}" >> "$GITHUB_OUTPUT"
 
       - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-        if: steps.report.outcome == 'success' && steps.report.outputs.body != ''
+        if: steps.report.outcome == 'success'
         with:
           comment-id: ${{ steps.existing.outputs.comment-id }}
           issue-number: ${{ steps.pull-request.outputs.number }}
-          body: ${{ steps.report.outputs.body }}
+          # The report is handed over as a file: a long one overflows the process argument list.
+          body-path: comment.md
           edit-mode: replace
