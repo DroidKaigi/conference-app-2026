@@ -47,6 +47,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
+      # Read while the checkout is still on disk — the companion branch below empties it.
+      - id: scheme-names
+        name: Read the color scheme names
+        run: |
+          # KaigiSchemeProvider names each render after its scheme, so these are the words the
+          # report folds a preview's runs on. In declaration order: the first is the one kept.
+          names=$(sed -n 's/^ *\([A-Z][A-Za-z0-9]*\),$/\1/p' \
+            core/model/src/commonMain/kotlin/io/github/droidkaigi/confsched/core/model/KaigiColorScheme.kt |
+            paste -sd'|' -)
+          echo "names=$names" >> "$GITHUB_OUTPUT"
       # A comment can only embed an image that is reachable over HTTP, so the diffs are pushed to a
       # branch of their own. It is orphaned so the images never enter main's history.
       - name: Start an empty companion branch
@@ -107,6 +117,7 @@ jobs:
         # ids run a row to some 800 characters.
         env:
           MAX_ROWS: 60
+          SCHEME_NAMES: ${{ steps.scheme-names.outputs.names }}
         run: |
           {
             echo "Snapshot diff report"
@@ -117,25 +128,29 @@ jobs:
           else
             mapfile -t files < files.txt
             rows=("${files[@]}")
-            if [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
-              # A @PreviewParameter fans one preview out into a render per value, numbered from
-              # zero, and a change to a shared component moves every one of them. Past the cap the
-              # report keeps value zero of each complete run, so a wide-reaching change still names
-              # every preview it touched instead of spending the table on the first few. A trailing
-              # number that is not such a run — a @Preview whose name ends in a digit — is left as
-              # its own row.
-              mapfile -t rows < <(awk '
-                function idxof(s,   t) {
-                  t = s
-                  if (!match(t, /_[0-9]+_compare\.png$/)) return -1
-                  t = substr(t, RSTART + 1); sub(/_compare\.png$/, "", t); return t + 0
+            if [ -n "$SCHEME_NAMES" ] && [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
+              # Every preview is rendered once per color scheme, so a change to a shared component
+              # moves the whole run of them. Past the cap the report keeps the first scheme of each
+              # run and drops the rest, so a wide-reaching change still names every preview it
+              # touched instead of spending the table on the first few.
+              mapfile -t rows < <(awk -v names="$SCHEME_NAMES" '
+                BEGIN {
+                  for (i = split(names, order, "|"); i > 0; i--) rank[order[i]] = i
+                  run = "_(" names ")_compare\\.png$"
                 }
-                function setof(s,   t) { t = s; sub(/_[0-9]+_compare\.png$/, "", t); return t }
-                NR == FNR { i = idxof($0); if (i >= 0) { s = setof($0); n[s]++; if (i > mx[s]) mx[s] = i } next }
-                { i = idxof($0); if (i < 0) { print; next }
-                  s = setof($0)
-                  if (n[s] < 2 || n[s] != mx[s] + 1) { print; next }
-                  if (i == 0) print }
+                function schemeof(s,   t) { match(s, run); t = substr(s, RSTART + 1); sub(/_compare\.png$/, "", t); return t }
+                function previewof(s,   t) { t = s; sub(run, "", t); return t }
+                NR == FNR {
+                  if (!match($0, run)) next
+                  p = previewof($0); r = rank[schemeof($0)]
+                  seen[p]++
+                  if (!(p in first) || r < first[p]) first[p] = r
+                  next
+                }
+                { if (!match($0, run)) { print; next }
+                  p = previewof($0)
+                  if (seen[p] < 2) { print; next }
+                  if (rank[schemeof($0)] == first[p]) print }
               ' files.txt files.txt)
             fi
             {
@@ -152,7 +167,7 @@ jobs:
             if [ "${#rows[@]}" -lt "${#files[@]}" ] || [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
               echo >> comment.md
               if [ "${#rows[@]}" -lt "${#files[@]}" ]; then
-                printf 'Renders that differ only by preview parameter are folded into one row each, %d rows for %d renders. ' \
+                printf 'Each row stands for one preview across every color scheme, %d rows for %d renders. ' \
                   "${#rows[@]}" "${#files[@]}" >> comment.md
               fi
               if [ "${#rows[@]}" -gt "$MAX_ROWS" ]; then
