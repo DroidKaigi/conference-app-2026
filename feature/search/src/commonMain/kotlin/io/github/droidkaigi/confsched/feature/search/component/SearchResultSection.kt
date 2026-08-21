@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
@@ -30,6 +31,7 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_result_count
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -63,6 +65,7 @@ internal fun SearchResultSection(
                 endsAt = slot.endsAt,
                 items = slot.items,
                 bookmarks = uiState.bookmarks,
+                titleMark = uiState.titleMark,
                 onBookmarkClick = onBookmarkClick,
                 onItemClick = onItemClick,
             )
@@ -77,6 +80,7 @@ private fun SearchResultRow(
     endsAt: String,
     items: PersistentList<TimetableItem>,
     bookmarks: PersistentSet<TimetableItemId>,
+    titleMark: String,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
 ) {
@@ -96,9 +100,48 @@ private fun SearchResultRow(
                     seed = item.id.value.hashCode(),
                     onBookmarkClick = { onBookmarkClick(item.id) },
                     onClick = { onItemClick(item.id) },
+                    titleMark = titleMark,
                 )
             }
         }
+    }
+}
+
+/**
+ * The two cases the highlight note singles out: a title matching the word more than once, and a
+ * match the wrap splits across two lines.
+ */
+@LocalePreviews
+@Composable
+private fun SearchResultSectionMarkedPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        val timetable = Timetable.fake()
+        val marked = persistentListOf(
+            timetable.items[0].copy(
+                title = MultiLangText(
+                    ja = "Compose で書く Compose",
+                    en = "Compose written in Compose",
+                ),
+            ),
+            timetable.items[1].copy(
+                title = MultiLangText(
+                    ja = "折り返しをまたぐ Compose Multiplatform の話",
+                    en = "A placeholder title long enough that Compose Multiplatform falls across the wrap",
+                ),
+            ),
+        )
+        SearchResultSection(
+            uiState = SearchResultUiState.Found(
+                matchCount = marked.size,
+                timeSlots = marked.toSearchTimeSlots(),
+                bookmarks = timetable.bookmarks,
+                titleMark = "Compose",
+            ),
+            onBookmarkClick = {},
+            onItemClick = {},
+        )
     }
 }
 
@@ -114,6 +157,7 @@ private fun SearchResultSectionPreview(
                 matchCount = timetable.items.size,
                 timeSlots = timetable.items.toSearchTimeSlots(),
                 bookmarks = timetable.bookmarks,
+                titleMark = "Session",
             ),
             onBookmarkClick = {},
             onItemClick = {},

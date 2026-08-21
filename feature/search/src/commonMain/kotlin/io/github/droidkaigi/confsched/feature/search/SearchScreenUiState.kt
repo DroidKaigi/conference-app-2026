@@ -35,6 +35,7 @@ internal fun SearchScreenUiState.Companion.fake(): SearchScreenUiState {
             matchCount = matches.size,
             timeSlots = matches.toSearchTimeSlots(),
             bookmarks = timetable.bookmarks,
+            titleMark = query.text,
         ),
     )
 }

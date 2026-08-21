@@ -77,6 +77,7 @@ fun searchScreenPresenter(
                 matchCount = matches.size,
                 timeSlots = matches.toSearchTimeSlots(),
                 bookmarks = timetable.bookmarks,
+                titleMark = query.text,
             )
         },
     )

@@ -46,6 +46,9 @@ import org.jetbrains.compose.resources.stringResource
  * One session, outlined by hand: the room and language it runs in, its title, and who gives
  * it, with the bookmark tinted in the room's color. A saved session also carries the room's
  * mascot, which marks the card as saved at a glance.
+ *
+ * A card reached from a search passes the word typed as `titleMark`, and the title draws a
+ * highlighter over wherever that word matched. A card outside a search leaves it empty.
  */
 @Composable
 fun TimetableItemCard(
@@ -58,6 +61,7 @@ fun TimetableItemCard(
     onBookmarkClick: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    titleMark: String = "",
 ) {
     val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
@@ -75,6 +79,7 @@ fun TimetableItemCard(
         )
         CardBody(
             title = title,
+            titleMark = titleMark,
             room = room,
             speaker = speaker,
             language = language,
@@ -112,6 +117,7 @@ fun TimetableItemCard(
 @Composable
 private fun CardBody(
     title: String,
+    titleMark: String,
     room: Room,
     speaker: String,
     language: Language,
@@ -123,8 +129,10 @@ private fun CardBody(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ChipRow(room = room, language = language, seed = seed)
-        Text(
+        SketchMarkedText(
             text = title,
+            mark = titleMark,
+            seed = seed,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )

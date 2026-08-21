@@ -28,6 +28,8 @@ sealed interface SearchResultUiState {
         val matchCount: Int,
         val timeSlots: PersistentList<TimeSlot>,
         val bookmarks: PersistentSet<TimetableItemId>,
+        /** The word typed, so a card can mark where it matched. A filter alone marks nothing. */
+        val titleMark: String,
     ) : SearchResultUiState {
         data class TimeSlot(
             val day: DroidKaigi2026Day,
