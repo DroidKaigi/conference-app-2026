@@ -9,5 +9,10 @@ kotlin {
             implementation(project(":core:model"))
             implementation(project(":core:ui"))
         }
+        commonTest.dependencies {
+            implementation(project(":core:model"))
+            implementation(kotlin("test"))
+            implementation(project(":core:testing"))
+        }
     }
 }

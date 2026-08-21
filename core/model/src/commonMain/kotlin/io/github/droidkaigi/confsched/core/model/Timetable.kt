@@ -40,5 +40,8 @@ data class Timetable(
 
     fun isFavorite(id: TimetableItemId): Boolean = id in bookmarks
 
+    fun search(query: SessionSearchQuery): PersistentList<TimetableItem> =
+        items.filter(query::matches).toPersistentList()
+
     companion object
 }

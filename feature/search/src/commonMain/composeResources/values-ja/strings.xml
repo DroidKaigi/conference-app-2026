@@ -1,0 +1,9 @@
+<resources>
+    <string name="search">検索</string>
+    <string name="search_hint">セッションを検索</string>
+    <string name="search_clear">消去</string>
+    <string name="search_initial_title">セッションを検索</string>
+    <string name="search_initial_description">タイトルや登壇者から探せます</string>
+    <string name="search_no_match_title">セッションが見つかりません</string>
+    <string name="search_no_match_description">別の言葉で試してください</string>
+</resources>

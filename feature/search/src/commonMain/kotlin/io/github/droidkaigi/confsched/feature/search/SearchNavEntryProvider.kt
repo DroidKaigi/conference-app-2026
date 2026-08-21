@@ -22,6 +22,7 @@ class SearchNavEntryProvider(
             context(graph.screenContext) {
                 SearchScreenRoot(
                     onNavigateBack = appNavigator::back,
+                    onNavigateToDetail = graph.screenNavigator::openSessionDetail,
                 )
             }
         }

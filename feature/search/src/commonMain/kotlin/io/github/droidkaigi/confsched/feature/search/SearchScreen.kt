@@ -1,46 +1,72 @@
 package io.github.droidkaigi.confsched.feature.search
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBarBackButton
+import io.github.droidkaigi.confsched.feature.search.component.SearchResultSection
+import io.github.droidkaigi.confsched.feature.search.component.SearchResultUiState
+import io.github.droidkaigi.confsched.feature.search.component.SearchStateView
+import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_hint
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SearchScreen(
     uiState: SearchScreenUiState,
-    onReloadClick: () -> Unit,
+    onQueryChange: (String) -> Unit,
+    onBookmarkClick: (TimetableItemId) -> Unit,
+    onItemClick: (TimetableItemId) -> Unit,
     onBackClick: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(uiState.title)
-        Text("Reloaded ${uiState.reloadCount} times")
-        Button(onClick = onReloadClick) { Text("Reload") }
-        Button(onClick = onBackClick) { Text("Back") }
+    Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            KaigiTopAppBarBackButton(onClick = onBackClick)
+            TextField(
+                value = uiState.query,
+                onValueChange = onQueryChange,
+                placeholder = { Text(stringResource(Res.string.search_hint)) },
+            )
+            when (val result = uiState.result) {
+                is SearchResultUiState.Empty -> SearchStateView(
+                    state = result,
+                    modifier = Modifier.weight(1f),
+                )
+
+                is SearchResultUiState.Found -> SearchResultSection(
+                    uiState = result,
+                    onBookmarkClick = onBookmarkClick,
+                    onItemClick = onItemClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
     }
 }
 
-@Preview
+@LocaleScreenPreviews
 @Composable
 private fun SearchScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
         SearchScreen(
-            uiState = SearchScreenUiState(title = "Search", reloadCount = 0),
-            onReloadClick = {},
+            uiState = SearchScreenUiState.fake(),
+            onQueryChange = {},
+            onBookmarkClick = {},
+            onItemClick = {},
             onBackClick = {},
         )
     }
