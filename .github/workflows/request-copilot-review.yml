@@ -1,9 +1,6 @@
 name: Request Copilot review
 
-# The ruleset's automatic Copilot review is attributed to the pull request author and is skipped
-# when the author has no Copilot access, which is the case for every fork. pull_request_target runs
-# with the base repository's token, so the request is made on the repository's behalf instead.
-# The pull request's code is never checked out here: this job only calls the API.
+# pull_request_target grants the base repository's token: never check out the pull request's code here.
 on:
   pull_request_target:
     types: [opened, ready_for_review]
