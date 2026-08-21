@@ -26,6 +26,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
 import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
@@ -67,6 +68,8 @@ fun AboutScreen(
     isDebugMenuAvailable: Boolean,
     onOpenDebug: () -> Unit,
 ) {
+    // The navigation bar floats over the content, so the scroll reserves its room at the bottom.
+    val navigationBarHeight = LocalNavigationBarOccupiedHeight.current
     Scaffold(
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.about_title)) },
     ) { innerPadding ->
@@ -172,7 +175,7 @@ fun AboutScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp + navigationBarHeight),
             )
         }
     }
