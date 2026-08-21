@@ -41,7 +41,6 @@ fun TimetableTimeRange(
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
-        // Delegate the line drawing logic to a separate private function
         ProgressWavyLine(
             state = timeRangeState,
             seed = seed,
