@@ -18,12 +18,12 @@ class StaffNavEntryProvider(
     private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<StaffNavKey> {
+        entry<StaffNavKey> { key ->
             val graph = retain(screenGraphFactory::createStaffScreenGraph)
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 StaffScreenRoot(
-                    onNavigateBack = appNavigator::back,
+                    onNavigateBack = { appNavigator.back(origin = key) },
                     onStaffClick = uriHandler::openUri,
                 )
             }

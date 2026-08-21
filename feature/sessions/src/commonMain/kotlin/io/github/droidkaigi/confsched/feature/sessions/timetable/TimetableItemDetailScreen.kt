@@ -4,11 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,12 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Close
+import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteBorder
+import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteFilled
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBarBackButton
+import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.add_favorite
@@ -42,14 +42,23 @@ fun TimetableItemDetailScreen(
     onBookmarkClick: () -> Unit,
     onBack: () -> Unit,
 ) {
+    val isListDetailPane = LocalListDetailSceneScope.current != null
+    val paneSpacerInset = if (isListDetailPane) {
+        LocalPanePartitionSpacerSize.current
+    } else {
+        0.dp
+    }
     Scaffold(
         topBar = {
             KaigiTopAppBar(
                 title = "",
                 navigationIcon = {
-                    if (LocalListDetailSceneScope.current != null) {
-                        IconButton(onClick = onBack) {
-                            Icon(Icons.Filled.Close, contentDescription = stringResource(Res.string.close))
+                    if (isListDetailPane) {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier.padding(start = paneSpacerInset),
+                        ) {
+                            Icon(KaigiIcons.Default.Close, contentDescription = stringResource(Res.string.close))
                         }
                     } else {
                         KaigiTopAppBarBackButton(onClick = onBack)
@@ -63,7 +72,7 @@ fun TimetableItemDetailScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = onBookmarkClick) {
                 Icon(
-                    imageVector = if (uiState.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    imageVector = if (uiState.isFavorite) KaigiIcons.Default.FavoriteFilled else KaigiIcons.Default.FavoriteBorder,
                     contentDescription = if (uiState.isFavorite) stringResource(Res.string.remove_favorite) else stringResource(Res.string.add_favorite),
                 )
             }
@@ -78,6 +87,7 @@ fun TimetableItemDetailScreen(
                     room = uiState.item.room.name,
                     title = uiState.item.title.current(),
                     speaker = uiState.item.speaker,
+                    startInset = paneSpacerInset,
                 )
             }
             item {
@@ -86,7 +96,9 @@ fun TimetableItemDetailScreen(
                     startsAt = uiState.item.startsAt,
                     endsAt = uiState.item.endsAt,
                     room = uiState.item.room.name,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+                    modifier = Modifier
+                        .padding(start = paneSpacerInset)
+                        .padding(horizontal = 8.dp, vertical = 16.dp),
                 )
             }
         }

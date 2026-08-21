@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +18,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.LocationOn
+import io.github.droidkaigi.confsched.core.designsystem.icon.Schedule
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -48,12 +48,12 @@ internal fun TimetableItemDetailSummaryCard(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SummaryRow(
-            imageVector = Icons.Outlined.Schedule,
+            imageVector = KaigiIcons.Default.Schedule,
             title = stringResource(Res.string.schedule),
             description = "${day.name} $startsAt - $endsAt",
         )
         SummaryRow(
-            imageVector = Icons.Outlined.LocationOn,
+            imageVector = KaigiIcons.Default.LocationOn,
             title = stringResource(Res.string.location),
             description = room,
         )

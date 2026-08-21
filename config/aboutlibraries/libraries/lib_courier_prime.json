@@ -1,0 +1,14 @@
+{
+  "uniqueId": "font.courier-prime",
+  "name": "Courier Prime",
+  "description": "Bundled font",
+  "website": "https://quoteunquoteapps.com/courierprime/",
+  "developers": [
+    {
+      "name": "The Courier Prime Project Authors"
+    }
+  ],
+  "licenses": [
+    "ofl-1.1-courier-prime"
+  ]
+}

@@ -9,9 +9,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 sealed interface NavCommand {
     data class Push(val key: NavKey) : NavCommand
-    data object Pop : NavCommand
+    data class Pop(val origin: NavKey?) : NavCommand
 
     data class MoveToTop(val key: NavKey) : NavCommand
+
+    data class ReplaceTop(val key: NavKey) : NavCommand
 }
 
 @Inject
@@ -25,13 +27,18 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
         commandChannel.trySend(NavCommand.Push(key))
     }
 
-    fun back() {
-        logger.debug { "back" }
-        commandChannel.trySend(NavCommand.Pop)
+    fun back(origin: NavKey? = null) {
+        logger.debug { "back from $origin" }
+        commandChannel.trySend(NavCommand.Pop(origin = origin))
     }
 
     fun moveToTop(key: NavKey) {
         logger.debug { "moveToTop $key" }
         commandChannel.trySend(NavCommand.MoveToTop(key))
+    }
+
+    fun replaceTop(key: NavKey) {
+        logger.debug { "replaceTop $key" }
+        commandChannel.trySend(NavCommand.ReplaceTop(key))
     }
 }

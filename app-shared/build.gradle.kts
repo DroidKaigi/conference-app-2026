@@ -30,5 +30,8 @@ kotlin {
             api(project(":feature:eventmap"))
             implementation(libs.composeMaterial3AdaptiveNavigation3)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
