@@ -11,11 +11,14 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.testing.Robot
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     private val graph = createGraph<TimetableScreenTestGraph>()
+
+    private var searchOpened = false
 
     fun setupTimetable(timetable: Timetable) {
         graph.timetableQueryKey.set(timetable)
@@ -24,9 +27,17 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     fun setupContent() {
         setScreenContent {
             context(graph.screenContext) {
-                TimetableScreenRoot(onNavigateToDetail = {}, onNavigateToSearch = {})
+                TimetableScreenRoot(
+                    onNavigateToDetail = {},
+                    onNavigateToSearch = { searchOpened = true },
+                )
             }
         }
+    }
+
+    fun clickSearch() {
+        composeUiTest.onNodeWithContentDescription("Search").performClick()
+        composeUiTest.waitForIdle()
     }
 
     fun clickDayTab(day: DroidKaigi2026Day) {
@@ -50,5 +61,9 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     fun checkTopBarActionsDisplayed() {
         composeUiTest.onNodeWithContentDescription("Search").assertIsDisplayed()
         composeUiTest.onNodeWithContentDescription("Switch to grid view").assertIsDisplayed()
+    }
+
+    fun checkSearchOpened() {
+        assertTrue(searchOpened)
     }
 }

@@ -29,15 +29,10 @@ fun searchScreenPresenter(
     ActionEffect(screenChannel) { action ->
         when (action) {
             is SearchScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
-
             is SearchScreenAction.ChangeQueryText -> query = query.copy(text = action.text)
-
             is SearchScreenAction.SelectDay -> query = query.copy(day = action.day)
-
             is SearchScreenAction.ToggleCategory -> query = query.toggleCategory(action.id)
-
             is SearchScreenAction.ToggleSessionType -> query = query.toggleSessionType(action.sessionType)
-
             is SearchScreenAction.ToggleLanguage -> query = query.toggleLanguage(action.language)
         }
     }

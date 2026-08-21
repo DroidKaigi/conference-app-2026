@@ -43,6 +43,14 @@ class TimetableScreenRobotTest : RobotTest() {
             itShould("offer the search and grid view actions") {
                 checkTopBarActionsDisplayed()
             }
+            describe("and the search action is tapped") {
+                doIt {
+                    clickSearch()
+                }
+                itShould("leave for the search screen") {
+                    checkSearchOpened()
+                }
+            }
             describe("and the Day2 tab is tapped") {
                 doIt {
                     clickDayTab(DroidKaigi2026Day.Day2)
