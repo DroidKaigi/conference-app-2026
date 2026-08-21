@@ -42,7 +42,8 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
  * @param size the diameter of the disc.
  * @param containerColor the colour filling the disc.
  * @param contentColor the colour [content] draws in, provided as [LocalContentColor].
- * @param content the icon the disc holds.
+ * @param content the icon the disc holds, laid out at [KaigiIconButtonDefaults.iconSize] rather
+ *   than at its own size.
  */
 @Composable
 fun KaigiIconButton(
@@ -63,12 +64,22 @@ fun KaigiIconButton(
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
+        CompositionLocalProvider(LocalContentColor provides contentColor) {
+            Box(
+                modifier = Modifier.size(KaigiIconButtonDefaults.iconSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                content()
+            }
+        }
     }
 }
 
 object KaigiIconButtonDefaults {
     val size = 38.dp
+
+    /** The box the top bar draws every glyph in, narrower than an icon's own 24.dp. */
+    val iconSize = 18.dp
 }
 
 @Preview
