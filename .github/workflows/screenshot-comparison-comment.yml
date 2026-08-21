@@ -77,6 +77,8 @@ jobs:
             esac
             [[ "$file" =~ ^[A-Za-z0-9._/-]+$ ]] && printf '%s\n' "$file" >> files.txt
           done
+          # find walks in directory order, which decides which renders a truncated report keeps.
+          LC_ALL=C sort -o files.txt files.txt
           echo "count=$(wc -l < files.txt)" >> "$GITHUB_OUTPUT"
 
       - name: Push the diff images
@@ -128,7 +130,9 @@ jobs:
             if [ "${#files[@]}" -gt "$MAX_ROWS" ]; then
               tree="https://github.com/${{ github.repository }}/tree/$COMPANION_BRANCH"
               echo >> comment.md
-              echo "$(( ${#files[@]} - MAX_ROWS )) further renders differ. Browse them on [$COMPANION_BRANCH]($tree)." >> comment.md
+              # The branch name is the pull request author's, so it stays inside the link target
+              # rather than becoming label text that could carry markdown of its own.
+              echo "$(( ${#files[@]} - MAX_ROWS )) further renders differ. [Browse them on the companion branch]($tree)." >> comment.md
             fi
           fi
 
