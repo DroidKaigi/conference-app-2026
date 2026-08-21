@@ -11,5 +11,6 @@ The design splits by concern:
 - [Root NavEntry emulation (RootSceneStrategy)](./navigation-predictive-back-tabs.md) — back exits from the home root even with other tabs stashed beneath it
 - [Root tab bar (RootTabSceneDecorator)](./navigation-root-tab-bar.md) — bottom bar and tab switching via `RootTabSceneDecorator`
 - [List-detail scenes (ListDetailSceneStrategy)](./navigation-list-detail.md) — `ListDetailSceneStrategy` on large windows; the detail pane's back icon adapts via a `CompositionLocal`
+- [Deep links (DeepLinkEffect)](./navigation-deep-links.md) — external navigation requests (widget taps, URLs) buffered in `DeepLinkStore` and applied with a synthesized back stack on cold start
 
 Related: [Building a screen](./building-a-screen.md) · [ScreenContext design](./screen-context.md) · [enforcement](./enforcement.md)

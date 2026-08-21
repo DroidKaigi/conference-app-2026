@@ -1,0 +1,14 @@
+{
+  "uniqueId": "font.noto-sans",
+  "name": "Noto Sans",
+  "description": "Bundled font",
+  "website": "https://fonts.google.com/noto/specimen/Noto+Sans",
+  "developers": [
+    {
+      "name": "The Noto Project Authors"
+    }
+  ],
+  "licenses": [
+    "ofl-1.1-noto-sans"
+  ]
+}
