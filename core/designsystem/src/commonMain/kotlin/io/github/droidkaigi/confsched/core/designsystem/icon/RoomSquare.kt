@@ -1,0 +1,33 @@
+package io.github.droidkaigi.confsched.core.designsystem.icon
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.unit.dp
+
+val KaigiIcons.Default.RoomSquare: ImageVector
+    get() = cachedRoomSquare ?: ImageVector.Builder(
+        name = "KaigiIcons.Default.RoomSquare",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 144f,
+        viewportHeight = 144f,
+    )
+        .addPath(
+            pathData = addPathNodes("M43.3587 43.3468C46.7787 40.4248 56.0967 44.6488 62.4987 44.9008C68.8347 45.0868 75.1767 44.8348 81.5127 44.5888C87.9147 44.3368 97.3587 40.2988 100.779 43.2208C104.133 46.2028 101.835 56.0848 101.835 62.4868C101.835 68.8228 101.091 75.1588 100.839 81.5008C100.653 87.8368 103.701 97.3468 100.467 100.455C97.2987 103.623 87.8547 100.329 81.5127 100.269C75.1767 100.203 68.8347 100.017 62.4987 100.083C56.1627 100.083 46.8387 103.563 43.5447 100.455C40.2507 97.3468 43.1127 87.8368 42.8607 81.5008C42.6147 75.1588 41.9307 68.8228 41.9907 62.4868C42.0567 56.0848 39.9387 46.2688 43.3587 43.3468Z"),
+            fill = SolidColor(Color.Black),
+        )
+        .addPath(
+            pathData = addPathNodes("M62.4987 44.9008C56.0967 44.6488 46.7787 40.4248 43.3587 43.3468C39.9387 46.2688 42.0567 56.0848 41.9907 62.4868C41.9307 68.8228 42.6147 75.1588 42.8607 81.5008C43.1127 87.8368 40.2507 97.3468 43.5447 100.455C46.8387 103.563 56.1627 100.083 62.4987 100.083C68.8347 100.017 75.1767 100.203 81.5127 100.269C87.8547 100.329 97.2987 103.623 100.467 100.455C103.701 97.3468 100.653 87.8368 100.839 81.5008C101.091 75.1588 101.835 68.8228 101.835 62.4868C101.835 56.0848 104.133 46.2028 100.779 43.2208C97.3587 40.2988 87.9147 44.3368 81.5127 44.5888L81.2655 44.5984C75.0117 44.8412 68.7523 45.0843 62.4987 44.9008Z"),
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 10.8f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        )
+        .build()
+        .also { cachedRoomSquare = it }
+
+private var cachedRoomSquare: ImageVector? = null

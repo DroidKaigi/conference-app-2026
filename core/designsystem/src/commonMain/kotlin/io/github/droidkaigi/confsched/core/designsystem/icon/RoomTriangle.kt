@@ -1,0 +1,33 @@
+package io.github.droidkaigi.confsched.core.designsystem.icon
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.unit.dp
+
+val KaigiIcons.Default.RoomTriangle: ImageVector
+    get() = cachedRoomTriangle ?: ImageVector.Builder(
+        name = "KaigiIcons.Default.RoomTriangle",
+        defaultWidth = 24.dp,
+        defaultHeight = 24.dp,
+        viewportWidth = 144f,
+        viewportHeight = 144f,
+    )
+        .addPath(
+            pathData = addPathNodes("M71.9416 39.7734C74.5576 39.7734 76.7896 50.2974 79.7296 55.4034C82.5976 60.5694 86.3596 65.4834 89.3596 70.6494C92.3596 75.8814 94.9096 81.3054 97.5256 86.6694C100.142 92.0874 107.546 100.319 105.122 103.001C102.698 105.743 90.3796 103.001 82.9816 102.875C75.6436 102.809 68.2396 102.299 60.9076 102.299C53.5696 102.299 41.3836 105.491 38.8936 102.875C36.4696 100.259 43.6756 92.0274 46.1656 86.6034C48.7156 81.1794 51.0796 75.6294 54.0136 70.3974C57.0136 65.1654 60.9076 60.3774 63.9016 55.2774C66.9016 50.1714 69.3256 39.7734 71.9416 39.7734Z"),
+            fill = SolidColor(Color.Black),
+        )
+        .addPath(
+            pathData = addPathNodes("M79.7296 55.4034C76.7896 50.2974 74.5576 39.7734 71.9416 39.7734C69.3256 39.7734 66.9016 50.1714 63.9016 55.2774C60.9076 60.3774 57.0136 65.1654 54.0136 70.3974C51.0796 75.6294 48.7156 81.1794 46.1656 86.6034C43.6756 92.0274 36.4696 100.259 38.8936 102.875C41.3836 105.491 53.5696 102.299 60.9076 102.299C68.2396 102.299 75.6436 102.809 82.9816 102.875C90.3796 103.001 102.698 105.743 105.122 103.001C107.546 100.319 100.142 92.0874 97.5256 86.6694C94.9096 81.3054 92.3596 75.8814 89.3596 70.6494C86.3596 65.4834 82.5976 60.5694 79.7296 55.4034Z"),
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 10.8f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        )
+        .build()
+        .also { cachedRoomTriangle = it }
+
+private var cachedRoomTriangle: ImageVector? = null

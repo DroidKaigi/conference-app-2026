@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +23,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowBack
+import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Search
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -135,7 +135,7 @@ fun KaigiLargeTopAppBar(
 fun KaigiTopAppBarBackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(onClick = onClick, modifier = modifier) {
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            imageVector = KaigiIcons.Default.ArrowBack,
             contentDescription = stringResource(Res.string.back),
         )
     }
@@ -194,10 +194,10 @@ private fun KaigiTopAppBarPreview(
     KaigiPreviewTheme(colorScheme) {
         KaigiTopAppBar(title = "Timetable", windowInsets = WindowInsets(0)) {
             KaigiIconButton(seed = 777, onClick = {}) {
-                Icon(Icons.Filled.Search, contentDescription = null)
+                Icon(KaigiIcons.Default.Search, contentDescription = null)
             }
             KaigiIconButton(seed = 778, onClick = {}) {
-                Icon(Icons.Filled.DateRange, contentDescription = null)
+                Icon(KaigiIcons.Default.GridView, contentDescription = null)
             }
         }
     }
