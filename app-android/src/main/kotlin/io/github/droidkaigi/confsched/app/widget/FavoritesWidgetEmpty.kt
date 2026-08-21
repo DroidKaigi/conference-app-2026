@@ -14,8 +14,12 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.Text
 import io.github.droidkaigi.confsched.R
+import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 
 @Composable
 internal fun EmptyContent(colors: FavoritesWidgetColors) {
@@ -55,4 +59,12 @@ private fun EmptyBody(colors: FavoritesWidgetColors, medium: Boolean) {
             Mascot(R.drawable.widget_mascot_ladybug, if (medium) 37.dp else 33.dp, if (medium) 34.dp else 30.dp, colors)
         }
     }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun EmptyPreview() {
+    FavoritesWidgetContent(FavoritesWidgetState.Empty, KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
 }

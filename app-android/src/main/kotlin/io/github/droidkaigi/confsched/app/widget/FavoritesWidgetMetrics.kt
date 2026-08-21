@@ -20,4 +20,9 @@ private val MediumMinWidth = 250.dp
 
 internal fun isMedium(size: DpSize): Boolean = size.width >= MediumMinWidth
 
+// The 2x2 and 4x2 cells of the design, which straddle the medium breakpoint.
+internal const val PREVIEW_SMALL_WIDTH_DP = 158
+internal const val PREVIEW_MEDIUM_WIDTH_DP = 338
+internal const val PREVIEW_HEIGHT_DP = 158
+
 internal fun mascotClearance(medium: Boolean): Dp = if (medium) 37.dp + GapArt else 0.dp

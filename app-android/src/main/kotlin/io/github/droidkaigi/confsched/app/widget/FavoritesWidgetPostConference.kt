@@ -15,9 +15,13 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import io.github.droidkaigi.confsched.R
+import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 
 @Composable
 internal fun PostConferenceContent(colors: FavoritesWidgetColors) {
@@ -73,4 +77,12 @@ private fun PostConferenceMediumBody(colors: FavoritesWidgetColors) {
         Spacer(modifier = GlanceModifier.width(GapArt))
         Mascot(R.drawable.widget_mascot_jellyfish, 37.dp, 34.dp, colors)
     }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun PostConferencePreview() {
+    FavoritesWidgetContent(FavoritesWidgetState.PostConference, KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
 }

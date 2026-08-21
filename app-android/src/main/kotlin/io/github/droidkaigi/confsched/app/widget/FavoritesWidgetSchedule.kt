@@ -19,15 +19,22 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.app.favoriteSessionDeepLinkIntent
+import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetRow
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetSlot
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Timetable
+import io.github.droidkaigi.confsched.core.model.computeFavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.toFavoritesWidgetRows
+import io.github.droidkaigi.confsched.core.preview.fake
 import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityIntent
 
 private const val MAX_MEDIUM_ROWS = 3
@@ -243,4 +250,29 @@ private fun List<FavoritesWidgetRow>.toBandGroups(): List<RowGroup> {
         }
     }
     return groups
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun SchedulePreview() {
+    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun ScheduleDarkPreview() {
+    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.CampfireNight.toFavoritesWidgetColors())
+}
+
+/** Day 1 shortly after the first favorite starts, so the live band and a later row both show. */
+private fun previewScheduleState(): FavoritesWidgetState {
+    val timetable = Timetable.fake()
+    return computeFavoritesWidgetState(
+        now = DroidKaigi2026Day.Day1.at(hour = 10, minute = 5),
+        timetable = timetable,
+        favoriteIds = timetable.bookmarks,
+    )
 }

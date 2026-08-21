@@ -14,11 +14,14 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.width
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import kotlinx.datetime.number
 
 @Composable
@@ -93,4 +96,15 @@ private fun CountdownFigures(
             )
         }
     }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun CountdownPreview() {
+    FavoritesWidgetContent(
+        FavoritesWidgetState.Countdown(daysUntilStart = 12),
+        KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+    )
 }
