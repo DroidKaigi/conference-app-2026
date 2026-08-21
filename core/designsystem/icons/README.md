@@ -5,7 +5,8 @@ task turns every file into a `KaigiIcons.Default.<Name>` extension under
 `build/generated/icons`, so no `ImageVector` is written by hand and none is committed.
 
 `android:pathData` is SVG path syntax, which `addPathNodes` parses unchanged, so the task moves
-geometry rather than reshaping it.
+geometry rather than reshaping it. `android:autoMirrored` carries through as `autoMirror`, which a
+directional glyph such as the back arrow needs to flip in a right-to-left layout.
 
 ## Adding or changing an icon
 

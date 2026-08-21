@@ -49,7 +49,13 @@ abstract class GenerateKaigiIcons : DefaultTask() {
 
     private fun parse(file: File): Icon {
         val document = DocumentBuilderFactory.newInstance()
-            .apply { isNamespaceAware = true }
+            .apply {
+                isNamespaceAware = true
+                // A drawable is data; resolving a doctype or an entity from one would read the build host.
+                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+                isXIncludeAware = false
+                isExpandEntityReferences = false
+            }
             .newDocumentBuilder()
             .parse(file)
         val vector = document.documentElement
@@ -72,6 +78,7 @@ abstract class GenerateKaigiIcons : DefaultTask() {
             defaultHeight = vector.androidAttribute("height")?.removeSuffix("dp") ?: "24",
             viewportWidth = vector.androidAttribute("viewportWidth") ?: "24",
             viewportHeight = vector.androidAttribute("viewportHeight") ?: "24",
+            autoMirrored = vector.androidAttribute("autoMirrored") == "true",
             paths = paths,
         )
     }
@@ -87,6 +94,7 @@ abstract class GenerateKaigiIcons : DefaultTask() {
         val defaultHeight: String,
         val viewportWidth: String,
         val viewportHeight: String,
+        val autoMirrored: Boolean,
         val paths: List<IconPath>,
     ) {
         fun toSource(): String = buildString {
@@ -108,6 +116,7 @@ abstract class GenerateKaigiIcons : DefaultTask() {
             appendLine("        defaultHeight = $defaultHeight.dp,")
             appendLine("        viewportWidth = ${viewportWidth}f,")
             appendLine("        viewportHeight = ${viewportHeight}f,")
+            if (autoMirrored) appendLine("        autoMirror = true,")
             appendLine("    )")
             for (path in paths) {
                 appendLine("        .addPath(")
