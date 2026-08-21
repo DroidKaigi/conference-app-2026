@@ -62,9 +62,9 @@ private val SponsorPlan.itemColumnSpan: Int
 
 private val SponsorPlan.itemHeight: Dp
     get() = when (this) {
-        SponsorPlan.Platinum -> 80.dp
+        SponsorPlan.Platinum -> 110.dp
         SponsorPlan.Gold -> 80.dp
-        SponsorPlan.Supporter -> 60.dp
+        SponsorPlan.Supporter -> 80.dp
     }
 
 private val SponsorPlan.itemShape: Shape
