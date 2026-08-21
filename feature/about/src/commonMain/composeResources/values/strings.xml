@@ -17,4 +17,7 @@
     <string name="privacy_policy">Privacy policy</string>
     <string name="debug_menu">Debug menu</string>
     <string name="debug_menu_description">Developer tools (debug builds only)</string>
+    <string name="about_social_youtube">YouTube</string>
+    <string name="about_social_x">X</string>
+    <string name="about_social_medium">Medium</string>
 </resources>

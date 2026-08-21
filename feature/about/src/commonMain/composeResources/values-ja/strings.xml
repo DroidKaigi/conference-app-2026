@@ -17,4 +17,7 @@
     <string name="privacy_policy">プライバシーポリシー</string>
     <string name="debug_menu">デバッグメニュー</string>
     <string name="debug_menu_description">開発者向けツール（デバッグビルドのみ）</string>
+    <string name="about_social_youtube">YouTube</string>
+    <string name="about_social_x">X</string>
+    <string name="about_social_medium">Medium</string>
 </resources>

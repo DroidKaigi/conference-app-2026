@@ -13,6 +13,9 @@ fun AboutScreenRoot(
     onNavigateToLicenses: () -> Unit,
     onOpenCodeOfConduct: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
+    onOpenYoutube: () -> Unit,
+    onOpenX: () -> Unit,
+    onOpenMedium: () -> Unit,
     isDebugMenuAvailable: Boolean,
     onNavigateToDebug: () -> Unit,
 ) {
@@ -28,6 +31,9 @@ fun AboutScreenRoot(
         onOpenLicenses = onNavigateToLicenses,
         onOpenCodeOfConduct = onOpenCodeOfConduct,
         onOpenPrivacyPolicy = onOpenPrivacyPolicy,
+        onOpenYoutube = onOpenYoutube,
+        onOpenX = onOpenX,
+        onOpenMedium = onOpenMedium,
         isDebugMenuAvailable = isDebugMenuAvailable,
         onOpenDebug = onNavigateToDebug,
     )
