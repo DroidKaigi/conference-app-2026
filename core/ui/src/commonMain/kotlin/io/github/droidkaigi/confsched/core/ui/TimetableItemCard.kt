@@ -82,16 +82,14 @@ fun TimetableItemCard(
             modifier = Modifier.clickable(onClick = onClick),
         )
         if (isFavorite) {
-            room.mascot?.let { mascot ->
-                Icon(
-                    painter = painterResource(mascot),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(TimetableItemCardDefaults.mascotPadding),
-                )
-            }
+            Icon(
+                painter = painterResource(room.mascot),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.outline,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(TimetableItemCardDefaults.mascotPadding),
+            )
         }
         FavoriteMark(
             room = room,
@@ -179,15 +177,14 @@ private fun FavoriteMark(
     )
 }
 
-/** The mascot drawn on a saved session's card, or null for a room the design gives none. */
-private val Room.mascot: DrawableResource?
+/** The mascot drawn on a saved session's card. */
+private val Room.mascot: DrawableResource
     get() = when (this) {
         Room.NARWHAL -> Res.drawable.room_mascot_narwhal
         Room.OTTER -> Res.drawable.room_mascot_otter
         Room.PANDA -> Res.drawable.room_mascot_panda
         Room.QUAIL -> Res.drawable.room_mascot_quail
         Room.MEERKAT -> Res.drawable.room_mascot_meerkat
-        Room.UNKNOWN -> null
     }
 
 private object TimetableItemCardDefaults {

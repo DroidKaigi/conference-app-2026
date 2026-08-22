@@ -19,13 +19,26 @@ class TimetableResponseMapperTest {
     }
 
     @Test
-    fun a_room_this_app_does_not_know_still_reaches_the_timetable() {
+    fun a_session_in_a_room_this_app_does_not_know_is_dropped() {
         val items = timetableResponse(
-            rooms = listOf(roomResponse(99999L, "Somewhere Else")),
-            sessions = listOf(sessionResponse("s1", roomId = 99999L, language = LanguageResponse.ENGLISH)),
+            rooms = listOf(roomResponse(99999L, "Somewhere Else"), roomResponse(81666L, "Meerkat")),
+            sessions = listOf(
+                sessionResponse("s1", roomId = 99999L, language = LanguageResponse.ENGLISH),
+                sessionResponse("s2", roomId = 81666L, language = LanguageResponse.ENGLISH),
+            ),
         ).toTimetableItems()
 
-        assertEquals(Room.UNKNOWN, items.single().room)
+        assertEquals(listOf("s2"), items.map { it.id.value })
+    }
+
+    @Test
+    fun timestamps_reach_the_timetable_as_wall_clock_times() {
+        val items = timetableResponse(
+            rooms = listOf(roomResponse(81666L, "Meerkat")),
+            sessions = listOf(sessionResponse("s1", roomId = 81666L, language = LanguageResponse.JAPANESE)),
+        ).toTimetableItems()
+
+        assertEquals("10:00" to "10:40", items.single().startsAt to items.single().endsAt)
     }
 
     @Test
