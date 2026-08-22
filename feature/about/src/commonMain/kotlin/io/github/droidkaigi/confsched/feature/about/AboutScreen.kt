@@ -33,6 +33,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Groups
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.designsystem.icon.PrivacyTip
+import io.github.droidkaigi.confsched.core.designsystem.icon.Settings
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
@@ -69,6 +70,7 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.others
 import io.github.droidkaigi.confsched.feature.about.generated.resources.privacy_policy
+import io.github.droidkaigi.confsched.feature.about.generated.resources.settings
 import io.github.droidkaigi.confsched.feature.about.generated.resources.sponsors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.staff
 import io.github.droidkaigi.confsched.feature.about.generated.resources.version
@@ -85,6 +87,7 @@ fun AboutScreen(
     onOpenLicenses: () -> Unit,
     onOpenCodeOfConduct: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
+    onOpenSettings: () -> Unit,
     onOpenYoutube: () -> Unit,
     onOpenX: () -> Unit,
     onOpenMedium: () -> Unit,
@@ -180,6 +183,12 @@ fun AboutScreen(
                 onClick = onOpenPrivacyPolicy,
             )
             HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.settings),
+                leadingIcon = KaigiIcons.Default.Settings,
+                onClick = onOpenSettings,
+            )
+            HorizontalDivider()
             if (isDebugMenuAvailable) {
                 AboutNavigationRow(
                     stringResource(Res.string.debug_menu),
@@ -257,6 +266,7 @@ private fun AboutScreenPreview(
             onOpenLicenses = {},
             onOpenCodeOfConduct = {},
             onOpenPrivacyPolicy = {},
+            onOpenSettings = {},
             onOpenYoutube = {},
             onOpenX = {},
             onOpenMedium = {},
@@ -281,6 +291,7 @@ private fun AboutScreenWithoutDebugMenuPreview(
             onOpenLicenses = {},
             onOpenCodeOfConduct = {},
             onOpenPrivacyPolicy = {},
+            onOpenSettings = {},
             onOpenYoutube = {},
             onOpenX = {},
             onOpenMedium = {},

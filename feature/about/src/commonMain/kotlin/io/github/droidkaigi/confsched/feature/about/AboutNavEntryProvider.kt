@@ -29,6 +29,8 @@ class AboutNavEntryProvider(
                     onNavigateToLicenses = graph.screenNavigator::openLicenses,
                     onOpenCodeOfConduct = { uriHandler.openUri(CODE_OF_CONDUCT_URL) },
                     onOpenPrivacyPolicy = { uriHandler.openUri(PRIVACY_POLICY_URL) },
+                    // TODO(#87): navigate to the settings screen once the feature/settings module lands.
+                    onNavigateToSettings = {},
                     onOpenYoutube = { uriHandler.openUri(YOUTUBE_URL) },
                     onOpenX = { uriHandler.openUri(X_URL) },
                     onOpenMedium = { uriHandler.openUri(MEDIUM_URL) },

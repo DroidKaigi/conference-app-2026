@@ -1,5 +1,5 @@
 <resources>
-    <string name="about_title">About DroidKaigi 2026</string>
+    <string name="about_title">About DroidKaigi</string>
     <string name="about_logo_description">DroidKaigi 2026</string>
     <string name="about_description">DroidKaigi is an Android conference by and for engineers, held to share Android technical knowledge and bring the community together.</string>
     <string name="about_event_date">2026.09.01 (Tue) – 03 (Thu)</string>
@@ -17,6 +17,7 @@
     <string name="licenses">Licenses</string>
     <string name="licenses_description">Open source libraries this build depends on</string>
     <string name="privacy_policy">Privacy policy</string>
+    <string name="settings">Settings</string>
     <string name="debug_menu">Debug menu</string>
     <string name="debug_menu_description">Developer tools (debug builds only)</string>
     <string name="about_social_youtube">YouTube</string>
