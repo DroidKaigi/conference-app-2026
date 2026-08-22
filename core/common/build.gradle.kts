@@ -20,5 +20,8 @@ kotlin {
             api(libs.soilQueryCompose)
             api(libs.kermit)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
