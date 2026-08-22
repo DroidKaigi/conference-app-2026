@@ -40,16 +40,17 @@ class WebHistorySyncEffect(private val navigator: AppNavigator) : HistorySyncEff
 
         LaunchedEffect(backStack) {
             popStateFlow().collect { hash ->
-                val targetTop = parseUrlHash(hash).lastOrNull() ?: return@collect
+                val targetStack = parseUrlHash(hash)
+                val targetTop = targetStack.lastOrNull() ?: return@collect
                 when {
-                    backStack.size > 1 && backStack.dropLast(1).lastOrNull() == targetTop -> {
+                    backStack.dropLast(1).toList() == targetStack -> {
                         state.suppressNextPush = true
                         navigator.back()
                     }
 
                     backStack.lastOrNull() != targetTop -> {
                         state.suppressNextPush = true
-                        navigator.goTo(targetTop)
+                        navigator.moveToTop(targetTop)
                     }
                 }
             }
