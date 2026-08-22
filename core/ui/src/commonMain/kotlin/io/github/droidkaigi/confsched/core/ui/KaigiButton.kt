@@ -120,10 +120,12 @@ private fun SketchButton(
         modifier = modifier
             .minimumInteractiveComponentSize()
             .height(KaigiButtonDefaults.height),
+        // So a caller-imposed min width (fillMaxWidth, weight) reaches the Row below, which
+        // otherwise hugs its content and would leave the border's matchParentSize outsizing it.
+        propagateMinConstraints = true,
     ) {
         Row(
             modifier = Modifier
-                .matchParentSize()
                 .clip(shape)
                 .background(containerColor)
                 .clickable(role = Role.Button, onClick = onClick)
