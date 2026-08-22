@@ -11,7 +11,6 @@ import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
-import io.github.droidkaigi.confsched.core.model.ConferenceTimeZone
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.startInstant
@@ -20,7 +19,6 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Timet
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.toTimeSlots
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
-import kotlinx.datetime.toLocalDateTime
 import soil.query.compose.rememberMutation
 import kotlin.time.Duration.Companion.minutes
 
@@ -56,9 +54,12 @@ fun timetableScreenPresenter(
         favoriteMutation.reset()
     }
 
+    val timeSlots = remember(timetable, selectedDay) {
+        timetable.itemsOn(selectedDay).toTimeSlots()
+    }
+
     val countdownBannerUiState = remember(timetable, selectedDay, now) {
-        val today = now.toLocalDateTime(ConferenceTimeZone).date
-        val currentDay = DroidKaigi2026Day.entries.find { it.date == today }
+        val currentDay = DroidKaigi2026Day.ofOrNull(now)
         if (currentDay == null || selectedDay != currentDay) {
             return@remember null
         }
@@ -86,7 +87,7 @@ fun timetableScreenPresenter(
     return TimetableScreenUiState(
         day = selectedDay,
         timetableListSection = TimetableListSectionUiState(
-            timeSlots = timetable.itemsOn(selectedDay).toTimeSlots(),
+            timeSlots = timeSlots,
             bookmarks = timetable.bookmarks,
             countdownBannerUiState = countdownBannerUiState,
         ),

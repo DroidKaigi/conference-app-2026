@@ -184,6 +184,47 @@ class TimetableScreenPresenterTest {
         }
     }
 
+    @Test
+    fun countdown_banner_is_null_when_no_favorited_sessions_exist() {
+        val timetable = Timetable(
+            items = persistentListOf(
+                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "S1", en = "S1"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+            ),
+            bookmarks = persistentSetOf(),
+        )
+
+        graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+        ) {
+            val initialState = uiStates.awaitItem()
+            assertEquals(null, initialState.timetableListSection.countdownBannerUiState)
+        }
+    }
+
+    @Test
+    fun countdown_banner_shows_multiple_sessions_if_concurrent_favorited_sessions_exist() {
+        val timetable = Timetable(
+            items = persistentListOf(
+                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "S1", en = "S1"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                TimetableItem(TimetableItemId("s2"), MultiLangText(ja = "S2", en = "S2"), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+            ),
+            bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
+        )
+
+        graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+        ) {
+            val initialState = uiStates.awaitItem()
+            val bannerState = initialState.timetableListSection.countdownBannerUiState
+            assertEquals(1.hours + 30.minutes, bannerState?.remainingDuration)
+            assertEquals(listOf("s1", "s2"), bannerState?.nextSessions?.map { it.id.value })
+        }
+    }
+
     @Composable
     context(_: ScreenContext)
     private fun rememberProbeQueryReply(key: TimetableQueryKey): Reply<Timetable> =
