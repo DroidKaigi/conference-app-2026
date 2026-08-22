@@ -1,12 +1,15 @@
 package io.github.droidkaigi.confsched.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.retain.retain
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
+import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
 import io.github.droidkaigi.confsched.core.ui.SetupRemoteImageLoader
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.rememberDeviceTiltSource
 import soil.query.compose.SwrClientProvider
 import soil.query.compose.rememberSubscription
 import kotlin.random.Random
@@ -24,42 +27,44 @@ fun KaigiApp() {
 
     SetupRemoteImageLoader()
 
-    SwrClientProvider(client = uiGraph.swrClient) {
-        SoilDataBoundary(
-            state = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
-        ) { colorScheme ->
-            KaigiTheme(
-                colorScheme = colorScheme,
-                sketchBaseSeed = appSketchBaseSeed,
-            ) {
-                NavigatorEffect(
-                    navigator = uiGraph.appNavigator,
-                    backStack = backStack,
-                    logger = uiGraph.logger,
-                )
-                DeepLinkEffect(
-                    deepLinkStore = uiGraph.deepLinkStore,
-                    backStack = backStack,
-                    logger = uiGraph.logger,
-                    onNavigate = uiGraph.appNavigator::moveToTop,
-                )
-                IosTabBarSyncEffect(
-                    backStack = backStack,
-                    rootTabNavigator = appGraph.rootTabNavigator,
-                    rootTabBarAppearance = appGraph.rootTabBarAppearance,
+    CompositionLocalProvider(LocalDeviceTiltSource provides rememberDeviceTiltSource()) {
+        SwrClientProvider(client = uiGraph.swrClient) {
+            SoilDataBoundary(
+                state = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
+            ) { colorScheme ->
+                KaigiTheme(
                     colorScheme = colorScheme,
-                    onSelectTab = { tab -> uiGraph.appNavigator.moveToTop(tab.key) },
-                )
+                    sketchBaseSeed = appSketchBaseSeed,
+                ) {
+                    NavigatorEffect(
+                        navigator = uiGraph.appNavigator,
+                        backStack = backStack,
+                        logger = uiGraph.logger,
+                    )
+                    DeepLinkEffect(
+                        deepLinkStore = uiGraph.deepLinkStore,
+                        backStack = backStack,
+                        logger = uiGraph.logger,
+                        onNavigate = uiGraph.appNavigator::moveToTop,
+                    )
+                    IosTabBarSyncEffect(
+                        backStack = backStack,
+                        rootTabNavigator = appGraph.rootTabNavigator,
+                        rootTabBarAppearance = appGraph.rootTabBarAppearance,
+                        colorScheme = colorScheme,
+                        onSelectTab = { tab -> uiGraph.appNavigator.moveToTop(tab.key) },
+                    )
 
-                KaigiNavDisplay(
-                    backStack = backStack,
-                    onBack = uiGraph.appNavigator::back,
-                    onSelectTab = { tab -> uiGraph.appNavigator.moveToTop(tab.key) },
-                    entryProvider = uiGraph.appEntryProvider.entryProvider,
-                )
+                    KaigiNavDisplay(
+                        backStack = backStack,
+                        onBack = uiGraph.appNavigator::back,
+                        onSelectTab = { tab -> uiGraph.appNavigator.moveToTop(tab.key) },
+                        entryProvider = uiGraph.appEntryProvider.entryProvider,
+                    )
 
-                uiGraph.soilErrorMonitor.Overlay()
-                uiGraph.clockOverlay.Overlay()
+                    uiGraph.soilErrorMonitor.Overlay()
+                    uiGraph.clockOverlay.Overlay()
+                }
             }
         }
     }
