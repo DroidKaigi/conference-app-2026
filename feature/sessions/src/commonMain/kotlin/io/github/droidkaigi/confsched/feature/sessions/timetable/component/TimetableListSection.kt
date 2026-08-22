@@ -49,8 +49,8 @@ internal fun TimetableListSection(
                 bookmarks = uiState.bookmarks,
                 onBookmarkClick = onBookmarkClick,
                 onItemClick = onItemClick,
-                timeRangeModifier = Modifier.graphicsLayer {
-                    translationY = stickyTimeRangeTranslationY(listState, index, size.height)
+                timeRangeTranslationY = { timeRangeHeightPx ->
+                    stickyTimeRangeTranslationY(listState, index, timeRangeHeightPx)
                 },
             )
         }
@@ -64,14 +64,16 @@ private fun SessionRow(
     bookmarks: Set<TimetableItemId>,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
-    timeRangeModifier: Modifier = Modifier,
+    timeRangeTranslationY: (timeRangeHeightPx: Float) -> Float,
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         TimetableTimeRange(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
             seed = slot.startsAt.hashCode(),
-            modifier = timeRangeModifier,
+            modifier = Modifier.graphicsLayer {
+                translationY = timeRangeTranslationY(size.height)
+            },
         )
         Column(
             modifier = Modifier.weight(1f),
