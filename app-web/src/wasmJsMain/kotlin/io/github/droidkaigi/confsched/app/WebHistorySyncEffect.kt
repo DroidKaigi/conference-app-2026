@@ -33,7 +33,8 @@ class WebHistorySyncEffect(private val navigator: AppNavigator) : HistorySyncEff
                         state.suppressNextPush = false
                         return@collect
                     }
-                    window.history.pushState(null, "", topKey?.toUrlHash() ?: "#/timetable")
+                    val hash = topKey?.toUrlHash() ?: return@collect
+                    window.history.pushState(null, "", hash)
                 }
         }
 
