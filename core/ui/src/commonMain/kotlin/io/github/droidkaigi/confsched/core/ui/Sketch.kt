@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -77,6 +78,7 @@ private fun requireWobble(roughness: Dp, tremor: Dp, sweepWavelength: Dp, tremor
     require(sweepWavelength > 0.dp) { "sweepWavelength must be positive, was $sweepWavelength" }
     require(tremorWavelength > 0.dp) { "tremorWavelength must be positive, was $tremorWavelength" }
 }
+
 private val DefaultRoughness = 1.dp
 private val DefaultTremor = 0.3.dp
 
@@ -211,6 +213,105 @@ fun SketchVerticalWavyLine(
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
                     drawPath(path = path, color = color, style = stroke)
+                }
+            },
+    )
+}
+
+/**
+ * A vertical wavy line that transitions from thick to thin at a specific [progress],
+ * drawing a solid circular dot at the transition point.
+ */
+@Composable
+fun SketchVerticalWavyProgressLine(
+    seed: Int,
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.outline,
+    passedThickness: Dp = 2.5.dp,
+    upcomingThickness: Dp = 1.dp,
+    amplitude: Dp = 3.dp,
+    wavelength: Dp = 10.dp,
+    noiseAmount: Float = 0.8f,
+) {
+    require(passedThickness >= 0.dp) { "passedThickness must not be negative, was $passedThickness" }
+    require(upcomingThickness >= 0.dp) { "upcomingThickness must not be negative, was $upcomingThickness" }
+    require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
+    require(wavelength > 0.dp) { "wavelength must be positive, was $wavelength" }
+    require(noiseAmount >= 0f) { "noiseAmount must not be negative, was $noiseAmount" }
+    require(progress in 0f..1f) { "progress must be between 0.0 and 1.0, was $progress" }
+
+    val combinedSeed = combineSketchSeed(seed)
+
+    Box(
+        modifier = modifier
+            .width(amplitude * (1f + noiseAmount) * 2 + maxOf(passedThickness, upcomingThickness))
+            .drawWithCache {
+                val path = sketchVerticalWavyLinePath(
+                    height = size.height,
+                    centerX = size.width / 2f,
+                    amplitude = amplitude,
+                    wavelength = wavelength,
+                    noiseAmount = noiseAmount,
+                    seed = combinedSeed,
+                )
+
+                onDrawBehind {
+                    val progressY = size.height * progress
+                    val centerX = size.width / 2f
+
+                    // Buffer to prevent clipping the StrokeCap.Round at the very top and bottom
+                    val buffer = 50.dp.toPx()
+
+                    // Passed line (thick)
+                    if (progress > 0f) {
+                        clipRect(
+                            left = -buffer,
+                            top = -buffer, // Extend bounds to preserve the top rounded cap
+                            right = size.width + buffer,
+                            bottom = progressY,
+                        ) {
+                            drawPath(
+                                path = path,
+                                color = color,
+                                style = Stroke(width = passedThickness.toPx(), cap = StrokeCap.Round),
+                            )
+                        }
+                    }
+
+                    // Upcoming line (thin)
+                    if (progress < 1f) {
+                        clipRect(
+                            left = -buffer,
+                            top = progressY,
+                            right = size.width + buffer,
+                            bottom = size.height + buffer, // Extend bounds to preserve the bottom rounded cap
+                        ) {
+                            drawPath(
+                                path = path,
+                                color = color,
+                                style = Stroke(width = upcomingThickness.toPx(), cap = StrokeCap.Round),
+                            )
+                        }
+                    }
+
+                    // Calculate the exact X-coordinate for the dot
+                    val dotRadius = 3.dp.toPx()
+                    val dotX = sketchVerticalWavyLineXAt(
+                        y = progressY,
+                        centerX = centerX,
+                        amplitude = amplitude,
+                        wavelength = wavelength,
+                        noiseAmount = noiseAmount,
+                        seed = combinedSeed,
+                    )
+
+                    // Draw the wobbly dot as a perfect circle covering the flat clipped seam
+                    drawCircle(
+                        color = color,
+                        radius = dotRadius,
+                        center = Offset(x = dotX, y = progressY),
+                    )
                 }
             },
     )

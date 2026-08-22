@@ -13,14 +13,37 @@ import io.github.droidkaigi.confsched.core.testing.runRobotTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
+import kotlin.time.Instant
 
 @OptIn(ExperimentalTestApi::class)
 class TimetableScreenRobotTest : RobotTest() {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, "Sp3", Language.ENGLISH, DroidKaigi2026Day.Day2, "10:00", "10:40"),
+            TimetableItem(
+                id = TimetableItemId("d1a"),
+                title = MultiLangText(ja = "Day1 A", en = "Day1 A"),
+                room = Room.NARWHAL,
+                speaker = "Sp1",
+                language = Language.ENGLISH,
+                day = DroidKaigi2026Day.Day1,
+                startsAt = "10:00",
+                endsAt = "10:40",
+                startsAtInstant = Instant.parse("2026-09-01T10:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-01T10:40:00Z"),
+            ),
+            TimetableItem(
+                id = TimetableItemId("d2a"),
+                title = MultiLangText(ja = "Day2 A", en = "Day2 A"),
+                room = Room.NARWHAL,
+                speaker = "Sp3",
+                language = Language.ENGLISH,
+                day = DroidKaigi2026Day.Day2,
+                startsAt = "10:00",
+                endsAt = "10:40",
+                startsAtInstant = Instant.parse("2026-09-02T10:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-02T10:40:00Z"),
+            ),
         ),
         bookmarks = persistentSetOf(),
     )

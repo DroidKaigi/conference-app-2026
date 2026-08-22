@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.github.droidkaigi.confsched.core.common.KaigiClock
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
@@ -14,6 +15,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableScreenScope
 class TimetablePresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
     val logger: KaigiLogger,
+    val clock: KaigiClock,
 ) : PresenterContext
 
 @Inject

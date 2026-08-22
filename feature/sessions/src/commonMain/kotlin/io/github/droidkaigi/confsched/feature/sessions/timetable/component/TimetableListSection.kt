@@ -59,6 +59,7 @@ private fun SessionRow(
         TimetableTimeRange(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
+            timeRangeState = slot.timeRangeState,
             seed = slot.startsAt.hashCode(),
         )
         Column(
