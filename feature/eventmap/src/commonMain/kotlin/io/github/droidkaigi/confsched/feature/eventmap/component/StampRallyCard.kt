@@ -47,7 +47,7 @@ internal fun StampRallyCard(
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(1f),
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
