@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- minWidth/minHeight target 2x2 cells; the widget stretches to 4x2 (MEDIUM) horizontally. -->
+<!-- 30 minutes is the platform minimum period; it carries the LIVE state across slot
+     boundaries while the app process is away, and favorites/theme changes push immediately. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="110dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="2"
+    android:maxResizeWidth="338dp"
+    android:maxResizeHeight="158dp"
+    android:resizeMode="horizontal"
+    android:updatePeriodMillis="1800000"
+    android:description="@string/widget_description"
+    android:widgetCategory="home_screen" />

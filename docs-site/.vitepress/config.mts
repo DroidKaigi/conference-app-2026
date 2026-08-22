@@ -74,6 +74,7 @@ export default withMermaid(defineConfig({
           { text: 'Root NavEntry emulation (RootSceneStrategy)', link: '/navigation-predictive-back-tabs' },
           { text: 'Root tab bar (RootTabSceneDecorator)', link: '/navigation-root-tab-bar' },
           { text: 'List-detail scenes (ListDetailSceneStrategy)', link: '/navigation-list-detail' },
+          { text: 'Deep links (DeepLinkEffect)', link: '/navigation-deep-links' },
         ],
       },
       {

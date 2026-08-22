@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.designsystem
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -177,7 +178,8 @@ private val CampfireNight = darkColorScheme(
     outlineVariant = Color(0xFF625C58),
 )
 
-private fun KaigiColorScheme.toMaterialColorScheme() = when (this) {
+/** The Material palette of [this] scheme, for callers outside a composition such as widgets. */
+fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.MorningMist -> MorningMist
     KaigiColorScheme.DeepTeal -> DeepTeal
     KaigiColorScheme.SakuraPlum -> SakuraPlum

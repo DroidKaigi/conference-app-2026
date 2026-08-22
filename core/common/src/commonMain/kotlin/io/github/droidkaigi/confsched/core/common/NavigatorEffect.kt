@@ -31,6 +31,10 @@ fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, lo
                     backStack.remove(command.key)
                     backStack.add(command.key)
                 }
+
+                is NavCommand.ReplaceTop -> if (backStack.isNotEmpty()) {
+                    backStack[backStack.lastIndex] = command.key
+                }
             }
         }
     }
