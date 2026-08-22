@@ -9,11 +9,13 @@ import dev.zacsweers.metro.SingleIn
 class PersistedDataResetter(
     private val themeStore: ThemeStore,
     private val favoritesStore: FavoritesStore,
+    private val sessionMemoStore: SessionMemoStore,
     private val fileStorage: FileStorage,
 ) {
     suspend fun clearAll() {
         themeStore.clear()
         favoritesStore.clear()
+        sessionMemoStore.clear()
         fileStorage.clear()
     }
 }

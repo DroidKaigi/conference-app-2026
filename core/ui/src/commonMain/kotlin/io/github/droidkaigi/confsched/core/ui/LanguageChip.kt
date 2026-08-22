@@ -12,7 +12,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /** The language a session is delivered in. */
 @Composable
-internal fun LanguageChip(language: Language, seed: Int) {
+fun LanguageChip(language: Language, seed: Int) {
     KaigiChip(
         seed = seed,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,

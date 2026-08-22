@@ -8,7 +8,10 @@ import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
+import io.github.droidkaigi.confsched.core.model.TimetableItemAsset
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
+import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +33,24 @@ class FavoritesWidgetRenderTest {
                 id = sessionId,
                 title = MultiLangText(ja = "セッション A", en = "Session A"),
                 room = Room.OTTER,
-                speaker = "Speaker A",
+                speakers = persistentListOf(
+                    TimetableSpeaker(
+                        id = TimetableSpeakerId("speaker-a"),
+                        name = "Speaker A",
+                        tagLine = "",
+                        iconUrl = null,
+                    ),
+                ),
                 language = Language.JAPANESE,
                 day = DroidKaigi2026Day.Day1,
                 startsAt = "10:00",
                 endsAt = "10:40",
+                description = MultiLangText(ja = "", en = ""),
+                targetAudience = MultiLangText(ja = "", en = ""),
+                category = null,
+                asset = TimetableItemAsset.Empty,
+                hasInterpretation = false,
+                isCancelled = false,
             ),
         ),
     )

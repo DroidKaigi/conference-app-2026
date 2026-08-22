@@ -9,16 +9,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiFilterChip
-import io.github.droidkaigi.confsched.feature.eventmap.EventMapFloor
 
 @Composable
 internal fun FloorTabRow(
-    selectedFloor: EventMapFloor,
-    onFloorClick: (EventMapFloor) -> Unit,
+    selectedFloor: Floor,
+    onFloorClick: (Floor) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -26,7 +26,7 @@ internal fun FloorTabRow(
             .selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(FloorTabRowDefaults.spacing),
     ) {
-        EventMapFloor.entries.forEachIndexed { index, floor ->
+        Floor.entries.forEachIndexed { index, floor ->
             KaigiFilterChip(
                 selected = selectedFloor == floor,
                 onClick = { onFloorClick(floor) },
@@ -48,6 +48,6 @@ private fun FloorTabRowPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        FloorTabRow(selectedFloor = EventMapFloor.entries.first(), onFloorClick = {})
+        FloorTabRow(selectedFloor = Floor.entries.first(), onFloorClick = {})
     }
 }
