@@ -76,7 +76,9 @@ private fun FavoritesScreenEmptyPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         FavoritesScreen(
-            uiState = FavoritesScreenUiState.fake().copy(favoritesListSection = FavoritesListSectionUiState(timeSlots = persistentListOf())),
+            uiState = FavoritesScreenUiState.fake().copy(
+                favoritesListSection = FavoritesListSectionUiState(timeSlots = persistentListOf(), showDayHeaders = true),
+            ),
             onBookmarkClick = {},
             onDayFilterClick = {},
             onItemClick = {},
