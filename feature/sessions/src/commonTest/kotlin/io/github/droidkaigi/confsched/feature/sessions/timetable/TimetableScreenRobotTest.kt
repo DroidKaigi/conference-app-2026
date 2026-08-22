@@ -53,6 +53,24 @@ class TimetableScreenRobotTest : RobotTest() {
                     checkSessionDoesNotExist("Day1 A")
                 }
             }
+            describe("and the list is scrolled down") {
+                doIt {
+                    recordDayTabsPosition()
+                    scrollDown()
+                }
+                itShould("fold the day tabs away, leaving the app bar in place") {
+                    checkDayTabsFoldedAway()
+                    checkTopBarActionsDisplayed()
+                }
+                describe("and then scrolled back up") {
+                    doIt {
+                        scrollUp()
+                    }
+                    itShould("return the day tabs to full height") {
+                        checkDayTabsAtFullHeight()
+                    }
+                }
+            }
         }
     }
 }
