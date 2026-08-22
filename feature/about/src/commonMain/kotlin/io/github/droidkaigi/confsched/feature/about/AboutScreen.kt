@@ -113,7 +113,7 @@ fun AboutScreen(
                     .fillMaxWidth()
                     .clip(AboutHeroWaveShape(amplitude = 12.dp, wavelength = 104.dp))
                     .background(MaterialTheme.colorScheme.inverseSurface)
-                    .padding(top = 24.dp, bottom = 48.dp),
+                    .padding(top = 12.dp, bottom = 36.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
