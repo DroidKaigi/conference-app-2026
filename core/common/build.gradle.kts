@@ -33,5 +33,8 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(libs.ktorClientJs)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
