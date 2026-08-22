@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.about
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,8 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +21,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
 import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
+import io.github.droidkaigi.confsched.feature.about.component.AboutSectionHeader
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_android_trademark
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_description
@@ -54,6 +56,13 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.contribu
 import io.github.droidkaigi.confsched.feature.about.generated.resources.credits
 import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu
 import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu_description
+import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_about_credits
+import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_about_others
+import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_medium
+import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_x
+import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_youtube
+import io.github.droidkaigi.confsched.feature.about.generated.resources.img_about_footer_character
+import io.github.droidkaigi.confsched.feature.about.generated.resources.img_about_hero_stage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.links
@@ -62,12 +71,8 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.privacy_
 import io.github.droidkaigi.confsched.feature.about.generated.resources.sponsors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.staff
 import io.github.droidkaigi.confsched.feature.about.generated.resources.version
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
-// Links marks are third-party brand icons on a literal white ground with a fixed dark label, so
-// they stay legible under every colour scheme (md3/onPrimary inverts to dark under two of them).
-private val LinksGround = Color.White
-private val LinksLabel = Color(0xFF11151C)
 
 @Composable
 fun AboutScreen(
@@ -96,19 +101,19 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            // Placeholder for the hand-drawn hero (logo, mascot, wavy bottom edge); see PR description
-            // for the asset and the generative spec. The band shares the top bar's colour.
+            // The hero illustration sits on a band that shares the top bar's colour, so the two read
+            // as one surface. The character stage is fixed at 331dp and stays centred at any width.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.inverseSurface)
-                    .padding(vertical = 48.dp),
+                    .padding(vertical = 24.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = stringResource(Res.string.about_logo_description),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.inverseOnSurface,
+                Image(
+                    painter = painterResource(Res.drawable.img_about_hero_stage),
+                    contentDescription = stringResource(Res.string.about_logo_description),
+                    modifier = Modifier.fillMaxWidth().widthIn(max = 331.dp),
                 )
             }
             Text(
@@ -124,11 +129,9 @@ fun AboutScreen(
                 modifier = Modifier.padding(all = 16.dp),
             )
 
-            Text(
-                text = stringResource(Res.string.credits),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+            AboutSectionHeader(
+                title = stringResource(Res.string.credits),
+                icon = Res.drawable.ic_about_credits,
             )
             HorizontalDivider()
             AboutNavigationRow(
@@ -150,11 +153,9 @@ fun AboutScreen(
             )
             HorizontalDivider()
 
-            Text(
-                text = stringResource(Res.string.others),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+            AboutSectionHeader(
+                title = stringResource(Res.string.others),
+                icon = Res.drawable.ic_about_others,
             )
             HorizontalDivider()
             AboutNavigationRow(
@@ -186,41 +187,37 @@ fun AboutScreen(
                 HorizontalDivider()
             }
 
-            Text(
-                text = stringResource(Res.string.links),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            ) {
-                // Placeholder chips for the YouTube / X / Medium brand marks (see PR description).
-                Box(
-                    modifier = Modifier
-                        .clickable(onClick = onOpenYoutube)
-                        .background(LinksGround, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+            AboutSectionHeader(title = stringResource(Res.string.links))
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                Row(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = stringResource(Res.string.about_social_youtube), color = LinksLabel)
+                    Image(
+                        painter = painterResource(Res.drawable.ic_social_youtube),
+                        contentDescription = stringResource(Res.string.about_social_youtube),
+                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenYoutube),
+                    )
+                    Image(
+                        painter = painterResource(Res.drawable.ic_social_x),
+                        contentDescription = stringResource(Res.string.about_social_x),
+                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenX),
+                    )
+                    Image(
+                        painter = painterResource(Res.drawable.ic_social_medium),
+                        contentDescription = stringResource(Res.string.about_social_medium),
+                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenMedium),
+                    )
                 }
-                Box(
+                Image(
+                    painter = painterResource(Res.drawable.img_about_footer_character),
+                    contentDescription = null,
                     modifier = Modifier
-                        .clickable(onClick = onOpenX)
-                        .background(LinksGround, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(text = stringResource(Res.string.about_social_x), color = LinksLabel)
-                }
-                Box(
-                    modifier = Modifier
-                        .clickable(onClick = onOpenMedium)
-                        .background(LinksGround, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(text = stringResource(Res.string.about_social_medium), color = LinksLabel)
-                }
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 24.dp)
+                        .size(width = 30.dp, height = 36.dp),
+                )
             }
             Text(
                 text = "${stringResource(Res.string.version)} ${uiState.versionName}",
