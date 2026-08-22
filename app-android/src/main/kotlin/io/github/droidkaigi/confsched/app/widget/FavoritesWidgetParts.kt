@@ -114,14 +114,13 @@ internal fun RoomChip(room: Room, colors: FavoritesWidgetColors) {
     }
 }
 
-private fun chipLabel(room: Room, shape: RoomShape?): String {
+private fun chipLabel(room: Room, shape: RoomShape): String {
     val mark = when (shape) {
         RoomShape.Circle -> "○"
         RoomShape.Star -> "✦"
         RoomShape.Square -> "□"
         RoomShape.Triangle -> "△"
         RoomShape.Diamond -> "◇"
-        null -> null
     }
-    return if (mark == null) room.name else "$mark ${room.name}"
+    return "$mark ${room.name}"
 }

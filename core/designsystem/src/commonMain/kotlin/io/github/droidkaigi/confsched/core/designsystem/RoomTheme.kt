@@ -20,14 +20,13 @@ enum class RoomShape { Circle, Star, Square, Triangle, Diamond }
  * rather than on the chip. That ground follows the scheme, so the accent takes a lighter
  * reading where the scheme is dark.
  *
- * [shape] is null for a room the design has not placed, which then draws under its name alone.
  */
 @Immutable
 data class RoomTheme(
     val container: Color,
     val onContainer: Color,
     val accent: Color,
-    val shape: RoomShape?,
+    val shape: RoomShape,
 )
 
 /**
@@ -75,15 +74,6 @@ fun roomTheme(room: Room, isDark: Boolean): RoomTheme {
             onContainer = Color(0xFF005A63),
             accent = if (isDark) Color(0xFF4DD0E0) else Color(0xFF00838F),
             shape = RoomShape.Diamond,
-        )
-
-        // Neutral rather than one of the five: a room the design has not placed must not
-        // arrive wearing another room's color and mark.
-        Room.UNKNOWN -> RoomTheme(
-            container = Color(0xFFE6E6EA),
-            onContainer = Color(0xFF3F3F46),
-            accent = if (isDark) Color(0xFFB4B4BE) else Color(0xFF5A5A63),
-            shape = null,
         )
     }
 }

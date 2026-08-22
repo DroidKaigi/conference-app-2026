@@ -16,11 +16,13 @@ fun TimetableResponse.toTimetableItems(): List<TimetableItem> {
         .toMap()
     return sessions
         .sortedBy { it.startsAt }
-        .map { session ->
+        .mapNotNull { session ->
+            // A room this app does not know cannot be placed on the timetable; drop the session.
+            val room = Room.of(roomNameById[session.roomId].orEmpty()) ?: return@mapNotNull null
             TimetableItem(
                 id = TimetableItemId(session.id),
                 title = session.title.toMultiLangText(),
-                room = Room.of(roomNameById[session.roomId].orEmpty()),
+                room = room,
                 speaker = session.speakers.mapNotNull { speakerNameById[it] }.joinToString(", "),
                 language = when (session.language) {
                     LanguageResponse.JAPANESE -> Language.JAPANESE
