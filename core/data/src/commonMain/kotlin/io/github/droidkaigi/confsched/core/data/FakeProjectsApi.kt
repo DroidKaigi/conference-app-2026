@@ -30,7 +30,7 @@ class FakeProjectsApi : ProjectsApi {
                     id = "3",
                     titleJa = "コミュニケーションエリア",
                     titleEn = "Communication Area",
-                    descJa = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう. 席に限りがありますので、お弁当受け取り後お早めにお越しください。",
+                    descJa = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                     descEn = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
                     roomId = 103,
                 ),
