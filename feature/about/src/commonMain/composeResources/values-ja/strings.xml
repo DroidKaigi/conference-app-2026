@@ -1,9 +1,11 @@
 <resources>
     <string name="about_title">DroidKaigi 2026 について</string>
     <string name="about_logo_description">DroidKaigi 2026</string>
-    <string name="about_description">DroidKaigi は Android 開発者のためのカンファレンスです。東京での3日間、開発者と出会い、知識を共有し、コミュニティを楽しみましょう。</string>
-    <string name="about_event_date">2026年9月1日〜3日</string>
+    <string name="about_description">DroidKaigiはAndroid技術情報の共有とコミュニケーションを目的に開催されるエンジニアが主役のAndroidカンファレンスです。</string>
+    <string name="about_event_date">2026.09.01 (火)〜03(木)</string>
     <string name="about_venue">ベルサール渋谷ガーデン</string>
+    <string name="about_view_map">地図を見る</string>
+    <string name="about_android_trademark">Android is a trademark of Google LLC. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
     <string name="credits">クレジット</string>
     <string name="others">その他</string>
     <string name="links">リンク</string>

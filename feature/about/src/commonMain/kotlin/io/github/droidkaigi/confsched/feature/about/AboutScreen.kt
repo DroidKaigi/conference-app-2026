@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,8 +37,10 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
+import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
 import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_android_trademark
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_event_date
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_logo_description
@@ -47,6 +48,7 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.about_so
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_x
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_youtube
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_venue
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_view_map
 import io.github.droidkaigi.confsched.feature.about.generated.resources.code_of_conduct
 import io.github.droidkaigi.confsched.feature.about.generated.resources.contributors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.credits
@@ -70,6 +72,7 @@ private val LinksLabel = Color(0xFF11151C)
 @Composable
 fun AboutScreen(
     uiState: AboutScreenUiState,
+    onOpenEventMap: () -> Unit,
     onOpenSponsors: () -> Unit,
     onOpenContributors: () -> Unit,
     onOpenStaff: () -> Unit,
@@ -111,27 +114,20 @@ fun AboutScreen(
             Text(
                 text = stringResource(Res.string.about_description),
                 style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
             )
-            Card(modifier = Modifier.fillMaxWidth().padding(all = 16.dp)) {
-                Column(modifier = Modifier.padding(all = 16.dp)) {
-                    Text(
-                        text = stringResource(Res.string.about_event_date),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Text(
-                        text = stringResource(Res.string.about_venue),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            AboutEventCard(
+                date = stringResource(Res.string.about_event_date),
+                venue = stringResource(Res.string.about_venue),
+                viewMapLabel = stringResource(Res.string.about_view_map),
+                onViewMap = onOpenEventMap,
+                modifier = Modifier.padding(all = 16.dp),
+            )
 
             Text(
                 text = stringResource(Res.string.credits),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
             )
             HorizontalDivider()
@@ -156,8 +152,8 @@ fun AboutScreen(
 
             Text(
                 text = stringResource(Res.string.others),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
             )
             HorizontalDivider()
@@ -192,8 +188,8 @@ fun AboutScreen(
 
             Text(
                 text = stringResource(Res.string.links),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
             )
             Row(
@@ -231,7 +227,17 @@ fun AboutScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp + navigationBarHeight),
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+            )
+            Text(
+                text = stringResource(Res.string.about_android_trademark),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .padding(top = 12.dp, bottom = 24.dp + navigationBarHeight),
             )
         }
     }
@@ -245,6 +251,7 @@ private fun AboutScreenPreview(
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
             uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
+            onOpenEventMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},
@@ -268,6 +275,7 @@ private fun AboutScreenWithoutDebugMenuPreview(
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
             uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
+            onOpenEventMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},

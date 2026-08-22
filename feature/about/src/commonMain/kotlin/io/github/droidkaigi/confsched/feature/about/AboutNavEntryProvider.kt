@@ -22,6 +22,7 @@ class AboutNavEntryProvider(
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 AboutScreenRoot(
+                    onNavigateToEventMap = graph.screenNavigator::openEventMap,
                     onNavigateToSponsors = graph.screenNavigator::openSponsors,
                     onNavigateToContributors = graph.screenNavigator::openContributors,
                     onNavigateToStaff = graph.screenNavigator::openStaff,
