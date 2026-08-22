@@ -24,7 +24,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "※こちらのイベントは時間が変更されました",
                 en = "* The time of this event has changed",
             ),
-            moreDetailsUrl = "https://droidkaigi.jp/2026/",
+            moreDetailsUrl = "https://example.com/",
         ),
         Project(
             id = ProjectId("2"),

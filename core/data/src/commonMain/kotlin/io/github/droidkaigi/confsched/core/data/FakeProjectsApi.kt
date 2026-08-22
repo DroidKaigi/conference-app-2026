@@ -65,7 +65,7 @@ class FakeProjectsApi : ProjectsApi {
         } else {
             null
         },
-        moreDetailsUrl = "https://droidkaigi.jp/2026/",
+        moreDetailsUrl = "https://example.com/",
     )
 
     private fun fakeRoom(id: Long, name: String) = RoomResponse(
