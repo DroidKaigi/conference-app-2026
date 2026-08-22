@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
+import io.github.droidkaigi.confsched.feature.about.component.AboutHeroWaveShape
 import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
 import io.github.droidkaigi.confsched.feature.about.component.AboutSectionHeader
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
@@ -65,7 +67,6 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.img_abou
 import io.github.droidkaigi.confsched.feature.about.generated.resources.img_about_hero_stage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses_description
-import io.github.droidkaigi.confsched.feature.about.generated.resources.links
 import io.github.droidkaigi.confsched.feature.about.generated.resources.others
 import io.github.droidkaigi.confsched.feature.about.generated.resources.privacy_policy
 import io.github.droidkaigi.confsched.feature.about.generated.resources.sponsors
@@ -102,12 +103,14 @@ fun AboutScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             // The hero illustration sits on a band that shares the top bar's colour, so the two read
-            // as one surface. The character stage is fixed at 331dp and stays centred at any width.
+            // as one surface. Its bottom scallops into the content below; the extra bottom padding is
+            // the room the wave occupies. The character stage is fixed at 331dp and stays centred.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clip(AboutHeroWaveShape(amplitude = 12.dp, wavelength = 104.dp))
                     .background(MaterialTheme.colorScheme.inverseSurface)
-                    .padding(vertical = 24.dp),
+                    .padding(top = 24.dp, bottom = 48.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
@@ -187,8 +190,7 @@ fun AboutScreen(
                 HorizontalDivider()
             }
 
-            AboutSectionHeader(title = stringResource(Res.string.links))
-            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 8.dp)) {
                 Row(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
