@@ -14,25 +14,78 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_HEIGHT_DP
 import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_WIDTH_DP
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
+import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
+import io.github.droidkaigi.confsched.feature.profilecard.component.SketchIntensity
 
 @Composable
 fun ProfileCardScreen(
     uiState: ProfileCardScreenUiState,
+    onNickNameChange: (String) -> Unit,
+    onOccupationChange: (String) -> Unit,
+    onLinkChange: (String) -> Unit,
+    onMascotSelected: (Mascot) -> Unit,
+    onSketchIntensitySelected: (SketchIntensity) -> Unit,
+    onSubmitClick: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(uiState.title, style = MaterialTheme.typography.headlineSmall)
+    when (uiState) {
+        is ProfileCardScreenUiState.Form -> ProfileCardFormView(
+            uiState = uiState,
+            onNickNameChange = onNickNameChange,
+            onOccupationChange = onOccupationChange,
+            onLinkChange = onLinkChange,
+            onMascotSelected = onMascotSelected,
+            onSketchIntensitySelected = onSketchIntensitySelected,
+            onSubmitClick = onSubmitClick,
+        )
+
+        is ProfileCardScreenUiState.Card -> Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(uiState.nickName, style = MaterialTheme.typography.headlineSmall)
+        }
     }
 }
 
 @Preview(widthDp = SCREEN_PREVIEW_WIDTH_DP, heightDp = SCREEN_PREVIEW_HEIGHT_DP)
 @Composable
-private fun ProfileCardScreenPreview(
+private fun ProfileCardScreenFormPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardScreen(uiState = ProfileCardScreenUiState(title = "Profile card"))
+        ProfileCardScreen(
+            uiState = ProfileCardScreenUiState.Form(),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotSelected = {},
+            onSketchIntensitySelected = {},
+            onSubmitClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ProfileCardScreenCardPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            uiState = ProfileCardScreenUiState.Card(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com",
+                mascot = Mascot.Koala,
+                sketchIntensity = SketchIntensity.Normal,
+            ),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotSelected = {},
+            onSketchIntensitySelected = {},
+            onSubmitClick = {},
+        )
     }
 }
