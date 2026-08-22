@@ -1,35 +1,71 @@
 package io.github.droidkaigi.confsched.feature.about
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Award
+import io.github.droidkaigi.confsched.core.designsystem.icon.Build
+import io.github.droidkaigi.confsched.core.designsystem.icon.Description
+import io.github.droidkaigi.confsched.core.designsystem.icon.Gavel
+import io.github.droidkaigi.confsched.core.designsystem.icon.Groups
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Person
+import io.github.droidkaigi.confsched.core.designsystem.icon.PrivacyTip
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
-import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
-import io.github.droidkaigi.confsched.core.ui.RemoteImage
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
+import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_description
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_event_date
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_logo_description
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_medium
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_x
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_youtube
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_venue
+import io.github.droidkaigi.confsched.feature.about.generated.resources.code_of_conduct
 import io.github.droidkaigi.confsched.feature.about.generated.resources.contributors
+import io.github.droidkaigi.confsched.feature.about.generated.resources.credits
 import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu
 import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses_description
+import io.github.droidkaigi.confsched.feature.about.generated.resources.links
+import io.github.droidkaigi.confsched.feature.about.generated.resources.others
+import io.github.droidkaigi.confsched.feature.about.generated.resources.privacy_policy
 import io.github.droidkaigi.confsched.feature.about.generated.resources.sponsors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.staff
 import io.github.droidkaigi.confsched.feature.about.generated.resources.version
 import org.jetbrains.compose.resources.stringResource
+
+// Links marks are third-party brand icons on a literal white ground with a fixed dark label, so
+// they stay legible under every colour scheme (md3/onPrimary inverts to dark under two of them).
+private val LinksGround = Color.White
+private val LinksLabel = Color(0xFF11151C)
 
 @Composable
 fun AboutScreen(
@@ -38,9 +74,16 @@ fun AboutScreen(
     onOpenContributors: () -> Unit,
     onOpenStaff: () -> Unit,
     onOpenLicenses: () -> Unit,
+    onOpenCodeOfConduct: () -> Unit,
+    onOpenPrivacyPolicy: () -> Unit,
+    onOpenYoutube: () -> Unit,
+    onOpenX: () -> Unit,
+    onOpenMedium: () -> Unit,
     isDebugMenuAvailable: Boolean,
     onOpenDebug: () -> Unit,
 ) {
+    // The navigation bar floats over the content, so the scroll reserves its room at the bottom.
+    val navigationBarHeight = LocalNavigationBarOccupiedHeight.current
     Scaffold(
         topBar = { KaigiTopAppBar(title = uiState.title) },
     ) { innerPadding ->
@@ -50,43 +93,146 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            RemoteImage(
-                imageUrl = PreviewImage.SessionCover.imageUrl,
-                contentDescription = null,
-            )
-            ListItem(
-                headlineContent = { Text(stringResource(Res.string.version)) },
-                trailingContent = { Text(uiState.versionName) },
-            )
-            HorizontalDivider()
-            ListItem(
-                modifier = Modifier.clickable(onClick = onOpenSponsors),
-                headlineContent = { Text(stringResource(Res.string.sponsors)) },
-            )
-            HorizontalDivider()
-            ListItem(
-                modifier = Modifier.clickable(onClick = onOpenContributors),
-                headlineContent = { Text(stringResource(Res.string.contributors)) },
-            )
-            HorizontalDivider()
-            ListItem(
-                modifier = Modifier.clickable(onClick = onOpenStaff),
-                headlineContent = { Text(stringResource(Res.string.staff)) },
-            )
-            HorizontalDivider()
-            ListItem(
-                modifier = Modifier.clickable(onClick = onOpenLicenses),
-                headlineContent = { Text(stringResource(Res.string.licenses)) },
-                supportingContent = { Text(stringResource(Res.string.licenses_description)) },
-            )
-            if (isDebugMenuAvailable) {
-                HorizontalDivider()
-                ListItem(
-                    modifier = Modifier.clickable(onClick = onOpenDebug),
-                    headlineContent = { Text(stringResource(Res.string.debug_menu)) },
-                    supportingContent = { Text(stringResource(Res.string.debug_menu_description)) },
+            // Placeholder for the hand-drawn hero (logo, mascot, wavy bottom edge); see PR description
+            // for the asset and the generative spec. The band shares the top bar's colour.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.inverseSurface)
+                    .padding(vertical = 48.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(Res.string.about_logo_description),
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.inverseOnSurface,
                 )
             }
+            Text(
+                text = stringResource(Res.string.about_description),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+            )
+            Card(modifier = Modifier.fillMaxWidth().padding(all = 16.dp)) {
+                Column(modifier = Modifier.padding(all = 16.dp)) {
+                    Text(
+                        text = stringResource(Res.string.about_event_date),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        text = stringResource(Res.string.about_venue),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            Text(
+                text = stringResource(Res.string.credits),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.contributors),
+                leadingIcon = KaigiIcons.Default.Groups,
+                onClick = onOpenContributors,
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.staff),
+                leadingIcon = KaigiIcons.Default.Person,
+                onClick = onOpenStaff,
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.sponsors),
+                leadingIcon = KaigiIcons.Default.Award,
+                onClick = onOpenSponsors,
+            )
+            HorizontalDivider()
+
+            Text(
+                text = stringResource(Res.string.others),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.code_of_conduct),
+                leadingIcon = KaigiIcons.Default.Gavel,
+                onClick = onOpenCodeOfConduct,
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.licenses),
+                leadingIcon = KaigiIcons.Default.Description,
+                onClick = onOpenLicenses,
+                supporting = stringResource(Res.string.licenses_description),
+            )
+            HorizontalDivider()
+            AboutNavigationRow(
+                stringResource(Res.string.privacy_policy),
+                leadingIcon = KaigiIcons.Default.PrivacyTip,
+                onClick = onOpenPrivacyPolicy,
+            )
+            HorizontalDivider()
+            if (isDebugMenuAvailable) {
+                AboutNavigationRow(
+                    stringResource(Res.string.debug_menu),
+                    leadingIcon = KaigiIcons.Default.Build,
+                    onClick = onOpenDebug,
+                    supporting = stringResource(Res.string.debug_menu_description),
+                )
+                HorizontalDivider()
+            }
+
+            Text(
+                text = stringResource(Res.string.links),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            ) {
+                // Placeholder chips for the YouTube / X / Medium brand marks (see PR description).
+                Box(
+                    modifier = Modifier
+                        .clickable(onClick = onOpenYoutube)
+                        .background(LinksGround, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(text = stringResource(Res.string.about_social_youtube), color = LinksLabel)
+                }
+                Box(
+                    modifier = Modifier
+                        .clickable(onClick = onOpenX)
+                        .background(LinksGround, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(text = stringResource(Res.string.about_social_x), color = LinksLabel)
+                }
+                Box(
+                    modifier = Modifier
+                        .clickable(onClick = onOpenMedium)
+                        .background(LinksGround, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(text = stringResource(Res.string.about_social_medium), color = LinksLabel)
+                }
+            }
+            Text(
+                text = "${stringResource(Res.string.version)} ${uiState.versionName}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp + navigationBarHeight),
+            )
         }
     }
 }
@@ -98,14 +244,16 @@ private fun AboutScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(
-                title = "About DroidKaigi 2026",
-                versionName = "1.0.0",
-            ),
+            uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},
             onOpenLicenses = {},
+            onOpenCodeOfConduct = {},
+            onOpenPrivacyPolicy = {},
+            onOpenYoutube = {},
+            onOpenX = {},
+            onOpenMedium = {},
             isDebugMenuAvailable = true,
             onOpenDebug = {},
         )
@@ -119,14 +267,16 @@ private fun AboutScreenWithoutDebugMenuPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(
-                title = "About DroidKaigi 2026",
-                versionName = "1.0.0",
-            ),
+            uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},
             onOpenLicenses = {},
+            onOpenCodeOfConduct = {},
+            onOpenPrivacyPolicy = {},
+            onOpenYoutube = {},
+            onOpenX = {},
+            onOpenMedium = {},
             isDebugMenuAvailable = false,
             onOpenDebug = {},
         )
