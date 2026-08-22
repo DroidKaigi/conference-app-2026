@@ -241,18 +241,19 @@ fun SketchVerticalWavyProgressLine(
     require(noiseAmount >= 0f) { "noiseAmount must not be negative, was $noiseAmount" }
     require(progress in 0f..1f) { "progress must be between 0.0 and 1.0, was $progress" }
 
+    val combinedSeed = combineSketchSeed(seed)
+
     Box(
         modifier = modifier
             .width(amplitude * (1f + noiseAmount) * 2 + maxOf(passedThickness, upcomingThickness))
             .drawWithCache {
-                // Generate the path only ONCE to optimize rendering performance
                 val path = sketchVerticalWavyLinePath(
                     height = size.height,
                     centerX = size.width / 2f,
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
 
                 onDrawBehind {
@@ -302,7 +303,7 @@ fun SketchVerticalWavyProgressLine(
                         amplitude = amplitude,
                         wavelength = wavelength,
                         noiseAmount = noiseAmount,
-                        seed = seed,
+                        seed = combinedSeed,
                     )
 
                     // Draw the wobbly dot as a perfect circle covering the flat clipped seam

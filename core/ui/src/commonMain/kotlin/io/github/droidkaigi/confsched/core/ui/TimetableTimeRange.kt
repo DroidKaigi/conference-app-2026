@@ -3,7 +3,6 @@ package io.github.droidkaigi.confsched.core.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +63,7 @@ private fun ProgressWavyLine(
         is TimetableLineState.Upcoming -> {
             SketchVerticalWavyLine(
                 seed = seed,
-                modifier = modifier.fillMaxHeight(),
+                modifier = modifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 thickness = 1.dp,
             )
@@ -74,7 +73,7 @@ private fun ProgressWavyLine(
             SketchVerticalWavyProgressLine(
                 seed = seed,
                 progress = state.progress,
-                modifier = modifier.fillMaxHeight(),
+                modifier = modifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 passedThickness = 2.5.dp,
                 upcomingThickness = 1.dp,
@@ -84,7 +83,7 @@ private fun ProgressWavyLine(
         is TimetableLineState.Passed -> {
             SketchVerticalWavyLine(
                 seed = seed,
-                modifier = modifier.fillMaxHeight(),
+                modifier = modifier,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 thickness = 2.5.dp,
             )

@@ -80,9 +80,7 @@ private fun fakeItem(
     startsAt: String,
     endsAt: String,
 ): TimetableItem {
-    // Unlike the data layer which parses full ISO-8601 strings, we construct Instants manually here.
-    // This allows us to keep the mock data definitions simple and readable (e.g., startsAt = "10:00")
-    // without requiring full timestamp strings for every fake item.
+    // Fake items take HH:mm strings; derive Instants via day.at to avoid full ISO-8601 timestamps.
     val startHour = startsAt.substringBefore(':').toInt()
     val startMinute = startsAt.substringAfter(':').toInt()
     val endHour = endsAt.substringBefore(':').toInt()
