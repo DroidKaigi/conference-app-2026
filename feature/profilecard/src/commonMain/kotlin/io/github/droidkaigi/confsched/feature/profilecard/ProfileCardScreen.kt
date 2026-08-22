@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
+import io.github.droidkaigi.confsched.feature.profilecard.component.SketchIntensity
 
 @Composable
 fun ProfileCardScreen(
@@ -22,6 +23,7 @@ fun ProfileCardScreen(
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
     onMascotSelected: (Mascot) -> Unit,
+    onSketchIntensitySelected: (SketchIntensity) -> Unit,
     onSubmitClick: () -> Unit,
 ) {
     when (uiState) {
@@ -31,6 +33,7 @@ fun ProfileCardScreen(
             onOccupationChange = onOccupationChange,
             onLinkChange = onLinkChange,
             onMascotSelected = onMascotSelected,
+            onSketchIntensitySelected = onSketchIntensitySelected,
             onSubmitClick = onSubmitClick,
         )
 
@@ -55,6 +58,7 @@ private fun ProfileCardScreenFormPreview(
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
+            onSketchIntensitySelected = {},
             onSubmitClick = {},
         )
     }
@@ -72,11 +76,13 @@ private fun ProfileCardScreenCardPreview(
                 occupation = "Software Engineer",
                 link = "https://example.com",
                 mascot = Mascot.Koala,
+                sketchIntensity = SketchIntensity.Normal,
             ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
+            onSketchIntensitySelected = {},
             onSubmitClick = {},
         )
     }

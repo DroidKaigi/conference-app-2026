@@ -26,6 +26,7 @@ fun ProfileCardFormView(
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
     onMascotSelected: (Mascot) -> Unit,
+    onSketchIntensitySelected: (SketchIntensity) -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +59,8 @@ fun ProfileCardFormView(
         )
         Text("Mascot", style = MaterialTheme.typography.labelLarge)
         MascotPicker(selected = uiState.mascot, onMascotSelected = onMascotSelected)
+        Text("Sketch intensity", style = MaterialTheme.typography.labelLarge)
+        SketchIntensityPicker(selected = uiState.sketchIntensity, onSketchIntensitySelected = onSketchIntensitySelected)
         Button(onClick = onSubmitClick) {
             Text("Create")
         }
@@ -76,6 +79,7 @@ private fun ProfileCardFormViewPreview(
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
+            onSketchIntensitySelected = {},
             onSubmitClick = {},
         )
     }
