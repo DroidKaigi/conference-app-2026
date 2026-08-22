@@ -59,27 +59,27 @@ fun ProfileCardFormView(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(stringResource(Res.string.subtitle), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(Res.string.nickname_label), style = MaterialTheme.typography.labelLarge)
         OutlinedTextField(
             value = uiState.nickName,
             onValueChange = onNickNameChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.nickname_label)) },
             placeholder = { Text(stringResource(Res.string.nickname_placeholder)) },
             singleLine = true,
         )
+        Text(stringResource(Res.string.occupation_label), style = MaterialTheme.typography.labelLarge)
         OutlinedTextField(
             value = uiState.occupation,
             onValueChange = onOccupationChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.occupation_label)) },
             placeholder = { Text(stringResource(Res.string.occupation_placeholder)) },
             singleLine = true,
         )
+        Text(stringResource(Res.string.link_label), style = MaterialTheme.typography.labelLarge)
         OutlinedTextField(
             value = uiState.link,
             onValueChange = onLinkChange,
             modifier = Modifier.fillMaxWidth(),
-            label = { Text(stringResource(Res.string.link_label)) },
             placeholder = { Text(stringResource(Res.string.link_placeholder)) },
             singleLine = true,
         )
