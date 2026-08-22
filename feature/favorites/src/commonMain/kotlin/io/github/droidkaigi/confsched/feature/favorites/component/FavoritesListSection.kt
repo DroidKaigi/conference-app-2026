@@ -47,7 +47,7 @@ internal fun FavoritesListSection(
         ),
     ) {
         uiState.timeSlots.groupBy { slot -> slot.day }.forEach { (day, slots) ->
-            if (uiState.showDayHeaders) {
+            if (uiState.dayHeadersVisible) {
                 item(key = "header-$day") {
                     FavoritesDayHeader(day = day)
                 }
@@ -68,7 +68,6 @@ internal fun FavoritesListSection(
     }
 }
 
-/** Which conference day the sessions below it run on. */
 @Composable
 private fun FavoritesDayHeader(day: DroidKaigi2026Day) {
     Row(

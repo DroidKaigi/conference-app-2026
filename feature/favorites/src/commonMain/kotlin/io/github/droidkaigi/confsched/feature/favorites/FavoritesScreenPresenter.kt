@@ -44,7 +44,7 @@ fun favoritesScreenPresenter(
         selectedDayFilter = selectedDayFilter,
         favoritesListSection = FavoritesListSectionUiState(
             timeSlots = favoriteItems.toTimeSlots(),
-            showDayHeaders = selectedDayFilter == null,
+            dayHeadersVisible = selectedDayFilter == null,
         ),
     )
 }

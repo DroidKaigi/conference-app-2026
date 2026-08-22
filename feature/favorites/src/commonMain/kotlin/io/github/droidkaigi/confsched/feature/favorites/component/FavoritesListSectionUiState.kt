@@ -9,7 +9,7 @@ import kotlinx.collections.immutable.toPersistentList
 
 data class FavoritesListSectionUiState(
     val timeSlots: PersistentList<TimeSlot>,
-    val showDayHeaders: Boolean,
+    val dayHeadersVisible: Boolean,
 ) {
     data class TimeSlot(
         val day: DroidKaigi2026Day,
@@ -38,6 +38,6 @@ internal fun FavoritesListSectionUiState.Companion.fake(): FavoritesListSectionU
     val timetable = Timetable.fake()
     return FavoritesListSectionUiState(
         timeSlots = timetable.items.filter { timetable.isFavorite(it.id) }.toTimeSlots(),
-        showDayHeaders = true,
+        dayHeadersVisible = true,
     )
 }
