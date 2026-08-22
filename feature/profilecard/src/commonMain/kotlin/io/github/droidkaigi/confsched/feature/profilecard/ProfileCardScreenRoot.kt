@@ -17,6 +17,7 @@ fun ProfileCardScreenRoot() {
         onNickNameChange = { screenChannel.send(ProfileCardScreenAction.UpdateNickName(it)) },
         onOccupationChange = { screenChannel.send(ProfileCardScreenAction.UpdateOccupation(it)) },
         onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
+        onMascotSelected = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
         onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
     )
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ fun ProfileCardFormView(
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
+    onMascotSelected: (Mascot) -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,6 +56,8 @@ fun ProfileCardFormView(
             label = { Text("Link") },
             singleLine = true,
         )
+        Text("Mascot", style = MaterialTheme.typography.labelLarge)
+        MascotPicker(selected = uiState.mascot, onMascotSelected = onMascotSelected)
         Button(onClick = onSubmitClick) {
             Text("Create")
         }
@@ -71,6 +75,7 @@ private fun ProfileCardFormViewPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
+            onMascotSelected = {},
             onSubmitClick = {},
         )
     }

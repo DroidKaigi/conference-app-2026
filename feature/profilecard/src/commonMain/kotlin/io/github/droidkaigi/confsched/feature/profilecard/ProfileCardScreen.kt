@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
 
 @Composable
@@ -20,6 +21,7 @@ fun ProfileCardScreen(
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
+    onMascotSelected: (Mascot) -> Unit,
     onSubmitClick: () -> Unit,
 ) {
     when (uiState) {
@@ -28,6 +30,7 @@ fun ProfileCardScreen(
             onNickNameChange = onNickNameChange,
             onOccupationChange = onOccupationChange,
             onLinkChange = onLinkChange,
+            onMascotSelected = onMascotSelected,
             onSubmitClick = onSubmitClick,
         )
 
@@ -51,6 +54,7 @@ private fun ProfileCardScreenFormPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
+            onMascotSelected = {},
             onSubmitClick = {},
         )
     }
@@ -67,10 +71,12 @@ private fun ProfileCardScreenCardPreview(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
                 link = "https://example.com",
+                mascot = Mascot.Koala,
             ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
+            onMascotSelected = {},
             onSubmitClick = {},
         )
     }

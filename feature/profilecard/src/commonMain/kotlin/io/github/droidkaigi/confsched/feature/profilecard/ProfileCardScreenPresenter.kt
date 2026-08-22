@@ -21,6 +21,7 @@ fun profileCardScreenPresenter(
             is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName)
             is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation)
             is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link)
+            is ProfileCardScreenAction.UpdateMascot -> form = form.copy(mascot = action.mascot)
             ProfileCardScreenAction.Submit -> isSubmitted = true
         }
     }
@@ -30,6 +31,7 @@ fun profileCardScreenPresenter(
             nickName = form.nickName,
             occupation = form.occupation,
             link = form.link,
+            mascot = form.mascot,
         )
     } else {
         form

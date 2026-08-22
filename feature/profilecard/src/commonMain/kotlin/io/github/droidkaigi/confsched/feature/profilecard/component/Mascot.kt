@@ -1,20 +1,30 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
+import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.hall
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.jellyfish
@@ -60,6 +70,76 @@ fun MascotIcon(
     )
 }
 
+/** A row letting the user pick one of the five [Mascot]s. */
+@Composable
+fun MascotPicker(
+    selected: Mascot,
+    onMascotSelected: (Mascot) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Mascot.entries.forEach { mascot ->
+            MascotOption(
+                mascot = mascot,
+                selected = mascot == selected,
+                onClick = { onMascotSelected(mascot) },
+                seed = mascot.ordinal,
+            )
+        }
+    }
+}
+
+/**
+ * One option of [MascotPicker], drawn as its own hand-sketched circle rather than sharing an
+ * outline with its neighbours, matching [io.github.droidkaigi.confsched.core.ui.KaigiFilterChip].
+ *
+ * @param seed the value the circle is drawn from. The same seed always produces the same
+ *   outline, so give neighbouring options different ones or a row of them reads as a repeat.
+ */
+@Composable
+private fun MascotOption(
+    mascot: Mascot,
+    selected: Boolean,
+    onClick: () -> Unit,
+    seed: Int,
+    modifier: Modifier = Modifier,
+    selectedContainerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    selectedContentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+) {
+    val shape = SketchEllipseShape(
+        seed = seed,
+        roughness = MascotOptionDefaults.roughness,
+        tremor = MascotOptionDefaults.tremor,
+        borderThickness = MascotOptionDefaults.borderThickness,
+    )
+    Box(
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .size(MascotOptionDefaults.size)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .clip(shape)
+            .background(if (selected) selectedContainerColor else Color.Transparent)
+            .sketchBorder(shape, if (selected) selectedContentColor else borderColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        MascotIcon(
+            mascot = mascot,
+            color = if (selected) selectedContentColor else contentColor,
+            modifier = Modifier.size(MascotOptionDefaults.iconSize),
+        )
+    }
+}
+
+object MascotOptionDefaults {
+    val size = 48.dp
+    val iconSize = 28.dp
+    val borderThickness = 1.5.dp
+    val roughness = 0.4.dp
+    val tremor = 0.15.dp
+}
+
 @Preview
 @Composable
 private fun MascotIconPreview(
@@ -71,5 +151,15 @@ private fun MascotIconPreview(
                 MascotIcon(mascot = mascot, modifier = Modifier.padding(4.dp).size(48.dp))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun MascotPickerPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        MascotPicker(selected = Mascot.Koala, onMascotSelected = {}, modifier = Modifier.padding(16.dp))
     }
 }
