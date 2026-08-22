@@ -9,5 +9,6 @@ sealed interface ProfileCardScreenAction {
     data class UpdateLink(val link: String) : ProfileCardScreenAction
     data class UpdateMascot(val mascot: Mascot) : ProfileCardScreenAction
     data class UpdateSketchIntensity(val sketchIntensity: SketchIntensity) : ProfileCardScreenAction
+    data object AddAvatarImage : ProfileCardScreenAction
     data object Submit : ProfileCardScreenAction
 }

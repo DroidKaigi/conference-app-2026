@@ -10,6 +10,7 @@ sealed interface ProfileCardScreenUiState {
         val link: String = "",
         val mascot: Mascot = Mascot.Koala,
         val sketchIntensity: SketchIntensity = SketchIntensity.Normal,
+        val hasAvatarImage: Boolean = false,
     ) : ProfileCardScreenUiState
 
     data class Card(
@@ -18,5 +19,6 @@ sealed interface ProfileCardScreenUiState {
         val link: String,
         val mascot: Mascot,
         val sketchIntensity: SketchIntensity,
+        val hasAvatarImage: Boolean,
     ) : ProfileCardScreenUiState
 }

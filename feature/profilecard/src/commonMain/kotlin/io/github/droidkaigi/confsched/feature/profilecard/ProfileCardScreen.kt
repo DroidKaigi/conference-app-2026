@@ -7,10 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
@@ -24,6 +24,7 @@ fun ProfileCardScreen(
     onLinkChange: (String) -> Unit,
     onMascotSelected: (Mascot) -> Unit,
     onSketchIntensitySelected: (SketchIntensity) -> Unit,
+    onAddImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
 ) {
     when (uiState) {
@@ -34,6 +35,7 @@ fun ProfileCardScreen(
             onLinkChange = onLinkChange,
             onMascotSelected = onMascotSelected,
             onSketchIntensitySelected = onSketchIntensitySelected,
+            onAddImageClick = onAddImageClick,
             onSubmitClick = onSubmitClick,
         )
 
@@ -46,7 +48,7 @@ fun ProfileCardScreen(
     }
 }
 
-@Preview
+@LocalePreviews
 @Composable
 private fun ProfileCardScreenFormPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -59,12 +61,13 @@ private fun ProfileCardScreenFormPreview(
             onLinkChange = {},
             onMascotSelected = {},
             onSketchIntensitySelected = {},
+            onAddImageClick = {},
             onSubmitClick = {},
         )
     }
 }
 
-@Preview
+@LocalePreviews
 @Composable
 private fun ProfileCardScreenCardPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -77,12 +80,14 @@ private fun ProfileCardScreenCardPreview(
                 link = "https://example.com",
                 mascot = Mascot.Koala,
                 sketchIntensity = SketchIntensity.Normal,
+                hasAvatarImage = false,
             ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
             onSketchIntensitySelected = {},
+            onAddImageClick = {},
             onSubmitClick = {},
         )
     }

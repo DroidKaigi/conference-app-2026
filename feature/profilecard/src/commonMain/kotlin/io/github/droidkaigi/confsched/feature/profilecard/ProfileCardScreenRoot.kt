@@ -19,6 +19,7 @@ fun ProfileCardScreenRoot() {
         onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
         onMascotSelected = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
         onSketchIntensitySelected = { screenChannel.send(ProfileCardScreenAction.UpdateSketchIntensity(it)) },
+        onAddImageClick = { screenChannel.send(ProfileCardScreenAction.AddAvatarImage) },
         onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
     )
 }

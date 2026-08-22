@@ -11,6 +11,11 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiSegmentedButton
 import io.github.droidkaigi.confsched.core.ui.KaigiSingleChoiceSegmentedButtonRow
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_normal
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_playful
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_subtle
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * How far the card's hand-sketched outlines wobble from a straight line, expressed as the
@@ -23,10 +28,10 @@ enum class SketchIntensity(val amplitudeMultiplier: Float) {
 }
 
 private val SketchIntensity.label: String
-    get() = when (this) {
-        SketchIntensity.Subtle -> "Subtle"
-        SketchIntensity.Normal -> "Normal"
-        SketchIntensity.Playful -> "Playful"
+    @Composable get() = when (this) {
+        SketchIntensity.Subtle -> stringResource(Res.string.sketchiness_subtle)
+        SketchIntensity.Normal -> stringResource(Res.string.sketchiness_normal)
+        SketchIntensity.Playful -> stringResource(Res.string.sketchiness_playful)
     }
 
 /** A three-way segmented picker for the card's [SketchIntensity]. */
