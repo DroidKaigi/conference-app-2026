@@ -5,11 +5,4 @@
     <string name="event_map_stamp_title">Stamp Rally</string>
     <string name="event_map_stamp_description">Collect stamps and exchange them for prizes!</string>
     <string name="event_map_learn_more_button_label">Learn more</string>
-    <string name="event_map_meetup_title">Meetup (Lunchtime)</string>
-    <string name="event_map_meetup_description">Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.</string>
-    <string name="event_map_meetup_message">* The time of this event has changed</string>
-    <string name="event_map_career_title">Career Counseling</string>
-    <string name="event_map_career_description">Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.</string>
-    <string name="event_map_communication_title">Communication Area</string>
-    <string name="event_map_communication_description">Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.</string>
 </resources>
