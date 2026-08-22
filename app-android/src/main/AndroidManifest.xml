@@ -1,16 +1,16 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:name=".app.KaigiApplication"
         android:label="DroidKaigi 2026"
-        android:theme="@style/Theme.KaigiApp"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.KaigiApp">
         <!-- singleTask: a deep link from the widget brings the existing task forward through
              onNewIntent instead of stacking a second copy of the single-activity app. -->
         <activity
             android:name=".app.MainActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
