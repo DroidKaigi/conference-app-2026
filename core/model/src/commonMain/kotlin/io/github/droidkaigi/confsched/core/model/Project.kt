@@ -9,7 +9,7 @@ value class ProjectId(val value: String)
 data class Project(
     val id: ProjectId,
     val title: MultiLangText,
-    val i18nDesc: MultiLangText,
+    val description: MultiLangText,
     val room: Room,
     val message: MultiLangText? = null,
     val moreDetailsUrl: String? = null,

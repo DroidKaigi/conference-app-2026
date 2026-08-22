@@ -16,7 +16,7 @@ fun ProjectListResponse.toProjects(): Projects {
 private fun ProjectResponse.toProject(roomNameById: Map<Long, String>): Project = Project(
     id = ProjectId(id),
     title = title.toMultiLangText(),
-    i18nDesc = i18nDesc.toMultiLangText(),
+    description = i18nDesc.toMultiLangText(),
     room = Room.of(roomNameById[roomId].orEmpty()),
     message = message?.toMultiLangText(),
     moreDetailsUrl = moreDetailsUrl,

@@ -90,7 +90,7 @@ private fun EventItemPreview(
         val project = Projects.fake().items.first()
         EventItem(
             title = project.title,
-            i18nDesc = project.i18nDesc,
+            i18nDesc = project.description,
             room = project.room,
             message = project.message,
             moreDetailsUrl = project.moreDetailsUrl,

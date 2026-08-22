@@ -15,7 +15,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "Meetup（ランチタイム）",
                 en = "Meetup (Lunchtime)",
             ),
-            i18nDesc = MultiLangText(
+            description = MultiLangText(
                 ja = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                 en = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
             ),
@@ -32,7 +32,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "キャリア相談会",
                 en = "Career Counseling",
             ),
-            i18nDesc = MultiLangText(
+            description = MultiLangText(
                 ja = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                 en = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
             ),
@@ -45,7 +45,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "コミュニケーションエリア",
                 en = "Communication Area",
             ),
-            i18nDesc = MultiLangText(
+            description = MultiLangText(
                 ja = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                 en = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
             ),

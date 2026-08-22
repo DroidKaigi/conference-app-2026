@@ -20,7 +20,7 @@ class EventMapScreenPresenterTest {
             Project(
                 id = ProjectId("1"),
                 title = MultiLangText(ja = "Meetup", en = "Meetup"),
-                i18nDesc = MultiLangText(ja = "Description", en = "Description"),
+                description = MultiLangText(ja = "Description", en = "Description"),
                 room = Room.NARWHAL,
             ),
         ),
