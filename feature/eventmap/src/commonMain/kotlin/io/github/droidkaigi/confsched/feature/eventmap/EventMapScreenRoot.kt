@@ -12,7 +12,7 @@ fun EventMapScreenRoot() {
     val screenChannel = retainScreenChannel<EventMapScreenAction, Nothing>()
     SoilDataBoundary(state = rememberQuery(screenContext.projectsQueryKey)) { projects ->
         val uiState = context(screenContext.presenterContext) {
-            eventMapScreenPresenter(screenChannel = screenChannel, projects)
+            eventMapScreenPresenter(screenChannel = screenChannel, projects = projects)
         }
         EventMapScreen(
             uiState = uiState,
