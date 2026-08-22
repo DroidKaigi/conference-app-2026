@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.sessions.timetable.component
+package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.SketchVerticalWavyLine
 
 /**
  * When a slot runs, drawn down the left of the sessions in it.
@@ -23,7 +22,7 @@ import io.github.droidkaigi.confsched.core.ui.SketchVerticalWavyLine
  * The two times sit either side of a wavy rule standing in for the stretch between them.
  */
 @Composable
-internal fun TimetableTimeRange(
+fun TimetableTimeRange(
     startsAt: String,
     endsAt: String,
     seed: Int,

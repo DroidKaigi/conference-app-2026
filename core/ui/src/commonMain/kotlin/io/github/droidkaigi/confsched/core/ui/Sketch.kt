@@ -43,10 +43,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlin.math.roundToInt
+
+/** Combines the app-wide sketch seed with an element's stable seed. */
+@Composable
+fun combineSketchSeed(seed: Int): Int = LocalSketchBaseSeed.current + seed
 
 /** How finely the tremor octave ripples: shorter is a faster, tighter shake. */
 private val DefaultTremorWavelength = 42.dp
@@ -103,6 +108,7 @@ fun SketchHorizontalDivider(
 ) {
     requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
     require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -115,7 +121,7 @@ fun SketchHorizontalDivider(
                     tremor = tremor,
                     sweepWavelength = sweepWavelength,
                     tremorWavelength = tremorWavelength,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
@@ -144,6 +150,7 @@ fun SketchVerticalDivider(
 ) {
     requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
     require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -156,7 +163,7 @@ fun SketchVerticalDivider(
                     tremor = tremor,
                     sweepWavelength = sweepWavelength,
                     tremorWavelength = tremorWavelength,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
@@ -188,6 +195,7 @@ fun SketchVerticalWavyLine(
     require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
     require(wavelength > 0.dp) { "wavelength must be positive, was $wavelength" }
     require(noiseAmount >= 0f) { "noiseAmount must not be negative, was $noiseAmount" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .width(amplitude * (1f + noiseAmount) * 2 + thickness)
@@ -198,7 +206,7 @@ fun SketchVerticalWavyLine(
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
@@ -504,7 +512,7 @@ private fun CornerRadiusSamples() {
                         .size(90.dp, 64.dp)
                         .sketchBorder(
                             shape = SketchRoundRectShape(
-                                seed = 20 + index,
+                                seed = combineSketchSeed(20 + index),
                                 cornerRadius = radius,
                                 borderThickness = 2.dp,
                             ),
@@ -547,7 +555,7 @@ private fun BorderTasteRow(roughness: Dp) {
                         .size(132.dp, 84.dp)
                         .sketchBorder(
                             shape = SketchRoundRectShape(
-                                seed = 9,
+                                seed = combineSketchSeed(9),
                                 roughness = roughness,
                                 tremor = tremor,
                                 cornerRadius = 10.dp,
@@ -573,12 +581,16 @@ private fun SketchShapePreview(
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
-                            .clip(SketchRoundRectShape(seed = 50, cornerRadius = 12.dp))
+                            .clip(SketchRoundRectShape(seed = combineSketchSeed(50), cornerRadius = 12.dp))
                             .background(MaterialTheme.colorScheme.primaryContainer),
                     )
                 }
                 LabelledSample(label = "clip + border") {
-                    val shape = SketchRoundRectShape(seed = 51, cornerRadius = 12.dp, borderThickness = 2.dp)
+                    val shape = SketchRoundRectShape(
+                        seed = combineSketchSeed(51),
+                        cornerRadius = 12.dp,
+                        borderThickness = 2.dp,
+                    )
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
@@ -590,7 +602,7 @@ private fun SketchShapePreview(
                 LabelledSample(label = "Surface") {
                     Surface(
                         modifier = Modifier.size(90.dp, 64.dp),
-                        shape = SketchRoundRectShape(seed = 52, cornerRadius = 20.dp),
+                        shape = SketchRoundRectShape(seed = combineSketchSeed(52), cornerRadius = 20.dp),
                         color = MaterialTheme.colorScheme.secondaryContainer,
                     ) {}
                 }
@@ -598,7 +610,13 @@ private fun SketchShapePreview(
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
-                            .clip(SketchRoundRectShape(seed = 53, tremor = 1.dp, cornerRadius = 12.dp))
+                            .clip(
+                                SketchRoundRectShape(
+                                    seed = combineSketchSeed(53),
+                                    tremor = 1.dp,
+                                    cornerRadius = 12.dp,
+                                ),
+                            )
                             .background(MaterialTheme.colorScheme.primaryContainer),
                     )
                 }
@@ -625,7 +643,7 @@ private fun SketchSegmentedPreview(
 @Composable
 private fun SegmentedSample(selectedFirst: Boolean) {
     val shape = SketchRoundRectShape(
-        seed = 900,
+        seed = combineSketchSeed(900),
         roughness = 0.4.dp,
         tremor = 0.15.dp,
         cornerRadius = 16.dp,
@@ -692,7 +710,11 @@ private fun ResizeSample() {
                 Modifier
                     .size(width.dp, height)
                     .sketchBorder(
-                        shape = SketchRoundRectShape(seed = 5, cornerRadius = 16.dp, borderThickness = 2.dp),
+                        shape = SketchRoundRectShape(
+                            seed = combineSketchSeed(5),
+                            cornerRadius = 16.dp,
+                            borderThickness = 2.dp,
+                        ),
                         color = MaterialTheme.colorScheme.outline,
                     ),
             )
@@ -703,7 +725,7 @@ private fun ResizeSample() {
                     .size(width.dp, height)
                     .sketchBorder(
                         shape = SketchRoundRectShape(
-                            seed = 5,
+                            seed = combineSketchSeed(5),
                             cornerRadius = 16.dp,
                             borderThickness = 2.dp,
                             referenceSize = DpSize(292.dp, height),
@@ -726,7 +748,11 @@ private fun SketchCardPreview(
                 Modifier
                     .width(260.dp)
                     .sketchBorder(
-                        shape = SketchRoundRectShape(seed = 40, cornerRadius = 16.dp, borderThickness = 2.dp),
+                        shape = SketchRoundRectShape(
+                            seed = combineSketchSeed(40),
+                            cornerRadius = 16.dp,
+                            borderThickness = 2.dp,
+                        ),
                         color = MaterialTheme.colorScheme.outline,
                     )
                     .padding(16.dp),

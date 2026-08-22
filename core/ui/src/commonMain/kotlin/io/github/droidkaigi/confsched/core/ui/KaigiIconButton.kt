@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Search
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -42,7 +42,8 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
  * @param size the diameter of the disc.
  * @param containerColor the colour filling the disc.
  * @param contentColor the colour [content] draws in, provided as [LocalContentColor].
- * @param content the icon the disc holds.
+ * @param content the icon the disc holds, laid out at [KaigiIconButtonDefaults.iconSize] rather
+ *   than at its own size.
  */
 @Composable
 fun KaigiIconButton(
@@ -54,20 +55,31 @@ fun KaigiIconButton(
     contentColor: Color = MaterialTheme.colorScheme.inverseSurface,
     content: @Composable () -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .size(size)
-            .clip(SketchRoundRectShape(seed = seed, cornerRadius = size / 2))
+            .clip(SketchRoundRectShape(seed = combinedSeed, cornerRadius = size / 2))
             .background(containerColor)
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
+        CompositionLocalProvider(LocalContentColor provides contentColor) {
+            Box(
+                modifier = Modifier.size(KaigiIconButtonDefaults.iconSize),
+                contentAlignment = Alignment.Center,
+            ) {
+                content()
+            }
+        }
     }
 }
 
 object KaigiIconButtonDefaults {
     val size = 38.dp
+
+    /** The box the top bar draws every glyph in, narrower than an icon's own 24.dp. */
+    val iconSize = 18.dp
 }
 
 @Preview
@@ -83,10 +95,10 @@ private fun KaigiIconButtonPreview(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             KaigiIconButton(seed = 777, onClick = {}) {
-                Icon(Icons.Filled.Search, contentDescription = null)
+                Icon(KaigiIcons.Default.Search, contentDescription = null)
             }
             KaigiIconButton(seed = 778, onClick = {}) {
-                Icon(Icons.Filled.DateRange, contentDescription = null)
+                Icon(KaigiIcons.Default.GridView, contentDescription = null)
             }
         }
     }

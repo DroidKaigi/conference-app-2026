@@ -121,7 +121,7 @@ The `droidkaigi.convention.kmp-feature` plugin gives every feature `implementati
 `:core:preview:impl` still has to be on the classpath that *renders* previews, yet it is absent from `releaseRuntimeClasspath`. The non-production paths that pull it in:
 
 - **Android Studio `@Preview` rendering** — the `kmp-feature` convention adds `"androidRuntimeClasspath"(project(":core:preview:impl"))` (and `compileOnly(project(":core:preview:impl"))` in `androidMain`) so the drawable resources are visible to the IDE preview renderer; the `kmp.compose` primitive adds `"androidRuntimeClasspath"(libs.composeUiTooling)` for `ComposeViewAdapter`. Neither configuration feeds the release runtime classpath.
-- **Tests / CI** — depend on `:core:preview:impl` from a test source set (e.g. `androidHostTest`). `:core:preview:wrapper`'s `PreviewWiringTest` proves `PreviewGraph` resolves the contributed `DefaultPreviewImageResolver` from there, and maps `preview://` URLs to `DrawableResource`s.
+- **Tests / CI** — depend on `:core:preview:impl` from a test source set (e.g. `jvmTest`). `:core:preview:wrapper`'s `PreviewWiringTest` proves `PreviewGraph` resolves the contributed `DefaultPreviewImageResolver` from there, and maps `preview://` URLs to `DrawableResource`s.
 
 ## Android Studio preview rendering
 

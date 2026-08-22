@@ -1,5 +1,9 @@
 package io.github.droidkaigi.confsched.feature.contributors.component
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,10 +11,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -21,6 +31,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -38,6 +49,24 @@ internal fun ContributorsCountText(
     count: Int,
     modifier: Modifier = Modifier,
 ) {
+    var hasCountedUp by rememberSaveable { mutableStateOf(false) }
+    val displayedCount = remember { Animatable(if (hasCountedUp) count else 0, Int.VectorConverter) }
+    LaunchedEffect(count) {
+        if (hasCountedUp) {
+            displayedCount.snapTo(count)
+        } else {
+            displayedCount.animateTo(
+                targetValue = count,
+                animationSpec = tween(
+                    durationMillis = ContributorsCountTextDefaults.COUNT_UP_DURATION_MILLIS,
+                    delayMillis = ContributorsCountTextDefaults.COUNT_UP_START_DELAY_MILLIS,
+                    easing = EaseOut,
+                ),
+            )
+            hasCountedUp = true
+        }
+    }
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         // The marks hug the count rather than the block, so they anchor to a box drawn around the
         // text and the block keeps the rest of its height outside them.
@@ -61,9 +90,14 @@ internal fun ContributorsCountText(
                     modifier = Modifier.alignByBaseline(),
                 )
                 Text(
-                    text = count.toString(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.alignByBaseline(),
+                    text = displayedCount.value.toString(),
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontFeatureSettings = ContributorsCountTextDefaults.TABULAR_FIGURES_FEATURE,
+                    ),
+                    modifier = Modifier
+                        .width(ContributorsCountTextDefaults.countDigitsWidth)
+                        .alignByBaseline(),
+                    textAlign = TextAlign.Center,
                 )
                 Text(
                     text = pluralStringResource(Res.plurals.contributors_count_unit, count),
@@ -183,6 +217,17 @@ private const val ORNAMENT_STROKE_WIDTH = 2f
 
 private object ContributorsCountTextDefaults {
     val textSpacing = 8.dp
+
+    /** Skips the fade-in's near-invisible first stretch, so the count doesn't move unseen. */
+    const val COUNT_UP_START_DELAY_MILLIS = 200
+
+    const val COUNT_UP_DURATION_MILLIS = 600
+
+    /** Tabular figures keep each digit the same width, so the count does not jitter while it animates. */
+    const val TABULAR_FIGURES_FEATURE = "tnum"
+
+    /** Wide enough for the total to reach three digits without the surrounding marks shifting. */
+    val countDigitsWidth = 48.dp
 
     /** How far the brackets stand off the count they frame. */
     val ornamentHorizontalPadding = 13.dp

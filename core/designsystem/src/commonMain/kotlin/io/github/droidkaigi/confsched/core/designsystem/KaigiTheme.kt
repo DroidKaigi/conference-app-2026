@@ -1,13 +1,22 @@
 package io.github.droidkaigi.confsched.core.designsystem
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.Res
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_mono_regular
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_medium
+import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_regular
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import org.jetbrains.compose.resources.Font
 
 // Palettes come from the Figma file's `DroidKaigi 2026 Material Theme` collection.
 // Tokens that collection leaves undefined keep their existing values, among them the
@@ -169,12 +178,18 @@ private val CampfireNight = darkColorScheme(
     outlineVariant = Color(0xFF625C58),
 )
 
-private fun KaigiColorScheme.toMaterialColorScheme() = when (this) {
+/** The Material palette of [this] scheme, for callers outside a composition such as widgets. */
+fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.MorningMist -> MorningMist
     KaigiColorScheme.DeepTeal -> DeepTeal
     KaigiColorScheme.SakuraPlum -> SakuraPlum
     KaigiColorScheme.Terracotta -> Terracotta
     KaigiColorScheme.CampfireNight -> CampfireNight
+}
+
+/** The app-wide base seed combined with each sketch element's stable seed. */
+val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
+    error("LocalSketchBaseSeed must be provided")
 }
 
 /**
@@ -195,14 +210,56 @@ val KaigiColorScheme.isDark: Boolean
         KaigiColorScheme.CampfireNight -> true
     }
 
+// Each bundled binary merges its Latin face with Noto Sans JP, because Compose offers no
+// way to direct per-glyph fallback to a bundled font.
+@Composable
+private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
+    val display = FontFamily(Font(Res.font.kaigi_mono_regular, FontWeight.Normal))
+    val standard = FontFamily(
+        Font(Res.font.kaigi_sans_regular, FontWeight.Normal),
+        Font(Res.font.kaigi_sans_medium, FontWeight.Medium),
+    )
+    return display to standard
+}
+
+// Only the family changes per role; sizes, line heights, and letter spacing must keep
+// the Material defaults the design file records.
+@Composable
+private fun kaigiTypography(): Typography {
+    val (display, standard) = kaigiFontFamilies()
+    val defaults = Typography()
+    return Typography(
+        displayLarge = defaults.displayLarge.copy(fontFamily = display),
+        displayMedium = defaults.displayMedium.copy(fontFamily = display),
+        displaySmall = defaults.displaySmall.copy(fontFamily = display),
+        headlineLarge = defaults.headlineLarge.copy(fontFamily = display),
+        headlineMedium = defaults.headlineMedium.copy(fontFamily = display),
+        headlineSmall = defaults.headlineSmall.copy(fontFamily = display),
+        titleLarge = defaults.titleLarge.copy(fontFamily = standard),
+        titleMedium = defaults.titleMedium.copy(fontFamily = standard),
+        titleSmall = defaults.titleSmall.copy(fontFamily = standard),
+        bodyLarge = defaults.bodyLarge.copy(fontFamily = standard),
+        bodyMedium = defaults.bodyMedium.copy(fontFamily = standard),
+        bodySmall = defaults.bodySmall.copy(fontFamily = standard),
+        labelLarge = defaults.labelLarge.copy(fontFamily = standard),
+        labelMedium = defaults.labelMedium.copy(fontFamily = standard),
+        labelSmall = defaults.labelSmall.copy(fontFamily = standard),
+    )
+}
+
 @Composable
 fun KaigiTheme(
     colorScheme: KaigiColorScheme,
+    sketchBaseSeed: Int,
     content: @Composable () -> Unit,
 ) {
-    CompositionLocalProvider(LocalSchemeIsDark provides colorScheme.isDark) {
+    CompositionLocalProvider(
+        LocalSchemeIsDark provides colorScheme.isDark,
+        LocalSketchBaseSeed provides sketchBaseSeed,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme.toMaterialColorScheme(),
+            typography = kaigiTypography(),
             content = content,
         )
     }

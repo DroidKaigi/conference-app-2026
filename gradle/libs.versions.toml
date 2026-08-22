@@ -22,6 +22,8 @@ androidxNavigation3 = "1.1.1"
 composeMaterial3AdaptiveNavigation3 = "1.3.0-beta02"
 agp = "9.2.1"
 androidxActivityCompose = "1.10.1"
+# Jetpack Glance home-screen widget framework (app-android only).
+androidxGlance = "1.2.0-rc01"
 # KSP 2.3.x is decoupled from the Kotlin compiler version (KSP2 standalone Analysis-API backend), so a
 # single 2.3.x release runs against Kotlin 2.4.0.
 ksp = "2.3.9"
@@ -50,11 +52,10 @@ aboutlibraries = "15.0.4"
 openapiGenerator = "7.14.0"
 # YAML parser used by the trimOpenApiSpec convention task (gradle-conventions only).
 kaml = "0.104.0"
-# Preview screenshot-test stack (Android host tests only — see docs/testing-preview-screenshot.md).
-# Roborazzi renders @Preview composables headlessly via Robolectric; ComposablePreviewScanner
+# Preview screenshot-test stack (JVM target — see docs/testing-preview-screenshot.md).
+# Roborazzi renders @Preview composables on the Compose Desktop (JVM) target; ComposablePreviewScanner
 # discovers them.
-roborazzi = "1.67.0"
-robolectric = "4.16.1"
+roborazzi = "1.70.0"
 composablePreviewScanner = "0.9.1"
 junit = "4.13.2"
 # Formatting: Spotless drives ktlint. The ktlint version is pinned here rather than left to
@@ -91,14 +92,16 @@ composeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrainsCo
 composeComponentsResources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrainsCompose" }
 composeUiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrainsCompose" }
 composeUiTooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "jetbrainsCompose" }
-# Material3 and material-icons-extended are versioned independently of the Compose Multiplatform release.
+# Material3 is versioned independently of the Compose Multiplatform release.
 composeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version = "1.12.0-alpha03" }
-composeMaterialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
 androidxDatastoreCore = { module = "androidx.datastore:datastore-core", version.ref = "androidxDatastore" }
 androidxDatastorePreferencesCore = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidxDatastore" }
 androidxDatastoreCoreOkio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidxDatastore" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidxGlanceAppwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidxGlance" }
+androidxGlancePreview = { module = "androidx.glance:glance-preview", version.ref = "androidxGlance" }
+androidxGlanceAppwidgetPreview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidxGlance" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinCompiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
 kotlinCompilerInternalTestFramework = { module = "org.jetbrains.kotlin:kotlin-compiler-internal-test-framework", version.ref = "kotlin" }
@@ -147,17 +150,12 @@ jetwhaleHostComposeFoundation = { module = "org.jetbrains.compose.foundation:fou
 jetwhaleHostComposeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetwhaleHostCompose" }
 jetwhaleHostComposeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version = "1.11.0-alpha07" }
 firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
-roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
-roborazziCompose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
-roborazziJunitRule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
-roborazziPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-preview-scanner-support", version.ref = "roborazzi" }
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+roborazziComposeDesktop = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop", version.ref = "roborazzi" }
+roborazziDesktopPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop-preview-scanner-support", version.ref = "roborazzi" }
 # The :android artifact scans androidx.compose.ui.tooling.preview.Preview, which is the annotation
 # Compose Multiplatform previews carry.
 composablePreviewScannerAndroid = { module = "io.github.sergio-sastre.ComposablePreviewScanner:android", version.ref = "composablePreviewScanner" }
 junit = { module = "junit:junit", version.ref = "junit" }
-composeUiTestJunit4 = { module = "org.jetbrains.compose.ui:ui-test-junit4", version.ref = "jetbrainsCompose" }
-androidxTestExtJunit = { module = "androidx.test.ext:junit", version = "1.2.1" }
 
 [plugins]
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -186,6 +184,7 @@ jetwhaleHost = { id = "com.kitakkun.jetwhale.host", version.ref = "jetwhale" }
 # includeBuild substitution wins — but the catalog schema requires one.
 droidkaigiPrimitiveKmp = { id = "droidkaigi.primitive.kmp", version = "unspecified" }
 droidkaigiPrimitiveOpenapi = { id = "droidkaigi.primitive.openapi", version = "unspecified" }
+droidkaigiPrimitiveIcons = { id = "droidkaigi.primitive.icons", version = "unspecified" }
 droidkaigiPrimitiveKmpCompose = { id = "droidkaigi.primitive.kmp.compose", version = "unspecified" }
 droidkaigiPrimitiveBuildkonfig = { id = "droidkaigi.primitive.buildkonfig", version = "unspecified" }
 droidkaigiPrimitiveSpotless = { id = "droidkaigi.primitive.spotless", version = "unspecified" }

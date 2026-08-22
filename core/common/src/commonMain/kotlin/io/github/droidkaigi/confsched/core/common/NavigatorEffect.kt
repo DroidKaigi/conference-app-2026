@@ -18,11 +18,22 @@ fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, lo
                     }
                 }
 
-                NavCommand.Pop -> if (backStack.size > 1) backStack.removeLastOrNull()
+                is NavCommand.Pop -> {
+                    val top = backStack.lastOrNull()
+                    if (command.origin != null && command.origin != top) {
+                        logger.warn { "Stale pop from non-top NavKey: ${command.origin}; top is $top" }
+                    } else if (backStack.size > 1) {
+                        backStack.removeLastOrNull()
+                    }
+                }
 
                 is NavCommand.MoveToTop -> if (backStack.lastOrNull() != command.key) {
                     backStack.remove(command.key)
                     backStack.add(command.key)
+                }
+
+                is NavCommand.ReplaceTop -> if (backStack.isNotEmpty()) {
+                    backStack[backStack.lastIndex] = command.key
                 }
             }
         }
