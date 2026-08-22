@@ -39,13 +39,15 @@ internal fun StampRallyCard(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
+                    .weight(1f),
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -78,8 +80,8 @@ internal fun StampRallyCard(
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onSurfaceVariant),
                 modifier = Modifier
-                    .padding(4.dp)
-                    .size(64.dp),
+                    .size(72.dp)
+                    .padding(end = 4.dp),
             )
         }
     }
