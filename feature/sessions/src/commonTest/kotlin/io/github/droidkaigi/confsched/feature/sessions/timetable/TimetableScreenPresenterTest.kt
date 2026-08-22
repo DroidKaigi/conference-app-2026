@@ -32,6 +32,8 @@ import soil.query.core.Reply
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class TimetableScreenPresenterTest {
 
@@ -139,6 +141,46 @@ class TimetableScreenPresenterTest {
             assertEquals(sampleTimetable, loaded.value)
 
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun countdown_banner_shows_next_favorited_session_and_handles_hours_and_past_sessions() {
+        val timetable = Timetable(
+            items = persistentListOf(
+                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "Session 1", en = ""), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                TimetableItem(TimetableItemId("s2"), MultiLangText(ja = "Session 2", en = ""), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
+            ),
+            bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
+        )
+
+        graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
+
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+        ) {
+            val initialState = uiStates.awaitItem()
+            assertEquals(1.hours + 30.minutes, initialState.timetableListSection.countdownBannerUiState?.remainingDuration)
+            assertEquals("s1", initialState.timetableListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
+
+            graph.clock.advanceBy(1.hours)
+            val at930 = uiStates.awaitItem()
+            assertEquals(30.minutes, at930.timetableListSection.countdownBannerUiState?.remainingDuration)
+
+            graph.clock.advanceBy(40.minutes)
+            val at1010 = uiStates.awaitItem()
+            assertEquals(50.minutes, at1010.timetableListSection.countdownBannerUiState?.remainingDuration)
+            assertEquals("s2", at1010.timetableListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
+
+            graph.clock.advanceBy(1.hours)
+            val at1110 = uiStates.awaitItem()
+            assertEquals(null, at1110.timetableListSection.countdownBannerUiState)
+
+            graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
+            send(TimetableScreenAction.SelectDay(DroidKaigi2026Day.Day2))
+            val atDay2 = uiStates.awaitItem()
+            assertEquals(null, atDay2.timetableListSection.countdownBannerUiState)
         }
     }
 

@@ -7,4 +7,7 @@
     <string name="remove_favorite">Remove favorite</string>
     <string name="schedule">Schedule</string>
     <string name="location">Location</string>
+    <string name="countdown_banner_title">Next favorited session</string>
+    <string name="countdown_minutes">in %1$d min</string>
+    <string name="countdown_hours_minutes">in %1$d hr %2$d min</string>
 </resources>

@@ -16,4 +16,5 @@ interface TimetableScreenTestGraph {
     val favoriteIdsSubscriptionKey: FakeFavoriteTimetableIdsSubscriptionKey
     val favoriteMutationKey: FakeFavoriteTimetableItemIdMutationKey
     val logger: FakeKaigiLogger
+    val clock: io.github.droidkaigi.confsched.core.testing.FakeClock
 }
