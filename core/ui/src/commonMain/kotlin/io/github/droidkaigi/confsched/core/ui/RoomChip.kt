@@ -25,11 +25,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 @Composable
 fun RoomChip(room: Room, seed: Int) {
     val theme = roomTheme(room)
-    KaigiChip(
-        seed = seed,
-        containerColor = theme.container,
-        contentColor = theme.onContainer,
-    ) {
+    KaigiChip(seed = seed, containerColor = theme.container, contentColor = theme.onContainer) {
         theme.shape?.let { RoomMark(shape = it, color = theme.onContainer) }
         Text(text = room.name, style = KaigiChipDefaults.labelStyle)
     }

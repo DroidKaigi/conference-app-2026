@@ -134,11 +134,7 @@ private fun CardBody(
         if (isCancelled) {
             CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
         }
-        ChipRow(
-            room = room,
-            language = language,
-            seed = seed,
-        )
+        ChipRow(room = room, language = language, seed = seed)
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
@@ -166,11 +162,7 @@ private fun CancelledBanner(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ChipRow(
-    room: Room,
-    language: Language,
-    seed: Int,
-) {
+private fun ChipRow(room: Room, language: Language, seed: Int) {
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         RoomChip(room = room, seed = seed + 1)
         LanguageChip(language = language, seed = seed + 2)
@@ -226,7 +218,6 @@ private val Room.mascot: DrawableResource?
     }
 
 private object TimetableItemCardDefaults {
-
     val cornerRadius = 24.dp
     val borderThickness = 2.dp
     val favoriteSize = 24.dp

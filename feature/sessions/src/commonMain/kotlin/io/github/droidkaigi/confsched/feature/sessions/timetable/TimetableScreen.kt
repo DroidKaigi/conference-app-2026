@@ -26,7 +26,6 @@ fun TimetableScreen(
     onSearchClick: () -> Unit,
     onUiTypeChangeClick: () -> Unit,
 ) {
-
     Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             TimetableHeader(
