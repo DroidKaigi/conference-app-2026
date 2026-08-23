@@ -18,5 +18,6 @@ class DebugKaigiClock(
     private val offsetStore: KaigiClockOffsetStore,
 ) : KaigiClock {
     override fun now(): Instant = Clock.System.now() + offsetStore.offset.value
+
     override val offset: StateFlow<Duration> get() = offsetStore.offset
 }

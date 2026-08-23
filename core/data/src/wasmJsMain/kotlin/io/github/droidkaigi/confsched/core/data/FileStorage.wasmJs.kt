@@ -30,6 +30,7 @@ private external interface IDBOpenDBRequest : IDBRequest {
 
 private external interface IDBDatabase : JsAny {
     fun transaction(storeNames: String, mode: String): IDBTransaction
+
     fun createObjectStore(name: String): JsAny
 }
 
@@ -39,8 +40,11 @@ private external interface IDBTransaction : JsAny {
 
 private external interface IDBObjectStore : JsAny {
     fun put(value: JsAny?, key: String): IDBRequest
+
     fun get(key: String): IDBRequest
+
     fun delete(key: String): IDBRequest
+
     fun clear(): IDBRequest
 }
 
