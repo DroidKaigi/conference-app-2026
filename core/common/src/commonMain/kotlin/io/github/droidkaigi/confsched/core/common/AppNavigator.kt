@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 sealed interface NavCommand {
     data class Push(val key: NavKey) : NavCommand
+
     data class Pop(val origin: NavKey?) : NavCommand
 
     data class MoveToTop(val key: NavKey) : NavCommand

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -30,6 +31,7 @@ import io.github.droidkaigi.confsched.core.ui.current
 @Composable
 internal fun TimetableListSection(
     uiState: TimetableListSectionUiState,
+    contentPadding: PaddingValues,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     listState: LazyListState = rememberLazyListState(),
@@ -38,19 +40,31 @@ internal fun TimetableListSection(
         state = listState,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(
+        contentPadding = contentPadding + PaddingValues(
             top = 24.dp,
             bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
         ),
     ) {
+        val hasBanner = uiState.countdownBannerUiState != null
+        uiState.countdownBannerUiState?.let { countdownState ->
+            item(key = "countdown_banner") {
+                TimetableCountdownBanner(
+                    uiState = countdownState,
+                    seed = countdownState.nextSessions.firstOrNull()?.id?.value?.hashCode() ?: 0,
+                    onItemClick = onItemClick,
+                )
+            }
+        }
+
         itemsIndexed(uiState.timeSlots, key = { _, slot -> "${slot.startsAt}-${slot.endsAt}" }) { index, slot ->
+            val layoutIndex = if (hasBanner) index + 1 else index
             SessionRow(
                 slot = slot,
                 bookmarks = uiState.bookmarks,
                 onBookmarkClick = onBookmarkClick,
                 onItemClick = onItemClick,
                 timeRangeTranslationY = { timeRangeHeightPx ->
-                    stickyTimeRangeTranslationY(listState, index, timeRangeHeightPx)
+                    stickyTimeRangeTranslationY(listState, layoutIndex, timeRangeHeightPx)
                 },
             )
         }
@@ -71,6 +85,7 @@ private fun SessionRow(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
             timeRangeState = slot.timeRangeState,
+            liveBadgeEnabled = true,
             seed = slot.startsAt.hashCode(),
             modifier = Modifier.graphicsLayer {
                 translationY = timeRangeTranslationY(size.height)
@@ -121,6 +136,7 @@ private fun TimetableListSectionPreview(
     KaigiPreviewTheme(colorScheme) {
         TimetableListSection(
             uiState = TimetableListSectionUiState.fake(),
+            contentPadding = PaddingValues(),
             onBookmarkClick = {},
             onItemClick = {},
         )
@@ -137,6 +153,7 @@ private fun TimetableListSectionStickyTimeRangePreview(
         Box(modifier = Modifier.height(400.dp)) {
             TimetableListSection(
                 uiState = TimetableListSectionUiState.fake(),
+                contentPadding = PaddingValues(),
                 onBookmarkClick = {},
                 onItemClick = {},
                 listState = rememberLazyListState(

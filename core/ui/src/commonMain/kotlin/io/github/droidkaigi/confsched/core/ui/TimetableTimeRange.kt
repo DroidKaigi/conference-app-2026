@@ -10,11 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /**
@@ -29,7 +29,9 @@ fun TimetableTimeRange(
     timeRangeState: TimetableLineState,
     seed: Int,
     modifier: Modifier = Modifier,
+    liveBadgeEnabled: Boolean = false,
 ) {
+    val displaysLiveBadge = liveBadgeEnabled && timeRangeState is TimetableLineState.InProgress
     Column(
         modifier = modifier.width(TimetableTimeRangeDefaults.width),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -40,6 +42,9 @@ fun TimetableTimeRange(
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurface,
         )
+        if (displaysLiveBadge) {
+            TimetableLiveBadge()
+        }
         ProgressWavyLine(
             state = timeRangeState,
             seed = seed,
@@ -96,7 +101,7 @@ private object TimetableTimeRangeDefaults {
     val ruleHeight = 40.dp
 }
 
-@Preview
+@LocalePreviews
 @Composable
 private fun TimetableTimeRangePreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -114,6 +119,13 @@ private fun TimetableTimeRangePreview(
                 endsAt = "10:20",
                 timeRangeState = TimetableLineState.InProgress(0.5f),
                 seed = 20,
+            )
+            TimetableTimeRange(
+                startsAt = "10:00",
+                endsAt = "10:20",
+                timeRangeState = TimetableLineState.InProgress(0.5f),
+                seed = 20,
+                liveBadgeEnabled = true,
             )
             TimetableTimeRange(
                 startsAt = "10:00",

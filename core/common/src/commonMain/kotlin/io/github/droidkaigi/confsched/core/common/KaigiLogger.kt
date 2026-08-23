@@ -11,8 +11,11 @@ import dev.zacsweers.metro.SingleIn
 
 interface KaigiLogger {
     fun debug(message: () -> String)
+
     fun info(message: () -> String)
+
     fun warn(message: () -> String)
+
     fun error(throwable: Throwable?, message: () -> String)
 }
 
@@ -36,7 +39,9 @@ class KermitKaigiLogger(
     )
 
     override fun debug(message: () -> String) = logger.d(message = message)
+
     override fun info(message: () -> String) = logger.i(message = message)
+
     override fun warn(message: () -> String) = logger.w(message = message)
 
     override fun error(throwable: Throwable?, message: () -> String) {

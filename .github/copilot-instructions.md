@@ -142,6 +142,7 @@ Apply the procedure to every declaration in the diff whose type is general-purpo
 - `<Feature>Screen` renders only: its inputs are a `UiState` and callbacks — no dependency injection, no Soil, no navigation types.
 - Material 3 idioms and theme tokens: a hardcoded colour or dimension where a token exists is a finding.
 - Window insets are handled where an entry draws to the edge, and empty, loading, and error states exist wherever the data can be empty or fail.
+- Compose animation APIs (`animate*AsState`, `Animatable`, `rememberInfiniteTransition`, `AnimatedVisibility`) honour `MotionDurationScale`, which the platform sets to zero under its reduced-motion setting, so an animation built on them already stops there. Do not ask for an explicit reduced-motion check; only motion outside those APIs, such as a `withFrameNanos` loop or video playback, needs one.
 - A value that ticks reaches the UI as a `UiState` field the presenter computed.
 
 ### CompositionLocal
@@ -158,6 +159,7 @@ Apply the procedure to every declaration in the diff whose type is general-purpo
 [`docs/localization.md`](../docs/localization.md)
 
 - A string literal drawn by a composable is a defect: every displayed string is a Compose Resources string, owned by the module that draws it, with the English base in `values/` and the translation in `values-ja/`.
+- A string whose value is the same in both locales is declared in `values/` only. Do not ask for a `values-ja/` entry that repeats the base value.
 - A count takes `pluralStringResource`.
 - Text the server supplies travels as `MultiLangText` and resolves at the point of display, never in the data layer.
 - Not localized: `:feature:debug`, preview and sample values, and values carrying no words.

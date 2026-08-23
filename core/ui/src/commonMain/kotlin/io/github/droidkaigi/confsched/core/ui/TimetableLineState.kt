@@ -8,7 +8,9 @@ import kotlin.time.Instant
  */
 sealed interface TimetableLineState {
     data object Upcoming : TimetableLineState
+
     data object Passed : TimetableLineState
+
     data class InProgress(val progress: Float) : TimetableLineState
 }
 

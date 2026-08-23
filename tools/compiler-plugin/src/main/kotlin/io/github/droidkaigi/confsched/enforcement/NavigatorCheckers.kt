@@ -69,6 +69,7 @@ internal object NavigatorConfinedToNavEntryClassChecker : FirClassChecker(MppChe
         if (!isRoleContext && !isStateType) return
 
         val reported = mutableSetOf<Pair<Int, Int>?>()
+
         fun reportIfNavigator(callable: FirCallableSymbol<*>) {
             if (!callable.isNavigatorTyped(session)) return
             val source = callable.source ?: declaration.source
