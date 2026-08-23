@@ -9,8 +9,8 @@ import java.util.Locale
 
 @OptIn(ExperimentalTestApi::class)
 internal actual fun runRobotComposeUiTest(block: suspend ComposeUiTest.() -> Unit) {
-    // Robots assert on English strings and captures are compared across machines, so resource
-    // resolution must not follow the host machine's locale.
+    // Temporary: robots still locate nodes by English display strings, so resource resolution
+    // must not follow the host locale until they move to test tags (#229).
     val previous = Locale.getDefault()
     Locale.setDefault(Locale.ENGLISH)
     try {
