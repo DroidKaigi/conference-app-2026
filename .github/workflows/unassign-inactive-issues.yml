@@ -2,7 +2,7 @@ name: Unassign inactive issues
 
 on:
   schedule:
-    - cron: '0 9 * * *' # Daily at UTC 9:00 (JST 18:00)
+    - cron: '17 * * * *' # Deadlines are announced as absolute times; an hourly check keeps removals close to them. Minute 17 avoids the congested top of the hour.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -21,9 +21,24 @@ jobs:
       - uses: actions/github-script@v7
         with:
           script: |
-            const REMIND_AFTER_DAYS = 2
-            const UNASSIGN_AFTER_DAYS = 3
+            const PRIORITY_DAYS = [
+              { label: 'priority:high 🔥', remind: 2, unassign: 3 },
+              { label: 'priority:medium ⏳', remind: 3, unassign: 4 },
+              { label: 'priority:low 🐢', remind: 4, unassign: 5 },
+            ]
             const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+            function thresholdsFor(issue) {
+              const names = new Set(
+                (issue.labels ?? []).map((label) => (typeof label === 'string' ? label : label.name))
+              )
+              const matched = PRIORITY_DAYS.filter((tier) => names.has(tier.label))
+              // Issues awaiting triage carry no priority label; they must not idle on a looser
+              // schedule than triaged ones, so unlabeled (and conflicting) issues take the
+              // strictest applicable tier.
+              const candidates = matched.length > 0 ? matched : PRIORITY_DAYS
+              return candidates.reduce((a, b) => (a.unassign <= b.unassign ? a : b))
+            }
 
             const input = context.payload.inputs?.dry_run
             const dryRun = context.eventName === 'workflow_dispatch'
@@ -34,7 +49,12 @@ jobs:
             const { owner, repo } = context.repo
             const now = Date.now()
 
-            const reminderMarker = (login) => `<!-- stale-reminder:${login} -->`
+            const reminderMarker = (login, unassignDays) => `<!-- stale-reminder:${login}:${unassignDays} -->`
+            // Reminders posted before thresholds became label-dependent omit the day count
+            // from the marker; they promised the then-fixed 3-day window.
+            const LEGACY_PROMISED_DAYS = 3
+
+            const formatUtc = (date) => `${date.toISOString().slice(0, 16).replace('T', ' ')} UTC`
 
             async function openLinkedPullRequestAuthors(timeline) {
               const prNumbers = new Set()
@@ -74,11 +94,22 @@ jobs:
               return own.length > 0 ? new Date(own[own.length - 1].created_at) : null
             }
 
-            function alreadyReminded(comments, login, lastActivity) {
-              const marker = reminderMarker(login)
-              return comments.some(
-                (comment) => comment.body?.includes(marker) && new Date(comment.created_at) > lastActivity
-              )
+            function latestReminder(comments, login, lastActivity) {
+              const pattern = new RegExp(`<!-- stale-reminder:${login}(?::(\\d+))? -->`)
+              let latest = null
+              for (const comment of comments) {
+                const match = pattern.exec(comment.body ?? '')
+                if (!match) continue
+                const createdAt = new Date(comment.created_at)
+                if (createdAt <= lastActivity) continue
+                if (!latest || createdAt > latest.createdAt) {
+                  latest = {
+                    createdAt,
+                    promisedDays: match[1] ? Number(match[1]) : LEGACY_PROMISED_DAYS,
+                  }
+                }
+              }
+              return latest
             }
 
             const issues = await github.paginate(github.rest.issues.listForRepo, {
@@ -92,6 +123,8 @@ jobs:
             for (const issue of issues) {
               if (issue.pull_request) continue
               if (!issue.assignees || issue.assignees.length === 0) continue
+
+              const { remind: remindAfterDays, unassign: unassignAfterDays } = thresholdsFor(issue)
 
               const timeline = await github.paginate(github.rest.issues.listEventsForTimeline, {
                 owner,
@@ -124,9 +157,40 @@ jobs:
                   )
                 )
                 const daysSince = (now - lastActivity.getTime()) / MS_PER_DAY
+                const reminder = latestReminder(comments, login, lastActivity)
+                // Relabeling can shrink the window after the last reminder, or move the deadline
+                // into the past before any reminder went out. A removal must be preceded by a
+                // reminder that promised the current (or a stricter) window and is at least one
+                // day old, so the assignee always gets a warning and a full day to react.
+                const warned = reminder && reminder.promisedDays <= unassignAfterDays
 
-                if (daysSince >= UNASSIGN_AFTER_DAYS) {
-                  core.info(`#${issue.number}: unassigning ${login} (idle ${daysSince.toFixed(1)}d)`)
+                async function postReminder(lead) {
+                  const removalAt = new Date(
+                    Math.max(lastActivity.getTime() + unassignAfterDays * MS_PER_DAY, now + MS_PER_DAY)
+                  )
+                  if (!dryRun) {
+                    await github.rest.issues.createComment({
+                      owner,
+                      repo,
+                      issue_number: issue.number,
+                      body: `@${login} ${lead} Unless there is further activity, the assignment will be removed after **${formatUtc(removalAt)}**. If you're still working on it, please leave a comment (opening a draft pull request also counts).\n${reminderMarker(login, unassignAfterDays)}`,
+                    })
+                  }
+                }
+                const windowChangedLead = `This issue now has a ${unassignAfterDays}-day inactivity window based on its priority.`
+
+                if (daysSince >= unassignAfterDays) {
+                  if (!warned) {
+                    core.info(`#${issue.number}: announcing the ${unassignAfterDays}d window to ${login} (idle ${daysSince.toFixed(1)}d)`)
+                    await postReminder(windowChangedLead)
+                    continue
+                  }
+                  const reminderAgeDays = (now - reminder.createdAt.getTime()) / MS_PER_DAY
+                  if (reminderAgeDays < 1) {
+                    core.info(`#${issue.number}: ${login} was reminded ${reminderAgeDays.toFixed(1)}d ago, deferring the removal`)
+                    continue
+                  }
+                  core.info(`#${issue.number}: unassigning ${login} (idle ${daysSince.toFixed(1)}d, threshold ${unassignAfterDays}d)`)
                   if (!dryRun) {
                     await github.rest.issues.removeAssignees({
                       owner,
@@ -138,23 +202,23 @@ jobs:
                       owner,
                       repo,
                       issue_number: issue.number,
-                      body: `@${login} This issue has been inactive for ${UNASSIGN_AFTER_DAYS}+ days, so the assignment has been removed. Please reassign yourself if you'd like to continue working on it.`,
+                      body: `@${login} This issue has been inactive for ${unassignAfterDays}+ days, so the assignment has been removed. If you'd like to continue working on it, comment 🙋 to get assigned again.`,
                     })
                   }
-                } else if (daysSince >= REMIND_AFTER_DAYS) {
-                  if (alreadyReminded(comments, login, lastActivity)) {
+                } else if (daysSince >= remindAfterDays) {
+                  if (reminder && reminder.promisedDays === unassignAfterDays) {
                     core.info(`#${issue.number}: ${login} already reminded, skipping`)
                     continue
                   }
-                  core.info(`#${issue.number}: reminding ${login} (idle ${daysSince.toFixed(1)}d)`)
-                  if (!dryRun) {
-                    await github.rest.issues.createComment({
-                      owner,
-                      repo,
-                      issue_number: issue.number,
-                      body: `@${login} This issue has had no activity for ${REMIND_AFTER_DAYS} days. If you're still working on it, please leave a comment (opening a draft pull request also counts). Otherwise, the assignment will be removed after ${UNASSIGN_AFTER_DAYS} days of inactivity.\n${reminderMarker(login)}`,
-                    })
+                  // The window changed in either direction since the last reminder; announce
+                  // the new deadline once the current remind threshold is reached.
+                  if (reminder) {
+                    core.info(`#${issue.number}: announcing the ${unassignAfterDays}d window to ${login} (idle ${daysSince.toFixed(1)}d)`)
+                    await postReminder(windowChangedLead)
+                    continue
                   }
+                  core.info(`#${issue.number}: reminding ${login} (idle ${daysSince.toFixed(1)}d, threshold ${remindAfterDays}d)`)
+                  await postReminder(`This issue has had no activity for ${remindAfterDays} days.`)
                 }
               }
             }

@@ -2,9 +2,8 @@ package io.github.droidkaigi.confsched.feature.contributors.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,13 +27,12 @@ internal fun ContributorItem(
     onContributorClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(role = Role.Button, onClick = onContributorClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+            .clickable(role = Role.Button, onClick = onContributorClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ContributorItemDefaults.nameSpacing),
     ) {
         KaigiAvatar(
             imageUrl = iconUrl,
@@ -50,8 +48,9 @@ internal fun ContributorItem(
     }
 }
 
-private object ContributorItemDefaults {
-    val avatarSize = 52.dp
+internal object ContributorItemDefaults {
+    val avatarSize = 100.dp
+    val nameSpacing = 4.dp
 }
 
 @Preview

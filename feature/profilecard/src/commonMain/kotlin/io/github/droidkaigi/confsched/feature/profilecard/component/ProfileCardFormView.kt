@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -18,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Add
+import io.github.droidkaigi.confsched.core.designsystem.icon.Check
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -88,7 +88,7 @@ fun ProfileCardFormView(
         Text(stringResource(Res.string.profile_image_label), style = MaterialTheme.typography.labelLarge)
         KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
             Icon(
-                imageVector = if (uiState.hasAvatarImage) Icons.Filled.Check else Icons.Filled.Add,
+                imageVector = if (uiState.hasAvatarImage) KaigiIcons.Default.Check else KaigiIcons.Default.Add,
                 contentDescription = null,
                 modifier = Modifier.size(KaigiButtonDefaults.iconSize),
             )

@@ -74,6 +74,7 @@ export default withMermaid(defineConfig({
           { text: 'Root NavEntry emulation (RootSceneStrategy)', link: '/navigation-predictive-back-tabs' },
           { text: 'Root tab bar (RootTabSceneDecorator)', link: '/navigation-root-tab-bar' },
           { text: 'List-detail scenes (ListDetailSceneStrategy)', link: '/navigation-list-detail' },
+          { text: 'Deep links (DeepLinkEffect)', link: '/navigation-deep-links' },
         ],
       },
       {
@@ -103,6 +104,7 @@ export default withMermaid(defineConfig({
         items: [
           { text: 'iOS overview', link: '/ios' },
           { text: 'Liquid Glass tab bar', link: '/ios-liquid-glass' },
+          { text: 'iOS top bar', link: '/ios-top-bar' },
           { text: 'Swift ↔ Kotlin interop', link: '/ios-interop' },
           { text: 'CMP on iOS (embedding)', link: '/ios-cmp-embedding' },
         ],

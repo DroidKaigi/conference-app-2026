@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -91,8 +91,9 @@ fun KaigiPlaceholderAvatar(
     borderColor: Color = MaterialTheme.colorScheme.outline,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
-        seed = seed,
+        seed = combinedSeed,
         roughness = KaigiAvatarDefaults.roughness,
         tremor = KaigiAvatarDefaults.tremor,
         cornerRadius = size * KaigiAvatarDefaults.CORNER_RADIUS_RATIO,
@@ -146,14 +147,14 @@ private fun KaigiAvatarPreview(
             }
             KaigiPlaceholderAvatar(seed = 852, size = 52.dp) {
                 Icon(
-                    imageVector = Icons.Filled.Person,
+                    imageVector = KaigiIcons.Default.Person,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                 )
             }
             KaigiPlaceholderAvatar(seed = 853, size = 24.dp) {
                 Icon(
-                    imageVector = Icons.Filled.Person,
+                    imageVector = KaigiIcons.Default.Person,
                     contentDescription = null,
                     modifier = Modifier.size(12.dp),
                 )

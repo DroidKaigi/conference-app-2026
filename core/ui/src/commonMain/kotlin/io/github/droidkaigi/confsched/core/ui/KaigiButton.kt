@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +27,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.PlayCircle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -107,8 +107,9 @@ private fun SketchButton(
     contentPadding: PaddingValues,
     content: @Composable RowScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
-        seed = seed,
+        seed = combinedSeed,
         roughness = KaigiButtonDefaults.roughness,
         tremor = KaigiButtonDefaults.tremor,
         cornerRadius = KaigiButtonDefaults.height / 2,
@@ -180,7 +181,7 @@ private fun KaigiButtonPreview(
                 }
                 KaigiOutlinedButton(onClick = {}, seed = 873, modifier = Modifier.weight(1f)) {
                     Icon(
-                        imageVector = Icons.Filled.PlayCircle,
+                        imageVector = KaigiIcons.Default.PlayCircle,
                         contentDescription = null,
                         modifier = Modifier.size(KaigiButtonDefaults.iconSize),
                     )

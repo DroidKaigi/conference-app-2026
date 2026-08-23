@@ -1,8 +1,9 @@
 <resources>
     <string name="contributors">Contributors</string>
     <string name="contributors_empty">No contributors to show yet.</string>
-    <plurals name="contributors_count">
-        <item quantity="one">%1$d contributor</item>
-        <item quantity="other">%1$d contributors</item>
+    <string name="contributors_count_label">TOTAL</string>
+    <plurals name="contributors_count_unit">
+        <item quantity="one">person</item>
+        <item quantity="other">persons</item>
     </plurals>
 </resources>

@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.data.ServerEnvironment
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_HEIGHT_DP
+import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_WIDTH_DP
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 @Composable
@@ -76,7 +78,7 @@ fun ServerEnvironmentScreen(
     }
 }
 
-@Preview
+@Preview(widthDp = SCREEN_PREVIEW_WIDTH_DP, heightDp = SCREEN_PREVIEW_HEIGHT_DP)
 @Composable
 private fun ServerEnvironmentScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

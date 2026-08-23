@@ -12,7 +12,7 @@ import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.favorites.component.FavoriteDayFilterRow
@@ -54,7 +54,7 @@ fun FavoritesScreen(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun FavoritesScreenPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -69,14 +69,16 @@ private fun FavoritesScreenPreview(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun FavoritesScreenEmptyPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
         FavoritesScreen(
-            uiState = FavoritesScreenUiState.fake().copy(favoritesListSection = FavoritesListSectionUiState(timeSlots = persistentListOf())),
+            uiState = FavoritesScreenUiState.fake().copy(
+                favoritesListSection = FavoritesListSectionUiState(timeSlots = persistentListOf(), dayHeadersVisible = true),
+            ),
             onBookmarkClick = {},
             onDayFilterClick = {},
             onItemClick = {},

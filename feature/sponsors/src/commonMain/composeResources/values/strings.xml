@@ -1,4 +1,8 @@
 <resources>
     <string name="sponsors">Sponsors</string>
     <string name="sponsors_empty">Sponsors have not been announced yet.</string>
+    <string name="sponsor_plan_platinum">PLATINUM SPONSORS</string>
+    <string name="sponsor_plan_gold">GOLD SPONSORS</string>
+    <string name="sponsor_plan_supporter">SPONSORS</string>
+    <string name="sponsor_supporters_label">SUPPORTERS</string>
 </resources>

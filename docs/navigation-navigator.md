@@ -25,7 +25,7 @@ flowchart TD
 ```kotlin
 sealed interface NavCommand {
     data class Push(val key: NavKey) : NavCommand
-    data object Pop : NavCommand
+    data class Pop(val origin: NavKey?) : NavCommand
     data class MoveToTop(val key: NavKey) : NavCommand
 }
 
@@ -35,7 +35,7 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
     private val commandChannel = Channel<NavCommand>(Channel.BUFFERED)
     val commands: Flow<NavCommand> = commandChannel.receiveAsFlow()
     fun goTo(key: NavKey) { commandChannel.trySend(NavCommand.Push(key)) }
-    fun back() { commandChannel.trySend(NavCommand.Pop) }
+    fun back(origin: NavKey? = null) { commandChannel.trySend(NavCommand.Pop(origin)) }
     fun moveToTop(key: NavKey) { commandChannel.trySend(NavCommand.MoveToTop(key)) }
 }
 
@@ -49,7 +49,14 @@ fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, lo
                 } else {
                     backStack.add(command.key)
                 }
-                NavCommand.Pop -> if (backStack.size > 1) backStack.removeLastOrNull()
+                is NavCommand.Pop -> {
+                    val top = backStack.lastOrNull()
+                    if (command.origin != null && command.origin != top) {
+                        logger.warn { "Stale pop from non-top NavKey: ${command.origin}; top is $top" }
+                    } else if (backStack.size > 1) {
+                        backStack.removeLastOrNull()
+                    }
+                }
                 is NavCommand.MoveToTop -> if (backStack.lastOrNull() != command.key) {
                     backStack.remove(command.key)
                     backStack.add(command.key)
@@ -60,18 +67,18 @@ fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, lo
 }
 ```
 
-Both classes log each command.
+`AppNavigator` logs each command. `NavigatorEffect` additionally warns when it rejects a duplicate `Push` or a stale `Pop`.
 
 ## Back stack guards
 
 `NavigatorEffect` is the single point that mutates the back stack, so the guarantees the back stack must hold are expressed there, as conditions on its current state:
 
 - **A `Push` never repeats the key already on top.** A fast double tap on a navigation control fires the same lambda twice — the first tap pushes before the screen leaves composition, and the second repeats it — which would otherwise leave two identical entries on the stack. The key is compared against the top only, so a legitimate cycle still works: with `[A, B]` on the stack, pushing `A` again is a distinct destination and is applied. The skipped push is logged as a warning, because a caller that fires the same push twice is worth seeing.
-- **A `Pop` never empties the stack.** `removeLastOrNull` runs only while `size > 1`, so an over-pop cannot drop below the root.
+- **A screen-originated `Pop` applies only while its origin is still on top.** Each NavEntry passes its own key as the command's `origin`. The first pop removes that entry; a second command from the same rapid tap then finds a different top key, is logged as stale, and is dropped. A valid pop still runs only while `size > 1`, so it can never remove the root.
 
-Both hold for programmatic navigation and for the platform back gesture alike: `KaigiApp` binds predictive back straight to `AppNavigator.back()`, and repeated back gestures are the user asking to pop several screens — legitimate intent that the guards leave untouched.
+`KaigiApp` calls `AppNavigator.back()` without an origin for platform and predictive back. An originless pop bypasses the stale-origin check but still keeps the root, so repeated back gestures can intentionally pop several screens.
 
-Each guard reads the back stack rather than the input that produced the command, so no timing is involved: the outcome is the same at any interval between two taps, and no input the stack would have accepted is discarded. A control fires its callback whenever the user taps it, and needs no wrapper of its own.
+These guards compare each command with current back-stack state rather than using a time window. A control remains immediately interactive, while only a command whose originating entry is no longer current is discarded.
 
 ## Implementing a screen-level Navigator
 
@@ -110,12 +117,12 @@ Because the binding is `@SingleIn` the screen's scope, resolving the navigator f
 A destination outside the app — a sponsor's site, a contributor's profile — has no `NavKey` and never enters the back stack, so it does not belong to a `<Feature>ScreenNavigator`. The NavEntry supplies Compose's `LocalUriHandler` as the Root's navigation lambda instead, and the Root passes it on like any other:
 
 ```kotlin
-entry<SponsorsNavKey> {
+entry<SponsorsNavKey> { key ->
     val graph = retain(screenGraphFactory::createSponsorsScreenGraph)
     val uriHandler = LocalUriHandler.current
     context(graph.screenContext) {
         SponsorsScreenRoot(
-            onNavigateBack = appNavigator::back,
+            onNavigateBack = { appNavigator.back(origin = key) },
             onNavigateToSponsorSite = uriHandler::openUri,
         )
     }

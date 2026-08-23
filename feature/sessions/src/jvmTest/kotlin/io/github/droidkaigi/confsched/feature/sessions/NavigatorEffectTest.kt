@@ -40,6 +40,45 @@ class NavigatorEffectTest {
     }
 
     @Test
+    fun skipsASecondPopFromAnEntryNoLongerOnTop() {
+        val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val topDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail, topDetail)
+
+        runEffect(backStack) { navigator ->
+            navigator.back(origin = topDetail)
+            navigator.back(origin = topDetail)
+        }
+
+        assertEquals(listOf(TimetableNavKey, firstDetail), backStack.toList())
+    }
+
+    @Test
+    fun skipsAPopFromAnEntryNotOnTop() {
+        val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val topDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail, topDetail)
+
+        runEffect(backStack) { navigator -> navigator.back(origin = firstDetail) }
+
+        assertEquals(listOf(TimetableNavKey, firstDetail, topDetail), backStack.toList())
+    }
+
+    @Test
+    fun appliesRepeatedPopsWithoutAnOrigin() {
+        val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val topDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail, topDetail)
+
+        runEffect(backStack) { navigator ->
+            navigator.back()
+            navigator.back()
+        }
+
+        assertEquals(listOf(TimetableNavKey), backStack.toList())
+    }
+
+    @Test
     fun keepsTheRootOnAnOverPop() {
         val detail = TimetableItemDetailNavKey(TimetableItemId("1"))
         val backStack = NavBackStack<NavKey>(TimetableNavKey, detail)

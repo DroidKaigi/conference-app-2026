@@ -7,11 +7,13 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.model.Projects
 
 @Composable
 context(_: EventMapPresenterContext)
 fun eventMapScreenPresenter(
     screenChannel: ScreenChannel<EventMapScreenAction, Nothing>,
+    projects: Projects,
 ): EventMapScreenUiState {
     var selectedFloor by retain { mutableStateOf(EventMapFloor.Ground) }
 
@@ -23,5 +25,6 @@ fun eventMapScreenPresenter(
 
     return EventMapScreenUiState(
         selectedFloor = selectedFloor,
+        projects = projects.items,
     )
 }

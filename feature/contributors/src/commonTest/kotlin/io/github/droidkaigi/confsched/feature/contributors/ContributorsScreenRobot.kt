@@ -44,7 +44,9 @@ class ContributorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTes
     }
 
     fun checkCountDisplayed(count: Int) {
-        composeUiTest.onNodeWithText("$count contributors").assertIsDisplayed()
+        composeUiTest.onNodeWithText("TOTAL").assertIsDisplayed()
+        composeUiTest.onNodeWithText("$count").assertIsDisplayed()
+        composeUiTest.onNodeWithText("persons").assertIsDisplayed()
     }
 
     fun checkOpenedProfiles(vararg urls: String) {

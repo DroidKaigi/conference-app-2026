@@ -65,4 +65,4 @@ An alternative embedding gives each tab of a `UITabBarController` its own `Compo
 
 Scroll-driven bar behaviors remain unavailable in this embedding too — the content inside each tab is still Compose, not a native `UIScrollView`. The overlay embedding is the default because it keeps the navigation model identical across platforms and requires no change to the shared navigation code.
 
-Related: [iOS overview](./ios.md) · [Root tab bar](./navigation-root-tab-bar.md) · [Navigation](./navigation.md)
+Related: [iOS overview](./ios.md) · [iOS top bar](./ios-top-bar.md) · [Root tab bar](./navigation-root-tab-bar.md) · [Navigation](./navigation.md)

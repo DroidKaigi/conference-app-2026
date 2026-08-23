@@ -29,6 +29,12 @@ dependencies {
     "commonMainImplementation"(libs.composeComponentsResources)
 }
 
+aboutLibraries {
+    // Assets outside the dependency graph — the bundled fonts — enter the export as the
+    // custom libraries defined here.
+    collect.configPath = rootDir.resolve("config/aboutlibraries")
+}
+
 afterEvaluate {
     val target = licensesExport.target.get()
     val exportTask = tasks.named("exportLibraryDefinitions${target.replaceFirstChar(Char::uppercaseChar)}")

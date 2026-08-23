@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="72dp"
+    android:height="72dp"
+    android:viewportWidth="72"
+    android:viewportHeight="72">
+
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M32.7 37.3105L32.92 37.1005L32.63 33.9005L30.8 30.7205L29 26.0605L27.45 21.7605L27.52 17.7605L29.29 14.1305L32.91 10.7605L37.82 8.40047L40.97 8.08047L44.23 7.48047L46.77 9.42047L49.73 10.6905L53.37 14.6605L55.44 19.1305L56.05 23.3005L54.32 26.9505L51.34 30.4505L47.51 33.6905L45.04 36.4105L43.77 39.2205L43.45 39.4005"
+        android:strokeWidth="2"
+        android:strokeColor="#3A4060"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M56.58 50.1204L57.32 48.9304L57.09 47.5204L55.99 46.0304L54.13 44.4304L51.54 42.7604L48.37 40.9504L44.53 39.6304L40.39 38.4004L36.09 37.4804L31.74 37.3804L27.7 37.1904L24.07 37.4104L20.93 37.5104L18.56 38.5304L16.82 39.4404L16.43 41.1004L16.56 42.5004L17.54 44.1004L19.43 45.7704L22.22 47.1904L25.34 49.0804L29.19 50.3804L33.31 51.6604L37.73 52.0304L41.95 52.8304H46.01L49.66 52.7104L52.77 52.4004L55.14 51.4304L56.58 50.1204Z"
+        android:strokeWidth="2"
+        android:strokeColor="#3A4060"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M16.34 41.0195L15.17 45.3795L14.3 49.8495L14.59 51.0995L15.14 52.5895L16.78 53.5995L18.45 55.2595L20.95 56.3395L23.64 57.8895L26.78 59.1195L30.21 60.0695L33.77 60.9095L37.38 61.5695L40.93 61.8195L44.3 61.9495L47.37 61.6595L50.08 61.3395L52.4 60.9095L54.14 60.0495L55.26 58.9995L55.88 57.8695L56.74 53.4495L57.47 49.0095"
+        android:strokeWidth="2"
+        android:strokeColor="#3A4060"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M17.29 64.39L21.29 64.53L25.29 64.27L29.29 64.48L33.29 64.08L37.29 64.36L41.29 64.38L45.29 64.59L49.29 64.04L53.29 64.3"
+        android:strokeWidth="2"
+        android:strokeColor="#3A4060"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+</vector>

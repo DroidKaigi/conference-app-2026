@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
@@ -51,7 +51,7 @@ fun ProfileCardScreen(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun ProfileCardScreenFormPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -70,7 +70,7 @@ private fun ProfileCardScreenFormPreview(
     }
 }
 
-@LocalePreviews
+@LocaleScreenPreviews
 @Composable
 private fun ProfileCardScreenCardPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,

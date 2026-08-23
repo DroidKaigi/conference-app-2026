@@ -11,6 +11,12 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 @Preview(name = "ja", locale = "ja")
 annotation class LocalePreviews
 
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@Preview(name = "en", locale = "en", widthDp = 360, heightDp = 800)
+@Preview(name = "ja", locale = "ja", widthDp = 360, heightDp = 800)
+annotation class LocaleScreenPreviews
+
 class KaigiSchemeProvider : PreviewParameterProvider<ColorScheme> {
     override val values: Sequence<ColorScheme> = emptySequence()
 }

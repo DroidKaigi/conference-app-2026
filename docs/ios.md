@@ -1,6 +1,6 @@
 # iOS overview
 
-iOS runs the shared Compose Multiplatform UI for every screen, with one native exception: the root tab bar, the system `UITabBar` rendering the Liquid Glass design.
+iOS runs the shared Compose Multiplatform UI for every screen, with one native exception: the root tab bar, the system `UITabBar` rendering the Liquid Glass design. The top bar stays Compose; [iOS top bar](./ios-top-bar.md) records why.
 
 - The Swift implementation is minimal and the app runs on a Compose Multiplatform base. `KaigiApp` runs on a `ComposeUIViewController`, and every screen uses the shared CMP UI. Per-screen SwiftUI with KMP Presenter integration is not carried forward.
 - The one native exception is the root tab bar, layered over that view controller; every screen — including screen-transition chrome — is drawn by CMP. Navigation3 owns the back stack across all platforms, and iOS mirrors the tab-related part of that state into the native bar.
@@ -21,4 +21,4 @@ iOS targets iosArm64 + iosSimulatorArm64. The exported `AppShared` module links 
 
 The native Liquid Glass tab bar composites over the CMP backdrop on iOS 26. For the embedding shape, see [CMP on iOS (embedding)](./ios-cmp-embedding.md); for the tab bar, see [Liquid Glass tab bar](./ios-liquid-glass.md).
 
-Related: [CMP on iOS (embedding)](./ios-cmp-embedding.md) · [Liquid Glass tab bar](./ios-liquid-glass.md) · [Swift ↔ Kotlin interop](./ios-interop.md)
+Related: [CMP on iOS (embedding)](./ios-cmp-embedding.md) · [Liquid Glass tab bar](./ios-liquid-glass.md) · [iOS top bar](./ios-top-bar.md) · [Swift ↔ Kotlin interop](./ios-interop.md)

@@ -1,7 +1,6 @@
 <resources>
     <string name="contributors">コントリビューター</string>
     <string name="contributors_empty">コントリビューターはまだいません。</string>
-    <plurals name="contributors_count">
-        <item quantity="other">%1$d 人のコントリビューター</item>
-    </plurals>
+    <!-- contributors_count_label and contributors_count_unit stay on the English base: the
+         design draws them in English on the Japanese screen as well. -->
 </resources>

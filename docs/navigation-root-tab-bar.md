@@ -1,25 +1,36 @@
 # Root tab bar (RootTabSceneDecorator)
 
-The bottom navigation bar is added by a Nav3 `SceneDecoratorStrategy` — `RootTabSceneDecorator`, in `:app-shared` — passed to `NavDisplay(sceneDecoratorStrategies = listOfNotNull(rememberRootTabSceneDecorator(…)))`. The list tolerates a null because `rememberRootTabSceneDecorator` returns `null` on iOS, where the bar is native.
+The navigation carrying the root destinations — a bottom bar, or a rail down the leading edge on expanded windows — is added by a Nav3 `SceneDecoratorStrategy` — `RootTabSceneDecorator`, in `:app-shared` — passed to `NavDisplay(sceneDecoratorStrategies = listOfNotNull(rememberRootTabSceneDecorator(…)))`. The list tolerates a null because `rememberRootTabSceneDecorator` returns `null` on iOS, where the bar is native.
 
 ## How it is built
 
-`decorateScene` asks which root tab the scene shows: the topmost entry it draws that names one of the five root tabs (`Timetable` / `EventMap` / `Favorites` / `About` / `ProfileCard`, declared by the `RootTab` enum). On a match it returns a scene that overlays the bar on the delegate's content; otherwise it returns the scene **unchanged** — so a detail screen shown on its own has no bar.
+`decorateScene` asks which root tab the scene shows: the topmost entry it draws that names one of the five root tabs (`Timetable` / `EventMap` / `Favorites` / `About` / `ProfileCard`, declared by the `RootTab` enum). On a match it returns a scene that adds the bar or the rail to the delegate's content; otherwise it returns the scene **unchanged** — so a detail screen shown on its own has neither.
 
 ```mermaid
 flowchart TD
   a["decorateScene(scene)"] --> b{"do the entries this scene draws<br/>include a root tab?<br/>(one of the five RootTab entries)"}
-  b -- yes --> c["RootTabScene(scene)<br/>content overlaid with the tab bar,<br/>the topmost such tab selected"]
+  b -- yes --> c["RootTabScene(scene)<br/>content with the tab bar or the rail,<br/>the topmost such tab selected"]
   b -- no --> d["scene unchanged<br/>(a detail screen alone: no bar)"]
 ```
 
-A scene that draws more than one entry — a [list-detail](./navigation-list-detail.md) scene on an expanded window — keeps its list pane on screen beside the detail above it. That list pane is a root destination, so the bar stays with its tab selected and another tab remains one tap away; the same detail reached on a compact window is a scene of one entry, matches no root tab, and has no bar.
+A scene that draws more than one entry — a [list-detail](./navigation-list-detail.md) scene on an expanded window — keeps its list pane on screen beside the detail above it. That list pane is a root destination, so the destinations stay on screen with its tab selected and another tab remains one tap away; the same detail reached on a compact window is a scene of one entry, matches no root tab, and has no bar.
 
-The wrapper `RootTabScene` overrides `content` — a `Box` holding `delegate.content()` and a bottom-aligned `KaigiNavigationBar` from `:core:ui` — plus `equals` / `hashCode`, so a scene is reused only while the delegate and the selected tab both hold. Everything else delegates to the decorated scene, so the bar changes no navigation semantics.
-
-The bar floats: it takes no layout space, so a scrollable root destination adds `KaigiNavigationBarDefaults.occupiedHeight` to its bottom content padding to clear it.
+The wrapper `RootTabScene` overrides `content` — the delegate's content with the bar or the rail added, as [Bar or rail](#bar-or-rail) describes — plus `equals` / `hashCode`, so a scene is reused only while the delegate and the selected tab both hold. Everything else delegates to the decorated scene, so the decoration changes no navigation semantics.
 
 > `NavEntry.key` is private in Nav3, so the decorator cannot read the keys out of `Scene.entries`. It takes the back stack and reads `Scene.entries.size` instead: every scene this app forms draws the topmost entries of the stack, so the count names which keys are on screen.
+
+## Bar or rail
+
+`RootTabScene` reads the window width: from the EXPANDED breakpoint — 840dp and up — a vertical `KaigiNavigationRail` down the leading edge carries the destinations, and anything narrower shows a bottom-aligned `KaigiNavigationBar` (both from `:core:ui`, drawn as the same hand-drawn pill). The switch follows the window width alone, never how many panes the scene draws: a wide window with no detail open still shows the rail.
+
+While the scene draws two panes, a drag handle on the pane boundary — at the right edge of the rail column, centred on the window height — collapses the rail: the column tracks the finger from its full width to zero and settles on release, and the freed width goes to the panes. The handle stays visible while the rail is collapsed, since nothing else brings the rail back, and it leaves the screen with the second pane, so leaving the two-pane layout restores the rail. Whether the rail is collapsed survives a configuration change.
+
+The two occupy space differently:
+
+- The **bar** floats over the content in a `Box` and takes no layout space.
+- The **rail** occupies a `KaigiNavigationRailDefaults.columnWidth` column in a `Row`, and the content — both panes of a list-detail scene included — begins after it. The rail is centred in its column on the window height, independent of whatever header the content draws.
+
+A scrollable root destination clears whichever is shown by adding `LocalNavigationBarOccupiedHeight.current` to its bottom content padding: it reads as `KaigiNavigationBarDefaults.occupiedHeight` where the bar floats over the content — including on iOS, where the native bar overlays and no provider is installed — and the decorator provides zero beside the rail, which floats over nothing.
 
 ## Tab switching
 
