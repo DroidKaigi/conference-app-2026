@@ -1,24 +1,30 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiSegmentedButton
-import io.github.droidkaigi.confsched.core.ui.KaigiSingleChoiceSegmentedButtonRow
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
@@ -45,8 +51,8 @@ private val Sketchiness.label: String
     }
 
 /**
- * A three-way segmented picker for the card's [Sketchiness]. Each option previews its own
- * wobble on a small swatch above the label, rather than naming the level in text alone.
+ * A row of independent [Sketchiness] chips, each its own rounded-rect outline with a gap to its
+ * neighbours, rather than segments sharing one continuous pill border.
  */
 @Composable
 fun SketchinessPicker(
@@ -54,27 +60,69 @@ fun SketchinessPicker(
     onSketchinessSelected: (Sketchiness) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val entries = Sketchiness.entries
-    KaigiSingleChoiceSegmentedButtonRow(
-        outlineSeed = SketchinessPickerDefaults.outlineSeed,
-        modifier = modifier,
-        borderColor = MaterialTheme.colorScheme.outline,
+    Row(
+        modifier = modifier.selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
     ) {
-        entries.forEachIndexed { index, sketchiness ->
-            KaigiSegmentedButton(
+        Sketchiness.entries.forEach { sketchiness ->
+            SketchinessOption(
+                sketchiness = sketchiness,
                 selected = sketchiness == selected,
                 onClick = { onSketchinessSelected(sketchiness) },
-                dividerSeed = if (index < entries.lastIndex) SketchinessPickerDefaults.outlineSeed + index + 1 else null,
-                leadingDividerSeed = if (index > 0) SketchinessPickerDefaults.outlineSeed + index else null,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SketchinessOption(
+    sketchiness: Sketchiness,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val containerColor = if (selected) {
+        MaterialTheme.colorScheme.secondaryContainer
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+    val contentColor = if (selected) {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val borderColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+    val shape = SketchRoundRectShape(
+        seed = SketchinessPickerDefaults.outlineSeed + sketchiness.ordinal,
+        roughness = SketchinessOptionDefaults.roughness,
+        tremor = SketchinessOptionDefaults.tremor,
+        cornerRadius = SketchinessOptionDefaults.cornerRadius,
+        borderThickness = if (selected) {
+            SketchinessOptionDefaults.selectedBorderThickness
+        } else {
+            SketchinessOptionDefaults.borderThickness
+        },
+    )
+    Box(
+        modifier = modifier
+            .height(SketchinessOptionDefaults.height)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .clip(shape)
+            .background(containerColor)
+            .sketchBorder(shape, borderColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        CompositionLocalProvider(LocalContentColor provides contentColor) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.swatchSpacing),
-                ) {
-                    SketchinessSwatch(sketchiness = sketchiness, seed = SketchinessPickerDefaults.outlineSeed + 30 + index)
-                    Text(sketchiness.label, style = MaterialTheme.typography.labelLarge)
-                }
+                SketchinessSwatch(
+                    sketchiness = sketchiness,
+                    seed = SketchinessPickerDefaults.outlineSeed + SketchinessSwatchDefaults.seedOffset + sketchiness.ordinal,
+                )
+                Text(sketchiness.label, style = MaterialTheme.typography.labelLarge)
             }
         }
     }
@@ -107,7 +155,16 @@ private fun SketchinessSwatch(
 
 object SketchinessPickerDefaults {
     val outlineSeed = 700
-    val swatchSpacing = 2.dp
+    val gap = 4.dp
+}
+
+private object SketchinessOptionDefaults {
+    val height = 60.dp
+    val cornerRadius = 12.dp
+    val borderThickness = 1.2.dp
+    val selectedBorderThickness = 2.5.dp
+    val roughness = 0.4.dp
+    val tremor = 0.15.dp
 }
 
 private object SketchinessSwatchDefaults {
@@ -116,6 +173,7 @@ private object SketchinessSwatchDefaults {
     val baseRoughness = 0.3.dp
     val baseTremor = 0.15.dp
     val borderThickness = 1.dp
+    val seedOffset = 40
 }
 
 @LocalePreviews
