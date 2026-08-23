@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -32,9 +33,8 @@ import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_WIDTH_DP
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlin.math.roundToInt
 
-private enum class CollapsingHeaderSlot {
-    PinnedHeader,
-    CollapsingHeader,
+private enum class CollapsingHeaderLayoutSlot {
+    CollapsingContent,
     Content,
 }
 
@@ -79,17 +79,16 @@ fun rememberCollapsingHeaderEnterAlwaysState(): CollapsingHeaderState.EnterAlway
 }
 
 /**
- * A header over scrolling content, in two parts: one that stays put, and one that folds behind it
- * as the content scrolls down.
+ * A header that folds away above scrolling content as the content scrolls down.
  *
- * The layout takes each scroll delta before the content does, folds [collapsingHeader] by as much
- * of it as that header's height allows, and leaves the remainder to the content. Any upward scroll
- * returns the header to full height from whatever position the content is in.
+ * The layout takes each scroll delta before the content does, folds [headerContent] by as much of
+ * it as that header's height allows, and leaves the remainder to the content. Any upward scroll
+ * returns the header to full height from whatever position the content is in. The header is
+ * clipped to the layout's bounds, so whatever sits above the layout stays in front of it.
  *
- * @param state how far the collapsing header has folded away, and the policy moving it.
- * @param pinnedHeader the part that never moves; it draws over [collapsingHeader].
- * @param collapsingHeader the part that folds behind [pinnedHeader]. It must be opaque: content
- *   already scrolled away passes underneath it while the header returns to full height.
+ * @param state how far the header has folded away, and the policy moving it.
+ * @param headerContent the folding header. It must be opaque: content already scrolled away
+ *   passes underneath it while the header returns to full height.
  * @param modifier the [Modifier] applied to the layout.
  * @param content the scrolling content, taking the padding that holds it clear of the header. The
  *   padding is measured in the same layout pass as the header, so content positioned against the
@@ -100,40 +99,34 @@ fun rememberCollapsingHeaderEnterAlwaysState(): CollapsingHeaderState.EnterAlway
 @Composable
 fun CollapsingHeaderLayout(
     state: CollapsingHeaderState,
-    pinnedHeader: @Composable () -> Unit,
-    collapsingHeader: @Composable () -> Unit,
+    headerContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (contentPadding: PaddingValues) -> Unit,
 ) {
     SubcomposeLayout(
-        modifier = modifier.nestedScroll(state.nestedScrollConnection),
+        modifier = modifier.clipToBounds().nestedScroll(state.nestedScrollConnection),
     ) { constraints ->
         val headerConstraints = constraints.copy(minWidth = 0, minHeight = 0)
 
-        val pinnedHeaderMeasurables = subcompose(CollapsingHeaderSlot.PinnedHeader, pinnedHeader)
-        val pinnedHeaderPlaceables = pinnedHeaderMeasurables.map { it.measure(headerConstraints) }
-        val pinnedHeaderHeightPx = pinnedHeaderPlaceables.fastMaxOfOrDefault(0) { it.height }
-
-        val collapsingHeaderMeasurables = subcompose(CollapsingHeaderSlot.CollapsingHeader, collapsingHeader)
-        val collapsingHeaderPlaceables = collapsingHeaderMeasurables.map { it.measure(headerConstraints) }
-        val collapsingHeaderHeightPx = collapsingHeaderPlaceables.fastMaxOfOrDefault(0) { it.height }
-        state.collapsibleHeightPx = collapsingHeaderHeightPx.toFloat()
+        val headerMeasurables = subcompose(CollapsingHeaderLayoutSlot.CollapsingContent, headerContent)
+        val headerPlaceables = headerMeasurables.map { it.measure(headerConstraints) }
+        val headerHeightPx = headerPlaceables.fastMaxOfOrDefault(0) { it.height }
+        state.collapsibleHeightPx = headerHeightPx.toFloat()
 
         val collapsingOffsetYPx = state.collapsingOffsetY
-            .coerceIn(-collapsingHeaderHeightPx.toFloat(), 0f)
+            .coerceIn(-headerHeightPx.toFloat(), 0f)
             .roundToInt()
         val collapsingHeaderContentPadding = PaddingValues(
-            top = (pinnedHeaderHeightPx + collapsingHeaderHeightPx + collapsingOffsetYPx).toDp(),
+            top = (headerHeightPx + collapsingOffsetYPx).toDp(),
         )
-        val contentMeasurables = subcompose(CollapsingHeaderSlot.Content) {
+        val contentMeasurables = subcompose(CollapsingHeaderLayoutSlot.Content) {
             content(collapsingHeaderContentPadding)
         }
         val contentPlaceables = contentMeasurables.map { it.measure(constraints) }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             contentPlaceables.forEach { it.placeRelative(0, 0) }
-            collapsingHeaderPlaceables.forEach { it.placeRelative(0, pinnedHeaderHeightPx + collapsingOffsetYPx) }
-            pinnedHeaderPlaceables.forEach { it.placeRelative(0, 0) }
+            headerPlaceables.forEach { it.placeRelative(0, collapsingOffsetYPx) }
         }
     }
 }
@@ -146,11 +139,8 @@ private fun CollapsingHeaderLayoutPreview(
     KaigiPreviewTheme(colorScheme) {
         CollapsingHeaderLayout(
             state = rememberCollapsingHeaderEnterAlwaysState(),
-            pinnedHeader = {
-                Box(Modifier.fillMaxWidth().height(64.dp).background(MaterialTheme.colorScheme.inverseSurface))
-            },
-            collapsingHeader = {
-                Box(Modifier.fillMaxWidth().height(48.dp).background(MaterialTheme.colorScheme.primaryContainer))
+            headerContent = {
+                Box(Modifier.fillMaxWidth().height(48.dp).background(MaterialTheme.colorScheme.inverseSurface))
             },
             modifier = Modifier.fillMaxSize(),
         ) { contentPadding ->

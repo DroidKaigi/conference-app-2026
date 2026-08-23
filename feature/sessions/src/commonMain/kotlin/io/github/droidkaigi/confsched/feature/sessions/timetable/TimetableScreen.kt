@@ -29,16 +29,18 @@ fun TimetableScreen(
     onUiTypeChangeClick: () -> Unit,
 ) {
     val collapsingHeaderState = rememberCollapsingHeaderEnterAlwaysState()
-    Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
+    Scaffold(
+        topBar = {
+            TimetableHeader(
+                onSearchClick = onSearchClick,
+                onUiTypeChangeClick = onUiTypeChangeClick,
+            )
+        },
+        contentWindowInsets = WindowInsets(),
+    ) { innerPadding ->
         CollapsingHeaderLayout(
             state = collapsingHeaderState,
-            pinnedHeader = {
-                TimetableHeader(
-                    onSearchClick = onSearchClick,
-                    onUiTypeChangeClick = onUiTypeChangeClick,
-                )
-            },
-            collapsingHeader = {
+            headerContent = {
                 DayTabRow(
                     selectedDay = uiState.day,
                     onDayClick = onDayClick,
