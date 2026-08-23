@@ -36,7 +36,7 @@ fun timetableScreenPresenter(
 
             is TimetableScreenAction.SelectDay -> selectedDay = action.day
 
-            TimetableScreenAction.ToggleViewMode ->
+            TimetableScreenAction.SwitchToGridView ->
                 selectedViewMode = when (selectedViewMode) {
                     TimetableViewMode.List -> TimetableViewMode.Grid
                     TimetableViewMode.Grid -> TimetableViewMode.List

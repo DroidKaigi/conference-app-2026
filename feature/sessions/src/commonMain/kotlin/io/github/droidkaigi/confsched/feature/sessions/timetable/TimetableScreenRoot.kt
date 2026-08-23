@@ -43,7 +43,7 @@ fun TimetableScreenRoot(
             onDayClick = { screenChannel.send(TimetableScreenAction.SelectDay(it)) },
             onItemClick = onNavigateToDetail,
             onSearchClick = onNavigateToSearch,
-            onUiTypeChangeClick = { screenChannel.send(TimetableScreenAction.ToggleViewMode) },
+            onUiTypeChangeClick = { screenChannel.send(TimetableScreenAction.SwitchToGridView) },
         )
     }
 }

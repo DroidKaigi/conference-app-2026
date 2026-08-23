@@ -99,10 +99,10 @@ class TimetableScreenPresenterTest {
         ) {
             uiStates.awaitItem()
 
-            send(TimetableScreenAction.ToggleViewMode)
+            send(TimetableScreenAction.SwitchToGridView)
             assertEquals(TimetableViewMode.Grid, uiStates.awaitItem().viewMode)
 
-            send(TimetableScreenAction.ToggleViewMode)
+            send(TimetableScreenAction.SwitchToGridView)
             assertEquals(TimetableViewMode.List, uiStates.awaitItem().viewMode)
         }
     }
