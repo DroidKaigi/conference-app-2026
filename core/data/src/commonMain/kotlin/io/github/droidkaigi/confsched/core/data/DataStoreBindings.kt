@@ -14,4 +14,10 @@ interface DataStoreBindings {
     @SettingsDataStoreQualifier
     fun provideSettingsDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
         createDataStore(pathProducer, SETTINGS_DATA_STORE_FILE_NAME)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @SessionMemoDataStoreQualifier
+    fun provideSessionMemoDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
+        createDataStore(pathProducer, SESSION_MEMO_DATA_STORE_FILE_NAME)
 }

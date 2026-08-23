@@ -1,6 +1,11 @@
 <resources>
     <string name="back">Back</string>
+    <string name="close">Close</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="add_favorite">Add favorite</string>
     <string name="remove_favorite">Remove favorite</string>
+    <string name="live_badge">LIVE</string>
+    <string name="cancelled_session">This session has been cancelled / Cancelled</string>
+    <string name="show_in_japanese">Show in Japanese</string>
+    <string name="show_in_english">Show in English</string>
 </resources>

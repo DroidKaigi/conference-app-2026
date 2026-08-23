@@ -83,6 +83,7 @@ private fun SessionRow(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
             timeRangeState = slot.timeRangeState,
+            liveBadgeEnabled = true,
             seed = slot.startsAt.hashCode(),
             modifier = Modifier.graphicsLayer {
                 translationY = timeRangeTranslationY(size.height)
@@ -96,7 +97,8 @@ private fun SessionRow(
                 TimetableItemCard(
                     title = item.title.current(),
                     room = item.room,
-                    speaker = item.speaker,
+                    speaker = item.speakerNames,
+                    isCancelled = item.isCancelled,
                     language = item.language,
                     isFavorite = item.id in bookmarks,
                     seed = item.id.value.hashCode(),
