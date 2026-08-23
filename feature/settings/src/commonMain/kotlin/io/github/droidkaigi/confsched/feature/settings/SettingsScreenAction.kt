@@ -5,9 +5,9 @@ import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
 import io.github.droidkaigi.confsched.core.model.SketchStrength
 
 sealed interface SettingsScreenAction {
-    data class SelectFont(val fontFamily: KaigiFontFamily) : SettingsScreenAction
+    data class SelectFontFamily(val fontFamily: KaigiFontFamily) : SettingsScreenAction
 
     data class SelectSketchStrength(val sketchStrength: SketchStrength) : SettingsScreenAction
 
-    data class SelectColorScheme(val colorSchemeSetting: ColorSchemeSetting) : SettingsScreenAction
+    data class SelectColorSchemeSetting(val colorSchemeSetting: ColorSchemeSetting) : SettingsScreenAction
 }

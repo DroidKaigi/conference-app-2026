@@ -25,9 +25,9 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun FontGroupSection(
+internal fun FontFamilyGroupSection(
     fontFamily: KaigiFontFamily,
-    onFontClick: (KaigiFontFamily) -> Unit,
+    onFontFamilyClick: (KaigiFontFamily) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SettingsGroupSection(title = stringResource(Res.string.font), modifier = modifier) {
@@ -36,12 +36,12 @@ internal fun FontGroupSection(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             KaigiFontFamily.entries.forEachIndexed { index, entry ->
-                FontOptionItem(
+                FontFamilyOptionItem(
                     label = stringResource(entry.label),
                     labelStyle = entry.labelStyle,
                     selected = entry == fontFamily,
-                    seed = FontGroupDefaults.FIRST_OPTION_SEED + index,
-                    onClick = { onFontClick(entry) },
+                    seed = FontFamilyGroupDefaults.FIRST_OPTION_SEED + index,
+                    onClick = { onFontFamilyClick(entry) },
                 )
             }
         }
@@ -67,19 +67,19 @@ private val KaigiFontFamily.labelStyle: TextStyle
             MaterialTheme.typography.headlineSmall.copy(fontFamily = KaigiFontFamilies.display)
     }
 
-private object FontGroupDefaults {
+private object FontFamilyGroupDefaults {
     const val FIRST_OPTION_SEED = 5810
 }
 
 @LocalePreviews
 @Composable
-private fun FontGroupSectionPreview(
+private fun FontFamilyGroupSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        FontGroupSection(
+        FontFamilyGroupSection(
             fontFamily = KaigiFontFamily.Default,
-            onFontClick = {},
+            onFontFamilyClick = {},
             modifier = Modifier.padding(16.dp),
         )
     }

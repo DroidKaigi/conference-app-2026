@@ -21,9 +21,9 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
-import io.github.droidkaigi.confsched.feature.settings.component.FontGroupSection
-import io.github.droidkaigi.confsched.feature.settings.component.StrengthGroupSection
-import io.github.droidkaigi.confsched.feature.settings.component.ThemeGroupSection
+import io.github.droidkaigi.confsched.feature.settings.component.ColorSchemeGroupSection
+import io.github.droidkaigi.confsched.feature.settings.component.FontFamilyGroupSection
+import io.github.droidkaigi.confsched.feature.settings.component.SketchStrengthGroupSection
 import io.github.droidkaigi.confsched.feature.settings.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.settings.generated.resources.settings_title
 import org.jetbrains.compose.resources.stringResource
@@ -31,9 +31,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingsScreen(
     uiState: SettingsScreenUiState,
-    onFontClick: (KaigiFontFamily) -> Unit,
+    onFontFamilyClick: (KaigiFontFamily) -> Unit,
     onSketchStrengthClick: (SketchStrength) -> Unit,
-    onColorSchemeClick: (ColorSchemeSetting) -> Unit,
+    onColorSchemeSettingClick: (ColorSchemeSetting) -> Unit,
     onBackClick: () -> Unit,
 ) {
     Scaffold(
@@ -56,21 +56,21 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(SettingsScreenDefaults.groupSpacing),
         ) {
             item(key = "font") {
-                FontGroupSection(
+                FontFamilyGroupSection(
                     fontFamily = uiState.fontFamily,
-                    onFontClick = onFontClick,
+                    onFontFamilyClick = onFontFamilyClick,
                 )
             }
             item(key = "strength") {
-                StrengthGroupSection(
+                SketchStrengthGroupSection(
                     sketchStrength = uiState.sketchStrength,
                     onSketchStrengthClick = onSketchStrengthClick,
                 )
             }
             item(key = "theme") {
-                ThemeGroupSection(
+                ColorSchemeGroupSection(
                     colorSchemeSetting = uiState.colorSchemeSetting,
-                    onColorSchemeClick = onColorSchemeClick,
+                    onColorSchemeSettingClick = onColorSchemeSettingClick,
                 )
             }
         }
@@ -95,9 +95,9 @@ private fun SettingsScreenPreview(
                 sketchStrength = SketchStrength.Normal,
                 colorSchemeSetting = ColorSchemeSetting.RandomPerLaunch,
             ),
-            onFontClick = {},
+            onFontFamilyClick = {},
             onSketchStrengthClick = {},
-            onColorSchemeClick = {},
+            onColorSchemeSettingClick = {},
             onBackClick = {},
         )
     }
@@ -105,7 +105,7 @@ private fun SettingsScreenPreview(
 
 @LocaleScreenPreviews
 @Composable
-private fun SettingsScreenWithFixedThemePreview(
+private fun SettingsScreenWithFixedColorSchemePreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
@@ -115,9 +115,9 @@ private fun SettingsScreenWithFixedThemePreview(
                 sketchStrength = SketchStrength.Playful,
                 colorSchemeSetting = ColorSchemeSetting.Fixed(colorScheme),
             ),
-            onFontClick = {},
+            onFontFamilyClick = {},
             onSketchStrengthClick = {},
-            onColorSchemeClick = {},
+            onColorSchemeSettingClick = {},
             onBackClick = {},
         )
     }

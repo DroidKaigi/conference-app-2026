@@ -31,7 +31,7 @@ import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 @Composable
-internal fun FontOptionItem(
+internal fun FontFamilyOptionItem(
     label: String,
     // The option sets its name in the face it selects, so the style comes from the caller
     // rather than from the typography the preference in force installs.
@@ -45,13 +45,13 @@ internal fun FontOptionItem(
         seed = combineSketchSeed(seed),
         roughness = SketchDefaults.roughness,
         tremor = SketchDefaults.tremor,
-        cornerRadius = FontOptionDefaults.cornerRadius,
-        borderThickness = FontOptionDefaults.borderThickness,
+        cornerRadius = FontFamilyOptionDefaults.cornerRadius,
+        borderThickness = FontFamilyOptionDefaults.borderThickness,
     )
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(FontOptionDefaults.height)
+            .height(FontFamilyOptionDefaults.height)
             .clip(shape)
             .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
             .sketchBorder(shape = shape, color = MaterialTheme.colorScheme.outline)
@@ -60,9 +60,9 @@ internal fun FontOptionItem(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(modifier = Modifier.size(FontOptionDefaults.checkSize)) {
+        Box(modifier = Modifier.size(FontFamilyOptionDefaults.checkSize)) {
             if (selected) {
-                SelectionCheckIcon(modifier = Modifier.size(FontOptionDefaults.checkSize))
+                SelectionCheckIcon(modifier = Modifier.size(FontFamilyOptionDefaults.checkSize))
             }
         }
         Text(
@@ -77,7 +77,7 @@ internal fun FontOptionItem(
     }
 }
 
-private object FontOptionDefaults {
+private object FontFamilyOptionDefaults {
     val height = 64.dp
     val cornerRadius = 12.dp
     val borderThickness = 2.dp
@@ -86,7 +86,7 @@ private object FontOptionDefaults {
 
 @Preview
 @Composable
-private fun FontOptionItemPreview(
+private fun FontFamilyOptionItemPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
@@ -94,14 +94,14 @@ private fun FontOptionItemPreview(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            FontOptionItem(
+            FontFamilyOptionItem(
                 label = "Default",
                 labelStyle = MaterialTheme.typography.titleLarge,
                 selected = true,
                 seed = 1,
                 onClick = {},
             )
-            FontOptionItem(
+            FontFamilyOptionItem(
                 label = "Noto Sans",
                 labelStyle = MaterialTheme.typography.titleLarge,
                 selected = false,

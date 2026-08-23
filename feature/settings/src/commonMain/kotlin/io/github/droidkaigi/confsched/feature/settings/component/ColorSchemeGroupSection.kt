@@ -22,26 +22,26 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun ThemeGroupSection(
+internal fun ColorSchemeGroupSection(
     colorSchemeSetting: ColorSchemeSetting,
-    onColorSchemeClick: (ColorSchemeSetting) -> Unit,
+    onColorSchemeSettingClick: (ColorSchemeSetting) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SettingsGroupSection(title = stringResource(Res.string.theme), modifier = modifier) {
-        PaletteBoardView(seed = ThemeGroupDefaults.BOARD_SEED) {
-            RandomThemeSwatchItem(
+        SwatchBoardView(seed = ColorSchemeGroupDefaults.BOARD_SEED) {
+            RandomColorSchemeSwatchItem(
                 label = stringResource(Res.string.theme_random),
                 selected = colorSchemeSetting == ColorSchemeSetting.RandomPerLaunch,
-                seed = ThemeGroupDefaults.FIRST_SWATCH_SEED,
-                onClick = { onColorSchemeClick(ColorSchemeSetting.RandomPerLaunch) },
+                seed = ColorSchemeGroupDefaults.FIRST_SWATCH_SEED,
+                onClick = { onColorSchemeSettingClick(ColorSchemeSetting.RandomPerLaunch) },
             )
             KaigiColorScheme.entries.forEachIndexed { index, entry ->
-                ThemeSwatchItem(
+                ColorSchemeSwatchItem(
                     colorScheme = entry,
                     label = stringResource(entry.label),
                     selected = colorSchemeSetting == ColorSchemeSetting.Fixed(entry),
-                    seed = ThemeGroupDefaults.FIRST_SWATCH_SEED + index + 1,
-                    onClick = { onColorSchemeClick(ColorSchemeSetting.Fixed(entry)) },
+                    seed = ColorSchemeGroupDefaults.FIRST_SWATCH_SEED + index + 1,
+                    onClick = { onColorSchemeSettingClick(ColorSchemeSetting.Fixed(entry)) },
                 )
             }
         }
@@ -57,7 +57,7 @@ private val KaigiColorScheme.label: StringResource
         KaigiColorScheme.CampfireNight -> Res.string.theme_campfire_night
     }
 
-private object ThemeGroupDefaults {
+private object ColorSchemeGroupDefaults {
     const val BOARD_SEED = 5830
 
     /** The random option takes this one; each scheme takes the next in entry order. */
@@ -66,13 +66,13 @@ private object ThemeGroupDefaults {
 
 @LocalePreviews
 @Composable
-private fun ThemeGroupSectionPreview(
+private fun ColorSchemeGroupSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ThemeGroupSection(
+        ColorSchemeGroupSection(
             colorSchemeSetting = ColorSchemeSetting.RandomPerLaunch,
-            onColorSchemeClick = {},
+            onColorSchemeSettingClick = {},
             modifier = Modifier.padding(16.dp),
         )
     }

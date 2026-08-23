@@ -34,8 +34,8 @@ import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 @Composable
-internal fun StrengthOptionItem(
-    strength: SketchStrength,
+internal fun SketchStrengthOptionItem(
+    sketchStrength: SketchStrength,
     label: String,
     selected: Boolean,
     seed: Int,
@@ -44,14 +44,14 @@ internal fun StrengthOptionItem(
 ) {
     Box(
         modifier = modifier
-            .width(StrengthOptionDefaults.width)
-            .heightIn(min = StrengthOptionDefaults.minHeight)
+            .width(SketchStrengthOptionDefaults.width)
+            .heightIn(min = SketchStrengthOptionDefaults.minHeight)
             .clip(
                 SketchRoundRectShape(
                     seed = combineSketchSeed(seed),
                     roughness = SketchDefaults.roughness,
                     tremor = SketchDefaults.tremor,
-                    cornerRadius = StrengthOptionDefaults.cornerRadius,
+                    cornerRadius = SketchStrengthOptionDefaults.cornerRadius,
                 ),
             )
             .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
@@ -62,7 +62,7 @@ internal fun StrengthOptionItem(
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            StrengthPreviewView(strength = strength, seed = seed)
+            SketchStrengthSampleView(sketchStrength = sketchStrength, seed = seed)
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelSmall,
@@ -87,68 +87,68 @@ internal fun StrengthOptionItem(
 
 /** The wobble the option selects, drawn at that wobble: a sample frame with a rule across it. */
 @Composable
-private fun StrengthPreviewView(strength: SketchStrength, seed: Int) {
-    val roughness = StrengthOptionDefaults.previewRoughness * strength.amplitudeScale
-    val tremor = StrengthOptionDefaults.previewTremor * strength.amplitudeScale
+private fun SketchStrengthSampleView(sketchStrength: SketchStrength, seed: Int) {
+    val roughness = SketchStrengthOptionDefaults.sampleRoughness * sketchStrength.amplitudeScale
+    val tremor = SketchStrengthOptionDefaults.sampleTremor * sketchStrength.amplitudeScale
     val shape = SketchRoundRectShape(
         seed = combineSketchSeed(seed),
         roughness = roughness,
         tremor = tremor,
-        sweepWavelength = StrengthOptionDefaults.previewSweepWavelength,
-        tremorWavelength = StrengthOptionDefaults.previewTremorWavelength,
-        cornerRadius = StrengthOptionDefaults.previewCornerRadius,
-        borderThickness = StrengthOptionDefaults.previewStroke,
+        sweepWavelength = SketchStrengthOptionDefaults.sampleSweepWavelength,
+        tremorWavelength = SketchStrengthOptionDefaults.sampleTremorWavelength,
+        cornerRadius = SketchStrengthOptionDefaults.sampleCornerRadius,
+        borderThickness = SketchStrengthOptionDefaults.sampleStroke,
     )
-    val dividerRoughness = roughness * StrengthOptionDefaults.PREVIEW_DIVIDER_ROUGHNESS_RATIO
-    val dividerHeight = StrengthOptionDefaults.previewStroke + dividerRoughness * 2
+    val dividerRoughness = roughness * SketchStrengthOptionDefaults.SAMPLE_DIVIDER_ROUGHNESS_RATIO
+    val dividerHeight = SketchStrengthOptionDefaults.sampleStroke + dividerRoughness * 2
     Box(
         modifier = Modifier
             .size(
-                width = StrengthOptionDefaults.previewWidth,
-                height = StrengthOptionDefaults.previewHeight,
+                width = SketchStrengthOptionDefaults.sampleWidth,
+                height = SketchStrengthOptionDefaults.sampleHeight,
             )
             .sketchBorder(shape = shape, color = MaterialTheme.colorScheme.outline),
     ) {
         SketchHorizontalDivider(
-            seed = seed + StrengthOptionDefaults.PREVIEW_DIVIDER_SEED_OFFSET,
+            seed = seed + SketchStrengthOptionDefaults.SAMPLE_DIVIDER_SEED_OFFSET,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = StrengthOptionDefaults.previewHeight * 0.7f - dividerHeight / 2)
-                .width(StrengthOptionDefaults.previewDividerWidth),
+                .offset(y = SketchStrengthOptionDefaults.sampleHeight * 0.7f - dividerHeight / 2)
+                .width(SketchStrengthOptionDefaults.sampleDividerWidth),
             color = MaterialTheme.colorScheme.outline,
-            thickness = StrengthOptionDefaults.previewStroke,
+            thickness = SketchStrengthOptionDefaults.sampleStroke,
             roughness = dividerRoughness,
             tremor = 0.dp,
-            sweepWavelength = StrengthOptionDefaults.previewDividerSweepWavelength,
+            sweepWavelength = SketchStrengthOptionDefaults.sampleDividerSweepWavelength,
         )
     }
 }
 
 // The sample frame follows the design's figures: the amplitudes below are the ones it states
 // for the middle level, which the strength's own scale then moves off.
-private object StrengthOptionDefaults {
+private object SketchStrengthOptionDefaults {
     val width = 100.dp
     val minHeight = 92.dp
     val cornerRadius = 12.dp
 
-    val previewWidth = 72.dp
-    val previewHeight = 32.dp
-    val previewCornerRadius = 10.dp
-    val previewStroke = 1.5.dp
-    val previewRoughness = 0.95.dp
-    val previewTremor = 0.24.dp
-    val previewSweepWavelength = 48.dp
-    val previewTremorWavelength = 18.dp
+    val sampleWidth = 72.dp
+    val sampleHeight = 32.dp
+    val sampleCornerRadius = 10.dp
+    val sampleStroke = 1.5.dp
+    val sampleRoughness = 0.95.dp
+    val sampleTremor = 0.24.dp
+    val sampleSweepWavelength = 48.dp
+    val sampleTremorWavelength = 18.dp
 
-    val previewDividerWidth = 56.dp
-    val previewDividerSweepWavelength = 30.dp
-    const val PREVIEW_DIVIDER_ROUGHNESS_RATIO = 0.5f
-    const val PREVIEW_DIVIDER_SEED_OFFSET = 10
+    val sampleDividerWidth = 56.dp
+    val sampleDividerSweepWavelength = 30.dp
+    const val SAMPLE_DIVIDER_ROUGHNESS_RATIO = 0.5f
+    const val SAMPLE_DIVIDER_SEED_OFFSET = 10
 }
 
 @Preview
 @Composable
-private fun StrengthOptionItemPreview(
+private fun SketchStrengthOptionItemPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
@@ -157,8 +157,8 @@ private fun StrengthOptionItemPreview(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             SketchStrength.entries.forEachIndexed { index, strength ->
-                StrengthOptionItem(
-                    strength = strength,
+                SketchStrengthOptionItem(
+                    sketchStrength = strength,
                     label = strength.name,
                     selected = strength == SketchStrength.Normal,
                     seed = index,

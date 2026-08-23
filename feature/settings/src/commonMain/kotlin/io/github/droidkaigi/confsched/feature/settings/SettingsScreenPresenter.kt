@@ -24,7 +24,7 @@ fun settingsScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is SettingsScreenAction.SelectFont -> {
+            is SettingsScreenAction.SelectFontFamily -> {
                 val newSettings = currentSettings.copy(fontFamily = action.fontFamily)
                 appearanceMutation.mutateAsync(newSettings)
             }
@@ -34,7 +34,7 @@ fun settingsScreenPresenter(
                 appearanceMutation.mutateAsync(newSettings)
             }
 
-            is SettingsScreenAction.SelectColorScheme -> {
+            is SettingsScreenAction.SelectColorSchemeSetting -> {
                 val newSettings = currentSettings.copy(colorSchemeSetting = action.colorSchemeSetting)
                 appearanceMutation.mutateAsync(newSettings)
             }

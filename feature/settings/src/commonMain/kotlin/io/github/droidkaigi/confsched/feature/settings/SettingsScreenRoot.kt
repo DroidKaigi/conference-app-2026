@@ -33,9 +33,9 @@ fun SettingsScreenRoot(
         }
         SettingsScreen(
             uiState = uiState,
-            onFontClick = { screenChannel.send(SettingsScreenAction.SelectFont(it)) },
+            onFontFamilyClick = { screenChannel.send(SettingsScreenAction.SelectFontFamily(it)) },
             onSketchStrengthClick = { screenChannel.send(SettingsScreenAction.SelectSketchStrength(it)) },
-            onColorSchemeClick = { screenChannel.send(SettingsScreenAction.SelectColorScheme(it)) },
+            onColorSchemeSettingClick = { screenChannel.send(SettingsScreenAction.SelectColorSchemeSetting(it)) },
             onBackClick = onNavigateBack,
         )
     }

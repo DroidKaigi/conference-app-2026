@@ -24,7 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun StrengthGroupSection(
+internal fun SketchStrengthGroupSection(
     sketchStrength: SketchStrength,
     onSketchStrengthClick: (SketchStrength) -> Unit,
     modifier: Modifier = Modifier,
@@ -36,11 +36,11 @@ internal fun StrengthGroupSection(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SketchStrength.entries.forEachIndexed { index, entry ->
-                StrengthOptionItem(
-                    strength = entry,
+                SketchStrengthOptionItem(
+                    sketchStrength = entry,
                     label = stringResource(entry.label),
                     selected = entry == sketchStrength,
-                    seed = StrengthGroupDefaults.FIRST_OPTION_SEED + index,
+                    seed = SketchStrengthGroupDefaults.FIRST_OPTION_SEED + index,
                     onClick = { onSketchStrengthClick(entry) },
                 )
             }
@@ -55,17 +55,17 @@ private val SketchStrength.label: StringResource
         SketchStrength.Playful -> Res.string.hand_drawn_strength_playful
     }
 
-private object StrengthGroupDefaults {
+private object SketchStrengthGroupDefaults {
     const val FIRST_OPTION_SEED = 5820
 }
 
 @LocalePreviews
 @Composable
-private fun StrengthGroupSectionPreview(
+private fun SketchStrengthGroupSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        StrengthGroupSection(
+        SketchStrengthGroupSection(
             sketchStrength = SketchStrength.Normal,
             onSketchStrengthClick = {},
             modifier = Modifier.padding(16.dp),

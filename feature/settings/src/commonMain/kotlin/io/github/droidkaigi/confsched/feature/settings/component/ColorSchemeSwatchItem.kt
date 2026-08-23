@@ -39,7 +39,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
-internal fun ThemeSwatchItem(
+internal fun ColorSchemeSwatchItem(
     colorScheme: KaigiColorScheme,
     label: String,
     selected: Boolean,
@@ -47,7 +47,7 @@ internal fun ThemeSwatchItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ThemeSwatchLayout(
+    ColorSchemeSwatchLayout(
         label = label,
         selected = selected,
         seed = seed,
@@ -58,13 +58,13 @@ internal fun ThemeSwatchItem(
         val dotOffset = colorScheme.dotOffset
         Box(
             modifier = Modifier
-                .size(ThemeSwatchDefaults.blobSize)
+                .size(ColorSchemeSwatchDefaults.blobSize)
                 .clip(
                     SketchRoundRectShape(
                         seed = combineSketchSeed(seed),
-                        roughness = ThemeSwatchDefaults.blobRoughness,
-                        tremor = ThemeSwatchDefaults.blobTremor,
-                        cornerRadius = ThemeSwatchDefaults.blobSize / 2,
+                        roughness = ColorSchemeSwatchDefaults.blobRoughness,
+                        tremor = ColorSchemeSwatchDefaults.blobTremor,
+                        cornerRadius = ColorSchemeSwatchDefaults.blobSize / 2,
                     ),
                 )
                 .background(palette.primary),
@@ -72,13 +72,13 @@ internal fun ThemeSwatchItem(
             Box(
                 modifier = Modifier
                     .offset(x = dotOffset.x, y = dotOffset.y)
-                    .size(ThemeSwatchDefaults.dotSize)
+                    .size(ColorSchemeSwatchDefaults.dotSize)
                     .clip(
                         SketchRoundRectShape(
-                            seed = combineSketchSeed(seed + ThemeSwatchDefaults.DOT_SEED_OFFSET),
-                            roughness = ThemeSwatchDefaults.dotRoughness,
-                            tremor = ThemeSwatchDefaults.blobTremor,
-                            cornerRadius = ThemeSwatchDefaults.dotSize / 2,
+                            seed = combineSketchSeed(seed + ColorSchemeSwatchDefaults.DOT_SEED_OFFSET),
+                            roughness = ColorSchemeSwatchDefaults.dotRoughness,
+                            tremor = ColorSchemeSwatchDefaults.blobTremor,
+                            cornerRadius = ColorSchemeSwatchDefaults.dotSize / 2,
                         ),
                     )
                     .background(palette.onPrimary),
@@ -89,14 +89,14 @@ internal fun ThemeSwatchItem(
 
 /** The option that leaves the scheme to the draw the app makes at every launch. */
 @Composable
-internal fun RandomThemeSwatchItem(
+internal fun RandomColorSchemeSwatchItem(
     label: String,
     selected: Boolean,
     seed: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ThemeSwatchLayout(
+    ColorSchemeSwatchLayout(
         label = label,
         selected = selected,
         seed = seed,
@@ -105,35 +105,35 @@ internal fun RandomThemeSwatchItem(
     ) {
         val plateShape = SketchRoundRectShape(
             seed = combineSketchSeed(seed),
-            roughness = ThemeSwatchDefaults.blobRoughness,
-            tremor = ThemeSwatchDefaults.blobTremor,
-            cornerRadius = ThemeSwatchDefaults.blobSize / 2,
-            borderThickness = ThemeSwatchDefaults.plateBorderThickness,
+            roughness = ColorSchemeSwatchDefaults.blobRoughness,
+            tremor = ColorSchemeSwatchDefaults.blobTremor,
+            cornerRadius = ColorSchemeSwatchDefaults.blobSize / 2,
+            borderThickness = ColorSchemeSwatchDefaults.plateBorderThickness,
         )
         Box(
             modifier = Modifier
-                .size(ThemeSwatchDefaults.blobSize)
+                .size(ColorSchemeSwatchDefaults.blobSize)
                 .clip(plateShape)
                 .background(MaterialTheme.colorScheme.surfaceBright)
                 .sketchBorder(shape = plateShape, color = MaterialTheme.colorScheme.outline),
             contentAlignment = Alignment.Center,
         ) {
             KaigiColorScheme.entries.forEachIndexed { index, scheme ->
-                val angle = ThemeSwatchDefaults.firstShardAngle +
-                    index * (ThemeSwatchDefaults.fullTurn / KaigiColorScheme.entries.size)
+                val angle = ColorSchemeSwatchDefaults.firstShardAngle +
+                    index * (ColorSchemeSwatchDefaults.fullTurn / KaigiColorScheme.entries.size)
                 Box(
                     modifier = Modifier
                         .offset(
-                            x = ThemeSwatchDefaults.shardRadius * cos(angle),
-                            y = ThemeSwatchDefaults.shardRadius * sin(angle),
+                            x = ColorSchemeSwatchDefaults.shardRadius * cos(angle),
+                            y = ColorSchemeSwatchDefaults.shardRadius * sin(angle),
                         )
-                        .size(ThemeSwatchDefaults.shardSize)
+                        .size(ColorSchemeSwatchDefaults.shardSize)
                         .clip(
                             SketchRoundRectShape(
-                                seed = combineSketchSeed(seed + ThemeSwatchDefaults.SHARD_SEED_OFFSET + index),
-                                roughness = ThemeSwatchDefaults.dotRoughness,
-                                tremor = ThemeSwatchDefaults.blobTremor,
-                                cornerRadius = ThemeSwatchDefaults.shardSize / 2,
+                                seed = combineSketchSeed(seed + ColorSchemeSwatchDefaults.SHARD_SEED_OFFSET + index),
+                                roughness = ColorSchemeSwatchDefaults.dotRoughness,
+                                tremor = ColorSchemeSwatchDefaults.blobTremor,
+                                cornerRadius = ColorSchemeSwatchDefaults.shardSize / 2,
                             ),
                         )
                         .background(scheme.toMaterialColorScheme().primary),
@@ -144,7 +144,7 @@ internal fun RandomThemeSwatchItem(
 }
 
 @Composable
-private fun ThemeSwatchLayout(
+private fun ColorSchemeSwatchLayout(
     label: String,
     selected: Boolean,
     seed: Int,
@@ -154,15 +154,15 @@ private fun ThemeSwatchLayout(
 ) {
     Box(
         modifier = modifier
-            .width(ThemeSwatchDefaults.width)
+            .width(ColorSchemeSwatchDefaults.width)
             // A long scheme name takes a third line; the card grows rather than clipping it.
-            .heightIn(min = ThemeSwatchDefaults.minHeight)
+            .heightIn(min = ColorSchemeSwatchDefaults.minHeight)
             .clip(
                 SketchRoundRectShape(
-                    seed = combineSketchSeed(seed + ThemeSwatchDefaults.FRAME_SEED_OFFSET),
+                    seed = combineSketchSeed(seed + ColorSchemeSwatchDefaults.FRAME_SEED_OFFSET),
                     roughness = SketchDefaults.roughness,
                     tremor = SketchDefaults.tremor,
-                    cornerRadius = ThemeSwatchDefaults.cornerRadius,
+                    cornerRadius = ColorSchemeSwatchDefaults.cornerRadius,
                 ),
             )
             .background(if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent)
@@ -175,8 +175,8 @@ private fun ThemeSwatchLayout(
         ) {
             Box(
                 modifier = Modifier.size(
-                    width = ThemeSwatchDefaults.dabWidth,
-                    height = ThemeSwatchDefaults.dabHeight,
+                    width = ColorSchemeSwatchDefaults.dabWidth,
+                    height = ColorSchemeSwatchDefaults.dabHeight,
                 ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -204,7 +204,7 @@ private fun ThemeSwatchLayout(
     }
 }
 
-private object ThemeSwatchDefaults {
+private object ColorSchemeSwatchDefaults {
     // The swatch artwork is drawn by the app, so its wobble follows the strength in force.
     val blobRoughness: Dp @Composable get() = scaleSketchAmplitude(1.6.dp)
     val blobTremor: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
@@ -241,7 +241,7 @@ private val KaigiColorScheme.dotOffset: DpOffset
 
 @Preview
 @Composable
-private fun ThemeSwatchItemPreview(
+private fun ColorSchemeSwatchItemPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
@@ -249,13 +249,13 @@ private fun ThemeSwatchItemPreview(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            RandomThemeSwatchItem(
+            RandomColorSchemeSwatchItem(
                 label = "Random\nOn launch",
                 selected = true,
                 seed = 1,
                 onClick = {},
             )
-            ThemeSwatchItem(
+            ColorSchemeSwatchItem(
                 colorScheme = colorScheme,
                 label = colorScheme.name,
                 selected = false,

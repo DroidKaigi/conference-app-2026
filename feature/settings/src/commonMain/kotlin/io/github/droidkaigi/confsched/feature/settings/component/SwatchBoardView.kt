@@ -22,7 +22,7 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 /** The board the theme swatches lie on, which wraps them by however many the width takes. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun PaletteBoardView(
+internal fun SwatchBoardView(
     seed: Int,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
@@ -31,22 +31,22 @@ internal fun PaletteBoardView(
         seed = combineSketchSeed(seed),
         roughness = SketchDefaults.roughness,
         tremor = SketchDefaults.tremor,
-        cornerRadius = PaletteBoardDefaults.cornerRadius,
-        borderThickness = PaletteBoardDefaults.borderThickness,
+        cornerRadius = SwatchBoardDefaults.cornerRadius,
+        borderThickness = SwatchBoardDefaults.borderThickness,
     )
     FlowRow(
         modifier = modifier
             .fillMaxWidth()
             .sketchBorder(shape = shape, color = MaterialTheme.colorScheme.outline)
-            .padding(PaletteBoardDefaults.padding),
-        horizontalArrangement = Arrangement.spacedBy(PaletteBoardDefaults.swatchSpacing),
-        verticalArrangement = Arrangement.spacedBy(PaletteBoardDefaults.swatchSpacing),
+            .padding(SwatchBoardDefaults.padding),
+        horizontalArrangement = Arrangement.spacedBy(SwatchBoardDefaults.swatchSpacing),
+        verticalArrangement = Arrangement.spacedBy(SwatchBoardDefaults.swatchSpacing),
     ) {
         content()
     }
 }
 
-private object PaletteBoardDefaults {
+private object SwatchBoardDefaults {
     val cornerRadius = 16.dp
     val borderThickness = 2.dp
     val padding = 14.dp
@@ -55,13 +55,13 @@ private object PaletteBoardDefaults {
 
 @Preview
 @Composable
-private fun PaletteBoardViewPreview(
+private fun SwatchBoardViewPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        PaletteBoardView(seed = 1, modifier = Modifier.padding(16.dp)) {
+        SwatchBoardView(seed = 1, modifier = Modifier.padding(16.dp)) {
             KaigiColorScheme.entries.forEachIndexed { index, scheme ->
-                ThemeSwatchItem(
+                ColorSchemeSwatchItem(
                     colorScheme = scheme,
                     label = scheme.name,
                     selected = index == 0,

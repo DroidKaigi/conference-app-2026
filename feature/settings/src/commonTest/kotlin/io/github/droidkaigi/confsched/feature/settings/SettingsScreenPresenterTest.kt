@@ -53,7 +53,7 @@ class SettingsScreenPresenterTest {
             },
         ) {
             uiStates.awaitItem()
-            send(SettingsScreenAction.SelectFont(KaigiFontFamily.NotoSans))
+            send(SettingsScreenAction.SelectFontFamily(KaigiFontFamily.NotoSans))
             assertEquals(
                 AppearanceSettings.Default.copy(
                     fontFamily = KaigiFontFamily.NotoSans,
@@ -79,7 +79,7 @@ class SettingsScreenPresenterTest {
             uiStates.awaitItem()
             stored = AppearanceSettings.Default.copy(sketchStrength = SketchStrength.Playful)
             assertEquals(SketchStrength.Playful, uiStates.awaitItem().sketchStrength)
-            send(SettingsScreenAction.SelectFont(KaigiFontFamily.NotoSans))
+            send(SettingsScreenAction.SelectFontFamily(KaigiFontFamily.NotoSans))
             assertEquals(
                 AppearanceSettings.Default.copy(
                     fontFamily = KaigiFontFamily.NotoSans,
@@ -102,7 +102,7 @@ class SettingsScreenPresenterTest {
             },
         ) {
             uiStates.awaitItem()
-            send(SettingsScreenAction.SelectColorScheme(ColorSchemeSetting.Fixed(KaigiColorScheme.SakuraPlum)))
+            send(SettingsScreenAction.SelectColorSchemeSetting(ColorSchemeSetting.Fixed(KaigiColorScheme.SakuraPlum)))
             assertEquals(
                 ColorSchemeSetting.Fixed(KaigiColorScheme.SakuraPlum),
                 graph.appearanceSettingsMutationKey.invocations.receive().colorSchemeSetting,
