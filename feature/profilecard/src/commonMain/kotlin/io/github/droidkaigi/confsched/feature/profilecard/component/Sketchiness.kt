@@ -170,8 +170,8 @@ private object SketchinessOptionDefaults {
 }
 
 private object SketchinessSwatchDefaults {
-    val width = 24.dp
-    val height = 10.dp
+    val width = 64.dp
+    val height = 28.dp
 }
 
 @LocalePreviews
