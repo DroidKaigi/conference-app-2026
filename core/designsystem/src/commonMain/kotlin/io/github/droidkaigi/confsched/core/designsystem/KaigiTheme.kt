@@ -7,9 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -199,9 +197,6 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
  */
 val LocalSketchStrength = staticCompositionLocalOf { SketchStrength.Normal }
 
-/** Whether decorative animations should be reduced to their static state. */
-val LocalReducedMotion = staticCompositionLocalOf { false }
-
 /** The app-wide base seed combined with each sketch element's stable seed. */
 val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
     error("LocalSketchBaseSeed must be provided")
@@ -280,13 +275,10 @@ fun KaigiTheme(
     sketchBaseSeed: Int,
     content: @Composable () -> Unit,
 ) {
-    val reducedMotion =
-        rememberCoroutineScope().coroutineContext[MotionDurationScale]?.scaleFactor == 0f
     CompositionLocalProvider(
         LocalSchemeIsDark provides colorScheme.isDark,
         LocalSketchBaseSeed provides sketchBaseSeed,
         LocalSketchStrength provides sketchStrength,
-        LocalReducedMotion provides reducedMotion,
     ) {
         MaterialTheme(
             colorScheme = colorScheme.toMaterialColorScheme(),

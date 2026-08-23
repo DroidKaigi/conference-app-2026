@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.LocalReducedMotion
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -36,27 +35,22 @@ import org.jetbrains.compose.resources.stringResource
 internal fun TimetableLiveBadge(
     modifier: Modifier = Modifier,
 ) {
-    val dotAlpha = if (LocalReducedMotion.current) {
-        TimetableLiveBadgeDefaults.DOT_MAX_ALPHA
-    } else {
-        val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
-        val animatedAlpha by infiniteTransition.animateFloat(
-            initialValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
-            targetValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
-            animationSpec = infiniteRepeatable(
-                animation = keyframes {
-                    durationMillis = TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS
-                    TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at 0 using EaseInOut
-                    TimetableLiveBadgeDefaults.DOT_MIN_ALPHA at
-                        (TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS / 2) using EaseInOut
-                    TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at
-                        TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS using EaseInOut
-                },
-            ),
-            label = "Live badge dot alpha",
-        )
-        animatedAlpha
-    }
+    val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
+    val dotAlpha by infiniteTransition.animateFloat(
+        initialValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+        targetValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS
+                TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at 0 using EaseInOut
+                TimetableLiveBadgeDefaults.DOT_MIN_ALPHA at
+                    (TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS / 2) using EaseInOut
+                TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at
+                    TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS using EaseInOut
+            },
+        ),
+        label = "Live badge dot alpha",
+    )
     val combinedSeed = combineSketchSeed(TimetableLiveBadgeDefaults.SEED)
     val shape = remember(combinedSeed) {
         SketchRoundRectShape(
