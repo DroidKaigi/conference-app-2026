@@ -37,9 +37,9 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.count
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.ceil
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-
 data class TimetableCountdownBannerUiState(
     val nextSessions: PersistentList<TimetableItem>,
     val remainingDuration: Duration,
@@ -60,16 +60,20 @@ internal fun TimetableCountdownBanner(
         borderThickness = 1.5.dp,
     )
 
-    val countdownText = if (uiState.remainingDuration.inWholeHours > 0) {
+    val totalMinutes = ceil(uiState.remainingDuration.inWholeSeconds / 60.0).toInt()
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
+
+    val countdownText = if (hours > 0) {
         stringResource(
             Res.string.countdown_hours_minutes,
-            uiState.remainingDuration.inWholeHours.toInt(),
-            (uiState.remainingDuration.inWholeMinutes % 60).toInt(),
+            hours,
+            minutes,
         )
     } else {
         stringResource(
             Res.string.countdown_minutes,
-            uiState.remainingDuration.inWholeMinutes.toInt(),
+            minutes,
         )
     }
 
@@ -85,7 +89,7 @@ internal fun TimetableCountdownBanner(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = "${stringResource(Res.string.countdown_banner_title)}  $countdownText",
+                text = "${stringResource(Res.string.countdown_banner_title)} $countdownText",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
