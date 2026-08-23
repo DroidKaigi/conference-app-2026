@@ -2,7 +2,7 @@
     <string name="event_map_title">Event Map</string>
     <string name="event_map_content_description">Map of %1$s</string>
     <string name="event_map_introducing">At DroidKaigi, we also host events beyond the sessions for participants to enjoy. Take the opportunity to connect, share ideas, and fully experience the conference!</string>
-    <string name="event_map_stamp_title">Stamp Rally</string>
+    <string name="event_map_stamp_title">Stamp collecting</string>
     <string name="event_map_stamp_description">Collect stamps and exchange them for prizes!</string>
     <string name="event_map_learn_more_button_label">Learn more</string>
 </resources>
