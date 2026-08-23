@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -116,8 +117,8 @@ object KaigiFilterChipDefaults {
     val iconSpacing = 4.dp
     val iconSize = 18.dp
     val borderThickness = 1.5.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
     val labelStyle
         @Composable get() = MaterialTheme.typography.labelLarge

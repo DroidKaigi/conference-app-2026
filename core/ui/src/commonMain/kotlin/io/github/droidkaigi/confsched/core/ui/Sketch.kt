@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
+import io.github.droidkaigi.confsched.core.designsystem.LocalSketchStrength
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -53,6 +54,16 @@ import kotlin.math.roundToInt
 /** Combines the app-wide sketch seed with an element's stable seed. */
 @Composable
 fun combineSketchSeed(seed: Int): Int = LocalSketchBaseSeed.current + seed
+
+/**
+ * Scales a sketch amplitude by the strength in force, so an element keeps the proportions
+ * its own figures give it while the settings screen decides how far the whole app wobbles.
+ *
+ * Every amplitude an element hands to a sketch drawing goes through here; one left raw stays
+ * at its full swing however subtle the rest of the app is drawn.
+ */
+@Composable
+fun scaleSketchAmplitude(amplitude: Dp): Dp = amplitude * LocalSketchStrength.current.amplitudeScale
 
 /** How finely the tremor octave ripples: shorter is a faster, tighter shake. */
 private val DefaultTremorWavelength = 42.dp
@@ -82,6 +93,12 @@ private fun requireWobble(roughness: Dp, tremor: Dp, sweepWavelength: Dp, tremor
 private val DefaultRoughness = 1.dp
 private val DefaultTremor = 0.3.dp
 
+/** The amplitudes a sketch drawing falls back on, at the strength in force. */
+object SketchDefaults {
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(DefaultRoughness)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(DefaultTremor)
+}
+
 // Swept as the horizontal axis of both taste grids, so the divider grid and the
 // border grid can be read against each other.
 private val TREMOR_STEPS = listOf(0.dp, 0.3.dp, 1.dp)
@@ -103,8 +120,8 @@ fun SketchHorizontalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
     thickness: Dp = 2.dp,
-    roughness: Dp = DefaultRoughness,
-    tremor: Dp = DefaultTremor,
+    roughness: Dp = SketchDefaults.roughness,
+    tremor: Dp = SketchDefaults.tremor,
     sweepWavelength: Dp = DefaultSweepWavelength,
     tremorWavelength: Dp = DefaultTremorWavelength,
 ) {
@@ -145,8 +162,8 @@ fun SketchVerticalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
     thickness: Dp = 2.dp,
-    roughness: Dp = DefaultRoughness,
-    tremor: Dp = DefaultTremor,
+    roughness: Dp = SketchDefaults.roughness,
+    tremor: Dp = SketchDefaults.tremor,
     sweepWavelength: Dp = DefaultSweepWavelength,
     tremorWavelength: Dp = DefaultTremorWavelength,
 ) {
@@ -368,6 +385,9 @@ interface SketchOutlineShape : Shape {
  * the wobble for an unrelated one each time the count steps — a flicker along the edge as
  * the box grows. Pinning the count to one size holds a single stroke still and lets it
  * stretch. What the size actually is barely matters; that it stops changing is the point.
+ *
+ * [roughness] and [tremor] default to raw figures: a shape is a plain value and cannot read the
+ * strength in force, so a composable passes [SketchDefaults] to follow it.
  */
 @Immutable
 data class SketchRoundRectShape(
