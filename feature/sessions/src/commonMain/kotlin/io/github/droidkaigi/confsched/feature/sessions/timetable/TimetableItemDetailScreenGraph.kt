@@ -11,6 +11,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 @GraphExtension(TimetableItemDetailScreenScope::class)
 interface TimetableItemDetailScreenGraph {
     val screenContext: TimetableItemDetailScreenContext
+    val screenNavigator: TimetableItemDetailScreenNavigator
 
     @Provides
     private fun provideMutationTag(): MutationTag = MutationTag("TimetableItemDetailScreen")

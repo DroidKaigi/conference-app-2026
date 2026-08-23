@@ -12,6 +12,14 @@ enum class Room {
     UNKNOWN,
     ;
 
+    /** Where the venue puts the room, which the conference publishes as a map and not as data. */
+    val floor: Floor?
+        get() = when (this) {
+            NARWHAL, MEERKAT -> Floor.Ground
+            OTTER, PANDA, QUAIL -> Floor.Basement
+            UNKNOWN -> null
+        }
+
     companion object {
         /** The room [name] refers to, or [UNKNOWN] where it is none of the above. */
         fun of(name: String): Room =

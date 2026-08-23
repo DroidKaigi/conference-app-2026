@@ -4,28 +4,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmInline
-import kotlin.time.Instant
-
-@Serializable
-@JvmInline
-value class TimetableItemId(val value: String)
-
-data class TimetableItem(
-    val id: TimetableItemId,
-    val title: MultiLangText,
-    val room: Room,
-    val speaker: String,
-    val language: Language,
-    val day: DroidKaigi2026Day,
-    val startsAt: String,
-    val endsAt: String,
-    val startsAtInstant: Instant,
-    val endsAtInstant: Instant,
-) {
-    companion object
-}
 
 data class Timetable(
     val items: PersistentList<TimetableItem>,
@@ -35,6 +13,16 @@ data class Timetable(
         items.filter { it.day == day }.toPersistentList()
 
     fun isFavorite(id: TimetableItemId): Boolean = id in bookmarks
+
+    fun detailOf(id: TimetableItemId): TimetableItemDetail {
+        val item = items.first { it.id == id }
+        return TimetableItemDetail(
+            item = item,
+            sameSlotItems = items
+                .filter { it.id != id && it.day == item.day && it.startsAt == item.startsAt }
+                .toPersistentList(),
+        )
+    }
 
     companion object
 }

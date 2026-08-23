@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
+import io.github.droidkaigi.confsched.core.testing.testTimetableItem
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
@@ -20,30 +21,8 @@ class TimetableScreenRobotTest : RobotTest() {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(
-                id = TimetableItemId("d1a"),
-                title = MultiLangText(ja = "Day1 A", en = "Day1 A"),
-                room = Room.NARWHAL,
-                speaker = "Sp1",
-                language = Language.ENGLISH,
-                day = DroidKaigi2026Day.Day1,
-                startsAt = "10:00",
-                endsAt = "10:40",
-                startsAtInstant = Instant.parse("2026-09-01T10:00:00Z"),
-                endsAtInstant = Instant.parse("2026-09-01T10:40:00Z"),
-            ),
-            TimetableItem(
-                id = TimetableItemId("d2a"),
-                title = MultiLangText(ja = "Day2 A", en = "Day2 A"),
-                room = Room.NARWHAL,
-                speaker = "Sp3",
-                language = Language.ENGLISH,
-                day = DroidKaigi2026Day.Day2,
-                startsAt = "10:00",
-                endsAt = "10:40",
-                startsAtInstant = Instant.parse("2026-09-02T10:00:00Z"),
-                endsAtInstant = Instant.parse("2026-09-02T10:40:00Z"),
-            ),
+            testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d2a", title = "Day2 A", room = Room.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
         ),
         bookmarks = persistentSetOf(),
     )
