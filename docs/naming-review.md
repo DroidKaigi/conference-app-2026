@@ -98,6 +98,18 @@ onMemoCommit: (String) -> Unit   // rejected: whether an edit is worth persistin
 
 The name states the input: `onMemoChange`, matching the `onValueChange` it forwards. The outcome keeps its own name where it is decided, in the action the presenter handles.
 
+### Event and handler
+
+A callback reports one event. Two controls whose handlers happen to agree today are still two events, and each takes its own parameter.
+
+```kotlin
+onArchiveClick: (String) -> Unit   // rejected: the video row and the slides row report through it
+```
+
+Both rows open an address, so one parameter served both — and the screen could no longer tell which of them was pressed. They are `onArchiveVideoClick` and `onArchiveSlideClick`; the root maps both to the same lambda, which is where deciding that two events mean one thing belongs.
+
+What may share a parameter is decided by what the events are, not by what the handlers currently do. A handler that stops agreeing — a video that opens in a player rather than a browser, a deck that is counted — needs the distinction the shared parameter threw away, and restoring it reaches every layer the event crosses.
+
 ### Layer and register
 
 | Declared on | Names | Example |
@@ -157,7 +169,7 @@ For each declaration in the diff whose type is general-purpose (`String`, `Int`,
 2. Compare that promise against the type. On a mismatch, pick a correction from [Choosing the correction](#choosing-the-correction) and report it together with the call site that reads worst under the current name.
 3. On agreement, ask whether the owner has more than one part the value could reach. If it does, the name states which one; see [Under-qualification](#under-qualification).
 
-The type gate covers those three steps only. [Event callbacks](#event-callbacks) applies to every function-typed parameter in the diff: read the name as a phrase, and check its object against what the verb acts on, that it states no outcome the handler decides, and that it sits at the register of the layer declaring it. [Factory prefixes](#factory-prefixes) applies to every composable returning a value. [Category names](#category-names) applies to every declaration in the diff whatever its type: read the name as a common noun, and where it names a category with more than one member in reach, the name states the member.
+The type gate covers those three steps only. [Event callbacks](#event-callbacks) applies to every function-typed parameter in the diff: read the name as a phrase, and check its object against what the verb acts on, that it states no outcome the handler decides, that it reports one event, and that it sits at the register of the layer declaring it. [Factory prefixes](#factory-prefixes) applies to every composable returning a value. [Category names](#category-names) applies to every declaration in the diff whatever its type: read the name as a common noun, and where it names a category with more than one member in reach, the name states the member.
 
 Domain models in `:core:model` and `UiState` properties come first: their names reach every feature that renders them.
 
