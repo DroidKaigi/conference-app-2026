@@ -150,8 +150,8 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_shows_next_favorited_session_and_handles_hours_and_past_sessions() {
         val timetable = Timetable(
             items = persistentListOf(
-                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "Session 1", en = ""), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-                TimetableItem(TimetableItemId("s2"), MultiLangText(ja = "Session 2", en = ""), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
+                testTimetableItem(id = "s1", title = "Session 1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s2", title = "Session 2", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
             ),
             bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
         )
@@ -190,7 +190,7 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_is_null_when_no_favorited_sessions_exist() {
         val timetable = Timetable(
             items = persistentListOf(
-                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "S1", en = "S1"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                testTimetableItem(id = "s1", title = "S1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
             ),
             bookmarks = persistentSetOf(),
         )
@@ -209,8 +209,8 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_shows_multiple_sessions_if_concurrent_favorited_sessions_exist() {
         val timetable = Timetable(
             items = persistentListOf(
-                TimetableItem(TimetableItemId("s1"), MultiLangText(ja = "S1", en = "S1"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-                TimetableItem(TimetableItemId("s2"), MultiLangText(ja = "S2", en = "S2"), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                testTimetableItem(id = "s1", title = "S1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s2", title = "S2", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
             ),
             bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
         )
