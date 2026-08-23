@@ -22,6 +22,7 @@ import kotlin.time.Instant
  */
 interface KaigiClock {
     fun now(): Instant
+
     /** Distance between [now] and the device clock; always zero outside debug builds. */
     val offset: StateFlow<Duration>
 }
