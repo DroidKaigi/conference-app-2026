@@ -40,6 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.math.ceil
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+
 data class TimetableCountdownBannerUiState(
     val nextSessions: PersistentList<TimetableItem>,
     val remainingDuration: Duration,
