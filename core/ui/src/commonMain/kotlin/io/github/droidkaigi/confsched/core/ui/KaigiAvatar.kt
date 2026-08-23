@@ -148,16 +148,6 @@ private fun KaigiAvatarPreview(
                 contentDescription = null,
                 size = 100.dp,
             )
-            KaigiAvatar(
-                imageUrl = PreviewImage.AvatarSample.imageUrl,
-                contentDescription = null,
-                size = 52.dp,
-            )
-            KaigiAvatar(
-                imageUrl = PreviewImage.AvatarSample.imageUrl,
-                contentDescription = null,
-                size = 24.dp,
-            )
             KaigiPlaceholderAvatar(seed = 851, size = 100.dp) {
                 Text("C01", style = KaigiAvatarDefaults.initialsStyle)
             }
