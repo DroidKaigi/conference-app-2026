@@ -87,7 +87,7 @@ internal fun ColorSchemeSwatchItem(
     }
 }
 
-/** The option that leaves the scheme to the draw the app makes at every launch. */
+/** The option that pins no scheme, leaving each launch to draw one. */
 @Composable
 internal fun RandomColorSchemeSwatchItem(
     label: String,

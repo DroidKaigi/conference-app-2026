@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.settings.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -28,7 +29,7 @@ internal fun ColorSchemeGroupSection(
     modifier: Modifier = Modifier,
 ) {
     SettingsGroupSection(title = stringResource(Res.string.theme), modifier = modifier) {
-        SwatchBoardView(seed = ColorSchemeGroupDefaults.BOARD_SEED) {
+        SwatchBoardView(seed = ColorSchemeGroupDefaults.BOARD_SEED, modifier = Modifier.selectableGroup()) {
             RandomColorSchemeSwatchItem(
                 label = stringResource(Res.string.theme_random),
                 selected = colorSchemeSetting == ColorSchemeSetting.RandomPerLaunch,
