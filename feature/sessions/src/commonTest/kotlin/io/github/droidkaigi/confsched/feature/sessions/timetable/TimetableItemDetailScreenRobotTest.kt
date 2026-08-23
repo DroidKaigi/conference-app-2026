@@ -38,9 +38,9 @@ class TimetableItemDetailScreenRobotTest : RobotTest() {
                 checkLocationOffersMap(Room.OTTER)
                 checkEventMapDoesNotExist()
             }
-            describe("and the location is tapped") {
+            describe("and the map action is tapped") {
                 doIt {
-                    clickLocation(Room.OTTER)
+                    clickOpenEventMap()
                 }
                 itShould("show the map of the floor that room is on") {
                     checkEventMapDisplayed(Floor.Basement)

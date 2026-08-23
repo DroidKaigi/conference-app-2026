@@ -22,4 +22,5 @@
     <string name="language_mixed">Japanese and English</string>
     <string name="language_with_interpretation">%1$s (with %2$s interpretation)</string>
     <string name="event_map_content_description">Map of %1$s</string>
+    <string name="open_event_map">Open event map</string>
 </resources>

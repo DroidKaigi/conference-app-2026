@@ -44,6 +44,7 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.langu
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_japanese
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_mixed
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_with_interpretation
+import io.github.droidkaigi.confsched.feature.sessions.generated.resources.open_event_map
 import kotlinx.datetime.number
 import org.jetbrains.compose.resources.stringResource
 import io.github.droidkaigi.confsched.core.model.Language as SessionLanguage
@@ -82,8 +83,9 @@ internal fun SessionInfoCard(
                 text = room.locationText(),
                 action = onOpenEventMapDialog?.let {
                     InfoRowAction(
-                        KaigiIcons.Default.Map, // FIXME: Replace with actual icon (pop-out)
-                        it,
+                        actionIconImageVector = KaigiIcons.Default.Map, // FIXME: Replace with actual icon (pop-out)
+                        actionContentDescription = stringResource(Res.string.open_event_map),
+                        onClick = it,
                     )
                 },
             )
@@ -125,7 +127,7 @@ private fun InfoRow(
         if (action != null) {
             Icon(
                 imageVector = action.actionIconImageVector,
-                contentDescription = null,
+                contentDescription = action.actionContentDescription,
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .clickable(
@@ -175,6 +177,7 @@ private object SessionInfoCardDefaults {
 
 private data class InfoRowAction(
     val actionIconImageVector: ImageVector,
+    val actionContentDescription: String,
     val onClick: () -> Unit,
 )
 

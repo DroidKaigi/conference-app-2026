@@ -2,12 +2,11 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraphFactory
@@ -44,17 +43,19 @@ class TimetableItemDetailScreenRobot(
         }
     }
 
-    fun clickLocation(room: Room) {
-        composeUiTest.onNode(locationRow(room)).performClick()
+    fun clickOpenEventMap() {
+        composeUiTest.onNodeWithContentDescription(OPEN_EVENT_MAP).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun checkLocationOffersMap(room: Room) {
-        composeUiTest.onNode(locationRow(room)).assertIsDisplayed()
+        checkLocationNames(room)
+        composeUiTest.onNodeWithContentDescription(OPEN_EVENT_MAP).assertIsDisplayed()
     }
 
     fun checkLocationOffersNoMap(room: Room) {
-        composeUiTest.onAllNodes(locationRow(room)).assertCountEquals(0)
+        checkLocationNames(room)
+        composeUiTest.onAllNodesWithContentDescription(OPEN_EVENT_MAP).assertCountEquals(0)
     }
 
     fun checkEventMapDisplayed(floor: Floor) {
@@ -65,10 +66,18 @@ class TimetableItemDetailScreenRobot(
         composeUiTest.onAllNodesWithContentDescription("Map of", substring = true).assertCountEquals(0)
     }
 
-    // Only a row that opens the map is clickable, and the header names the room without one.
-    private fun locationRow(room: Room): SemanticsMatcher = hasText(locationText(room)) and hasClickAction()
+    // The header names the room as well, so a room the app knows no floor for leaves the location
+    // row sharing its text with that chip.
+    private fun checkLocationNames(room: Room) {
+        composeUiTest.onAllNodesWithText(locationText(room)).onFirst().assertIsDisplayed()
+    }
 
     // Repeats the format SessionInfoCard draws, which is the text its row carries.
     private fun locationText(room: Room): String =
         room.floor?.let { "${room.name} (${it.label})" } ?: room.name
+
+    private companion object {
+        // The label SessionInfoCard gives the icon that opens the map.
+        const val OPEN_EVENT_MAP = "Open event map"
+    }
 }

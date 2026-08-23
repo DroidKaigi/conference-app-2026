@@ -22,4 +22,5 @@
     <string name="language_mixed">日英混在</string>
     <string name="language_with_interpretation">%1$s（%2$s通訳あり）</string>
     <string name="event_map_content_description">%1$s のマップ</string>
+    <string name="open_event_map">イベントマップを開く</string>
 </resources>
