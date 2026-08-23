@@ -1,0 +1,86 @@
+package io.github.droidkaigi.confsched.feature.settings.component
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.KaigiFontFamilies
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
+import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.feature.settings.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.settings.generated.resources.font
+import io.github.droidkaigi.confsched.feature.settings.generated.resources.font_courier_prime
+import io.github.droidkaigi.confsched.feature.settings.generated.resources.font_default
+import io.github.droidkaigi.confsched.feature.settings.generated.resources.font_noto_sans
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+internal fun FontGroupSection(
+    fontFamily: KaigiFontFamily,
+    onFontClick: (KaigiFontFamily) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SettingsGroupSection(title = stringResource(Res.string.font), modifier = modifier) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            KaigiFontFamily.entries.forEachIndexed { index, entry ->
+                FontOptionItem(
+                    label = stringResource(entry.label),
+                    labelStyle = entry.labelStyle,
+                    selected = entry == fontFamily,
+                    seed = FontGroupDefaults.FIRST_OPTION_SEED + index,
+                    onClick = { onFontClick(entry) },
+                )
+            }
+        }
+    }
+}
+
+private val KaigiFontFamily.label: StringResource
+    get() = when (this) {
+        KaigiFontFamily.Default -> Res.string.font_default
+        KaigiFontFamily.CourierPrime -> Res.string.font_courier_prime
+        KaigiFontFamily.NotoSans -> Res.string.font_noto_sans
+    }
+
+// Each option names itself in the face it selects, so the family is pinned here rather than
+// taken from the role, which the preference already in force has decided.
+private val KaigiFontFamily.labelStyle: TextStyle
+    @Composable get() = when (this) {
+        KaigiFontFamily.Default,
+        KaigiFontFamily.NotoSans,
+        -> MaterialTheme.typography.titleLarge.copy(fontFamily = KaigiFontFamilies.text)
+
+        KaigiFontFamily.CourierPrime ->
+            MaterialTheme.typography.headlineSmall.copy(fontFamily = KaigiFontFamilies.display)
+    }
+
+private object FontGroupDefaults {
+    const val FIRST_OPTION_SEED = 5810
+}
+
+@LocalePreviews
+@Composable
+private fun FontGroupSectionPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        FontGroupSection(
+            fontFamily = KaigiFontFamily.Default,
+            onFontClick = {},
+            modifier = Modifier.padding(16.dp),
+        )
+    }
+}

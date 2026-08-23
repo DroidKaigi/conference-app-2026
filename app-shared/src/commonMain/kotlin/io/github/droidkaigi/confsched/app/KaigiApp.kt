@@ -27,10 +27,13 @@ fun KaigiApp() {
 
     SwrClientProvider(client = uiGraph.swrClient) {
         SoilDataBoundary(
-            state = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
-        ) { colorScheme ->
+            state1 = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
+            state2 = rememberSubscription(uiGraph.appearanceSettingsSubscriptionKey),
+        ) { colorScheme, appearanceSettings ->
             KaigiTheme(
                 colorScheme = colorScheme,
+                fontFamily = appearanceSettings.fontFamily,
+                sketchStrength = appearanceSettings.sketchStrength,
                 sketchBaseSeed = appSketchBaseSeed,
             ) {
                 NavigatorEffect(
