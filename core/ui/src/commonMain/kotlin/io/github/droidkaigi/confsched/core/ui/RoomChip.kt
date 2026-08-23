@@ -1,16 +1,13 @@
 package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -18,8 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
-import io.github.droidkaigi.confsched.core.designsystem.icon.Map
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Room
@@ -28,28 +23,15 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /** The room a session is in, named and marked in the room's own color. */
 @Composable
-fun RoomChip(
-    room: Room,
-    seed: Int,
-    onRoomClick: (() -> Unit)? = null,
-) {
+fun RoomChip(room: Room, seed: Int) {
     val theme = roomTheme(room)
     KaigiChip(
         seed = seed,
         containerColor = theme.container,
         contentColor = theme.onContainer,
-        modifier = if (onRoomClick == null) Modifier else Modifier.clickable(onClick = onRoomClick),
     ) {
         theme.shape?.let { RoomMark(shape = it, color = theme.onContainer) }
         Text(text = room.name, style = KaigiChipDefaults.labelStyle)
-        if (onRoomClick != null) {
-            Icon(
-                imageVector = KaigiIcons.Default.Map,
-                contentDescription = null,
-                tint = theme.onContainer,
-                modifier = Modifier.size(8.dp),
-            )
-        }
     }
 }
 

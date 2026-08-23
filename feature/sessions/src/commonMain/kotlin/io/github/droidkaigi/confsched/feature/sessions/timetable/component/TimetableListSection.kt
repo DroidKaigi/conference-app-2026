@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -32,7 +31,6 @@ import io.github.droidkaigi.confsched.core.ui.current
 internal fun TimetableListSection(
     uiState: TimetableListSectionUiState,
     onBookmarkClick: (TimetableItemId) -> Unit,
-    onRoomClick: (Room) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     listState: LazyListState = rememberLazyListState(),
 ) {
@@ -50,7 +48,6 @@ internal fun TimetableListSection(
                 slot = slot,
                 bookmarks = uiState.bookmarks,
                 onBookmarkClick = onBookmarkClick,
-                onRoomClick = onRoomClick,
                 onItemClick = onItemClick,
                 timeRangeTranslationY = { timeRangeHeightPx ->
                     stickyTimeRangeTranslationY(listState, index, timeRangeHeightPx)
@@ -66,7 +63,6 @@ private fun SessionRow(
     slot: TimetableListSectionUiState.TimeSlot,
     bookmarks: Set<TimetableItemId>,
     onBookmarkClick: (TimetableItemId) -> Unit,
-    onRoomClick: (Room) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     timeRangeTranslationY: (timeRangeHeightPx: Float) -> Float,
 ) {
@@ -95,7 +91,6 @@ private fun SessionRow(
                     isFavorite = item.id in bookmarks,
                     seed = item.id.value.hashCode(),
                     onBookmarkClick = { onBookmarkClick(item.id) },
-                    onRoomClick = if (item.room.floor == null) null else { -> onRoomClick(item.room) },
                     onClick = { onItemClick(item.id) },
                 )
             }
@@ -128,7 +123,6 @@ private fun TimetableListSectionPreview(
         TimetableListSection(
             uiState = TimetableListSectionUiState.fake(),
             onBookmarkClick = {},
-            onRoomClick = {},
             onItemClick = {},
         )
     }

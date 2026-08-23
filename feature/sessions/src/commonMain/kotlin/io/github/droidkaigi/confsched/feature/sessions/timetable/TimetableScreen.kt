@@ -6,20 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionEventMapDialog
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableHeader
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSection
 
@@ -32,8 +26,6 @@ fun TimetableScreen(
     onSearchClick: () -> Unit,
     onUiTypeChangeClick: () -> Unit,
 ) {
-    var selectedRoom by remember { mutableStateOf<Room?>(null) }
-    var isEventMapDialogOpen by remember { mutableStateOf(false) }
 
     Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
@@ -46,18 +38,9 @@ fun TimetableScreen(
             TimetableListSection(
                 uiState = uiState.timetableListSection,
                 onBookmarkClick = onBookmarkClick,
-                onRoomClick = { room ->
-                    selectedRoom = room
-                    isEventMapDialogOpen = true
-                },
                 onItemClick = onItemClick,
             )
         }
-        SessionEventMapDialog(
-            room = selectedRoom,
-            isOpen = isEventMapDialogOpen,
-            onDismiss = { isEventMapDialogOpen = false },
-        )
     }
 }
 
