@@ -27,6 +27,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
+import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
 import kotlinx.collections.immutable.PersistentList
@@ -59,6 +60,7 @@ internal fun FavoritesListSection(
                 FavoriteSessionRow(
                     startsAt = slot.startsAt,
                     endsAt = slot.endsAt,
+                    timeRangeState = slot.timeRangeState,
                     items = slot.items,
                     onBookmarkClick = onBookmarkClick,
                     onItemClick = onItemClick,
@@ -97,6 +99,7 @@ private fun FavoritesDayHeader(day: DroidKaigi2026Day) {
 private fun FavoriteSessionRow(
     startsAt: String,
     endsAt: String,
+    timeRangeState: TimetableLineState,
     items: PersistentList<TimetableItem>,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
@@ -105,6 +108,7 @@ private fun FavoriteSessionRow(
         TimetableTimeRange(
             startsAt = startsAt,
             endsAt = endsAt,
+            timeRangeState = timeRangeState,
             seed = startsAt.hashCode(),
         )
         Column(

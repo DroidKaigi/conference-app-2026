@@ -5,6 +5,7 @@ import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import kotlin.time.Instant
 
 fun TimetableResponse.toTimetableItems(): List<TimetableItem> {
     // Room is named in English, so that is the side Room.of matches.
@@ -30,6 +31,10 @@ fun TimetableResponse.toTimetableItems(): List<TimetableItem> {
                 day = dayByDate.getValue(session.startsAt.date()),
                 startsAt = session.startsAt.time(),
                 endsAt = session.endsAt.time(),
+                // The API provides full ISO-8601 strings with offsets (e.g., "2026-09-02T10:00:00+09:00").
+                // Parsing them directly here is the most accurate approach for the data layer.
+                startsAtInstant = Instant.parse(session.startsAt),
+                endsAtInstant = Instant.parse(session.endsAt),
             )
         }
 }
