@@ -57,6 +57,30 @@ class ScreenChannelEffectTest {
     }
 
     @Test
+    fun actions_whose_handlers_never_suspend_complete_in_the_order_sent() = runTest {
+        val channel = ScreenChannel<String, Nothing>()
+        val handled = mutableListOf<String>()
+
+        backgroundScope.launch {
+            moleculeFlow(RecompositionMode.Immediate) {
+                context(presenterContext) {
+                    ActionEffect(channel) { action -> handled.add(action) }
+                }
+            }.collect {}
+        }
+        runCurrent()
+
+        context(screenContext) {
+            channel.send("first")
+            channel.send("second")
+            channel.send("third")
+        }
+        runCurrent()
+
+        assertEquals(listOf("first", "second", "third"), handled)
+    }
+
+    @Test
     fun an_action_that_throws_is_reported_and_leaves_the_screen_running() = runTest {
         val channel = ScreenChannel<String, Nothing>()
         val handled = Channel<String>(Channel.UNLIMITED)

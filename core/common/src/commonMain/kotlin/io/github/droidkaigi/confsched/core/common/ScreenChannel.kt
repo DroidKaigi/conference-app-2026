@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -63,9 +64,13 @@ fun <R> ActionResultEffect(channel: ScreenChannel<*, R>, block: suspend (R) -> U
  * still on screen — so handling in the receiving loop would hold every later event behind it.
  * A handler that throws is a defect in the screen rather than a condition the user can act on:
  * reporting it keeps the loop, and the rest of the screen, alive.
+ *
+ * The child starts undispatched so a handler runs up to its first suspension before the next
+ * event is taken: handlers that never suspend complete in the order their events were sent,
+ * whatever the dispatcher.
  */
 private fun CoroutineScope.consume(logger: KaigiLogger, event: Any?, block: suspend () -> Unit) {
-    launch {
+    launch(start = CoroutineStart.UNDISPATCHED) {
         try {
             block()
         } catch (cancellation: CancellationException) {
