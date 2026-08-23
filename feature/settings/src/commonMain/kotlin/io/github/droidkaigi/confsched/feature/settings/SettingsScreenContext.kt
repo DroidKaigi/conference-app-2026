@@ -5,7 +5,7 @@ import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.AppearanceSettingsMutationKey
-import io.github.droidkaigi.confsched.core.model.AppearanceSettingsSubscriptionKey
+import io.github.droidkaigi.confsched.core.model.AppearanceSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.SettingsScreenScope
 
 @Inject
@@ -16,6 +16,6 @@ class SettingsPresenterContext(
 @Inject
 @SingleIn(SettingsScreenScope::class)
 class SettingsScreenContext(
-    val appearanceSettingsSubscriptionKey: AppearanceSettingsSubscriptionKey,
+    val appearanceSubscriptionKey: AppearanceSubscriptionKey,
     val presenterContext: SettingsPresenterContext,
 ) : ScreenContext

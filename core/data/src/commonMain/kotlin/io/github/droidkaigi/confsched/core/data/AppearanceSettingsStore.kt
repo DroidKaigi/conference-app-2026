@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.github.droidkaigi.confsched.core.model.Appearance
 import io.github.droidkaigi.confsched.core.model.AppearanceSettings
 import io.github.droidkaigi.confsched.core.model.ColorSchemeSetting
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -26,8 +27,11 @@ class AppearanceSettingsStore(@SettingsDataStoreQualifier private val dataStore:
 
     fun settings(): Flow<AppearanceSettings> = dataStore.data.map { it.readSettings() }.distinctUntilChanged()
 
-    fun colorScheme(): Flow<KaigiColorScheme> = settings()
-        .map { settings -> settings.colorSchemeSetting.resolve() }
+    fun appearance(): Flow<Appearance> = settings()
+        .map { settings -> Appearance(colorScheme = settings.colorSchemeSetting.resolve(), settings = settings) }
+
+    fun colorScheme(): Flow<KaigiColorScheme> = appearance()
+        .map { appearance -> appearance.colorScheme }
         .distinctUntilChanged()
 
     suspend fun save(settings: AppearanceSettings) {

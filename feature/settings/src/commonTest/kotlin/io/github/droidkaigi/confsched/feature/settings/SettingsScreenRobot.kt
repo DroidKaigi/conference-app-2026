@@ -10,7 +10,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.Appearance
 import io.github.droidkaigi.confsched.core.model.AppearanceSettings
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.testing.Robot
 import kotlin.test.assertEquals
 
@@ -21,7 +23,7 @@ class SettingsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     private var backCount = 0
 
     fun setupSettings(settings: AppearanceSettings) {
-        graph.appearanceSettingsSubscriptionKey.set(settings)
+        graph.appearanceSubscriptionKey.set(Appearance(colorScheme = KaigiColorScheme.MorningMist, settings = settings))
     }
 
     fun setupContent() {

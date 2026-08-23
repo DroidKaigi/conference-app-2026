@@ -14,8 +14,8 @@ fun SettingsScreenRoot(
     onNavigateBack: () -> Unit,
 ) {
     SoilDataBoundary(
-        state = rememberSubscription(screenContext.appearanceSettingsSubscriptionKey),
-    ) { appearanceSettings ->
+        state = rememberSubscription(screenContext.appearanceSubscriptionKey),
+    ) { appearance ->
         val screenChannel = retainScreenChannel<SettingsScreenAction, SettingsScreenActionResult>()
         val snackbarHostState = LocalSnackbarHostState.current
 
@@ -28,7 +28,7 @@ fun SettingsScreenRoot(
         val uiState = context(screenContext.presenterContext) {
             settingsScreenPresenter(
                 screenChannel = screenChannel,
-                appearanceSettings = appearanceSettings,
+                appearanceSettings = appearance.settings,
             )
         }
         SettingsScreen(
