@@ -119,7 +119,8 @@ private fun FavoriteSessionRow(
                 TimetableItemCard(
                     title = item.title.current(),
                     room = item.room,
-                    speaker = item.speaker,
+                    speaker = item.speakerNames,
+                    isCancelled = item.isCancelled,
                     language = item.language,
                     isFavorite = true,
                     seed = item.id.value.hashCode(),
