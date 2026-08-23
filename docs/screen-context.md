@@ -109,7 +109,7 @@ entry<TimetableNavKey> {
 entry<TimetableItemDetailNavKey> { key ->
     val graph = retain(key) { screenGraphFactory.createTimetableItemDetailScreenGraph(key.id) }
     context(graph.screenContext) {
-        TimetableItemDetailScreenRoot(onNavigateBack = { appNavigator.back() })
+        TimetableItemDetailScreenRoot(onNavigateBack = { appNavigator.back(origin = key) })
     }
 }
 ```

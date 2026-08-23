@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -43,10 +44,26 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
+import io.github.droidkaigi.confsched.core.designsystem.LocalSketchStrength
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlin.math.roundToInt
+
+/** Combines the app-wide sketch seed with an element's stable seed. */
+@Composable
+fun combineSketchSeed(seed: Int): Int = LocalSketchBaseSeed.current + seed
+
+/**
+ * Scales a sketch amplitude by the strength in force, so an element keeps the proportions
+ * its own figures give it while the settings screen decides how far the whole app wobbles.
+ *
+ * Every amplitude an element hands to a sketch drawing goes through here; one left raw stays
+ * at its full swing however subtle the rest of the app is drawn.
+ */
+@Composable
+fun scaleSketchAmplitude(amplitude: Dp): Dp = amplitude * LocalSketchStrength.current.amplitudeScale
 
 /** How finely the tremor octave ripples: shorter is a faster, tighter shake. */
 private val DefaultTremorWavelength = 42.dp
@@ -72,8 +89,15 @@ private fun requireWobble(roughness: Dp, tremor: Dp, sweepWavelength: Dp, tremor
     require(sweepWavelength > 0.dp) { "sweepWavelength must be positive, was $sweepWavelength" }
     require(tremorWavelength > 0.dp) { "tremorWavelength must be positive, was $tremorWavelength" }
 }
+
 private val DefaultRoughness = 1.dp
 private val DefaultTremor = 0.3.dp
+
+/** The amplitudes a sketch drawing falls back on, at the strength in force. */
+object SketchDefaults {
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(DefaultRoughness)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(DefaultTremor)
+}
 
 // Swept as the horizontal axis of both taste grids, so the divider grid and the
 // border grid can be read against each other.
@@ -96,13 +120,14 @@ fun SketchHorizontalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
     thickness: Dp = 2.dp,
-    roughness: Dp = DefaultRoughness,
-    tremor: Dp = DefaultTremor,
+    roughness: Dp = SketchDefaults.roughness,
+    tremor: Dp = SketchDefaults.tremor,
     sweepWavelength: Dp = DefaultSweepWavelength,
     tremorWavelength: Dp = DefaultTremorWavelength,
 ) {
     requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
     require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -115,7 +140,7 @@ fun SketchHorizontalDivider(
                     tremor = tremor,
                     sweepWavelength = sweepWavelength,
                     tremorWavelength = tremorWavelength,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
@@ -137,13 +162,14 @@ fun SketchVerticalDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline,
     thickness: Dp = 2.dp,
-    roughness: Dp = DefaultRoughness,
-    tremor: Dp = DefaultTremor,
+    roughness: Dp = SketchDefaults.roughness,
+    tremor: Dp = SketchDefaults.tremor,
     sweepWavelength: Dp = DefaultSweepWavelength,
     tremorWavelength: Dp = DefaultTremorWavelength,
 ) {
     requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
     require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -156,7 +182,7 @@ fun SketchVerticalDivider(
                     tremor = tremor,
                     sweepWavelength = sweepWavelength,
                     tremorWavelength = tremorWavelength,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
@@ -188,6 +214,7 @@ fun SketchVerticalWavyLine(
     require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
     require(wavelength > 0.dp) { "wavelength must be positive, was $wavelength" }
     require(noiseAmount >= 0f) { "noiseAmount must not be negative, was $noiseAmount" }
+    val combinedSeed = combineSketchSeed(seed)
     Box(
         modifier = modifier
             .width(amplitude * (1f + noiseAmount) * 2 + thickness)
@@ -198,11 +225,110 @@ fun SketchVerticalWavyLine(
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
-                    seed = seed,
+                    seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
                 onDrawBehind {
                     drawPath(path = path, color = color, style = stroke)
+                }
+            },
+    )
+}
+
+/**
+ * A vertical wavy line that transitions from thick to thin at a specific [progress],
+ * drawing a solid circular dot at the transition point.
+ */
+@Composable
+fun SketchVerticalWavyProgressLine(
+    seed: Int,
+    progress: Float,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.outline,
+    passedThickness: Dp = 2.5.dp,
+    upcomingThickness: Dp = 1.dp,
+    amplitude: Dp = 3.dp,
+    wavelength: Dp = 10.dp,
+    noiseAmount: Float = 0.8f,
+) {
+    require(passedThickness >= 0.dp) { "passedThickness must not be negative, was $passedThickness" }
+    require(upcomingThickness >= 0.dp) { "upcomingThickness must not be negative, was $upcomingThickness" }
+    require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
+    require(wavelength > 0.dp) { "wavelength must be positive, was $wavelength" }
+    require(noiseAmount >= 0f) { "noiseAmount must not be negative, was $noiseAmount" }
+    require(progress in 0f..1f) { "progress must be between 0.0 and 1.0, was $progress" }
+
+    val combinedSeed = combineSketchSeed(seed)
+
+    Box(
+        modifier = modifier
+            .width(amplitude * (1f + noiseAmount) * 2 + maxOf(passedThickness, upcomingThickness))
+            .drawWithCache {
+                val path = sketchVerticalWavyLinePath(
+                    height = size.height,
+                    centerX = size.width / 2f,
+                    amplitude = amplitude,
+                    wavelength = wavelength,
+                    noiseAmount = noiseAmount,
+                    seed = combinedSeed,
+                )
+
+                onDrawBehind {
+                    val progressY = size.height * progress
+                    val centerX = size.width / 2f
+
+                    // Buffer to prevent clipping the StrokeCap.Round at the very top and bottom
+                    val buffer = 50.dp.toPx()
+
+                    // Passed line (thick)
+                    if (progress > 0f) {
+                        clipRect(
+                            left = -buffer,
+                            top = -buffer, // Extend bounds to preserve the top rounded cap
+                            right = size.width + buffer,
+                            bottom = progressY,
+                        ) {
+                            drawPath(
+                                path = path,
+                                color = color,
+                                style = Stroke(width = passedThickness.toPx(), cap = StrokeCap.Round),
+                            )
+                        }
+                    }
+
+                    // Upcoming line (thin)
+                    if (progress < 1f) {
+                        clipRect(
+                            left = -buffer,
+                            top = progressY,
+                            right = size.width + buffer,
+                            bottom = size.height + buffer, // Extend bounds to preserve the bottom rounded cap
+                        ) {
+                            drawPath(
+                                path = path,
+                                color = color,
+                                style = Stroke(width = upcomingThickness.toPx(), cap = StrokeCap.Round),
+                            )
+                        }
+                    }
+
+                    // Calculate the exact X-coordinate for the dot
+                    val dotRadius = 3.dp.toPx()
+                    val dotX = sketchVerticalWavyLineXAt(
+                        y = progressY,
+                        centerX = centerX,
+                        amplitude = amplitude,
+                        wavelength = wavelength,
+                        noiseAmount = noiseAmount,
+                        seed = combinedSeed,
+                    )
+
+                    // Draw the wobbly dot as a perfect circle covering the flat clipped seam
+                    drawCircle(
+                        color = color,
+                        radius = dotRadius,
+                        center = Offset(x = dotX, y = progressY),
+                    )
                 }
             },
     )
@@ -259,6 +385,9 @@ interface SketchOutlineShape : Shape {
  * the wobble for an unrelated one each time the count steps — a flicker along the edge as
  * the box grows. Pinning the count to one size holds a single stroke still and lets it
  * stretch. What the size actually is barely matters; that it stops changing is the point.
+ *
+ * [roughness] and [tremor] default to raw figures: a shape is a plain value and cannot read the
+ * strength in force, so a composable passes [SketchDefaults] to follow it.
  */
 @Immutable
 data class SketchRoundRectShape(
@@ -504,7 +633,7 @@ private fun CornerRadiusSamples() {
                         .size(90.dp, 64.dp)
                         .sketchBorder(
                             shape = SketchRoundRectShape(
-                                seed = 20 + index,
+                                seed = combineSketchSeed(20 + index),
                                 cornerRadius = radius,
                                 borderThickness = 2.dp,
                             ),
@@ -547,7 +676,7 @@ private fun BorderTasteRow(roughness: Dp) {
                         .size(132.dp, 84.dp)
                         .sketchBorder(
                             shape = SketchRoundRectShape(
-                                seed = 9,
+                                seed = combineSketchSeed(9),
                                 roughness = roughness,
                                 tremor = tremor,
                                 cornerRadius = 10.dp,
@@ -573,12 +702,16 @@ private fun SketchShapePreview(
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
-                            .clip(SketchRoundRectShape(seed = 50, cornerRadius = 12.dp))
+                            .clip(SketchRoundRectShape(seed = combineSketchSeed(50), cornerRadius = 12.dp))
                             .background(MaterialTheme.colorScheme.primaryContainer),
                     )
                 }
                 LabelledSample(label = "clip + border") {
-                    val shape = SketchRoundRectShape(seed = 51, cornerRadius = 12.dp, borderThickness = 2.dp)
+                    val shape = SketchRoundRectShape(
+                        seed = combineSketchSeed(51),
+                        cornerRadius = 12.dp,
+                        borderThickness = 2.dp,
+                    )
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
@@ -590,7 +723,7 @@ private fun SketchShapePreview(
                 LabelledSample(label = "Surface") {
                     Surface(
                         modifier = Modifier.size(90.dp, 64.dp),
-                        shape = SketchRoundRectShape(seed = 52, cornerRadius = 20.dp),
+                        shape = SketchRoundRectShape(seed = combineSketchSeed(52), cornerRadius = 20.dp),
                         color = MaterialTheme.colorScheme.secondaryContainer,
                     ) {}
                 }
@@ -598,7 +731,13 @@ private fun SketchShapePreview(
                     Box(
                         Modifier
                             .size(90.dp, 64.dp)
-                            .clip(SketchRoundRectShape(seed = 53, tremor = 1.dp, cornerRadius = 12.dp))
+                            .clip(
+                                SketchRoundRectShape(
+                                    seed = combineSketchSeed(53),
+                                    tremor = 1.dp,
+                                    cornerRadius = 12.dp,
+                                ),
+                            )
                             .background(MaterialTheme.colorScheme.primaryContainer),
                     )
                 }
@@ -625,7 +764,7 @@ private fun SketchSegmentedPreview(
 @Composable
 private fun SegmentedSample(selectedFirst: Boolean) {
     val shape = SketchRoundRectShape(
-        seed = 900,
+        seed = combineSketchSeed(900),
         roughness = 0.4.dp,
         tremor = 0.15.dp,
         cornerRadius = 16.dp,
@@ -692,7 +831,11 @@ private fun ResizeSample() {
                 Modifier
                     .size(width.dp, height)
                     .sketchBorder(
-                        shape = SketchRoundRectShape(seed = 5, cornerRadius = 16.dp, borderThickness = 2.dp),
+                        shape = SketchRoundRectShape(
+                            seed = combineSketchSeed(5),
+                            cornerRadius = 16.dp,
+                            borderThickness = 2.dp,
+                        ),
                         color = MaterialTheme.colorScheme.outline,
                     ),
             )
@@ -703,7 +846,7 @@ private fun ResizeSample() {
                     .size(width.dp, height)
                     .sketchBorder(
                         shape = SketchRoundRectShape(
-                            seed = 5,
+                            seed = combineSketchSeed(5),
                             cornerRadius = 16.dp,
                             borderThickness = 2.dp,
                             referenceSize = DpSize(292.dp, height),
@@ -726,7 +869,11 @@ private fun SketchCardPreview(
                 Modifier
                     .width(260.dp)
                     .sketchBorder(
-                        shape = SketchRoundRectShape(seed = 40, cornerRadius = 16.dp, borderThickness = 2.dp),
+                        shape = SketchRoundRectShape(
+                            seed = combineSketchSeed(40),
+                            cornerRadius = 16.dp,
+                            borderThickness = 2.dp,
+                        ),
                         color = MaterialTheme.colorScheme.outline,
                     )
                     .padding(16.dp),

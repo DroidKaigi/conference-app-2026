@@ -34,7 +34,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | `@Preview` requires a sanctioned wrapper | FIR `PreviewRequiresWrapper` |
 | Nav-only click not routed through the presenter | FIR `NoForwardOnlyAction` |
 | Theme-dependent previews use `@PreviewParameter` | FIR read + IR `@ThemeSensitive` metadata |
-| Locale-dependent previews use `@LocalePreviews` | FIR read + IR `@LocaleSensitive` metadata |
+| Locale-dependent previews use `@LocalePreviews` / `@LocaleScreenPreviews` | FIR read + IR `@LocaleSensitive` metadata |
 | Argument-forwarding lambdas use callable references | FIR `LambdaCanBeCallableReference` |
 | Pass-through lambdas pass the function value itself | FIR `LambdaCanBePassedDirectly` |
 | A `@Composable` lambda literal at the last parameter is trailing | FIR `ComposableLambdaMustBeTrailing` |
@@ -353,15 +353,15 @@ A component that genuinely cannot be rendered on its own carries `@Suppress("UI_
 
 ```kotlin
 @Composable
-internal fun TimetableItemDetailHeadline(item: TimetableItem) { // ERROR: id, day, startsAt, endsAt unread
-    Text(item.room)
-    Text(item.title)
-    Text(item.speaker)
+internal fun SessionHeaderView(item: TimetableItem) { // ERROR: day, startsAt, endsAt, asset unread
+    Text(item.room.name)
+    Text(item.title.current())
+    Text(item.speakerNames)
 }
 
 // OK: the properties it reads
 @Composable
-internal fun TimetableItemDetailHeadline(room: String, title: String, speaker: String) { … }
+internal fun SessionHeaderView(room: Room, title: String, speakerNames: String) { … }
 ```
 
 Why: a component that takes an aggregate for a few of its properties spreads that type further than its own reads justify — every caller must hold the whole state to render the component, the preview must build it, and Compose recomposes the component when a property it never reads changes. A feature UI `@Composable` must read **every** property of a parameter it selects from; otherwise declare a UiState type for the component holding only what it reads (`FavoritesListSectionUiState` is the shape to copy), or take those properties as separate parameters.

@@ -22,6 +22,7 @@ kotlin {
             api(project(":core:ui"))
             api(project(":feature:sessions"))
             api(project(":feature:about"))
+            api(project(":feature:settings"))
             api(project(":feature:staff"))
             api(project(":feature:contributors"))
             api(project(":feature:sponsors"))
@@ -29,6 +30,9 @@ kotlin {
             api(project(":feature:favorites"))
             api(project(":feature:eventmap"))
             implementation(libs.composeMaterial3AdaptiveNavigation3)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

@@ -33,8 +33,9 @@ import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
-import io.github.droidkaigi.confsched.core.model.Speaker
 import io.github.droidkaigi.confsched.core.model.TimetableItem
+import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
+import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -52,7 +53,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun TimetableGridCell(
     title: MultiLangText,
     room: Room,
-    speakers: PersistentList<Speaker>,
+    speakers: PersistentList<TimetableSpeaker>,
     startsAt: String,
     endsAt: String,
     height: Dp,
@@ -108,7 +109,7 @@ internal fun TimetableGridCell(
 
 @Composable
 private fun SpeakerRow(
-    speakers: PersistentList<Speaker>,
+    speakers: PersistentList<TimetableSpeaker>,
     color: Color,
     modifier: Modifier = Modifier,
     leading: @Composable () -> Unit = {},
@@ -199,8 +200,10 @@ private val SpeakerFaceOutline = 0.3.dp
 private val SpeakerFaceFeature = 0.9.dp
 
 
-private fun fakePreviewSpeaker(name: String) = Speaker(
+private fun fakePreviewSpeaker(name: String) = TimetableSpeaker(
+    id = TimetableSpeakerId(name),
     name = name,
+    tagLine = "",
     iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
 )
 

@@ -17,10 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +34,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteBorder
+import io.github.droidkaigi.confsched.core.designsystem.icon.Info
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Timetable
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -59,6 +59,7 @@ fun KaigiNavigationBar(
     modifier: Modifier = Modifier,
     content: @Composable KaigiNavigationBarScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(outlineSeed)
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -77,7 +78,7 @@ fun KaigiNavigationBar(
                 .height(KaigiNavigationBarDefaults.height)
                 .clip(
                     SketchRoundRectShape(
-                        seed = outlineSeed,
+                        seed = combinedSeed,
                         roughness = KaigiNavigationBarDefaults.roughness,
                         tremor = KaigiNavigationBarDefaults.tremor,
                         cornerRadius = KaigiNavigationBarDefaults.cornerRadius,
@@ -126,6 +127,7 @@ fun KaigiNavigationRail(
     modifier: Modifier = Modifier,
     content: @Composable KaigiNavigationRailScope.() -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(outlineSeed)
     Box(
         modifier = modifier
             .fillMaxHeight()
@@ -140,7 +142,7 @@ fun KaigiNavigationRail(
                 .width(KaigiNavigationRailDefaults.width)
                 .clip(
                     SketchRoundRectShape(
-                        seed = outlineSeed,
+                        seed = combinedSeed,
                         roughness = KaigiNavigationBarDefaults.roughness,
                         tremor = KaigiNavigationBarDefaults.tremor,
                         cornerRadius = KaigiNavigationBarDefaults.cornerRadius,
@@ -239,6 +241,7 @@ private fun KaigiNavigationItemIcon(
     indicatorSeed: Int,
     icon: @Composable () -> Unit,
 ) {
+    val combinedSeed = combineSketchSeed(indicatorSeed)
     Box(
         modifier = Modifier
             .size(KaigiNavigationBarDefaults.indicatorSize)
@@ -247,7 +250,7 @@ private fun KaigiNavigationItemIcon(
                     Modifier
                         .clip(
                             SketchRoundRectShape(
-                                seed = indicatorSeed,
+                                seed = combinedSeed,
                                 roughness = KaigiNavigationBarDefaults.roughness,
                                 tremor = KaigiNavigationBarDefaults.tremor,
                                 cornerRadius = KaigiNavigationBarDefaults.indicatorSize / 2,
@@ -291,8 +294,8 @@ object KaigiNavigationBarDefaults {
 
     val cornerRadius = 28.dp
     val indicatorSize = 40.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 }
 
 object KaigiNavigationRailDefaults {
@@ -327,13 +330,13 @@ private fun KaigiNavigationBarPreview(
         Box(Modifier.background(MaterialTheme.colorScheme.surface)) {
             KaigiNavigationBar(outlineSeed = 955) {
                 KaigiNavigationBarItem(selected = true, onClick = {}, indicatorSeed = 956) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "Timetable")
+                    Icon(KaigiIcons.Default.Timetable, contentDescription = "Timetable")
                 }
                 KaigiNavigationBarItem(selected = false, onClick = {}, indicatorSeed = 957) {
-                    Icon(Icons.Filled.Favorite, contentDescription = "Favorites")
+                    Icon(KaigiIcons.Default.FavoriteBorder, contentDescription = "Favorites")
                 }
                 KaigiNavigationBarItem(selected = false, onClick = {}, indicatorSeed = 958) {
-                    Icon(Icons.Filled.Info, contentDescription = "About")
+                    Icon(KaigiIcons.Default.Info, contentDescription = "About")
                 }
             }
         }
@@ -353,13 +356,13 @@ private fun KaigiNavigationRailPreview(
         ) {
             KaigiNavigationRail(outlineSeed = 955) {
                 KaigiNavigationRailItem(selected = true, onClick = {}, indicatorSeed = 956) {
-                    Icon(Icons.Filled.DateRange, contentDescription = "Timetable")
+                    Icon(KaigiIcons.Default.Timetable, contentDescription = "Timetable")
                 }
                 KaigiNavigationRailItem(selected = false, onClick = {}, indicatorSeed = 957) {
-                    Icon(Icons.Filled.Favorite, contentDescription = "Favorites")
+                    Icon(KaigiIcons.Default.FavoriteBorder, contentDescription = "Favorites")
                 }
                 KaigiNavigationRailItem(selected = false, onClick = {}, indicatorSeed = 958) {
-                    Icon(Icons.Filled.Info, contentDescription = "About")
+                    Icon(KaigiIcons.Default.Info, contentDescription = "About")
                 }
             }
         }
