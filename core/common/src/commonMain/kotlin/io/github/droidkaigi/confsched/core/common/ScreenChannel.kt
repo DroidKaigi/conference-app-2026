@@ -2,9 +2,13 @@ package io.github.droidkaigi.confsched.core.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class ScreenChannel<Action, ActionResult>(
     internal val actions: Channel<Action> = Channel(Channel.BUFFERED),
@@ -27,17 +31,48 @@ class ScreenChannel<Action, ActionResult>(
 fun <A, R> retainScreenChannel(): ScreenChannel<A, R> = retain { ScreenChannel() }
 
 @Composable
-context(_: PresenterContext)
+context(presenterContext: PresenterContext)
 fun <A> ActionEffect(channel: ScreenChannel<A, *>, block: suspend (A) -> Unit) {
+    // The effect outlives the composition that launched it, so it reads the block through a
+    // state: the one it was launched with holds the UiState of that first composition.
+    val currentBlock by rememberUpdatedState(block)
+    val logger = presenterContext.logger
     LaunchedEffect(channel) {
-        channel.actions.receiveAsFlow().collect(block)
+        for (action in channel.actions) {
+            consume(logger, action) { currentBlock(action) }
+        }
     }
 }
 
 @Composable
-context(_: ScreenContext)
+context(screenContext: ScreenContext)
 fun <R> ActionResultEffect(channel: ScreenChannel<*, R>, block: suspend (R) -> Unit) {
+    val currentBlock by rememberUpdatedState(block)
+    val logger = screenContext.logger
     LaunchedEffect(channel) {
-        channel.results.receiveAsFlow().collect(block)
+        for (result in channel.results) {
+            consume(logger, result) { currentBlock(result) }
+        }
+    }
+}
+
+/**
+ * Handles one event in a child of the effect's scope.
+ *
+ * A handler suspends for as long as the work it drives takes — a mutation in flight, a snackbar
+ * still on screen — so handling in the receiving loop would hold every later event behind it.
+ * A handler that throws is a defect in the screen rather than a condition the user can act on:
+ * reporting it keeps the loop, and the rest of the screen, alive.
+ */
+private fun CoroutineScope.consume(logger: KaigiLogger, event: Any?, block: suspend () -> Unit) {
+    launch {
+        try {
+            block()
+        } catch (cancellation: CancellationException) {
+            throw cancellation
+        } catch (failure: Throwable) {
+            // The type alone, so a payload never reaches the crash report.
+            logger.error(failure) { "Unhandled failure while consuming ${event?.let { it::class.simpleName }}" }
+        }
     }
 }

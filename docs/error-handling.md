@@ -28,6 +28,12 @@ A screen's actions (input) and results (output) are aggregated into one `ScreenC
 
 The Root creates the channel with `retainScreenChannel()`. It is retained rather than remembered so that buffered, not-yet-consumed events survive transient destruction of the entry.
 
+`ActionEffect` and `ActionResultEffect` both hold to three rules, so a screen never has to restate them:
+
+- **One handler per event.** Each event is handled in a child coroutine of the effect, so an event whose handler is still running — a mutation in flight, a snackbar still on screen — does not hold up the events behind it. Handlers therefore overlap: a screen that requires one write to land before the next orders them itself.
+- **The handler runs against the latest composition.** The effect is keyed by the channel alone, so it outlives the composition that launched it; it reads the handler through `rememberUpdatedState`. Without that, a handler would close over the values of the composition it was launched in and write back state the screen has already moved past.
+- **A handler that throws is reported, not fatal.** The failure goes to `KaigiLogger.error`, which forwards it to `CrashReporter` as a non-fatal report, and the screen keeps consuming. A failure here is a defect in the screen rather than a condition the user can act on; what the user should see goes through the snackbar sink above.
+
 Each end is gated by a context parameter, so using the wrong end from the wrong layer is an ordinary compile error:
 
 | Operation | Direction | Context | Form |
