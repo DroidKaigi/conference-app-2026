@@ -4,65 +4,6 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmInline
-import kotlin.time.Instant
-
-@Serializable
-@JvmInline
-value class TimetableItemId(val value: String)
-
-@Serializable
-@JvmInline
-value class TimetableSpeakerId(val value: String)
-
-data class TimetableSpeaker(
-    val id: TimetableSpeakerId,
-    val name: String,
-    val tagLine: String,
-    val iconUrl: String?,
-)
-
-data class TimetableItemAsset(
-    val videoUrl: String?,
-    val slideUrl: String?,
-) {
-    val isEmpty: Boolean get() = videoUrl == null && slideUrl == null
-
-    companion object {
-        val Empty = TimetableItemAsset(videoUrl = null, slideUrl = null)
-    }
-}
-
-data class TimetableItem(
-    val id: TimetableItemId,
-    val title: MultiLangText,
-    val room: Room,
-    val speakers: PersistentList<TimetableSpeaker>,
-    val language: Language,
-    val day: DroidKaigi2026Day,
-    val startsAt: String,
-    val endsAt: String,
-    val startsAtInstant: Instant,
-    val endsAtInstant: Instant,
-    val description: MultiLangText,
-    val targetAudience: MultiLangText,
-    val category: MultiLangText?,
-    val asset: TimetableItemAsset,
-    val hasInterpretation: Boolean,
-    val isCancelled: Boolean,
-) {
-    val speakerNames: String get() = speakers.joinToString(", ") { it.name }
-
-    companion object
-}
-
-data class TimetableItemDetail(
-    val item: TimetableItem,
-    val sameSlotItems: PersistentList<TimetableItem>,
-) {
-    companion object
-}
 
 data class Timetable(
     val items: PersistentList<TimetableItem>,
@@ -85,5 +26,3 @@ data class Timetable(
 
     companion object
 }
-
-fun sessionUrl(id: TimetableItemId): String = "https://2026.droidkaigi.jp/timetable/${id.value}"
