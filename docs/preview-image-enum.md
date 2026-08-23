@@ -8,6 +8,7 @@ Add the file under `:core:preview:impl`'s Compose Resources:
 
 ```text
 core/preview/impl/src/commonMain/composeResources/drawable/
+    avatar_sample.png
     session_cover.png
     speaker_avatar_a.png
 ```
@@ -21,6 +22,7 @@ Each entry also carries a stable `imageUrl` under a dedicated `preview://` schem
 ```kotlin
 // build/generated/.../preview/PreviewImage.kt   (lands in core:preview:api)
 enum class PreviewImage(val imageUrl: String) {
+    AvatarSample("preview://avatar_sample"),
     SessionCover("preview://session_cover"),
     SpeakerAvatarA("preview://speaker_avatar_a"),
 }
@@ -63,6 +65,7 @@ class DefaultPreviewImageResolver : PreviewImageResolver {
     override fun resolve(imageUrl: String): DrawableResource? {
         val image = PreviewImage.entries.firstOrNull { it.imageUrl == imageUrl } ?: return null
         return when (image) {
+            PreviewImage.AvatarSample -> Res.drawable.avatar_sample
             PreviewImage.SessionCover -> Res.drawable.session_cover
             PreviewImage.SpeakerAvatarA -> Res.drawable.speaker_avatar_a
         }
