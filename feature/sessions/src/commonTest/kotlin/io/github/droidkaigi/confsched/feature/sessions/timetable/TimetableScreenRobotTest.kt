@@ -13,7 +13,6 @@ import io.github.droidkaigi.confsched.core.testing.runRobotTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
-import kotlin.time.Instant
 
 @OptIn(ExperimentalTestApi::class)
 class TimetableScreenRobotTest : RobotTest() {
@@ -29,8 +28,8 @@ class TimetableScreenRobotTest : RobotTest() {
                 day = DroidKaigi2026Day.Day1,
                 startsAt = "10:00",
                 endsAt = "10:40",
-                startsAtInstant = Instant.parse("2026-09-01T10:00:00Z"),
-                endsAtInstant = Instant.parse("2026-09-01T10:40:00Z"),
+                startsAtInstant = DroidKaigi2026Day.Day1.at(10, 0),
+                endsAtInstant = DroidKaigi2026Day.Day1.at(10, 40),
             ),
             TimetableItem(
                 id = TimetableItemId("d2a"),
@@ -41,8 +40,8 @@ class TimetableScreenRobotTest : RobotTest() {
                 day = DroidKaigi2026Day.Day2,
                 startsAt = "10:00",
                 endsAt = "10:40",
-                startsAtInstant = Instant.parse("2026-09-02T10:00:00Z"),
-                endsAtInstant = Instant.parse("2026-09-02T10:40:00Z"),
+                startsAtInstant = DroidKaigi2026Day.Day2.at(10, 0),
+                endsAtInstant = DroidKaigi2026Day.Day2.at(10, 40),
             ),
         ),
         bookmarks = persistentSetOf(),
@@ -61,6 +60,7 @@ class TimetableScreenRobotTest : RobotTest() {
                 checkSessionDisplayed("Day1 A")
                 checkSessionDoesNotExist("Day2 A")
                 checkTimeSlotDisplayed("10:00", "10:40")
+                checkLiveBadgeDisplayed()
             }
             itShould("offer the search and grid view actions") {
                 checkTopBarActionsDisplayed()

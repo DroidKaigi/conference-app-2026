@@ -3,4 +3,5 @@
     <string name="failed_to_load">Failed to load</string>
     <string name="add_favorite">Add favorite</string>
     <string name="remove_favorite">Remove favorite</string>
+    <string name="live_badge">LIVE</string>
 </resources>
