@@ -51,6 +51,10 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
         composeUiTest.onNodeWithText("LIVE").assertIsDisplayed()
     }
 
+    fun checkLiveBadgeDoesNotExist() {
+        composeUiTest.onNodeWithText("LIVE").assertDoesNotExist()
+    }
+
     fun checkTopBarActionsDisplayed() {
         composeUiTest.onNodeWithContentDescription("Search").assertIsDisplayed()
         composeUiTest.onNodeWithContentDescription("Switch to grid view").assertIsDisplayed()

@@ -72,6 +72,7 @@ class TimetableScreenRobotTest : RobotTest() {
                 itShould("swap the list to Day2 sessions") {
                     checkSessionDisplayed("Day2 A")
                     checkSessionDoesNotExist("Day1 A")
+                    checkLiveBadgeDoesNotExist()
                 }
             }
         }
