@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.PreviewImageResolver
 import io.github.droidkaigi.confsched.core.preview.PreviewScope
 import io.github.droidkaigi.confsched.core.preview.impl.generated.resources.Res
+import io.github.droidkaigi.confsched.core.preview.impl.generated.resources.avatar_sample
 import io.github.droidkaigi.confsched.core.preview.impl.generated.resources.prize_photo
 import io.github.droidkaigi.confsched.core.preview.impl.generated.resources.session_cover
 import io.github.droidkaigi.confsched.core.preview.impl.generated.resources.speaker_avatar_a
@@ -21,6 +22,7 @@ class DefaultPreviewImageResolver : PreviewImageResolver {
             PreviewImage.PrizePhoto -> Res.drawable.prize_photo
             PreviewImage.SessionCover -> Res.drawable.session_cover
             PreviewImage.SpeakerAvatarA -> Res.drawable.speaker_avatar_a
+            PreviewImage.AvatarSample -> Res.drawable.avatar_sample
         }
     }
 }

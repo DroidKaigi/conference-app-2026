@@ -27,6 +27,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /**
@@ -142,6 +143,21 @@ private fun KaigiAvatarPreview(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            KaigiAvatar(
+                imageUrl = PreviewImage.AvatarSample.imageUrl,
+                contentDescription = null,
+                size = 100.dp,
+            )
+            KaigiAvatar(
+                imageUrl = PreviewImage.AvatarSample.imageUrl,
+                contentDescription = null,
+                size = 52.dp,
+            )
+            KaigiAvatar(
+                imageUrl = PreviewImage.AvatarSample.imageUrl,
+                contentDescription = null,
+                size = 24.dp,
+            )
             KaigiPlaceholderAvatar(seed = 851, size = 100.dp) {
                 Text("C01", style = KaigiAvatarDefaults.initialsStyle)
             }
