@@ -111,6 +111,8 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
 ) {
     val combinedDividerSeed = if (dividerSeed != null) combineSketchSeed(dividerSeed) else null
     val combinedLeadingDividerSeed = if (leadingDividerSeed != null) combineSketchSeed(leadingDividerSeed) else null
+    val dividerRoughness = KaigiSegmentedButtonDefaults.dividerRoughness
+    val dividerTremor = KaigiSegmentedButtonDefaults.dividerTremor
     Box(
         modifier = modifier
             .weight(1f)
@@ -121,8 +123,8 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
                         width = size.width,
                         height = size.height,
                         centerX = size.width,
-                        roughness = KaigiSegmentedButtonDefaults.dividerRoughness,
-                        tremor = KaigiSegmentedButtonDefaults.dividerTremor,
+                        roughness = dividerRoughness,
+                        tremor = dividerTremor,
                         sweepWavelength = KaigiSegmentedButtonDefaults.dividerSweepWavelength,
                         tremorWavelength = KaigiSegmentedButtonDefaults.dividerTremorWavelength,
                         seed = combinedDividerSeed,
@@ -136,8 +138,8 @@ fun KaigiSingleChoiceSegmentedButtonRowScope.KaigiSegmentedButton(
                         width = size.width,
                         height = size.height,
                         centerX = 0f,
-                        roughness = KaigiSegmentedButtonDefaults.dividerRoughness,
-                        tremor = KaigiSegmentedButtonDefaults.dividerTremor,
+                        roughness = dividerRoughness,
+                        tremor = dividerTremor,
                         sweepWavelength = KaigiSegmentedButtonDefaults.dividerSweepWavelength,
                         tremorWavelength = KaigiSegmentedButtonDefaults.dividerTremorWavelength,
                         seed = combinedLeadingDividerSeed,
@@ -188,14 +190,14 @@ object KaigiSegmentedButtonDefaults {
     val height = 40.dp
     val cornerRadius = 16.dp
     val borderThickness = 2.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
     val dividerThickness = 1.dp
-    val dividerRoughness = 0.3.dp
-    val dividerTremor = 0.3.dp
+    val dividerRoughness: Dp @Composable get() = scaleSketchAmplitude(0.3.dp)
+    val dividerTremor: Dp @Composable get() = scaleSketchAmplitude(0.3.dp)
     val dividerSweepWavelength = 140.dp
     val dividerTremorWavelength = 42.dp
-    val dividerHalfWidth = (dividerThickness + (dividerRoughness + dividerTremor) * 2) / 2
+    val dividerHalfWidth: Dp @Composable get() = (dividerThickness + (dividerRoughness + dividerTremor) * 2) / 2
 }
 
 @Preview

@@ -62,6 +62,8 @@ fun TimetableItemCard(
     val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
         seed = combinedSeed,
+        roughness = SketchDefaults.roughness,
+        tremor = SketchDefaults.tremor,
         cornerRadius = TimetableItemCardDefaults.cornerRadius,
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
