@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.drop
 class WebHistorySyncEffect(private val navigator: AppNavigator) : HistorySyncEffect {
 
     @Composable
-    override fun Sync(backStack: NavBackStack<NavKey>) {
+    override fun invoke(backStack: NavBackStack<NavKey>) {
         val state = remember { SyncState() }
 
         LaunchedEffect(backStack) {

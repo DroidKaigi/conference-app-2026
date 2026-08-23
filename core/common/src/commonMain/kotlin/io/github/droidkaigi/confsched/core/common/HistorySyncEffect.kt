@@ -12,14 +12,14 @@ import dev.zacsweers.metro.Inject
  * browser address bar in step with in-app navigation and translates browser back/forward into
  * back-stack operations; all other targets do nothing.
  */
-interface HistorySyncEffect {
+fun interface HistorySyncEffect {
     @Composable
-    fun Sync(backStack: NavBackStack<NavKey>)
+    operator fun invoke(backStack: NavBackStack<NavKey>)
 }
 
 @Inject
 @ContributesBinding(AppScope::class)
 class NoopHistorySyncEffect : HistorySyncEffect {
     @Composable
-    override fun Sync(backStack: NavBackStack<NavKey>) = Unit
+    override fun invoke(backStack: NavBackStack<NavKey>) = Unit
 }
