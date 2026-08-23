@@ -21,7 +21,7 @@ import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 internal fun KaigiNavDisplay(
     backStack: NavBackStack<NavKey>,
     onBack: () -> Unit,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
 ) {
     CompositionLocalProvider(LocalPanePartitionSpacerSize provides PanePartitionSpacerSize) {
@@ -44,7 +44,7 @@ internal fun KaigiNavDisplay(
                 sceneDecoratorStrategies = listOfNotNull(
                     rememberRootTabSceneDecorator(
                         backStack = backStack,
-                        onSelectTab = onSelectTab,
+                        onTabClick = onTabClick,
                     ),
                 ),
                 entryProvider = entryProvider,

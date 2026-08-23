@@ -22,7 +22,7 @@ internal fun IosTabBarSyncEffect(
     rootTabNavigator: RootTabNavigator,
     rootTabBarAppearance: RootTabBarAppearance,
     colorScheme: KaigiColorScheme,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
 ) {
     val currentTab = RootTab.entries.firstOrNull { it.key == backStack.lastOrNull() }
     LaunchedEffect(currentTab) {
@@ -38,7 +38,7 @@ internal fun IosTabBarSyncEffect(
     }
 
     LaunchedEffect(Unit) {
-        rootTabNavigator.selections.collect { tab -> onSelectTab(tab) }
+        rootTabNavigator.selections.collect { tab -> onTabClick(tab) }
     }
 }
 

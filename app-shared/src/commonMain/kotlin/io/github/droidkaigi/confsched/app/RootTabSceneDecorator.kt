@@ -112,20 +112,20 @@ private val Scene<NavKey>.isMultiPane: Boolean
 
 private class RootTabSceneDecorator(
     private val backStack: List<NavKey>,
-    private val onSelectTab: (RootTab) -> Unit,
+    private val onTabClick: (RootTab) -> Unit,
 ) : SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(scene: Scene<NavKey>): Scene<NavKey> {
         val currentTab = backStack.rootTabInTopPanes(scene.entries.size)
             ?: return scene
-        return RootTabScene(scene, currentTab, onSelectTab)
+        return RootTabScene(scene, currentTab, onTabClick)
     }
 }
 
 private class RootTabScene(
     private val delegate: Scene<NavKey>,
     private val currentTab: RootTab,
-    private val onSelectTab: (RootTab) -> Unit,
+    private val onTabClick: (RootTab) -> Unit,
 ) : Scene<NavKey> {
     override val key: Any get() = delegate.key
     override val entries get() = delegate.entries
@@ -139,7 +139,7 @@ private class RootTabScene(
         if (isExpanded) {
             RootTabRailLayout(
                 currentTab = currentTab,
-                onSelectTab = onSelectTab,
+                onTabClick = onTabClick,
                 collapsible = currentDelegate.isMultiPane,
             ) {
                 CompositionLocalProvider(
@@ -152,7 +152,7 @@ private class RootTabScene(
                 movableContent()
                 RootTabBar(
                     currentTab = currentTab,
-                    onSelectTab = onSelectTab,
+                    onTabClick = onTabClick,
                     modifier = Modifier.align(Alignment.BottomCenter),
                 )
             }
@@ -169,14 +169,14 @@ private class RootTabScene(
 @Composable
 private fun RootTabBar(
     currentTab: RootTab,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     KaigiNavigationBar(outlineSeed = RootTabBarSeeds.OUTLINE, modifier = modifier) {
         RootTab.entries.forEachIndexed { index, tab ->
             KaigiNavigationBarItem(
                 selected = tab == currentTab,
-                onClick = { onSelectTab(tab) },
+                onClick = { onTabClick(tab) },
                 indicatorSeed = RootTabBarSeeds.FIRST_INDICATOR + index,
             ) {
                 Icon(tab.icon, contentDescription = tab.label)
@@ -189,14 +189,14 @@ private fun RootTabBar(
 @Composable
 private fun RootTabRail(
     currentTab: RootTab,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     KaigiNavigationRail(outlineSeed = RootTabBarSeeds.OUTLINE, modifier = modifier) {
         RootTab.entries.forEachIndexed { index, tab ->
             KaigiNavigationRailItem(
                 selected = tab == currentTab,
-                onClick = { onSelectTab(tab) },
+                onClick = { onTabClick(tab) },
                 indicatorSeed = RootTabBarSeeds.FIRST_INDICATOR + index,
             ) {
                 Icon(tab.icon, contentDescription = tab.label)
@@ -209,7 +209,7 @@ private fun RootTabRail(
 @Composable
 private fun RootTabRailLayout(
     currentTab: RootTab,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
     collapsible: Boolean,
     content: @Composable () -> Unit,
 ) {
@@ -248,7 +248,7 @@ private fun RootTabRailLayout(
                 state = railDragState,
                 columnWidthPx = columnWidthPx,
                 currentTab = currentTab,
-                onSelectTab = onSelectTab,
+                onTabClick = onTabClick,
             )
             Box(Modifier.weight(1f)) {
                 content()
@@ -275,7 +275,7 @@ private fun CollapsingRailColumn(
     state: AnchoredDraggableState<RailValue>,
     columnWidthPx: Float,
     currentTab: RootTab,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
 ) {
     val railWidth = with(LocalDensity.current) { railWidthPx(state, columnWidthPx).toDp() }
     if (railWidth > 0.dp) {
@@ -287,7 +287,7 @@ private fun CollapsingRailColumn(
         ) {
             RootTabRail(
                 currentTab = currentTab,
-                onSelectTab = onSelectTab,
+                onTabClick = onTabClick,
                 // Unbounded keeps the column at its own width under the shrinking clip, and End
                 // pins it to the moving boundary, so the drag slides the rail out instead of
                 // squeezing it.
@@ -404,11 +404,11 @@ private object RootTabBarSeeds {
 @Composable
 internal fun rememberRootTabSceneDecorator(
     backStack: NavBackStack<NavKey>,
-    onSelectTab: (RootTab) -> Unit,
+    onTabClick: (RootTab) -> Unit,
 ): SceneDecoratorStrategy<NavKey>? = if (currentPlatform == TargetPlatform.Ios) {
     null
 } else {
-    remember(backStack, onSelectTab) {
-        RootTabSceneDecorator(backStack, onSelectTab)
+    remember(backStack, onTabClick) {
+        RootTabSceneDecorator(backStack, onTabClick)
     }
 }
