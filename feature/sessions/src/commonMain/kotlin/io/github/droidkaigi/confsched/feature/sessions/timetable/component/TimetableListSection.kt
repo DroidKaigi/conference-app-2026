@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -30,6 +31,7 @@ import io.github.droidkaigi.confsched.core.ui.current
 @Composable
 internal fun TimetableListSection(
     uiState: TimetableListSectionUiState,
+    contentPadding: PaddingValues,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     listState: LazyListState = rememberLazyListState(),
@@ -38,7 +40,7 @@ internal fun TimetableListSection(
         state = listState,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(
+        contentPadding = contentPadding + PaddingValues(
             top = 24.dp,
             bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
         ),
@@ -134,6 +136,7 @@ private fun TimetableListSectionPreview(
     KaigiPreviewTheme(colorScheme) {
         TimetableListSection(
             uiState = TimetableListSectionUiState.fake(),
+            contentPadding = PaddingValues(),
             onBookmarkClick = {},
             onItemClick = {},
         )
@@ -150,6 +153,7 @@ private fun TimetableListSectionStickyTimeRangePreview(
         Box(modifier = Modifier.height(400.dp)) {
             TimetableListSection(
                 uiState = TimetableListSectionUiState.fake(),
+                contentPadding = PaddingValues(),
                 onBookmarkClick = {},
                 onItemClick = {},
                 listState = rememberLazyListState(
