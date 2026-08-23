@@ -12,6 +12,7 @@ import kotlin.time.Instant
 
 data class FavoritesListSectionUiState(
     val timeSlots: PersistentList<TimeSlot>,
+    val dayHeadersVisible: Boolean,
 ) {
     data class TimeSlot(
         val day: DroidKaigi2026Day,
@@ -50,5 +51,6 @@ internal fun FavoritesListSectionUiState.Companion.fake(
         timeSlots = timetable.items
             .filter { timetable.isFavorite(it.id) }
             .toTimeSlots(currentTime),
+        dayHeadersVisible = true,
     )
 }
