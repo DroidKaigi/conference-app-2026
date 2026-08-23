@@ -8,6 +8,7 @@ import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import io.github.droidkaigi.confsched.core.testing.fakeSpeakers
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
 import kotlinx.collections.immutable.persistentListOf
@@ -19,8 +20,8 @@ class TimetableScreenRobotTest : RobotTest() {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, "Sp3", Language.ENGLISH, DroidKaigi2026Day.Day2, "10:00", "10:40"),
+            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, fakeSpeakers("Sp1"), Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, fakeSpeakers("Sp3"), Language.ENGLISH, DroidKaigi2026Day.Day2, "10:00", "10:40"),
         ),
         bookmarks = persistentSetOf(),
     )

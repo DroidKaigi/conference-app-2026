@@ -7,4 +7,5 @@
     <string name="remove_favorite">Remove favorite</string>
     <string name="schedule">Schedule</string>
     <string name="location">Location</string>
+    <string name="speaker_overflow">+%1$d</string>
 </resources>

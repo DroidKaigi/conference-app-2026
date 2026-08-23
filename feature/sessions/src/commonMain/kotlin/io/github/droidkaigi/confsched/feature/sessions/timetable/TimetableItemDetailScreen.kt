@@ -77,7 +77,7 @@ fun TimetableItemDetailScreen(
                 TimetableItemDetailHeadline(
                     room = uiState.item.room.name,
                     title = uiState.item.title.current(),
-                    speaker = uiState.item.speaker,
+                    speaker = uiState.item.speakers.joinToString(", ") { it.name },
                 )
             }
             item {

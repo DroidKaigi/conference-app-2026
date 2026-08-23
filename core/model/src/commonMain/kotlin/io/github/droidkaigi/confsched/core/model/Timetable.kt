@@ -11,11 +11,17 @@ import kotlin.jvm.JvmInline
 @JvmInline
 value class TimetableItemId(val value: String)
 
+/** Someone giving a session, and the picture the timetable shows them by. */
+data class Speaker(
+    val name: String,
+    val iconUrl: String?,
+)
+
 data class TimetableItem(
     val id: TimetableItemId,
     val title: MultiLangText,
     val room: Room,
-    val speaker: String,
+    val speakers: PersistentList<Speaker>,
     val language: Language,
     val day: DroidKaigi2026Day,
     val startsAt: String,

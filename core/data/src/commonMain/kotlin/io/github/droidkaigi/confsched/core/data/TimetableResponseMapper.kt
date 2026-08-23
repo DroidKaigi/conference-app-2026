@@ -3,13 +3,15 @@ package io.github.droidkaigi.confsched.core.data
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.Speaker
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import kotlinx.collections.immutable.toPersistentList
 
 fun TimetableResponse.toTimetableItems(): List<TimetableItem> {
     // Room is named in English, so that is the side Room.of matches.
     val roomNameById = rooms.associateBy({ it.id }, { it.name.toMultiLangText().en })
-    val speakerNameById = speakers.associateBy({ it.id }, { it.fullName })
+    val speakerById = speakers.associateBy { it.id }
     // Conference days are not encoded in the payload; the two distinct dates map to Day1/Day2.
     val dayByDate = sessions.map { it.startsAt.date() }.distinct().sorted()
         .mapIndexed { index, date -> date to DroidKaigi2026Day.entries[index.coerceAtMost(DroidKaigi2026Day.entries.lastIndex)] }
@@ -21,7 +23,10 @@ fun TimetableResponse.toTimetableItems(): List<TimetableItem> {
                 id = TimetableItemId(session.id),
                 title = session.title.toMultiLangText(),
                 room = Room.of(roomNameById[session.roomId].orEmpty()),
-                speaker = session.speakers.mapNotNull { speakerNameById[it] }.joinToString(", "),
+                speakers = session.speakers
+                    .mapNotNull { speakerById[it] }
+                    .map { Speaker(name = it.fullName, iconUrl = it.profilePicture) }
+                    .toPersistentList(),
                 language = when (session.language) {
                     LanguageResponse.JAPANESE -> Language.JAPANESE
                     LanguageResponse.ENGLISH -> Language.ENGLISH

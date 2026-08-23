@@ -50,7 +50,7 @@ internal fun FavoritesListSection(
                     day = item.day,
                     title = item.title.current(),
                     room = item.room.name,
-                    speaker = item.speaker,
+                    speaker = item.speakers.joinToString(", ") { it.name },
                     onBookmarkClick = { onBookmarkClick(item.id) },
                     onClick = { onItemClick(item.id) },
                 )

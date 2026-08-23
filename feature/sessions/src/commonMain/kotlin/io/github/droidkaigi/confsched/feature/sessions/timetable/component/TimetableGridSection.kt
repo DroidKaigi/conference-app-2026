@@ -2,14 +2,15 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
@@ -40,6 +42,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
@@ -56,71 +59,125 @@ internal fun TimetableGridSection(
         .maxOfOrNull { it.endsAt.toTimetableGridMinuteOfDay() }
         ?.coerceAtLeast(TimetableGridDefaultDayEndMinutes)
         ?: TimetableGridDefaultDayEndMinutes
-    val dayDurationMinutes = endMinute - TimetableGridDayStartMinutes
+    val navigationBarHeight = LocalNavigationBarOccupiedHeight.current
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        // The scale that fits the whole day in the viewport without scrolling, floored under
-        // the default: a short day on a tall screen must not force pinch-out past the start scale.
-        val fitToViewportHourHeight = (maxHeight - TimetableGridVerticalPadding * 2 - TimetableGridHeaderHeight).value * 60f / dayDurationMinutes
-        val minHourHeight = fitToViewportHourHeight.coerceIn(1f, TimetableGridDefaultHourHeight.value)
+    var hourHeightValue by rememberSaveable { mutableStateOf(initialHourHeight.value) }
+    var pinchStartHourHeightValue by rememberSaveable { mutableStateOf(initialHourHeight.value) }
+    var pinching by rememberSaveable { mutableStateOf(false) }
+    val hourHeight by animateDpAsState(
+        targetValue = hourHeightValue.dp,
+        animationSpec = tween(durationMillis = if (pinching) 0 else 180),
+        label = "TimetableGridHourHeight",
+    )
+    val contentHeight = timetableGridContentHeight(endMinute, hourHeight)
+    val verticalScrollState = rememberScrollState()
+    val horizontalScrollState = rememberScrollState()
 
-        var hourHeightValue by rememberSaveable { mutableStateOf(initialHourHeight.value) }
-        var pinchStartHourHeightValue by rememberSaveable { mutableStateOf(initialHourHeight.value) }
-        var pinching by rememberSaveable { mutableStateOf(false) }
-        val hourHeight by animateDpAsState(
-            targetValue = hourHeightValue.dp,
-            animationSpec = tween(durationMillis = if (pinching) 0 else 180),
-            label = "TimetableGridHourHeight",
-        )
-        val contentHeight = timetableGridContentHeight(endMinute, hourHeight)
-        val verticalScrollState = rememberScrollState()
-        val horizontalScrollState = rememberScrollState()
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .timetableGridZoom(
-                    onPinchStart = {
-                        pinching = true
-                        pinchStartHourHeightValue = hourHeightValue
-                    },
-                    onZoom = { zoomRatio ->
-                        hourHeightValue = (pinchStartHourHeightValue * zoomRatio)
-                            .coerceIn(minHourHeight, TimetableGridMaxHourHeight.value)
-                    },
-                    onPinchEnd = {
-                        pinching = false
-                    },
-                )
-                .verticalScroll(verticalScrollState)
-                .padding(horizontal = 16.dp, vertical = TimetableGridVerticalPadding),
-        ) {
-            TimetableGridTimeGutter(
-                endMinute = endMinute,
-                hourHeight = hourHeight,
-                nowMinute = uiState.nowMinute,
-                modifier = Modifier
-                    .width(TimetableGridTimeGutterWidth)
-                    .height(contentHeight),
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .timetableGridZoom(
+                onPinchStart = {
+                    pinching = true
+                    pinchStartHourHeightValue = hourHeightValue
+                },
+                onZoom = { zoomRatio ->
+                    hourHeightValue = (pinchStartHourHeightValue * zoomRatio)
+                        .coerceIn(TimetableGridDefaultHourHeight.value, TimetableGridMaxHourHeight.value)
+                },
+                onPinchEnd = {
+                    pinching = false
+                    hourHeightValue = timetableGridSnappedHourHeight(hourHeightValue)
+                },
             )
-            Row(
-                modifier = Modifier.horizontalScroll(horizontalScrollState),
-                horizontalArrangement = Arrangement.spacedBy(TimetableGridRoomColumnGap),
-            ) {
+            .verticalScroll(verticalScrollState)
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = TimetableGridVerticalPadding,
+                bottom = TimetableGridVerticalPadding + navigationBarHeight,
+            ),
+    ) {
+        TimetableGridTimeGutter(
+            endMinute = endMinute,
+            hourHeight = hourHeight,
+            nowMinute = uiState.nowMinute,
+            modifier = Modifier
+                .width(TimetableGridTimeGutterWidth)
+                .height(contentHeight),
+        )
+        TimetableGridRooms(
+            uiState = uiState,
+            rooms = rooms,
+            contentHeight = contentHeight,
+            endMinute = endMinute,
+            hourHeight = hourHeight,
+            horizontalScrollState = horizontalScrollState,
+            onItemClick = onItemClick,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.TimetableGridRooms(
+    uiState: TimetableGridSectionUiState,
+    rooms: PersistentList<Room>,
+    contentHeight: Dp,
+    endMinute: Int,
+    hourHeight: Dp,
+    horizontalScrollState: ScrollState,
+    onItemClick: (TimetableItemId) -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .height(contentHeight)
+            .horizontalScroll(horizontalScrollState),
+    ) {
+        // The rules and the now line span the rooms rather than the viewport, so their wobble
+        // holds still against the columns as the grid pans.
+        Box(
+            modifier = Modifier
+                .width(timetableGridContentWidth(rooms.size))
+                .height(contentHeight),
+        ) {
+            for (minute in (TimetableGridDayStartMinutes + 60)..endMinute step 60) {
+                TimetableGridHourRule(
+                    seed = minute,
+                    modifier = Modifier.offset(
+                        y = timetableGridLineOffsetY(
+                            minute = minute,
+                            endMinute = endMinute,
+                            hourHeight = hourHeight,
+                            lineHeight = TimetableGridHourRuleHeight,
+                        ),
+                    ),
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(TimetableGridRoomColumnGap)) {
                 rooms.forEach { room ->
                     TimetableGridRoomColumn(
                         room = room,
                         sessions = uiState.sessions.filter { it.room == room }.toPersistentList(),
-                        contentHeight = contentHeight,
-                        endMinute = endMinute,
                         hourHeight = hourHeight,
-                        nowMinute = uiState.nowMinute,
                         onItemClick = onItemClick,
                         modifier = Modifier
                             .width(TimetableGridRoomColumnWidth)
                             .height(contentHeight),
                     )
                 }
+            }
+            uiState.nowMinute.visibleNowMinuteOrNull(endMinute)?.let { visibleNowMinute ->
+                TimetableGridNowLine(
+                    modifier = Modifier.offset(
+                        y = timetableGridLineOffsetY(
+                            minute = visibleNowMinute,
+                            endMinute = endMinute,
+                            hourHeight = hourHeight,
+                            lineHeight = TimetableGridNowLineHeight,
+                        ),
+                    ),
+                )
             }
         }
     }
@@ -135,14 +192,21 @@ private fun TimetableGridTimeGutter(
 ) {
     Box(modifier = modifier) {
         for (minute in TimetableGridDayStartMinutes..endMinute step 60) {
-            Text(
-                modifier = Modifier.offset(
-                    y = timetableGridMinuteOffsetY(minute = minute, hourHeight = hourHeight),
-                ),
-                text = minute.toTimetableGridTimeLabel(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.labelSmall,
-            )
+            Box(
+                modifier = Modifier
+                    .height(TimetableGridHourLabelHeight)
+                    .offset(
+                        y = timetableGridMinuteOffsetY(minute = minute, hourHeight = hourHeight) -
+                            TimetableGridHourLabelHeight / 2,
+                    ),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                Text(
+                    text = minute.toTimetableGridTimeLabel(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
         }
         nowMinute.visibleNowMinuteOrNull(endMinute)?.let { visibleNowMinute ->
             TimetableGridNowLabel(
@@ -164,40 +228,17 @@ private fun TimetableGridTimeGutter(
 private fun TimetableGridRoomColumn(
     room: Room,
     sessions: PersistentList<TimetableItem>,
-    contentHeight: Dp,
-    endMinute: Int,
     hourHeight: Dp,
-    nowMinute: Int?,
     onItemClick: (TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
         TimetableGridRoomHeader(room = room)
-        Box(
-            modifier = Modifier
-                .offset(y = TimetableGridHeaderHeight)
-                .width(TimetableGridRoomColumnWidth)
-                .height(contentHeight - TimetableGridHeaderHeight)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.32f)),
-        )
-        for (minute in (TimetableGridDayStartMinutes + 60)..endMinute step 60) {
-            TimetableGridHourRule(
-                seed = minute,
-                modifier = Modifier.offset(
-                    y = timetableGridLineOffsetY(
-                        minute = minute,
-                        endMinute = endMinute,
-                        hourHeight = hourHeight,
-                        lineHeight = TimetableGridHourRuleHeight,
-                    ),
-                ),
-            )
-        }
         sessions.forEach { item ->
             TimetableGridCell(
                 title = item.title,
                 room = item.room,
-                speaker = item.speaker,
+                speakers = item.speakers,
                 startsAt = item.startsAt,
                 endsAt = item.endsAt,
                 height = timetableGridSessionHeight(
@@ -214,18 +255,6 @@ private fun TimetableGridRoomColumn(
                 ),
             )
         }
-        nowMinute.visibleNowMinuteOrNull(endMinute)?.let { visibleNowMinute ->
-            TimetableGridNowLine(
-                modifier = Modifier.offset(
-                    y = timetableGridLineOffsetY(
-                        minute = visibleNowMinute,
-                        endMinute = endMinute,
-                        hourHeight = hourHeight,
-                        lineHeight = TimetableGridNowLineHeight,
-                    ),
-                ),
-            )
-        }
     }
 }
 
@@ -238,6 +267,7 @@ private fun TimetableGridHourRule(seed: Int, modifier: Modifier = Modifier) {
         thickness = TimetableGridHourRuleHeight,
         roughness = TimetableGridLineRoughness,
         tremor = TimetableGridLineTremor,
+        tremorWavelength = TimetableGridLineTremorWavelength,
     )
 }
 
@@ -247,7 +277,7 @@ private fun TimetableGridNowLine(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .height(TimetableGridNowLineHeight)
-            .background(MaterialTheme.colorScheme.primary),
+            .background(MaterialTheme.colorScheme.inverseSurface),
     )
 }
 
@@ -261,12 +291,12 @@ private fun BoxScope.TimetableGridNowLabel(
             .width(TimetableGridNowLabelWidth)
             .height(TimetableGridNowLabelHeight)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.inverseSurface,
                 shape = RoundedCornerShape(percent = 50),
             )
             .padding(horizontal = 4.dp),
         text = minute.toTimetableGridTimeLabel(),
-        color = MaterialTheme.colorScheme.onPrimary,
+        color = MaterialTheme.colorScheme.inverseOnSurface,
         style = MaterialTheme.typography.labelSmall,
         textAlign = TextAlign.Center,
         maxLines = 1,
@@ -275,11 +305,23 @@ private fun BoxScope.TimetableGridNowLabel(
 
 private val TimetableGridHourRuleHeight = 1.dp
 private val TimetableGridNowLineHeight = 2.dp
+private val TimetableGridHourLabelHeight = 16.dp
 private val TimetableGridNowLabelWidth = 42.dp
 private val TimetableGridNowLabelHeight = 18.dp
-private val TimetableGridLineRoughness = 0.dp
-private val TimetableGridLineTremor = 1.2.dp
+private val TimetableGridLineRoughness = 0.8.dp
+private val TimetableGridLineTremor = 1.5.dp
+private val TimetableGridLineTremorWavelength = 28.dp
 private val TimetableGridLineWobbleInset = TimetableGridLineRoughness + TimetableGridLineTremor
+
+/** The gesture runs between the two scales; letting go settles on the nearer one. */
+private fun timetableGridSnappedHourHeight(hourHeightValue: Float): Float {
+    val midpoint = (TimetableGridDefaultHourHeight.value + TimetableGridMaxHourHeight.value) / 2f
+    return if (hourHeightValue < midpoint) {
+        TimetableGridDefaultHourHeight.value
+    } else {
+        TimetableGridMaxHourHeight.value
+    }
+}
 
 private fun Int?.visibleNowMinuteOrNull(endMinute: Int): Int? =
     takeIf { this != null && this in TimetableGridDayStartMinutes..endMinute }

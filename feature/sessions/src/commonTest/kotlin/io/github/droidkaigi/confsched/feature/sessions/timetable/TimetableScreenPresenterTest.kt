@@ -18,6 +18,7 @@ import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
+import io.github.droidkaigi.confsched.core.testing.fakeSpeakers
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
@@ -39,9 +40,9 @@ class TimetableScreenPresenterTest {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
-            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, "Sp3", Language.ENGLISH, DroidKaigi2026Day.Day2, "10:00", "10:40"),
+            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, fakeSpeakers("Sp1"), Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+            TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, fakeSpeakers("Sp2"), Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
+            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, fakeSpeakers("Sp3"), Language.ENGLISH, DroidKaigi2026Day.Day2, "10:00", "10:40"),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a")),
     )
@@ -76,9 +77,9 @@ class TimetableScreenPresenterTest {
     fun sessions_sharing_a_time_are_grouped_into_one_slot() {
         val concurrent = Timetable(
             items = persistentListOf(
-                TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-                TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, "Sp2", Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-                TimetableItem(TimetableItemId("d1c"), MultiLangText(ja = "Day1 C", en = "Day1 C"), Room.NARWHAL, "Sp3", Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
+                TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, fakeSpeakers("Sp1"), Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, fakeSpeakers("Sp2"), Language.ENGLISH, DroidKaigi2026Day.Day1, "10:00", "10:40"),
+                TimetableItem(TimetableItemId("d1c"), MultiLangText(ja = "Day1 C", en = "Day1 C"), Room.NARWHAL, fakeSpeakers("Sp3"), Language.ENGLISH, DroidKaigi2026Day.Day1, "11:00", "11:40"),
             ),
         )
         runPresenterTest(
