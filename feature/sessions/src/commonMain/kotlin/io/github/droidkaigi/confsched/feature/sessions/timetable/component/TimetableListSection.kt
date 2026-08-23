@@ -71,6 +71,7 @@ private fun SessionRow(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
             timeRangeState = slot.timeRangeState,
+            liveBadgeEnabled = true,
             seed = slot.startsAt.hashCode(),
             modifier = Modifier.graphicsLayer {
                 translationY = timeRangeTranslationY(size.height)
