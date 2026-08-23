@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +41,9 @@ fun ProfileCardScreen(
         )
 
         is ProfileCardScreenUiState.Card -> Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center,
         ) {
             Text(uiState.nickName, style = MaterialTheme.typography.headlineSmall)

@@ -55,13 +55,18 @@ fun SketchinessPicker(
     modifier: Modifier = Modifier,
 ) {
     val entries = Sketchiness.entries
-    KaigiSingleChoiceSegmentedButtonRow(outlineSeed = SketchinessPickerDefaults.outlineSeed, modifier = modifier) {
+    KaigiSingleChoiceSegmentedButtonRow(
+        outlineSeed = SketchinessPickerDefaults.outlineSeed,
+        modifier = modifier,
+        borderColor = MaterialTheme.colorScheme.outline,
+    ) {
         entries.forEachIndexed { index, sketchiness ->
             KaigiSegmentedButton(
                 selected = sketchiness == selected,
                 onClick = { onSketchinessSelected(sketchiness) },
                 dividerSeed = if (index < entries.lastIndex) SketchinessPickerDefaults.outlineSeed + index + 1 else null,
                 leadingDividerSeed = if (index > 0) SketchinessPickerDefaults.outlineSeed + index else null,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
