@@ -34,12 +34,12 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun AboutScreen(
     uiState: AboutScreenUiState,
-    onOpenSponsors: () -> Unit,
-    onOpenContributors: () -> Unit,
-    onOpenStaff: () -> Unit,
-    onOpenLicenses: () -> Unit,
+    onSponsorsClick: () -> Unit,
+    onContributorsClick: () -> Unit,
+    onStaffClick: () -> Unit,
+    onLicensesClick: () -> Unit,
     isDebugMenuAvailable: Boolean,
-    onOpenDebug: () -> Unit,
+    onDebugMenuClick: () -> Unit,
 ) {
     Scaffold(
         topBar = { KaigiTopAppBar(title = uiState.title) },
@@ -60,29 +60,29 @@ fun AboutScreen(
             )
             HorizontalDivider()
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenSponsors),
+                modifier = Modifier.clickable(onClick = onSponsorsClick),
                 headlineContent = { Text(stringResource(Res.string.sponsors)) },
             )
             HorizontalDivider()
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenContributors),
+                modifier = Modifier.clickable(onClick = onContributorsClick),
                 headlineContent = { Text(stringResource(Res.string.contributors)) },
             )
             HorizontalDivider()
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenStaff),
+                modifier = Modifier.clickable(onClick = onStaffClick),
                 headlineContent = { Text(stringResource(Res.string.staff)) },
             )
             HorizontalDivider()
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenLicenses),
+                modifier = Modifier.clickable(onClick = onLicensesClick),
                 headlineContent = { Text(stringResource(Res.string.licenses)) },
                 supportingContent = { Text(stringResource(Res.string.licenses_description)) },
             )
             if (isDebugMenuAvailable) {
                 HorizontalDivider()
                 ListItem(
-                    modifier = Modifier.clickable(onClick = onOpenDebug),
+                    modifier = Modifier.clickable(onClick = onDebugMenuClick),
                     headlineContent = { Text(stringResource(Res.string.debug_menu)) },
                     supportingContent = { Text(stringResource(Res.string.debug_menu_description)) },
                 )
@@ -102,12 +102,12 @@ private fun AboutScreenPreview(
                 title = "About DroidKaigi 2026",
                 versionName = "1.0.0",
             ),
-            onOpenSponsors = {},
-            onOpenContributors = {},
-            onOpenStaff = {},
-            onOpenLicenses = {},
+            onSponsorsClick = {},
+            onContributorsClick = {},
+            onStaffClick = {},
+            onLicensesClick = {},
             isDebugMenuAvailable = true,
-            onOpenDebug = {},
+            onDebugMenuClick = {},
         )
     }
 }
@@ -123,12 +123,12 @@ private fun AboutScreenWithoutDebugMenuPreview(
                 title = "About DroidKaigi 2026",
                 versionName = "1.0.0",
             ),
-            onOpenSponsors = {},
-            onOpenContributors = {},
-            onOpenStaff = {},
-            onOpenLicenses = {},
+            onSponsorsClick = {},
+            onContributorsClick = {},
+            onStaffClick = {},
+            onLicensesClick = {},
             isDebugMenuAvailable = false,
-            onOpenDebug = {},
+            onDebugMenuClick = {},
         )
     }
 }

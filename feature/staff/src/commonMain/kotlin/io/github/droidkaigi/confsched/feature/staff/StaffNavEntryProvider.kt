@@ -24,7 +24,7 @@ class StaffNavEntryProvider(
             context(graph.screenContext) {
                 StaffScreenRoot(
                     onNavigateBack = { appNavigator.back(origin = key) },
-                    onStaffClick = uriHandler::openUri,
+                    onNavigateToStaffProfile = uriHandler::openUri,
                 )
             }
         }

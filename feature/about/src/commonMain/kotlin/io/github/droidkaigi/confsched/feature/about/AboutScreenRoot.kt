@@ -18,11 +18,11 @@ fun AboutScreenRoot(
     }
     AboutScreen(
         uiState = uiState,
-        onOpenSponsors = onNavigateToSponsors,
-        onOpenContributors = onNavigateToContributors,
-        onOpenStaff = onNavigateToStaff,
-        onOpenLicenses = onNavigateToLicenses,
+        onSponsorsClick = onNavigateToSponsors,
+        onContributorsClick = onNavigateToContributors,
+        onStaffClick = onNavigateToStaff,
+        onLicensesClick = onNavigateToLicenses,
         isDebugMenuAvailable = isDebugMenuAvailable,
-        onOpenDebug = onNavigateToDebug,
+        onDebugMenuClick = onNavigateToDebug,
     )
 }

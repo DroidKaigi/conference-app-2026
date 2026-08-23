@@ -9,7 +9,7 @@ import soil.query.compose.rememberQuery
 context(screenContext: StaffScreenContext)
 fun StaffScreenRoot(
     onNavigateBack: () -> Unit,
-    onStaffClick: (String) -> Unit,
+    onNavigateToStaffProfile: (String) -> Unit,
 ) {
     SoilDataBoundary(state = rememberQuery(screenContext.staffQueryKey)) { staff ->
         val uiState = context(screenContext.presenterContext) {
@@ -18,7 +18,7 @@ fun StaffScreenRoot(
         StaffScreen(
             uiState = uiState,
             onBackClick = onNavigateBack,
-            onStaffClick = onStaffClick,
+            onStaffClick = onNavigateToStaffProfile,
         )
     }
 }
