@@ -18,6 +18,7 @@ class FakeClock : KaigiClock {
     var instant: Instant = DroidKaigi2026Day.Day1.at(hour = 10, minute = 0)
 
     override fun now(): Instant = instant
+
     override val offset: StateFlow<Duration> = MutableStateFlow(Duration.ZERO)
 
     fun advanceBy(duration: Duration) {
