@@ -18,21 +18,21 @@ fun DebugScreenRoot(
 
     DebugScreen(
         uiState = uiState,
-        toggleSoilErrorOverlay = { enabled ->
+        onSoilErrorOverlayEnabledChange = { enabled ->
             screenChannel.send(DebugScreenAction.SetSoilErrorOverlayEnabled(enabled))
         },
-        applyClockPreset = { preset ->
+        onClockPresetClick = { preset ->
             screenChannel.send(DebugScreenAction.ApplyClockPreset(preset))
         },
-        shiftClockTo = { isoInstant ->
+        onClockShiftClick = { isoInstant ->
             screenChannel.send(DebugScreenAction.ShiftClockTo(isoInstant))
         },
-        resetClock = { screenChannel.send(DebugScreenAction.ResetClock) },
-        toggleClockOverlay = { enabled ->
+        onClockResetClick = { screenChannel.send(DebugScreenAction.ResetClock) },
+        onClockOverlayEnabledChange = { enabled ->
             screenChannel.send(DebugScreenAction.SetClockOverlayEnabled(enabled))
         },
-        onOpenSoilErrors = onNavigateToSoilErrors,
-        onClearData = { screenChannel.send(DebugScreenAction.ClearData) },
+        onSoilErrorsClick = onNavigateToSoilErrors,
+        onClearDataClick = { screenChannel.send(DebugScreenAction.ClearData) },
         onBack = onNavigateBack,
     )
 }

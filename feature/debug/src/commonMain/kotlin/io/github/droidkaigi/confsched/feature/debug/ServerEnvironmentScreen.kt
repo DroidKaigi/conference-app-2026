@@ -28,8 +28,8 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 @Composable
 fun ServerEnvironmentScreen(
     skipSelectionNextLaunch: Boolean,
-    toggleSkipNextLaunch: (Boolean) -> Unit,
-    onSelectServer: (ServerEnvironment) -> Unit,
+    onSkipNextLaunchChange: (Boolean) -> Unit,
+    onServerClick: (ServerEnvironment) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -50,7 +50,7 @@ fun ServerEnvironmentScreen(
             OutlinedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onSelectServer(environment) },
+                    .clickable { onServerClick(environment) },
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -72,7 +72,7 @@ fun ServerEnvironmentScreen(
             Text("Skip this screen next launch")
             Switch(
                 checked = skipSelectionNextLaunch,
-                onCheckedChange = toggleSkipNextLaunch,
+                onCheckedChange = onSkipNextLaunchChange,
             )
         }
     }
@@ -86,8 +86,8 @@ private fun ServerEnvironmentScreenPreview(
     KaigiPreviewTheme(colorScheme) {
         ServerEnvironmentScreen(
             skipSelectionNextLaunch = false,
-            toggleSkipNextLaunch = {},
-            onSelectServer = {},
+            onSkipNextLaunchChange = {},
+            onServerClick = {},
         )
     }
 }

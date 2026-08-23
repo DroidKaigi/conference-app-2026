@@ -31,13 +31,13 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 @Composable
 fun DebugScreen(
     uiState: DebugScreenUiState,
-    toggleSoilErrorOverlay: (Boolean) -> Unit,
-    applyClockPreset: (DebugClockPreset) -> Unit,
-    shiftClockTo: (String) -> Unit,
-    resetClock: () -> Unit,
-    toggleClockOverlay: (Boolean) -> Unit,
-    onOpenSoilErrors: () -> Unit,
-    onClearData: () -> Unit,
+    onSoilErrorOverlayEnabledChange: (Boolean) -> Unit,
+    onClockPresetClick: (DebugClockPreset) -> Unit,
+    onClockShiftClick: (String) -> Unit,
+    onClockResetClick: () -> Unit,
+    onClockOverlayEnabledChange: (Boolean) -> Unit,
+    onSoilErrorsClick: () -> Unit,
+    onClearDataClick: () -> Unit,
     onBack: () -> Unit,
 ) {
     Scaffold(
@@ -68,10 +68,10 @@ fun DebugScreen(
             SectionHeader("Clock")
             DebugClockSection(
                 uiState = uiState.clock,
-                applyClockPreset = applyClockPreset,
-                shiftClockTo = shiftClockTo,
-                resetClock = resetClock,
-                toggleClockOverlay = toggleClockOverlay,
+                onClockPresetClick = onClockPresetClick,
+                onClockShiftClick = onClockShiftClick,
+                onClockResetClick = onClockResetClick,
+                onClockOverlayEnabledChange = onClockOverlayEnabledChange,
             )
             HorizontalDivider()
 
@@ -82,12 +82,12 @@ fun DebugScreen(
                 trailingContent = {
                     Switch(
                         checked = uiState.soilErrorOverlayEnabled,
-                        onCheckedChange = toggleSoilErrorOverlay,
+                        onCheckedChange = onSoilErrorOverlayEnabledChange,
                     )
                 },
             )
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenSoilErrors),
+                modifier = Modifier.clickable(onClick = onSoilErrorsClick),
                 headlineContent = { Text("Soil errors") },
                 supportingContent = { Text("Errors relayed during this session") },
                 trailingContent = { Text("${uiState.soilErrors.size}") },
@@ -96,7 +96,7 @@ fun DebugScreen(
 
             SectionHeader("Data")
             ListItem(
-                modifier = Modifier.clickable(onClick = onClearData),
+                modifier = Modifier.clickable(onClick = onClearDataClick),
                 headlineContent = { Text("Clear persisted data") },
                 supportingContent = {
                     Text(
@@ -126,13 +126,13 @@ private fun DebugScreenPreview(
                 soilErrors = listOf(SoilError.fake()),
                 clock = DebugClockUiState.fake(),
             ),
-            toggleSoilErrorOverlay = {},
-            applyClockPreset = {},
-            shiftClockTo = {},
-            resetClock = {},
-            toggleClockOverlay = {},
-            onOpenSoilErrors = {},
-            onClearData = {},
+            onSoilErrorOverlayEnabledChange = {},
+            onClockPresetClick = {},
+            onClockShiftClick = {},
+            onClockResetClick = {},
+            onClockOverlayEnabledChange = {},
+            onSoilErrorsClick = {},
+            onClearDataClick = {},
             onBack = {},
         )
     }

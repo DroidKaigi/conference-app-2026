@@ -28,10 +28,10 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 @Composable
 internal fun DebugClockSection(
     uiState: DebugClockUiState,
-    applyClockPreset: (DebugClockPreset) -> Unit,
-    shiftClockTo: (String) -> Unit,
-    resetClock: () -> Unit,
-    toggleClockOverlay: (Boolean) -> Unit,
+    onClockPresetClick: (DebugClockPreset) -> Unit,
+    onClockShiftClick: (String) -> Unit,
+    onClockResetClick: () -> Unit,
+    onClockOverlayEnabledChange: (Boolean) -> Unit,
 ) {
     var isoInstant by retain { mutableStateOf("") }
 
@@ -46,7 +46,7 @@ internal fun DebugClockSection(
         trailingContent = {
             Switch(
                 checked = uiState.overlayEnabled,
-                onCheckedChange = toggleClockOverlay,
+                onCheckedChange = onClockOverlayEnabledChange,
             )
         },
     )
@@ -58,7 +58,7 @@ internal fun DebugClockSection(
     ) {
         DebugClockPreset.entries.forEach { preset ->
             SuggestionChip(
-                onClick = { applyClockPreset(preset) },
+                onClick = { onClockPresetClick(preset) },
                 label = { Text(preset.label) },
             )
         }
@@ -78,10 +78,10 @@ internal fun DebugClockSection(
             singleLine = true,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = { shiftClockTo(isoInstant) }) {
+            Button(onClick = { onClockShiftClick(isoInstant) }) {
                 Text("Apply")
             }
-            TextButton(onClick = resetClock, enabled = uiState.shifted) {
+            TextButton(onClick = onClockResetClick, enabled = uiState.shifted) {
                 Text("Back to system time")
             }
         }
@@ -96,10 +96,10 @@ private fun DebugClockSectionPreview(
     KaigiPreviewTheme(colorScheme) {
         DebugClockSection(
             uiState = DebugClockUiState.fake(),
-            applyClockPreset = {},
-            shiftClockTo = {},
-            resetClock = {},
-            toggleClockOverlay = {},
+            onClockPresetClick = {},
+            onClockShiftClick = {},
+            onClockResetClick = {},
+            onClockOverlayEnabledChange = {},
         )
     }
 }
