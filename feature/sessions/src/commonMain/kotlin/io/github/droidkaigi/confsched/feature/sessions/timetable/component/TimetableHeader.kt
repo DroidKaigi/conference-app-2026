@@ -30,14 +30,14 @@ internal fun TimetableHeader(
     selectedDay: DroidKaigi2026Day,
     onDayClick: (DroidKaigi2026Day) -> Unit,
     onSearchClick: () -> Unit,
-    onUiTypeChangeClick: () -> Unit,
+    onGridViewClick: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.inverseSurface)) {
         KaigiTopAppBar(title = stringResource(Res.string.timetable)) {
             KaigiIconButton(seed = 777, onClick = onSearchClick) {
                 Icon(KaigiIcons.Default.Search, contentDescription = stringResource(Res.string.search))
             }
-            KaigiIconButton(seed = 778, onClick = onUiTypeChangeClick) {
+            KaigiIconButton(seed = 778, onClick = onGridViewClick) {
                 Icon(KaigiIcons.Default.GridView, contentDescription = stringResource(Res.string.switch_to_grid_view))
             }
         }
@@ -55,7 +55,7 @@ private fun TimetableHeaderPreview(
             selectedDay = DroidKaigi2026Day.Day1,
             onDayClick = {},
             onSearchClick = {},
-            onUiTypeChangeClick = {},
+            onGridViewClick = {},
         )
     }
 }

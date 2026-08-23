@@ -24,7 +24,7 @@ fun TimetableScreen(
     onDayClick: (DroidKaigi2026Day) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
     onSearchClick: () -> Unit,
-    onUiTypeChangeClick: () -> Unit,
+    onGridViewClick: () -> Unit,
 ) {
     Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
@@ -32,7 +32,7 @@ fun TimetableScreen(
                 selectedDay = uiState.day,
                 onDayClick = onDayClick,
                 onSearchClick = onSearchClick,
-                onUiTypeChangeClick = onUiTypeChangeClick,
+                onGridViewClick = onGridViewClick,
             )
             TimetableListSection(
                 uiState = uiState.timetableListSection,
@@ -55,7 +55,7 @@ private fun TimetableScreenPreview(
             onDayClick = {},
             onItemClick = {},
             onSearchClick = {},
-            onUiTypeChangeClick = {},
+            onGridViewClick = {},
         )
     }
 }
