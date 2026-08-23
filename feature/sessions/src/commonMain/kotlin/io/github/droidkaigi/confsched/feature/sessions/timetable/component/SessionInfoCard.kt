@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -79,7 +82,7 @@ internal fun SessionInfoCard(
                 text = room.locationText(),
                 action = onOpenEventMapDialog?.let {
                     InfoRowAction(
-                        KaigiIcons.Default.Map,
+                        KaigiIcons.Default.Map, // FIXME: Replace with actual icon (pop-out)
                         it,
                     )
                 },
@@ -102,10 +105,11 @@ private fun InfoRow(
     text: String,
     action: InfoRowAction? = null,
 ) {
+    val interactionSource = remember(::MutableInteractionSource)
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = if (action == null) Modifier else Modifier.clickable(onClick = action.onClick),
     ) {
         Icon(
             imageVector = imageVector,
@@ -123,7 +127,14 @@ private fun InfoRow(
                 imageVector = action.actionIconImageVector,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(SessionInfoCardDefaults.iconSize),
+                modifier = Modifier
+                    .clickable(
+                        onClick = action.onClick,
+                        indication = ripple(bounded = false),
+                        interactionSource = interactionSource,
+                    )
+                    .size(SessionInfoCardDefaults.iconSize)
+                    .padding(2.dp),
             )
         }
     }
