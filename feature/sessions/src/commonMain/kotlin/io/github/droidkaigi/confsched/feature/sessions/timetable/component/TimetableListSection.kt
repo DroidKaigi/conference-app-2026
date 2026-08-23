@@ -24,7 +24,6 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
-import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
 
@@ -72,7 +71,7 @@ private fun SessionRow(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
             timeRangeState = slot.timeRangeState,
-            showLiveBadge = slot.timeRangeState is TimetableLineState.InProgress,
+            liveBadgeEnabled = true,
             seed = slot.startsAt.hashCode(),
             modifier = Modifier.graphicsLayer {
                 translationY = timeRangeTranslationY(size.height)

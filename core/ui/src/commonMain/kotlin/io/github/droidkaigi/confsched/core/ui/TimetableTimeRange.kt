@@ -29,9 +29,9 @@ fun TimetableTimeRange(
     timeRangeState: TimetableLineState,
     seed: Int,
     modifier: Modifier = Modifier,
-    showLiveBadge: Boolean = false,
+    liveBadgeEnabled: Boolean = false,
 ) {
-    val displaysLiveBadge = showLiveBadge && timeRangeState is TimetableLineState.InProgress
+    val displaysLiveBadge = liveBadgeEnabled && timeRangeState is TimetableLineState.InProgress
     Column(
         modifier = modifier.width(TimetableTimeRangeDefaults.width),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,7 +125,7 @@ private fun TimetableTimeRangePreview(
                 endsAt = "10:20",
                 timeRangeState = TimetableLineState.InProgress(0.5f),
                 seed = 20,
-                showLiveBadge = true,
+                liveBadgeEnabled = true,
             )
             TimetableTimeRange(
                 startsAt = "10:00",
