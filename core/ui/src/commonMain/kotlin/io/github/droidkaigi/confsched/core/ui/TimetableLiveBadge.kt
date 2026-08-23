@@ -17,14 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.LocalReducedMotion
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -37,9 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun TimetableLiveBadge(
     modifier: Modifier = Modifier,
 ) {
-    val reducedMotion =
-        rememberCoroutineScope().coroutineContext[MotionDurationScale]?.scaleFactor == 0f
-    val dotAlpha = if (reducedMotion) {
+    val dotAlpha = if (LocalReducedMotion.current) {
         TimetableLiveBadgeDefaults.DOT_MAX_ALPHA
     } else {
         val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
