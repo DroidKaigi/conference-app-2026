@@ -42,7 +42,6 @@ internal fun List<TimetableItem>.toTimeSlots(
         .sortedWith(compareBy({ slot -> slot.day }, { slot -> slot.startsAt }, { slot -> slot.endsAt }))
         .toPersistentList()
 
-
 internal fun FavoritesListSectionUiState.Companion.fake(
     currentTime: Instant = Instant.parse("2026-09-02T12:00:00Z"),
 ): FavoritesListSectionUiState {

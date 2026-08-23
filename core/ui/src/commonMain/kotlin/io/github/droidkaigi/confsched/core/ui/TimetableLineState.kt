@@ -19,7 +19,9 @@ fun calculateTimetableLineState(
 ): TimetableLineState {
     return when {
         currentTime < startsAt -> TimetableLineState.Upcoming
+
         currentTime >= endsAt -> TimetableLineState.Passed
+
         else -> {
             val totalDuration = (endsAt - startsAt).inWholeMilliseconds.toFloat()
             val elapsedDuration = (currentTime - startsAt).inWholeMilliseconds.toFloat()

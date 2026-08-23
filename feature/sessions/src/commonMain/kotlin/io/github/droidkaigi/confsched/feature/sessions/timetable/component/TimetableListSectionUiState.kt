@@ -52,4 +52,3 @@ internal fun TimetableListSectionUiState.Companion.fake(
         bookmarks = timetable.bookmarks,
     )
 }
-

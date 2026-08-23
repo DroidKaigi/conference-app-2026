@@ -38,7 +38,6 @@ fun favoritesScreenPresenter(
         favoriteMutation.reset()
     }
 
-
     val favoriteItems = timetable.items
         .filter { timetable.isFavorite(it.id) }
         .filter { selectedDayFilter == null || it.day == selectedDayFilter }
