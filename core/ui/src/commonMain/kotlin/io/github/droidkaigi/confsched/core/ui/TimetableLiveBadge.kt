@@ -1,5 +1,10 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,8 +15,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -27,6 +34,20 @@ import org.jetbrains.compose.resources.stringResource
 internal fun TimetableLiveBadge(
     modifier: Modifier = Modifier,
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
+    val dotAlpha by infiniteTransition.animateFloat(
+        initialValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+        targetValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS
+                TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at 0 using EaseInOut
+                TimetableLiveBadgeDefaults.DOT_MIN_ALPHA at
+                    TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS / 2 using EaseInOut
+            },
+        ),
+        label = "Live badge dot alpha",
+    )
     val shape = SketchRoundRectShape(
         seed = combineSketchSeed(TimetableLiveBadgeDefaults.SEED),
         roughness = TimetableLiveBadgeDefaults.roughness,
@@ -42,13 +63,17 @@ internal fun TimetableLiveBadge(
             .size(TimetableLiveBadgeDefaults.width, TimetableLiveBadgeDefaults.height)
             .background(primary, shape)
             .sketchBorder(shape, primary)
-            .padding(horizontal = TimetableLiveBadgeDefaults.horizontalPadding),
+            .padding(
+                start = TimetableLiveBadgeDefaults.startPadding,
+                end = TimetableLiveBadgeDefaults.endPadding,
+            ),
         horizontalArrangement = Arrangement.spacedBy(TimetableLiveBadgeDefaults.contentSpacing),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Spacer(
             Modifier
                 .size(TimetableLiveBadgeDefaults.dotSize)
+                .graphicsLayer { alpha = dotAlpha }
                 .background(MaterialTheme.colorScheme.onPrimary, CircleShape),
         )
         Text(
@@ -64,10 +89,14 @@ internal fun TimetableLiveBadge(
 
 private object TimetableLiveBadgeDefaults {
     const val SEED = 1300
+    const val DOT_MIN_ALPHA = 0.35f
+    const val DOT_MAX_ALPHA = 1f
+    const val DOT_BREATH_DURATION_MILLIS = 1600
     val width = 54.dp
     val height = 22.dp
-    val horizontalPadding = 9.dp
-    val contentSpacing = 4.dp
+    val startPadding = 8.dp
+    val endPadding = 9.dp
+    val contentSpacing = 5.dp
     val dotSize = 4.dp
     val cornerRadius = 11.dp
     val borderThickness = 1.5.dp
