@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,8 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Re
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_normal
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_playful
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_subtle
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -48,6 +52,13 @@ private val Sketchiness.label: String
         Sketchiness.Subtle -> stringResource(Res.string.sketchiness_subtle)
         Sketchiness.Normal -> stringResource(Res.string.sketchiness_normal)
         Sketchiness.Playful -> stringResource(Res.string.sketchiness_playful)
+    }
+
+private val Sketchiness.drawableResource: DrawableResource
+    get() = when (this) {
+        Sketchiness.Subtle -> Res.drawable.sketchiness_subtle
+        Sketchiness.Normal -> Res.drawable.sketchiness_normal
+        Sketchiness.Playful -> Res.drawable.sketchiness_playful
     }
 
 /**
@@ -118,10 +129,7 @@ private fun SketchinessOption(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
             ) {
-                SketchinessSwatch(
-                    sketchiness = sketchiness,
-                    seed = SketchinessPickerDefaults.outlineSeed + SketchinessSwatchDefaults.seedOffset + sketchiness.ordinal,
-                )
+                SketchinessSwatch(sketchiness = sketchiness)
                 Text(sketchiness.label, style = MaterialTheme.typography.labelLarge)
             }
         }
@@ -129,27 +137,21 @@ private fun SketchinessOption(
 }
 
 /**
- * A small pill outline wobbling by [sketchiness]'s own [Sketchiness.amplitudeMultiplier], so the
- * option previews what picking it draws like rather than just naming it.
+ * Line art of [sketchiness]'s own wobble, traced from the Figma source and shipped as SVG. The
+ * artwork is a single flat stroke color in the source file, so [color] retints it via
+ * [ColorFilter.tint] rather than each option needing per-theme variants of the file itself.
  */
 @Composable
 private fun SketchinessSwatch(
     sketchiness: Sketchiness,
-    seed: Int,
     modifier: Modifier = Modifier,
     color: Color = LocalContentColor.current,
 ) {
-    val shape = SketchRoundRectShape(
-        seed = seed,
-        roughness = SketchinessSwatchDefaults.baseRoughness * sketchiness.amplitudeMultiplier,
-        tremor = SketchinessSwatchDefaults.baseTremor * sketchiness.amplitudeMultiplier,
-        cornerRadius = SketchinessSwatchDefaults.height / 2,
-        borderThickness = SketchinessSwatchDefaults.borderThickness,
-    )
-    Box(
-        modifier = modifier
-            .size(width = SketchinessSwatchDefaults.width, height = SketchinessSwatchDefaults.height)
-            .sketchBorder(shape, color),
+    Image(
+        painter = painterResource(sketchiness.drawableResource),
+        contentDescription = null,
+        modifier = modifier.size(width = SketchinessSwatchDefaults.width, height = SketchinessSwatchDefaults.height),
+        colorFilter = ColorFilter.tint(color),
     )
 }
 
@@ -170,10 +172,6 @@ private object SketchinessOptionDefaults {
 private object SketchinessSwatchDefaults {
     val width = 24.dp
     val height = 10.dp
-    val baseRoughness = 0.3.dp
-    val baseTremor = 0.15.dp
-    val borderThickness = 1.dp
-    val seedOffset = 40
 }
 
 @LocalePreviews
