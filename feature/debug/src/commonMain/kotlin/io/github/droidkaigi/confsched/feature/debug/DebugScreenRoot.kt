@@ -33,6 +33,6 @@ fun DebugScreenRoot(
         },
         onSoilErrorsClick = onNavigateToSoilErrors,
         onClearDataClick = { screenChannel.send(DebugScreenAction.ClearData) },
-        onBack = onNavigateBack,
+        onBackClick = onNavigateBack,
     )
 }

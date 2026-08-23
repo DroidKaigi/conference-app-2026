@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TimetableItemDetailScreen(
     uiState: TimetableItemDetailScreenUiState,
     onBookmarkClick: () -> Unit,
-    onBack: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     val isListDetailPane = LocalListDetailSceneScope.current != null
     val paneSpacerInset = if (isListDetailPane) {
@@ -55,13 +55,13 @@ fun TimetableItemDetailScreen(
                 navigationIcon = {
                     if (isListDetailPane) {
                         IconButton(
-                            onClick = onBack,
+                            onClick = onBackClick,
                             modifier = Modifier.padding(start = paneSpacerInset),
                         ) {
                             Icon(KaigiIcons.Default.Close, contentDescription = stringResource(Res.string.close))
                         }
                     } else {
-                        KaigiTopAppBarBackButton(onClick = onBack)
+                        KaigiTopAppBarBackButton(onClick = onBackClick)
                     }
                 },
                 // The headline below carries the same background, so the two read as one surface.
@@ -118,7 +118,7 @@ private fun TimetableItemDetailScreenPreview(
         TimetableItemDetailScreen(
             uiState = TimetableItemDetailScreenUiState.fake(),
             onBookmarkClick = {},
-            onBack = {},
+            onBackClick = {},
         )
     }
 }

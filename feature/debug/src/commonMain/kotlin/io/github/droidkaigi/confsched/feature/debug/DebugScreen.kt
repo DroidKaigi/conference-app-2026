@@ -38,14 +38,14 @@ fun DebugScreen(
     onClockOverlayEnabledChange: (Boolean) -> Unit,
     onSoilErrorsClick: () -> Unit,
     onClearDataClick: () -> Unit,
-    onBack: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Debug menu") },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = onBackClick) {
                         Icon(KaigiIcons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -133,7 +133,7 @@ private fun DebugScreenPreview(
             onClockOverlayEnabledChange = {},
             onSoilErrorsClick = {},
             onClearDataClick = {},
-            onBack = {},
+            onBackClick = {},
         )
     }
 }

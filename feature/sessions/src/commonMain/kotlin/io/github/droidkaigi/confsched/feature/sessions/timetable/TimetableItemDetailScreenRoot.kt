@@ -43,7 +43,7 @@ fun TimetableItemDetailScreenRoot(
             onBookmarkClick = {
                 screenChannel.send(TimetableItemDetailScreenAction.Bookmark(uiState.item.id))
             },
-            onBack = onNavigateBack,
+            onBackClick = onNavigateBack,
         )
     }
 }
