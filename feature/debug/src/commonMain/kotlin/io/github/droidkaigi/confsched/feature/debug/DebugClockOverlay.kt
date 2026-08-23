@@ -23,14 +23,13 @@ import kotlin.time.Duration.Companion.seconds
 @ContributesBinding(AppScope::class, replaces = [NoopClockOverlay::class])
 class DebugClockOverlay(
     private val clock: KaigiClock,
-    private val offsetStore: KaigiClockOffsetStore,
     private val debugPreferencesStore: DebugPreferencesStore,
 ) : ClockOverlay {
 
     @Composable
     override fun Overlay() {
         val enabled by debugPreferencesStore.clockOverlayEnabled.collectAsState(initial = true)
-        val offset by offsetStore.offset.collectAsState()
+        val offset by clock.offset.collectAsState()
         // An unshifted clock has nothing to warn about, so the badge appears exactly while the app
         // is reading a time the device does not.
         if (!enabled || offset == Duration.ZERO) return
