@@ -37,6 +37,7 @@ class FavoritesScreenPresenterTest {
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(null, initial.selectedDayFilter)
+            assertEquals(true, initial.favoritesListSection.dayHeadersVisible)
 
             val slots = initial.favoritesListSection.timeSlots
             assertEquals(
@@ -64,6 +65,7 @@ class FavoritesScreenPresenterTest {
             send(FavoritesScreenAction.SelectDayFilter(DroidKaigi2026Day.Day2))
             val onDay2 = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day2, onDay2.selectedDayFilter)
+            assertEquals(false, onDay2.favoritesListSection.dayHeadersVisible)
             assertEquals(
                 listOf("d2a", "d2b"),
                 onDay2.favoritesListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } },
