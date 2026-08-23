@@ -3,14 +3,14 @@ package io.github.droidkaigi.confsched.app.widget
 import android.content.Context
 import io.github.droidkaigi.confsched.app.appGraph
 import io.github.droidkaigi.confsched.core.common.KaigiClock
+import io.github.droidkaigi.confsched.core.data.AppearanceSettingsStore
 import io.github.droidkaigi.confsched.core.data.FavoritesStore
 import io.github.droidkaigi.confsched.core.data.PersistedTimetableReader
-import io.github.droidkaigi.confsched.core.data.ThemeStore
 
 /** What the favorites widget needs from the app graph; AndroidAppGraph implements it. */
 interface WidgetDependencies {
     val favoritesStore: FavoritesStore
-    val themeStore: ThemeStore
+    val appearanceSettingsStore: AppearanceSettingsStore
     val persistedTimetableReader: PersistedTimetableReader
     val kaigiClock: KaigiClock
 }

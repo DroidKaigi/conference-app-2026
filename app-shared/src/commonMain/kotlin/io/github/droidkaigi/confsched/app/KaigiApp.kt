@@ -27,10 +27,12 @@ fun KaigiApp() {
 
     SwrClientProvider(client = uiGraph.swrClient) {
         SoilDataBoundary(
-            state = rememberSubscription(uiGraph.themeColorSchemeSubscriptionKey),
-        ) { colorScheme ->
+            state = rememberSubscription(uiGraph.appearanceSubscriptionKey),
+        ) { appearance ->
             KaigiTheme(
-                colorScheme = colorScheme,
+                colorScheme = appearance.colorScheme,
+                fontFamily = appearance.settings.fontFamily,
+                sketchStrength = appearance.settings.sketchStrength,
                 sketchBaseSeed = appSketchBaseSeed,
             ) {
                 NavigatorEffect(
@@ -48,7 +50,7 @@ fun KaigiApp() {
                     backStack = backStack,
                     rootTabNavigator = appGraph.rootTabNavigator,
                     rootTabBarAppearance = appGraph.rootTabBarAppearance,
-                    colorScheme = colorScheme,
+                    colorScheme = appearance.colorScheme,
                     onSelectTab = { tab -> uiGraph.appNavigator.moveToTop(tab.key) },
                 )
 
