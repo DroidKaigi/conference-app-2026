@@ -10,11 +10,13 @@ import io.github.droidkaigi.confsched.core.ui.lineState
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentList
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class TimetableListSectionUiState(
     val timeSlots: PersistentList<TimeSlot>,
     val bookmarks: PersistentSet<TimetableItemId>,
+    val countdownBannerUiState: TimetableCountdownBannerUiState? = null,
 ) {
     data class TimeSlot(
         val startsAt: String,
@@ -50,5 +52,9 @@ internal fun TimetableListSectionUiState.Companion.fake(
     return TimetableListSectionUiState(
         timeSlots = timetable.itemsOn(DroidKaigi2026Day.Day1).toTimeSlots(currentTime),
         bookmarks = timetable.bookmarks,
+        countdownBannerUiState = TimetableCountdownBannerUiState(
+            nextSessions = timetable.itemsOn(DroidKaigi2026Day.Day1).take(1).toPersistentList(),
+            remainingDuration = 25.minutes,
+        ),
     )
 }

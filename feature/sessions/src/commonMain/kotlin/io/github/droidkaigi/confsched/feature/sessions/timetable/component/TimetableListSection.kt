@@ -43,14 +43,26 @@ internal fun TimetableListSection(
             bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
         ),
     ) {
+        val hasBanner = uiState.countdownBannerUiState != null
+        uiState.countdownBannerUiState?.let { countdownState ->
+            item(key = "countdown_banner") {
+                TimetableCountdownBanner(
+                    uiState = countdownState,
+                    seed = countdownState.nextSessions.firstOrNull()?.id?.value?.hashCode() ?: 0,
+                    onItemClick = onItemClick,
+                )
+            }
+        }
+
         itemsIndexed(uiState.timeSlots, key = { _, slot -> "${slot.startsAt}-${slot.endsAt}" }) { index, slot ->
+            val layoutIndex = if (hasBanner) index + 1 else index
             SessionRow(
                 slot = slot,
                 bookmarks = uiState.bookmarks,
                 onBookmarkClick = onBookmarkClick,
                 onItemClick = onItemClick,
                 timeRangeTranslationY = { timeRangeHeightPx ->
-                    stickyTimeRangeTranslationY(listState, index, timeRangeHeightPx)
+                    stickyTimeRangeTranslationY(listState, layoutIndex, timeRangeHeightPx)
                 },
             )
         }
