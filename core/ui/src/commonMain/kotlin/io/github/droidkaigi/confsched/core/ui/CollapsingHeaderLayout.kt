@@ -13,8 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -45,12 +44,12 @@ private enum class CollapsingHeaderSlot {
  * [nestedScrollConnection]; obtain one from the matching `remember…State` function.
  */
 @Stable
-sealed class CollapsingHeaderState(initialOffset: Float) {
+sealed class CollapsingHeaderState {
 
     abstract val nestedScrollConnection: NestedScrollConnection
 
     /** How far the collapsing header sits above its resting place: `0` at full height. */
-    var collapsingOffsetY: Float by mutableFloatStateOf(initialOffset)
+    var collapsingOffsetY: Float by mutableFloatStateOf(0f)
         protected set
 
     /** The height of the collapsing header, measured by the layout it is handed to. */
@@ -61,7 +60,7 @@ sealed class CollapsingHeaderState(initialOffset: Float) {
      * Folds the header on a downward scroll and returns it to full height on any upward scroll,
      * from whatever position the content is in.
      */
-    class EnterAlways internal constructor(initialOffset: Float) : CollapsingHeaderState(initialOffset) {
+    class EnterAlways internal constructor() : CollapsingHeaderState() {
 
         override val nestedScrollConnection: NestedScrollConnection = object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -71,21 +70,12 @@ sealed class CollapsingHeaderState(initialOffset: Float) {
                 return Offset(0f, consumed)
             }
         }
-
-        companion object {
-            val Saver: Saver<EnterAlways, Float> = Saver(
-                save = { it.collapsingOffsetY },
-                restore = { EnterAlways(initialOffset = it) },
-            )
-        }
     }
 }
 
 @Composable
 fun rememberCollapsingHeaderEnterAlwaysState(): CollapsingHeaderState.EnterAlways {
-    return rememberSaveable(saver = CollapsingHeaderState.EnterAlways.Saver) {
-        CollapsingHeaderState.EnterAlways(initialOffset = 0f)
-    }
+    return remember { CollapsingHeaderState.EnterAlways() }
 }
 
 /**
