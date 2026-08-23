@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import io.github.droidkaigi.confsched.core.designsystem.generated.resources.Res
@@ -221,30 +220,6 @@ val KaigiColorScheme.isDark: Boolean
         KaigiColorScheme.CampfireNight -> true
     }
 
-/**
- * The two bundled faces, for a control that has to set text in a face other than the one the
- * font preference puts on that role — the font options of the settings screen, above all.
- */
-object KaigiFontFamilies {
-    val display: FontFamily @Composable get() = kaigiFontFamilies().first
-    val text: FontFamily @Composable get() = kaigiFontFamilies().second
-}
-
-/** Style roles the Material set has no slot for. */
-object KaigiTypography {
-    /**
-     * The heading a group of controls carries: the title/medium size set in the display face.
-     *
-     * The face is read back off a headline role so that it follows the font preference, which
-     * decides per role rather than per family.
-     */
-    val accentTitleMedium: TextStyle
-        @Composable get() = MaterialTheme.typography.titleMedium.copy(
-            fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
-            fontWeight = FontWeight.Bold,
-        )
-}
-
 // Each bundled binary merges its Latin face with Noto Sans JP, because Compose offers no
 // way to direct per-glyph fallback to a bundled font.
 @Composable
@@ -257,10 +232,15 @@ private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
     return display to standard
 }
 
-// Only the family changes per role; sizes, line heights, and letter spacing must keep
-// the Material defaults the design file records.
+/**
+ * The type set [fontFamily] installs. Only the family changes per role; sizes, line heights, and
+ * letter spacing keep the Material defaults the design file records.
+ *
+ * Public for a control that has to set text in a font other than the one in force, such as the
+ * settings screen naming each font option in the face that option selects.
+ */
 @Composable
-private fun kaigiTypography(fontFamily: KaigiFontFamily): Typography {
+fun kaigiTypography(fontFamily: KaigiFontFamily): Typography {
     val (display, standard) = kaigiFontFamilies()
     val (displayRole, textRole) = when (fontFamily) {
         KaigiFontFamily.Default -> display to standard

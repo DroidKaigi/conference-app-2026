@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.KaigiFontFamilies
+import io.github.droidkaigi.confsched.core.designsystem.kaigiTypography
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -58,17 +58,10 @@ private val KaigiFontFamily.label: StringResource
         KaigiFontFamily.NotoSans -> Res.string.font_noto_sans
     }
 
-// Each option names itself in the face it selects, so the family is pinned here rather than
-// taken from the role, which the preference already in force has decided.
+// Each option names itself in the face it selects, so the style comes from the type set that
+// option installs rather than from the one the preference in force has already installed.
 private val KaigiFontFamily.labelStyle: TextStyle
-    @Composable get() = when (this) {
-        KaigiFontFamily.Default,
-        KaigiFontFamily.NotoSans,
-        -> MaterialTheme.typography.titleLarge.copy(fontFamily = KaigiFontFamilies.text)
-
-        KaigiFontFamily.CourierPrime ->
-            MaterialTheme.typography.headlineSmall.copy(fontFamily = KaigiFontFamilies.display)
-    }
+    @Composable get() = kaigiTypography(this).titleLarge
 
 private object FontFamilyGroupDefaults {
     const val FIRST_OPTION_SEED = 5810

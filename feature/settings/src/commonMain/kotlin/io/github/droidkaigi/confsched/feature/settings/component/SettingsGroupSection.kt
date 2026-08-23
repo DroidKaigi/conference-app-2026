@@ -9,10 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.KaigiTypography
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -29,12 +30,24 @@ internal fun SettingsGroupSection(
     ) {
         Text(
             text = title,
-            style = KaigiTypography.accentTitleMedium,
+            style = groupTitleStyle,
             color = MaterialTheme.colorScheme.onSurface,
         )
         content()
     }
 }
+
+/**
+ * The heading a group carries: the title/medium size in the display face.
+ *
+ * The face is read back off a headline role, so it follows the font preference, which decides
+ * per role rather than per family.
+ */
+private val groupTitleStyle: TextStyle
+    @Composable get() = MaterialTheme.typography.titleMedium.copy(
+        fontFamily = MaterialTheme.typography.headlineSmall.fontFamily,
+        fontWeight = FontWeight.Bold,
+    )
 
 @Preview
 @Composable
