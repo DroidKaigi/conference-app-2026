@@ -11,7 +11,7 @@ typealias ThemeColorSchemeSubscriptionKey = SubscriptionKey<KaigiColorScheme>
 
 @Inject
 @ContributesBinding(AppScope::class)
-class DefaultThemeColorSchemeSubscriptionKey(private val store: ThemeStore) :
+class DefaultThemeColorSchemeSubscriptionKey(private val store: AppearanceSettingsStore) :
     ThemeColorSchemeSubscriptionKey by buildSubscriptionKey(
         id = SoilIds.themeColorSchemeSubscription,
         subscribe = { store.colorScheme() },

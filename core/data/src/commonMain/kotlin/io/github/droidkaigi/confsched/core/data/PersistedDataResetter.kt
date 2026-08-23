@@ -7,12 +7,12 @@ import dev.zacsweers.metro.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class PersistedDataResetter(
-    private val themeStore: ThemeStore,
+    private val appearanceSettingsStore: AppearanceSettingsStore,
     private val favoritesStore: FavoritesStore,
     private val fileStorage: FileStorage,
 ) {
     suspend fun clearAll() {
-        themeStore.clear()
+        appearanceSettingsStore.clear()
         favoritesStore.clear()
         fileStorage.clear()
     }
