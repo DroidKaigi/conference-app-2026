@@ -16,8 +16,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -34,29 +37,41 @@ import org.jetbrains.compose.resources.stringResource
 internal fun TimetableLiveBadge(
     modifier: Modifier = Modifier,
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
-    val dotAlpha by infiniteTransition.animateFloat(
-        initialValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
-        targetValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS
-                TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at 0 using EaseInOut
-                TimetableLiveBadgeDefaults.DOT_MIN_ALPHA at
-                    TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS / 2 using EaseInOut
-            },
-        ),
-        label = "Live badge dot alpha",
-    )
-    val shape = SketchRoundRectShape(
-        seed = combineSketchSeed(TimetableLiveBadgeDefaults.SEED),
-        roughness = TimetableLiveBadgeDefaults.roughness,
-        tremor = TimetableLiveBadgeDefaults.tremor,
-        sweepWavelength = TimetableLiveBadgeDefaults.sweepWavelength,
-        tremorWavelength = TimetableLiveBadgeDefaults.tremorWavelength,
-        cornerRadius = TimetableLiveBadgeDefaults.cornerRadius,
-        borderThickness = TimetableLiveBadgeDefaults.borderThickness,
-    )
+    val reducedMotion =
+        rememberCoroutineScope().coroutineContext[MotionDurationScale]?.scaleFactor == 0f
+    val dotAlpha = if (reducedMotion) {
+        TimetableLiveBadgeDefaults.DOT_MAX_ALPHA
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "Live badge dot")
+        val animatedAlpha by infiniteTransition.animateFloat(
+            initialValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+            targetValue = TimetableLiveBadgeDefaults.DOT_MAX_ALPHA,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS
+                    TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at 0 using EaseInOut
+                    TimetableLiveBadgeDefaults.DOT_MIN_ALPHA at
+                        (TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS / 2) using EaseInOut
+                    TimetableLiveBadgeDefaults.DOT_MAX_ALPHA at
+                        TimetableLiveBadgeDefaults.DOT_BREATH_DURATION_MILLIS using EaseInOut
+                },
+            ),
+            label = "Live badge dot alpha",
+        )
+        animatedAlpha
+    }
+    val combinedSeed = combineSketchSeed(TimetableLiveBadgeDefaults.SEED)
+    val shape = remember(combinedSeed) {
+        SketchRoundRectShape(
+            seed = combinedSeed,
+            roughness = TimetableLiveBadgeDefaults.roughness,
+            tremor = TimetableLiveBadgeDefaults.tremor,
+            sweepWavelength = TimetableLiveBadgeDefaults.sweepWavelength,
+            tremorWavelength = TimetableLiveBadgeDefaults.tremorWavelength,
+            cornerRadius = TimetableLiveBadgeDefaults.cornerRadius,
+            borderThickness = TimetableLiveBadgeDefaults.borderThickness,
+        )
+    }
     val primary = MaterialTheme.colorScheme.primary
     Row(
         modifier = modifier
