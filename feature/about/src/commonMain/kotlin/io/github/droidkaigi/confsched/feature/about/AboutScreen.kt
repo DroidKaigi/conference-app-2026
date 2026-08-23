@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Award
 import io.github.droidkaigi.confsched.core.designsystem.icon.Build
 import io.github.droidkaigi.confsched.core.designsystem.icon.Description
@@ -43,7 +45,9 @@ import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.feature.about.component.AboutEventCard
 import io.github.droidkaigi.confsched.feature.about.component.AboutHeroWaveShape
 import io.github.droidkaigi.confsched.feature.about.component.AboutNavigationRow
+import io.github.droidkaigi.confsched.feature.about.component.AboutRowDivider
 import io.github.droidkaigi.confsched.feature.about.component.AboutSectionHeader
+import io.github.droidkaigi.confsched.feature.about.component.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_android_trademark
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_description
@@ -53,34 +57,31 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.about_so
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_x
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_youtube
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_venue
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_version_format
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_view_map
 import io.github.droidkaigi.confsched.feature.about.generated.resources.code_of_conduct
 import io.github.droidkaigi.confsched.feature.about.generated.resources.contributors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.credits
 import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu
-import io.github.droidkaigi.confsched.feature.about.generated.resources.debug_menu_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_about_credits
 import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_about_others
 import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_medium
 import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_x
 import io.github.droidkaigi.confsched.feature.about.generated.resources.ic_social_youtube
 import io.github.droidkaigi.confsched.feature.about.generated.resources.img_about_footer_character
-import io.github.droidkaigi.confsched.feature.about.generated.resources.img_about_hero_stage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
-import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses_description
 import io.github.droidkaigi.confsched.feature.about.generated.resources.others
 import io.github.droidkaigi.confsched.feature.about.generated.resources.privacy_policy
 import io.github.droidkaigi.confsched.feature.about.generated.resources.settings
 import io.github.droidkaigi.confsched.feature.about.generated.resources.sponsors
 import io.github.droidkaigi.confsched.feature.about.generated.resources.staff
-import io.github.droidkaigi.confsched.feature.about.generated.resources.version
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun AboutScreen(
     uiState: AboutScreenUiState,
-    onOpenEventMap: () -> Unit,
+    onOpenVenueWithMap: () -> Unit,
     onOpenSponsors: () -> Unit,
     onOpenContributors: () -> Unit,
     onOpenStaff: () -> Unit,
@@ -105,19 +106,26 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            // The hero illustration sits on a band that shares the top bar's colour, so the two read
-            // as one surface. Its bottom scallops into the content below; the extra bottom padding is
-            // the room the wave occupies. The character stage is fixed at 331dp and stays centred.
+            // The hero is a stage: a batten hangs just under the top bar and the mascots stand on the
+            // hand-drawn lower edge. The band and its artwork are coloured from the primary role so the
+            // whole scene follows the theme.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(AboutHeroWaveShape(amplitude = 12.dp, wavelength = 104.dp))
-                    .background(MaterialTheme.colorScheme.inverseSurface)
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(top = 12.dp, bottom = 36.dp),
                 contentAlignment = Alignment.Center,
             ) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                )
                 Image(
-                    painter = painterResource(Res.drawable.img_about_hero_stage),
+                    imageVector = rememberAboutHeroStage(),
                     contentDescription = stringResource(Res.string.about_logo_description),
                     modifier = Modifier.fillMaxWidth().widthIn(max = 331.dp),
                 )
@@ -125,81 +133,75 @@ fun AboutScreen(
             Text(
                 text = stringResource(Res.string.about_description),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 44.dp, vertical = 16.dp),
             )
             AboutEventCard(
                 date = stringResource(Res.string.about_event_date),
                 venue = stringResource(Res.string.about_venue),
                 viewMapLabel = stringResource(Res.string.about_view_map),
-                onViewMap = onOpenEventMap,
-                modifier = Modifier.padding(all = 16.dp),
+                onViewMap = onOpenVenueWithMap,
+                modifier = Modifier.padding(horizontal = 44.dp),
             )
 
             AboutSectionHeader(
                 title = stringResource(Res.string.credits),
                 icon = Res.drawable.ic_about_credits,
             )
-            HorizontalDivider()
             AboutNavigationRow(
                 stringResource(Res.string.contributors),
                 leadingIcon = KaigiIcons.Default.Groups,
                 onClick = onOpenContributors,
             )
-            HorizontalDivider()
+            AboutRowDivider(seed = 1)
             AboutNavigationRow(
                 stringResource(Res.string.staff),
                 leadingIcon = KaigiIcons.Default.Person,
                 onClick = onOpenStaff,
             )
-            HorizontalDivider()
+            AboutRowDivider(seed = 2)
             AboutNavigationRow(
                 stringResource(Res.string.sponsors),
                 leadingIcon = KaigiIcons.Default.Award,
                 onClick = onOpenSponsors,
             )
-            HorizontalDivider()
 
             AboutSectionHeader(
                 title = stringResource(Res.string.others),
                 icon = Res.drawable.ic_about_others,
             )
-            HorizontalDivider()
             AboutNavigationRow(
                 stringResource(Res.string.code_of_conduct),
                 leadingIcon = KaigiIcons.Default.Gavel,
                 onClick = onOpenCodeOfConduct,
             )
-            HorizontalDivider()
+            AboutRowDivider(seed = 3)
             AboutNavigationRow(
                 stringResource(Res.string.licenses),
                 leadingIcon = KaigiIcons.Default.Description,
                 onClick = onOpenLicenses,
-                supporting = stringResource(Res.string.licenses_description),
             )
-            HorizontalDivider()
+            AboutRowDivider(seed = 4)
             AboutNavigationRow(
                 stringResource(Res.string.privacy_policy),
                 leadingIcon = KaigiIcons.Default.PrivacyTip,
                 onClick = onOpenPrivacyPolicy,
             )
-            HorizontalDivider()
+            AboutRowDivider(seed = 5)
             AboutNavigationRow(
                 stringResource(Res.string.settings),
                 leadingIcon = KaigiIcons.Default.Settings,
                 onClick = onOpenSettings,
             )
-            HorizontalDivider()
             if (isDebugMenuAvailable) {
+                AboutRowDivider(seed = 6)
                 AboutNavigationRow(
                     stringResource(Res.string.debug_menu),
                     leadingIcon = KaigiIcons.Default.Build,
                     onClick = onOpenDebug,
-                    supporting = stringResource(Res.string.debug_menu_description),
                 )
-                HorizontalDivider()
             }
 
-            Box(modifier = Modifier.fillMaxWidth().padding(top = 32.dp, bottom = 8.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 32.dp)) {
                 Row(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -221,9 +223,10 @@ fun AboutScreen(
                         modifier = Modifier.size(48.dp).clickable(onClick = onOpenMedium),
                     )
                 }
-                Image(
+                Icon(
                     painter = painterResource(Res.drawable.img_about_footer_character),
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 24.dp)
@@ -231,21 +234,25 @@ fun AboutScreen(
                 )
             }
             Text(
-                text = "${stringResource(Res.string.version)} ${uiState.versionName}",
+                text = stringResource(Res.string.about_version_format, uiState.versionName),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
             )
             Text(
                 text = stringResource(Res.string.about_android_trademark),
-                style = MaterialTheme.typography.labelSmall,
+                // The trademark notice is fixed legal fine print set in Courier Prime, the display role's face.
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontFamily = MaterialTheme.typography.displaySmall.fontFamily,
+                    fontSize = 9.sp,
+                ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .padding(top = 12.dp, bottom = 24.dp + navigationBarHeight),
+                    .padding(top = 24.dp, bottom = 24.dp + navigationBarHeight),
             )
         }
     }
@@ -258,8 +265,8 @@ private fun AboutScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
-            onOpenEventMap = {},
+            uiState = AboutScreenUiState(title = "About DroidKaigi", versionName = "1.0.0"),
+            onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},
@@ -283,8 +290,8 @@ private fun AboutScreenWithoutDebugMenuPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(title = "About DroidKaigi 2026", versionName = "1.0.0"),
-            onOpenEventMap = {},
+            uiState = AboutScreenUiState(title = "About DroidKaigi", versionName = "1.0.0"),
+            onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
             onOpenStaff = {},

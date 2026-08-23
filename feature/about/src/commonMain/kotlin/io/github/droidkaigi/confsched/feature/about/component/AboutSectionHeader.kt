@@ -39,14 +39,14 @@ internal fun AboutSectionHeader(
                 // The mark is hand-drawn line art, so it is tinted to track the header text colour.
                 painter = painterResource(icon),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(width = 39.dp, height = 36.dp),
             )
         }
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

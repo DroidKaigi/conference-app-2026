@@ -6,7 +6,7 @@ import io.github.droidkaigi.confsched.core.common.context
 @Composable
 context(screenContext: AboutScreenContext)
 fun AboutScreenRoot(
-    onNavigateToEventMap: () -> Unit,
+    onOpenVenueWithMap: () -> Unit,
     onNavigateToSponsors: () -> Unit,
     onNavigateToContributors: () -> Unit,
     onNavigateToStaff: () -> Unit,
@@ -25,7 +25,7 @@ fun AboutScreenRoot(
     }
     AboutScreen(
         uiState = uiState,
-        onOpenEventMap = onNavigateToEventMap,
+        onOpenVenueWithMap = onOpenVenueWithMap,
         onOpenSponsors = onNavigateToSponsors,
         onOpenContributors = onNavigateToContributors,
         onOpenStaff = onNavigateToStaff,

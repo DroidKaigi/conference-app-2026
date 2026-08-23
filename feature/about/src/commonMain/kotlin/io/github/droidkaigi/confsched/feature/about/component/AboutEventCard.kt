@@ -1,20 +1,19 @@
 package io.github.droidkaigi.confsched.feature.about.component
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -24,6 +23,9 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
+import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_event_date
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_venue
@@ -38,39 +40,60 @@ internal fun AboutEventCard(
     onViewMap: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        onClick = onViewMap,
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    val shape = SketchRoundRectShape(
+        seed = combineSketchSeed(EVENT_CARD_SEED),
+        cornerRadius = 20.dp,
+        borderThickness = 2.dp,
+    )
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .clickable(onClick = onViewMap)
+            .sketchBorder(shape, MaterialTheme.colorScheme.outline)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(imageVector = KaigiIcons.Default.Schedule, contentDescription = null)
-                Text(text = date, style = MaterialTheme.typography.bodyLarge)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Icon(imageVector = KaigiIcons.Default.LocationOn, contentDescription = null)
-                Column {
-                    Text(text = venue, style = MaterialTheme.typography.bodyLarge)
-                    Text(
-                        text = viewMapLabel,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+            Icon(
+                imageVector = KaigiIcons.Default.Schedule,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+            Text(
+                text = date,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(
+                imageVector = KaigiIcons.Default.LocationOn,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+            Column {
+                Text(
+                    text = venue,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                    text = viewMapLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
             }
         }
     }
 }
+
+private const val EVENT_CARD_SEED = 8201
 
 @LocalePreviews
 @Composable
