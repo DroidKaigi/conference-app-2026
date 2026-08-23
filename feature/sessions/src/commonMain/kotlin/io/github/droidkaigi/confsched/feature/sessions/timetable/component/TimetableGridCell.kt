@@ -37,8 +37,8 @@ import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiAvatar
@@ -63,7 +63,7 @@ internal fun TimetableGridCell(
     val theme = roomTheme(room)
     val shape = RoundedCornerShape(8.dp)
     val bucket = timetableGridBlockBucket(startsAt = startsAt, endsAt = endsAt)
-    val detailColor = theme.onContainer.copy(alpha = TimetableGridCellDetailAlpha)
+    val detailColor = theme.onContainer.copy(alpha = DETAIL_TEXT_ALPHA)
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -192,13 +192,12 @@ private fun CellDetail(text: String, color: Color, modifier: Modifier = Modifier
     )
 }
 
-private const val TimetableGridCellDetailAlpha = 0.7f
+private const val DETAIL_TEXT_ALPHA = 0.7f
 
 private const val SPEAKER_FACE_CORNER_PERCENT = 34
 private val SpeakerFaceSize = 16.dp
 private val SpeakerFaceOutline = 0.3.dp
 private val SpeakerFaceFeature = 0.9.dp
-
 
 private fun fakePreviewSpeaker(name: String) = TimetableSpeaker(
     id = TimetableSpeakerId(name),
