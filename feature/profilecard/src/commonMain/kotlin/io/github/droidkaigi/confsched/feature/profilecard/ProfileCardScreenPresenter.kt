@@ -22,7 +22,7 @@ fun profileCardScreenPresenter(
             is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation)
             is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link)
             is ProfileCardScreenAction.UpdateMascot -> form = form.copy(mascot = action.mascot)
-            is ProfileCardScreenAction.UpdateSketchIntensity -> form = form.copy(sketchIntensity = action.sketchIntensity)
+            is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
             ProfileCardScreenAction.AddAvatarImage -> form = form.copy(hasAvatarImage = true)
             ProfileCardScreenAction.Submit -> isSubmitted = true
         }
@@ -34,7 +34,7 @@ fun profileCardScreenPresenter(
             occupation = form.occupation,
             link = form.link,
             mascot = form.mascot,
-            sketchIntensity = form.sketchIntensity,
+            sketchiness = form.sketchiness,
             hasAvatarImage = form.hasAvatarImage,
         )
     } else {

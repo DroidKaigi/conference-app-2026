@@ -47,7 +47,7 @@ fun ProfileCardFormView(
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
     onMascotSelected: (Mascot) -> Unit,
-    onSketchIntensitySelected: (SketchIntensity) -> Unit,
+    onSketchinessSelected: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,7 +95,7 @@ fun ProfileCardFormView(
         Text(stringResource(Res.string.mascot_label), style = MaterialTheme.typography.labelLarge)
         MascotPicker(selected = uiState.mascot, onMascotSelected = onMascotSelected)
         Text(stringResource(Res.string.sketchiness_label), style = MaterialTheme.typography.labelLarge)
-        SketchIntensityPicker(selected = uiState.sketchIntensity, onSketchIntensitySelected = onSketchIntensitySelected)
+        SketchinessPicker(selected = uiState.sketchiness, onSketchinessSelected = onSketchinessSelected)
         KaigiButton(
             onClick = onSubmitClick,
             seed = ProfileCardFormViewDefaults.submitButtonSeed,
@@ -123,7 +123,7 @@ private fun ProfileCardFormViewPreview(
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
-            onSketchIntensitySelected = {},
+            onSketchinessSelected = {},
             onAddImageClick = {},
             onSubmitClick = {},
         )

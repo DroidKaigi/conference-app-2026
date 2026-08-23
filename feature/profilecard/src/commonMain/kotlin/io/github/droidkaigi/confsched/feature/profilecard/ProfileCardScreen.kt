@@ -14,7 +14,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
-import io.github.droidkaigi.confsched.feature.profilecard.component.SketchIntensity
+import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
 
 @Composable
 fun ProfileCardScreen(
@@ -23,7 +23,7 @@ fun ProfileCardScreen(
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
     onMascotSelected: (Mascot) -> Unit,
-    onSketchIntensitySelected: (SketchIntensity) -> Unit,
+    onSketchinessSelected: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
 ) {
@@ -34,7 +34,7 @@ fun ProfileCardScreen(
             onOccupationChange = onOccupationChange,
             onLinkChange = onLinkChange,
             onMascotSelected = onMascotSelected,
-            onSketchIntensitySelected = onSketchIntensitySelected,
+            onSketchinessSelected = onSketchinessSelected,
             onAddImageClick = onAddImageClick,
             onSubmitClick = onSubmitClick,
         )
@@ -60,7 +60,7 @@ private fun ProfileCardScreenFormPreview(
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
-            onSketchIntensitySelected = {},
+            onSketchinessSelected = {},
             onAddImageClick = {},
             onSubmitClick = {},
         )
@@ -79,14 +79,14 @@ private fun ProfileCardScreenCardPreview(
                 occupation = "Software Engineer",
                 link = "https://example.com",
                 mascot = Mascot.Koala,
-                sketchIntensity = SketchIntensity.Normal,
+                sketchiness = Sketchiness.Normal,
                 hasAvatarImage = false,
             ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
             onMascotSelected = {},
-            onSketchIntensitySelected = {},
+            onSketchinessSelected = {},
             onAddImageClick = {},
             onSubmitClick = {},
         )

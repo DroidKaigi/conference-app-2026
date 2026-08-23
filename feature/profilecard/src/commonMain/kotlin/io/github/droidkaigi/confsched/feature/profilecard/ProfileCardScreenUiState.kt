@@ -1,7 +1,7 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
-import io.github.droidkaigi.confsched.feature.profilecard.component.SketchIntensity
+import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
 
 sealed interface ProfileCardScreenUiState {
     data class Form(
@@ -9,7 +9,7 @@ sealed interface ProfileCardScreenUiState {
         val occupation: String = "",
         val link: String = "",
         val mascot: Mascot = Mascot.Koala,
-        val sketchIntensity: SketchIntensity = SketchIntensity.Normal,
+        val sketchiness: Sketchiness = Sketchiness.Normal,
         val hasAvatarImage: Boolean = false,
     ) : ProfileCardScreenUiState
 
@@ -18,7 +18,7 @@ sealed interface ProfileCardScreenUiState {
         val occupation: String,
         val link: String,
         val mascot: Mascot,
-        val sketchIntensity: SketchIntensity,
+        val sketchiness: Sketchiness,
         val hasAvatarImage: Boolean,
     ) : ProfileCardScreenUiState
 }
