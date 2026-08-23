@@ -1,8 +1,6 @@
 package io.github.droidkaigi.confsched.feature.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
@@ -18,20 +16,23 @@ fun settingsScreenPresenter(
 ): SettingsScreenUiState {
     val appearanceMutation = rememberMutation(presenterContext.appearanceSettingsMutationKey)
 
-    // Each option writes the whole record, so the effect has to see the settings of the
-    // composition it fires in rather than the ones it was launched with.
-    val currentSettings by rememberUpdatedState(appearanceSettings)
-
     ActionEffect(screenChannel) { action ->
-        val updated = when (action) {
-            is SettingsScreenAction.SelectFont -> currentSettings.copy(fontFamily = action.fontFamily)
+        when (action) {
+            is SettingsScreenAction.SelectFont -> {
+                val newSettings = appearanceSettings.copy(fontFamily = action.fontFamily)
+                appearanceMutation.mutateAsync(newSettings)
+            }
 
-            is SettingsScreenAction.SelectSketchStrength ->
-                currentSettings.copy(sketchStrength = action.sketchStrength)
+            is SettingsScreenAction.SelectSketchStrength -> {
+                val newSettings = appearanceSettings.copy(sketchStrength = action.sketchStrength)
+                appearanceMutation.mutateAsync(newSettings)
+            }
 
-            is SettingsScreenAction.SelectColorScheme -> currentSettings.copy(colorSchemeSetting = action.colorSchemeSetting)
+            is SettingsScreenAction.SelectColorScheme -> {
+               val newSettings =  appearanceSettings.copy(colorSchemeSetting = action.colorSchemeSetting)
+                appearanceMutation.mutateAsync(newSettings)
+            }
         }
-        appearanceMutation.mutateAsync(updated)
     }
 
     MutationErrorEffect(appearanceMutation) { error ->

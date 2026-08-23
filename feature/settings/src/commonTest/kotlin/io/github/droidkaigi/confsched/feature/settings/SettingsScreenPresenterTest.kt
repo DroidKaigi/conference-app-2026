@@ -1,5 +1,8 @@
 package io.github.droidkaigi.confsched.feature.settings
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.model.AppearanceSettings
 import io.github.droidkaigi.confsched.core.model.ColorSchemeSetting
@@ -55,6 +58,32 @@ class SettingsScreenPresenterTest {
                 AppearanceSettings.Default.copy(
                     fontFamily = KaigiFontFamily.NotoSans,
                     sketchStrength = SketchStrength.Subtle,
+                ),
+                graph.appearanceSettingsMutationKey.invocations.receive(),
+            )
+        }
+    }
+
+    @Test
+    fun picking_an_option_writes_the_settings_that_arrived_after_the_screen_opened() {
+        var stored by mutableStateOf(AppearanceSettings.Default)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                settingsScreenPresenter(
+                    screenChannel = channel,
+                    appearanceSettings = stored,
+                )
+            },
+        ) {
+            uiStates.awaitItem()
+            stored = AppearanceSettings.Default.copy(sketchStrength = SketchStrength.Playful)
+            assertEquals(SketchStrength.Playful, uiStates.awaitItem().sketchStrength)
+            send(SettingsScreenAction.SelectFont(KaigiFontFamily.NotoSans))
+            assertEquals(
+                AppearanceSettings.Default.copy(
+                    fontFamily = KaigiFontFamily.NotoSans,
+                    sketchStrength = SketchStrength.Playful,
                 ),
                 graph.appearanceSettingsMutationKey.invocations.receive(),
             )
