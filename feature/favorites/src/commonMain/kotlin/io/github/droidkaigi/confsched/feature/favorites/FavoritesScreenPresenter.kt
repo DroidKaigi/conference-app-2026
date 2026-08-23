@@ -28,7 +28,7 @@ fun favoritesScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is FavoritesScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+            is FavoritesScreenAction.ToggleBookmark -> favoriteMutation.mutateAsync(action.id)
             is FavoritesScreenAction.SelectDayFilter -> selectedDayFilter = action.day
         }
     }

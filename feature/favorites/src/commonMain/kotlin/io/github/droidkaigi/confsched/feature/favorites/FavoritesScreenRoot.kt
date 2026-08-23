@@ -38,7 +38,7 @@ fun FavoritesScreenRoot(
 
         FavoritesScreen(
             uiState = uiState,
-            onBookmarkClick = { screenChannel.send(FavoritesScreenAction.Bookmark(it)) },
+            onBookmarkClick = { screenChannel.send(FavoritesScreenAction.ToggleBookmark(it)) },
             onDayFilterClick = { screenChannel.send(FavoritesScreenAction.SelectDayFilter(it)) },
             onItemClick = onNavigateToDetail,
         )

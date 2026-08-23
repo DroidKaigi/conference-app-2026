@@ -19,7 +19,7 @@ fun timetableItemDetailScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is TimetableItemDetailScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+            is TimetableItemDetailScreenAction.ToggleBookmark -> favoriteMutation.mutateAsync(action.id)
         }
     }
 

@@ -39,7 +39,7 @@ fun TimetableScreenRoot(
 
         TimetableScreen(
             uiState = uiState,
-            onBookmarkClick = { screenChannel.send(TimetableScreenAction.Bookmark(it)) },
+            onBookmarkClick = { screenChannel.send(TimetableScreenAction.ToggleBookmark(it)) },
             onDayClick = { screenChannel.send(TimetableScreenAction.SelectDay(it)) },
             onItemClick = onNavigateToDetail,
             onSearchClick = onNavigateToSearch,

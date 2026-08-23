@@ -28,7 +28,7 @@ fun timetableScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is TimetableScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+            is TimetableScreenAction.ToggleBookmark -> favoriteMutation.mutateAsync(action.id)
 
             is TimetableScreenAction.SelectDay -> selectedDay = action.day
 

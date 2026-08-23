@@ -126,7 +126,7 @@ class FavoritesScreenPresenterTest {
         ) {
             uiStates.awaitItem()
 
-            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
+            send(FavoritesScreenAction.ToggleBookmark(TimetableItemId("d1a")))
             assertEquals(TimetableItemId("d1a"), graph.favoriteMutationKey.invocations.receive())
         }
     }
@@ -139,7 +139,7 @@ class FavoritesScreenPresenterTest {
             presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
         ) {
             uiStates.awaitItem()
-            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
+            send(FavoritesScreenAction.ToggleBookmark(TimetableItemId("d1a")))
 
             val result = results.awaitItem()
             assertIs<FavoritesScreenActionResult.ShowMessage>(result)

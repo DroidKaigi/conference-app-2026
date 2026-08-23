@@ -96,7 +96,7 @@ class TimetableScreenPresenterTest {
             assertEquals(DroidKaigi2026Day.Day2, onDay2.day)
             assertEquals(listOf("d2a"), onDay2.timetableListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
 
-            send(TimetableScreenAction.Bookmark(TimetableItemId("d2a")))
+            send(TimetableScreenAction.ToggleBookmark(TimetableItemId("d2a")))
             assertEquals(TimetableItemId("d2a"), graph.favoriteMutationKey.invocations.receive())
         }
     }
@@ -175,7 +175,7 @@ class TimetableScreenPresenterTest {
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
         ) {
             uiStates.awaitItem()
-            send(TimetableScreenAction.Bookmark(TimetableItemId("d1a")))
+            send(TimetableScreenAction.ToggleBookmark(TimetableItemId("d1a")))
 
             val result = results.awaitItem()
             assertIs<TimetableScreenActionResult.ShowMessage>(result)
