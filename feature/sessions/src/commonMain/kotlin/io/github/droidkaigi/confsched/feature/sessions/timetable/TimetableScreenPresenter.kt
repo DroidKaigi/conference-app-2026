@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -23,6 +24,7 @@ fun timetableScreenPresenter(
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
+    val currentTime = presenterContext.clock.rememberCurrentTime()
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -43,7 +45,7 @@ fun timetableScreenPresenter(
     return TimetableScreenUiState(
         day = selectedDay,
         timetableListSection = TimetableListSectionUiState(
-            timeSlots = timetable.itemsOn(selectedDay).toTimeSlots(),
+            timeSlots = timetable.itemsOn(selectedDay).toTimeSlots(currentTime),
             bookmarks = timetable.bookmarks,
         ),
     )

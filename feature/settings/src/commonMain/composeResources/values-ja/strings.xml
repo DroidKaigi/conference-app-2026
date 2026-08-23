@@ -1,0 +1,18 @@
+<resources>
+    <string name="settings_title">設定</string>
+    <string name="font">フォント</string>
+    <string name="font_default">デフォルト</string>
+    <string name="font_courier_prime">Courier Prime</string>
+    <string name="font_noto_sans">Noto Sans</string>
+    <string name="hand_drawn_strength">手書きの強さ</string>
+    <string name="hand_drawn_strength_subtle">ひかえめ</string>
+    <string name="hand_drawn_strength_normal">ふつう</string>
+    <string name="hand_drawn_strength_playful">のびのび</string>
+    <string name="theme">テーマ</string>
+    <string name="theme_random">ランダム\n起動ごと</string>
+    <string name="theme_morning_mist">モーニングミスト</string>
+    <string name="theme_deep_teal">ディープティール</string>
+    <string name="theme_campfire_night">キャンプファイアナイト</string>
+    <string name="theme_terracotta">テラコッタ</string>
+    <string name="theme_sakura_plum">サクラプラム</string>
+</resources>

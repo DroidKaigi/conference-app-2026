@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.SketchDefaults
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
@@ -21,7 +22,13 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 @Composable
 internal fun SketchCard(
     modifier: Modifier = Modifier,
-    shape: SketchRoundRectShape = SketchRoundRectShape(seed = 40, cornerRadius = 16.dp, borderThickness = 2.dp),
+    shape: SketchRoundRectShape = SketchRoundRectShape(
+        seed = 40,
+        roughness = SketchDefaults.roughness,
+        tremor = SketchDefaults.tremor,
+        cornerRadius = 16.dp,
+        borderThickness = 2.dp,
+    ),
     borderColor: Color = MaterialTheme.colorScheme.outlineVariant,
     color: Color = MaterialTheme.colorScheme.surfaceContainerLow,
     content: @Composable (() -> Unit) = {},

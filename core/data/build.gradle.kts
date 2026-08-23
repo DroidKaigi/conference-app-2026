@@ -38,6 +38,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktorClientCio)
         }
+        jvmTest.dependencies {
+            implementation(libs.kotlinxCoroutinesTest)
+        }
         androidMain.dependencies {
             implementation(libs.ktorClientOkhttp)
         }

@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -72,8 +73,8 @@ fun KaigiChip(
 object KaigiChipDefaults {
     val cornerRadius = 8.dp
     val borderThickness = 1.dp
-    val roughness = 0.3.dp
-    val tremor = 0.1.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.3.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.1.dp)
 
     val labelStyle
         @Composable get() = MaterialTheme.typography.labelSmall

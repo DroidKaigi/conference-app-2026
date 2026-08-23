@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -32,6 +34,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
+import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
 import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_meerkat
 import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_narwhal
@@ -45,7 +48,8 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * One session, outlined by hand: the room and language it runs in, its title, and who gives
  * it, with the bookmark tinted in the room's color. A saved session also carries the room's
- * mascot, which marks the card as saved at a glance.
+ * mascot, which marks the card as saved at a glance, and a cancelled one leads with a banner
+ * saying so and strikes its title through.
  */
 @Composable
 fun TimetableItemCard(
@@ -54,6 +58,7 @@ fun TimetableItemCard(
     speaker: String,
     language: Language,
     isFavorite: Boolean,
+    isCancelled: Boolean,
     seed: Int,
     onBookmarkClick: () -> Unit,
     onClick: () -> Unit,
@@ -62,6 +67,8 @@ fun TimetableItemCard(
     val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
         seed = combinedSeed,
+        roughness = SketchDefaults.roughness,
+        tremor = SketchDefaults.tremor,
         cornerRadius = TimetableItemCardDefaults.cornerRadius,
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
@@ -78,6 +85,7 @@ fun TimetableItemCard(
             room = room,
             speaker = speaker,
             language = language,
+            isCancelled = isCancelled,
             seed = seed,
             modifier = Modifier.clickable(onClick = onClick),
         )
@@ -115,6 +123,7 @@ private fun CardBody(
     room: Room,
     speaker: String,
     language: Language,
+    isCancelled: Boolean,
     seed: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -122,16 +131,34 @@ private fun CardBody(
         modifier = modifier.fillMaxWidth().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        if (isCancelled) {
+            CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
+        }
         ChipRow(room = room, language = language, seed = seed)
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = if (isCancelled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+            textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
         )
         if (speaker.isNotEmpty()) {
             SpeakerRow(speaker = speaker, seed = seed)
         }
     }
+}
+
+@Composable
+private fun CancelledBanner(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(Res.string.cancelled_session),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.inverseOnSurface,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(TimetableItemCardDefaults.cancelledBannerCornerRadius))
+            .background(MaterialTheme.colorScheme.inverseSurface)
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+    )
 }
 
 @Composable
@@ -196,6 +223,10 @@ private object TimetableItemCardDefaults {
     val favoriteSize = 24.dp
     val favoritePadding = 12.dp
     val avatarSize = 24.dp
+    val cancelledBannerCornerRadius = 6.dp
+
+    /** Keeps the banner clear of the bookmark, which the card draws over the same corner. */
+    val cancelledBannerEndInset = 32.dp
 
     /** Bottom-end inset of the mascot, taken from the design's mascot slot. */
     val mascotPadding = PaddingValues(end = 12.dp, bottom = 8.dp)
@@ -226,6 +257,7 @@ private fun TimetableItemCardSamples() {
             speaker = "",
             language = Language.MIXED,
             isFavorite = true,
+            isCancelled = false,
             seed = 100,
             onBookmarkClick = {},
             onClick = {},
@@ -236,6 +268,7 @@ private fun TimetableItemCardSamples() {
             speaker = "Speaker B",
             language = Language.ENGLISH,
             isFavorite = false,
+            isCancelled = true,
             seed = 200,
             onBookmarkClick = {},
             onClick = {},
@@ -246,6 +279,7 @@ private fun TimetableItemCardSamples() {
             speaker = "Speaker C",
             language = Language.ENGLISH,
             isFavorite = true,
+            isCancelled = false,
             seed = 300,
             onBookmarkClick = {},
             onClick = {},

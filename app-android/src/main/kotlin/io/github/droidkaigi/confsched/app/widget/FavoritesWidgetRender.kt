@@ -35,7 +35,7 @@ internal fun favoritesWidgetRenders(
 internal fun WidgetDependencies.favoritesWidgetRenders(): Flow<FavoritesWidgetRender> =
     favoritesWidgetRenders(
         favoriteIds = favoritesStore.favoriteIds(),
-        colorSchemes = themeStore.colorScheme(),
+        colorSchemes = appearanceSettingsStore.colorScheme(),
         readTimetable = persistedTimetableReader::read,
         now = kaigiClock::now,
     )

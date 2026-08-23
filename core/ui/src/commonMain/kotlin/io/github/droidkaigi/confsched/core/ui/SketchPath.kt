@@ -130,17 +130,40 @@ internal fun Density.sketchVerticalWavyLinePath(
     noiseAmount: Float,
     seed: Int,
 ): Path {
-    val reach = amplitude.toPx()
     val pitch = wavelength.toPx()
     val steps = max(2, (height / pitch * POINTS_PER_WAVE).roundToInt())
     val ys = FloatArray(steps + 1) { height * it / steps }
     val xs = FloatArray(steps + 1) { index ->
-        val turns = ys[index] / pitch
-        val swell = 1f + coherentNoise(seed, ys[index], pitch) * noiseAmount
-        centerX + sin(turns * TWO_PI) * reach * swell
+        sketchVerticalWavyLineXAt(
+            y = ys[index],
+            centerX = centerX,
+            amplitude = amplitude,
+            wavelength = wavelength,
+            noiseAmount = noiseAmount,
+            seed = seed,
+        )
     }
 
     return openCurveThrough(xs, ys, WAVY_TANGENT_CLAMP)
+}
+
+/**
+ * Returns the exact x-coordinate of the wavy line at [y], using the same logic as
+ * [sketchVerticalWavyLinePath].
+ */
+internal fun Density.sketchVerticalWavyLineXAt(
+    y: Float,
+    centerX: Float,
+    amplitude: Dp,
+    wavelength: Dp,
+    noiseAmount: Float,
+    seed: Int,
+): Float {
+    val reach = amplitude.toPx()
+    val pitch = wavelength.toPx()
+    val turns = y / pitch
+    val swell = 1f + coherentNoise(seed, y, pitch) * noiseAmount
+    return centerX + sin(turns * TWO_PI) * reach * swell
 }
 
 /**

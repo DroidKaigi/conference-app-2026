@@ -122,8 +122,8 @@ object KaigiAvatarDefaults {
     val shape = RoundedCornerShape(percent = (CORNER_RADIUS_RATIO * 100).toInt())
 
     val borderThickness = 1.5.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
     val initialsStyle
         @Composable get() = MaterialTheme.typography.titleMedium

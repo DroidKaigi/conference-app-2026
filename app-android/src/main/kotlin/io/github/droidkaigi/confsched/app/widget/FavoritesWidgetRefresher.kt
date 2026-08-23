@@ -17,7 +17,7 @@ fun startFavoritesWidgetRefresh(context: Context, scope: CoroutineScope) {
     scope.launch {
         merge(
             dependencies.favoritesStore.favoriteIds().drop(1).map {},
-            dependencies.themeStore.colorScheme().drop(1).map {},
+            dependencies.appearanceSettingsStore.colorScheme().drop(1).map {},
         ).collect {
             FavoritesWidget().updateAll(context)
         }
