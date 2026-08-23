@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
+import kotlin.time.Instant
 
 @Serializable
 @JvmInline
@@ -20,6 +21,8 @@ data class TimetableItem(
     val day: DroidKaigi2026Day,
     val startsAt: String,
     val endsAt: String,
+    val startsAtInstant: Instant,
+    val endsAtInstant: Instant,
 ) {
     companion object
 }

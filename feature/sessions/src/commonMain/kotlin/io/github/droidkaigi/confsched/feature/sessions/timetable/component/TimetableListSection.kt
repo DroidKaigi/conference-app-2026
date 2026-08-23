@@ -82,6 +82,7 @@ private fun SessionRow(
         TimetableTimeRange(
             startsAt = slot.startsAt,
             endsAt = slot.endsAt,
+            timeRangeState = slot.timeRangeState,
             seed = slot.startsAt.hashCode(),
             modifier = Modifier.graphicsLayer {
                 translationY = timeRangeTranslationY(size.height)

@@ -14,6 +14,7 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.time.Instant
 
 class FavoritesScreenPresenterTest {
 
@@ -21,10 +22,54 @@ class FavoritesScreenPresenterTest {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            TimetableItem(TimetableItemId("d1a"), MultiLangText(ja = "Day1 A", en = "Day1 A"), Room.NARWHAL, "Sp1", Language.MIXED, DroidKaigi2026Day.Day1, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d1b"), MultiLangText(ja = "Day1 B", en = "Day1 B"), Room.OTTER, "Sp2", Language.MIXED, DroidKaigi2026Day.Day1, "11:00", "11:40"),
-            TimetableItem(TimetableItemId("d2a"), MultiLangText(ja = "Day2 A", en = "Day2 A"), Room.NARWHAL, "Sp3", Language.MIXED, DroidKaigi2026Day.Day2, "10:00", "10:40"),
-            TimetableItem(TimetableItemId("d2b"), MultiLangText(ja = "Day2 B", en = "Day2 B"), Room.OTTER, "Sp4", Language.MIXED, DroidKaigi2026Day.Day2, "11:00", "11:40"),
+            TimetableItem(
+                id = TimetableItemId("d1a"),
+                title = MultiLangText(ja = "Day1 A", en = "Day1 A"),
+                room = Room.NARWHAL,
+                speaker = "Sp1",
+                language = Language.MIXED,
+                day = DroidKaigi2026Day.Day1,
+                startsAt = "10:00",
+                endsAt = "10:40",
+                startsAtInstant = Instant.parse("2026-09-02T10:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-02T10:40:00Z"),
+            ),
+            TimetableItem(
+                id = TimetableItemId("d1b"),
+                title = MultiLangText(ja = "Day1 B", en = "Day1 B"),
+                room = Room.OTTER,
+                speaker = "Sp2",
+                language = Language.MIXED,
+                day = DroidKaigi2026Day.Day1,
+                startsAt = "11:00",
+                endsAt = "11:40",
+                startsAtInstant = Instant.parse("2026-09-02T11:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-02T11:40:00Z"),
+            ),
+            TimetableItem(
+                id = TimetableItemId("d2a"),
+                title = MultiLangText(ja = "Day2 A", en = "Day2 A"),
+                room = Room.NARWHAL,
+                speaker = "Sp3",
+                language = Language.MIXED,
+                day = DroidKaigi2026Day.Day2,
+                startsAt = "10:00",
+                endsAt = "10:40",
+                startsAtInstant = Instant.parse("2026-09-03T10:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-03T10:40:00Z"),
+            ),
+            TimetableItem(
+                id = TimetableItemId("d2b"),
+                title = MultiLangText(ja = "Day2 B", en = "Day2 B"),
+                room = Room.OTTER,
+                speaker = "Sp4",
+                language = Language.MIXED,
+                day = DroidKaigi2026Day.Day2,
+                startsAt = "11:00",
+                endsAt = "11:40",
+                startsAtInstant = Instant.parse("2026-09-03T11:00:00Z"),
+                endsAtInstant = Instant.parse("2026-09-03T11:40:00Z"),
+            ),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a"), TimetableItemId("d2a"), TimetableItemId("d2b")),
     )
@@ -37,6 +82,7 @@ class FavoritesScreenPresenterTest {
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(null, initial.selectedDayFilter)
+            assertEquals(true, initial.favoritesListSection.dayHeadersVisible)
 
             val slots = initial.favoritesListSection.timeSlots
             assertEquals(
@@ -64,6 +110,7 @@ class FavoritesScreenPresenterTest {
             send(FavoritesScreenAction.SelectDayFilter(DroidKaigi2026Day.Day2))
             val onDay2 = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day2, onDay2.selectedDayFilter)
+            assertEquals(false, onDay2.favoritesListSection.dayHeadersVisible)
             assertEquals(
                 listOf("d2a", "d2b"),
                 onDay2.favoritesListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } },

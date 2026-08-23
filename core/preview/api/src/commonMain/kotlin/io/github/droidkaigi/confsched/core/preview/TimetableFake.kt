@@ -79,13 +79,23 @@ private fun fakeItem(
     day: DroidKaigi2026Day,
     startsAt: String,
     endsAt: String,
-) = TimetableItem(
-    id = TimetableItemId(id),
-    title = title,
-    room = room,
-    speaker = speaker,
-    language = language,
-    day = day,
-    startsAt = startsAt,
-    endsAt = endsAt,
-)
+): TimetableItem {
+    // Fake items take HH:mm strings; derive Instants via day.at to avoid full ISO-8601 timestamps.
+    val startHour = startsAt.substringBefore(':').toInt()
+    val startMinute = startsAt.substringAfter(':').toInt()
+    val endHour = endsAt.substringBefore(':').toInt()
+    val endMinute = endsAt.substringAfter(':').toInt()
+
+    return TimetableItem(
+        id = TimetableItemId(id),
+        title = title,
+        room = room,
+        speaker = speaker,
+        language = language,
+        day = day,
+        startsAt = startsAt,
+        endsAt = endsAt,
+        startsAtInstant = day.at(hour = startHour, minute = startMinute),
+        endsAtInstant = day.at(hour = endHour, minute = endMinute),
+    )
+}

@@ -18,8 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Projects
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
+import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
@@ -73,15 +75,19 @@ fun EventMapScreen(
                     onLearnMoreClick = { /*TODO*/ },
                 )
             }
-            itemsIndexed(uiState.eventMapItems) { index, event ->
+            itemsIndexed(uiState.projects) { index, project ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     EventItem(
-                        event = event,
+                        title = project.title,
+                        i18nDesc = project.description,
+                        room = project.room,
+                        message = project.message,
+                        moreDetailsUrl = project.moreDetailsUrl,
                         seed = index,
                     )
-                    if (event != uiState.eventMapItems.last()) {
+                    if (index != uiState.projects.lastIndex) {
                         SketchHorizontalDivider(
                             seed = index + 100,
                             thickness = 1.3.dp,
@@ -106,7 +112,7 @@ private fun EventMapScreenPreview(
         EventMapScreen(
             uiState = EventMapScreenUiState(
                 selectedFloor = selectedFloor,
-                eventMapItems = EventMapScreenUiState.mock(selectedFloor),
+                projects = Projects.fake().items,
             ),
             onFloorClick = {},
         )

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.PlayCircle
@@ -148,8 +149,8 @@ object KaigiButtonDefaults {
     val iconSize = 16.dp
     val iconSpacing = 8.dp
     val borderThickness = 1.5.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
     val filledContentPadding = PaddingValues(horizontal = 24.dp)
     val outlinedContentPadding = PaddingValues(horizontal = 16.dp)

@@ -35,6 +35,8 @@ class FavoritesWidgetRenderTest {
                 day = DroidKaigi2026Day.Day1,
                 startsAt = "10:00",
                 endsAt = "10:40",
+                startsAtInstant = DroidKaigi2026Day.Day1.at(10, 0),
+                endsAtInstant = DroidKaigi2026Day.Day1.at(10, 40),
             ),
         ),
     )

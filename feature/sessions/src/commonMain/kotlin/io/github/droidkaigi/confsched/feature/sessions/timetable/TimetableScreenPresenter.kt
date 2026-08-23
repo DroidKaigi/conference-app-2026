@@ -3,13 +3,13 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -18,9 +18,7 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Timet
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSectionUiState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.toTimeSlots
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.delay
 import soil.query.compose.rememberMutation
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 context(presenterContext: TimetablePresenterContext)
@@ -30,13 +28,7 @@ fun timetableScreenPresenter(
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
-
-    val now by produceState(initialValue = presenterContext.clock.now()) {
-        while (true) {
-            delay(1.minutes)
-            value = presenterContext.clock.now()
-        }
-    }
+    val currentTime = presenterContext.clock.rememberCurrentTime()
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -54,12 +46,12 @@ fun timetableScreenPresenter(
         favoriteMutation.reset()
     }
 
-    val timeSlots = remember(timetable, selectedDay) {
-        timetable.itemsOn(selectedDay).toTimeSlots()
+    val timeSlots = remember(timetable, selectedDay, currentTime) {
+        timetable.itemsOn(selectedDay).toTimeSlots(currentTime)
     }
 
-    val countdownBannerUiState = remember(timetable, selectedDay, now) {
-        val currentDay = DroidKaigi2026Day.ofOrNull(now)
+    val countdownBannerUiState = remember(timetable, selectedDay, currentTime) {
+        val currentDay = DroidKaigi2026Day.ofOrNull(currentTime)
         if (currentDay == null || selectedDay != currentDay) {
             return@remember null
         }
@@ -68,13 +60,13 @@ fun timetableScreenPresenter(
             .filter { it.id in timetable.bookmarks }
 
         val nextFavoritedItems = favoritedItemsOnDay
-            .filter { it.startInstant > now }
+            .filter { it.startInstant > currentTime }
 
         if (nextFavoritedItems.isNotEmpty()) {
             val firstStartInstant = nextFavoritedItems.minOf { it.startInstant }
             val sessionsAtFirstStartTime = nextFavoritedItems.filter { it.startInstant == firstStartInstant }
 
-            val diff = firstStartInstant - now
+            val diff = firstStartInstant - currentTime
             TimetableCountdownBannerUiState(
                 nextSessions = sessionsAtFirstStartTime.toPersistentList(),
                 remainingDuration = diff,
