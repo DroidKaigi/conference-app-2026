@@ -4,6 +4,8 @@ import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionCategory
+import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemAsset
@@ -14,6 +16,11 @@ import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
+
+private val sampleCategories = persistentListOf(
+    SessionCategory(id = 11L, name = MultiLangText(ja = "サンプル分類1", en = "Sample Category 1")),
+    SessionCategory(id = 12L, name = MultiLangText(ja = "サンプル分類2", en = "Sample Category 2")),
+)
 
 fun Timetable.Companion.fake(): Timetable = Timetable(
     items = persistentListOf(
@@ -39,6 +46,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             day = DroidKaigi2026Day.Day1,
             startsAt = "11:00",
             endsAt = "11:40",
+            sessionType = SessionType.CODELABS,
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
         ),
@@ -96,11 +104,14 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             day = DroidKaigi2026Day.Day2,
             startsAt = "11:00",
             endsAt = "11:40",
+            sessionType = SessionType.FIRESIDE_CHAT,
+            category = null,
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
         ),
     ),
     bookmarks = persistentSetOf(TimetableItemId("d1a"), TimetableItemId("d1b"), TimetableItemId("d2a")),
+    categories = sampleCategories,
 )
 
 fun TimetableItem.Companion.fake(): TimetableItem = fakeItem(
@@ -119,6 +130,7 @@ fun TimetableItem.Companion.fake(): TimetableItem = fakeItem(
     day = DroidKaigi2026Day.Day1,
     startsAt = "11:00",
     endsAt = "11:40",
+    category = sampleCategories[1],
     asset = TimetableItemAsset(
         videoUrl = "https://example.com/sessions/d1b/video",
         slideUrl = "https://example.com/sessions/d1b/slides",
@@ -145,6 +157,8 @@ private fun fakeItem(
     day: DroidKaigi2026Day,
     startsAt: String,
     endsAt: String,
+    sessionType: SessionType = SessionType.NORMAL,
+    category: SessionCategory? = sampleCategories.first(),
     asset: TimetableItemAsset,
     isCancelled: Boolean,
 ): TimetableItem {
@@ -163,6 +177,7 @@ private fun fakeItem(
         day = day,
         startsAt = startsAt,
         endsAt = endsAt,
+        sessionType = sessionType,
         startsAtInstant = day.at(hour = startHour, minute = startMinute),
         endsAtInstant = day.at(hour = endHour, minute = endMinute),
         description = MultiLangText(
@@ -173,7 +188,7 @@ private fun fakeItem(
             ja = "- モダンなAndroidアプリ開発の設計に興味がある方\n- Kotlin Multiplatformの実践的な適用例を知りたい方\n- マルチプラットフォーム対応の知見を自分のプロジェクトに活かしたい方",
             en = "- Anyone interested in the design of a modern Android app\n- Anyone after a worked example of Kotlin Multiplatform\n- Anyone taking multiplatform findings back to their own project",
         ),
-        category = MultiLangText(ja = "Jetpack Compose", en = "Jetpack Compose"),
+        category = category,
         asset = asset,
         hasInterpretation = language == Language.JAPANESE,
         isCancelled = isCancelled,

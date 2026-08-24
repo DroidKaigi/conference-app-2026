@@ -111,7 +111,7 @@ fun TimetableItemDetailScreen(
                     room = item.room,
                     language = item.language,
                     hasInterpretation = item.hasInterpretation,
-                    category = item.category?.of(displayLanguage),
+                    category = item.category?.name?.of(displayLanguage),
                     seed = TimetableItemDetailScreenDefaults.INFO_CARD_SEED,
                     modifier = Modifier
                         .padding(start = paneSpacerInset)
