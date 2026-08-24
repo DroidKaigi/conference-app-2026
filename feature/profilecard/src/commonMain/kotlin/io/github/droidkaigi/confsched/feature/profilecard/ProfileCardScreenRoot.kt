@@ -21,5 +21,7 @@ fun ProfileCardScreenRoot() {
         onSketchinessSelected = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
         onAddImageClick = { screenChannel.send(ProfileCardScreenAction.AddAvatarImage) },
         onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
+        onFlipCard = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
+        onEditCard = { screenChannel.send(ProfileCardScreenAction.EditCard) },
     )
 }

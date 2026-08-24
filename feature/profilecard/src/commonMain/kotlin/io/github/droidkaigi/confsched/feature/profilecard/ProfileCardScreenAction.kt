@@ -17,4 +17,8 @@ sealed interface ProfileCardScreenAction {
     data object AddAvatarImage : ProfileCardScreenAction
 
     data object Submit : ProfileCardScreenAction
+
+    data object FlipCard : ProfileCardScreenAction
+
+    data object EditCard : ProfileCardScreenAction
 }

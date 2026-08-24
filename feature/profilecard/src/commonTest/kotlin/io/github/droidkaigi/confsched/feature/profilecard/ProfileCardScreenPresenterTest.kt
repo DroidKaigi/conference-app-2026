@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.testing.PresenterTestScope
 import io.github.droidkaigi.confsched.core.testing.compositionLocalProviderWithReturnValue
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlin.test.Test
@@ -108,5 +109,60 @@ class ProfileCardScreenPresenterTest {
             assertNull(afterEdit.nickNameErrorMessage)
             assertNotNull(afterEdit.occupationErrorMessage)
         }
+    }
+
+    @Test
+    fun flip_card_toggles_which_face_is_showing() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = presenter,
+        ) {
+            uiStates.awaitItem()
+            submitAValidForm()
+            val front = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
+            assertEquals(false, front.isShowingBack)
+
+            send(ProfileCardScreenAction.FlipCard)
+            val back = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
+            assertEquals(true, back.isShowingBack)
+
+            send(ProfileCardScreenAction.FlipCard)
+            val frontAgain = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
+            assertEquals(false, frontAgain.isShowingBack)
+        }
+    }
+
+    @Test
+    fun edit_card_returns_to_the_form_showing_the_front_next_time() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = presenter,
+        ) {
+            uiStates.awaitItem()
+            submitAValidForm()
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.FlipCard)
+            uiStates.awaitItem()
+
+            send(ProfileCardScreenAction.EditCard)
+            assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+
+            // The form kept its still-valid field values across EditCard, so it can resubmit as-is.
+            send(ProfileCardScreenAction.Submit)
+            val afterResubmit = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
+            assertEquals(false, afterResubmit.isShowingBack)
+        }
+    }
+
+    private suspend fun PresenterTestScope<ProfileCardScreenAction, Nothing, ProfileCardScreenUiState>.submitAValidForm() {
+        send(ProfileCardScreenAction.UpdateNickName("droidkaigi"))
+        uiStates.awaitItem()
+        send(ProfileCardScreenAction.UpdateOccupation("Software Engineer"))
+        uiStates.awaitItem()
+        send(ProfileCardScreenAction.UpdateLink("https://example.com/user"))
+        uiStates.awaitItem()
+        send(ProfileCardScreenAction.AddAvatarImage)
+        uiStates.awaitItem()
+        send(ProfileCardScreenAction.Submit)
     }
 }

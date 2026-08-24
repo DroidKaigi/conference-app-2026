@@ -20,4 +20,11 @@
     <string name="link_required_error">リンクを入力してください</string>
     <string name="link_invalid_error">URLの形式が正しくありません</string>
     <string name="avatar_image_required_error">画像を追加してください</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
+    <string name="share_button">共有する</string>
+    <string name="edit_button">編集する</string>
 </resources>

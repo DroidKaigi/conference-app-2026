@@ -20,4 +20,11 @@
     <string name="link_required_error">Please enter a link</string>
     <string name="link_invalid_error">The URL format is invalid</string>
     <string name="avatar_image_required_error">Please add an image</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
+    <string name="share_button">Share</string>
+    <string name="edit_button">Edit</string>
 </resources>

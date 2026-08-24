@@ -22,6 +22,7 @@ fun profileCardScreenPresenter(
 ): ProfileCardScreenUiState {
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isSubmitted by retain { mutableStateOf(false) }
+    var isShowingBack by retain { mutableStateOf(false) }
 
     val nicknameRequiredMessage = stringResource(Res.string.nickname_required_error)
     val occupationRequiredMessage = stringResource(Res.string.occupation_required_error)
@@ -57,6 +58,13 @@ fun profileCardScreenPresenter(
                 form = validated
                 if (validated.hasNoErrors) isSubmitted = true
             }
+
+            ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
+
+            ProfileCardScreenAction.EditCard -> {
+                isSubmitted = false
+                isShowingBack = false
+            }
         }
     }
 
@@ -68,6 +76,7 @@ fun profileCardScreenPresenter(
             mascot = form.mascot,
             sketchiness = form.sketchiness,
             hasAvatarImage = form.hasAvatarImage,
+            isShowingBack = isShowingBack,
         )
     } else {
         form

@@ -24,5 +24,6 @@ sealed interface ProfileCardScreenUiState {
         val mascot: Mascot,
         val sketchiness: Sketchiness,
         val hasAvatarImage: Boolean,
+        val isShowingBack: Boolean = false,
     ) : ProfileCardScreenUiState
 }

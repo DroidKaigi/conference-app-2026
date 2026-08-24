@@ -132,6 +132,54 @@ fun SketchHorizontalDivider(
 }
 
 /**
+ * Fills the content in two colours meeting along a single hand-sketched horizontal line:
+ * [topColor] above it, [bottomColor] below. The line sits at [splitFraction] of the height and
+ * wobbles the same way [SketchHorizontalDivider] does.
+ */
+fun Modifier.sketchHorizontalSplitBackground(
+    seed: Int,
+    topColor: Color,
+    bottomColor: Color,
+    splitFraction: Float = 0.5f,
+    roughness: Dp = DefaultRoughness,
+    tremor: Dp = DefaultTremor,
+    sweepWavelength: Dp = DefaultSweepWavelength,
+    tremorWavelength: Dp = DefaultTremorWavelength,
+): Modifier {
+    requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
+    require(splitFraction in 0f..1f) { "splitFraction must be within 0f..1f, was $splitFraction" }
+    return drawWithCache {
+        val centerY = size.height * splitFraction
+        val topPath = sketchHorizontalFillPath(
+            width = size.width,
+            height = size.height,
+            centerY = centerY,
+            roughness = roughness,
+            tremor = tremor,
+            sweepWavelength = sweepWavelength,
+            tremorWavelength = tremorWavelength,
+            seed = seed,
+            fillTop = true,
+        )
+        val bottomPath = sketchHorizontalFillPath(
+            width = size.width,
+            height = size.height,
+            centerY = centerY,
+            roughness = roughness,
+            tremor = tremor,
+            sweepWavelength = sweepWavelength,
+            tremorWavelength = tremorWavelength,
+            seed = seed,
+            fillTop = false,
+        )
+        onDrawBehind {
+            drawPath(path = topPath, color = topColor)
+            drawPath(path = bottomPath, color = bottomColor)
+        }
+    }
+}
+
+/**
  * A vertical rule drawn as a single hand-sketched stroke.
  *
  * The line [SketchHorizontalDivider] draws, running down instead of across: a given
