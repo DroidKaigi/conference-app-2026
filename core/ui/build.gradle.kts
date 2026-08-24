@@ -23,6 +23,9 @@ kotlin {
             implementation(libs.coilNetworkKtor3)
             implementation(libs.ktorClientCore)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         jvmMain.dependencies {
             implementation(libs.ktorClientCio)
         }

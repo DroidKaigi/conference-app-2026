@@ -5,6 +5,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
@@ -827,4 +828,74 @@ private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
         }
         close()
     }
+}
+
+private val MarkerTremor = 1.75.dp
+private val MarkerTremorWavelength = 12.dp
+private val MarkerAnchorSpacing = 3.dp
+private val MarkerCapLength = 6.dp
+private const val MARKER_NIB = 1.6f
+private const val MARKER_NIB_RANGE = 0.4f
+private const val MARKER_OVERSHOOT = 1f
+private const val MARKER_OVERSHOOT_NOISE = 0.8f
+private const val MARKER_CAP_ANCHORS = 3
+
+// Fixed-distance samples keep existing anchors stable while the marker grows.
+internal fun Density.sketchMarkerPath(width: Float, height: Float, seed: Int): Path {
+    val spacing = MarkerAnchorSpacing.toPx()
+    val tremor = MarkerTremor.toPx()
+    val wavelength = MarkerTremorWavelength.toPx()
+    val capLength = min(MarkerCapLength.toPx(), width / 2f)
+    val halfHeight = height / 2f
+    val overshoot = (MARKER_OVERSHOOT + MARKER_OVERSHOOT_NOISE * abs(hashNoise(seed, 0))) * spacing
+
+    val steps = max(1, ceil(width / spacing).toInt())
+    val xs = ArrayList<Float>(steps * 2 + MARKER_CAP_ANCHORS * 2 + 4)
+    val ys = ArrayList<Float>(xs.size)
+
+    for (step in 0..steps) {
+        val x = min(step * spacing, width)
+        xs += x
+        ys += -edgeOffset(x, halfHeight, capLength, width, tremor, wavelength, seed)
+    }
+    for (index in 1..MARKER_CAP_ANCHORS) {
+        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
+        xs += width + overshoot * sin(angle)
+        ys += -halfHeight * MARKER_NIB / (MARKER_NIB + MARKER_NIB_RANGE) * cos(angle)
+    }
+    for (step in steps downTo 0) {
+        val x = min(step * spacing, width)
+        xs += x
+        ys += edgeOffset(x, halfHeight, capLength, width, tremor, wavelength, seed + TREMOR_SEED_OFFSET)
+    }
+    for (index in 1..MARKER_CAP_ANCHORS) {
+        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
+        xs += -overshoot * sin(angle)
+        ys += halfHeight * MARKER_NIB / (MARKER_NIB + MARKER_NIB_RANGE) * cos(angle)
+    }
+    return closedCurveThrough(xs.toFloatArray(), ys.toFloatArray())
+}
+
+private fun edgeOffset(
+    x: Float,
+    halfHeight: Float,
+    capLength: Float,
+    width: Float,
+    tremor: Float,
+    wavelength: Float,
+    seed: Int,
+): Float {
+    val fromNearestEnd = min(x, width - x)
+    val ramp = if (capLength <= 0f) 1f else smoothstep(min(1f, fromNearestEnd / capLength))
+    val nib = (MARKER_NIB - MARKER_NIB_RANGE + 2f * MARKER_NIB_RANGE * ramp) / MARKER_NIB
+    return halfHeight * nib + tremor * coherentNoise(seed, x, wavelength)
+}
+
+fun stableSketchSeed(value: String): Int {
+    var hash = SEED_MULTIPLIER
+    for (index in value.indices) {
+        hash = (hash xor value[index].code) * INDEX_MULTIPLIER
+        hash = hash xor (hash ushr 13)
+    }
+    return hash
 }
