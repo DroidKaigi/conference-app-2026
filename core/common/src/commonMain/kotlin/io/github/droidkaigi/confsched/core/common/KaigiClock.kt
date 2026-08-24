@@ -47,5 +47,6 @@ fun KaigiClock.rememberCurrentTime(refreshInterval: Duration = 1.minutes): Insta
 @ContributesBinding(AppScope::class)
 class SystemKaigiClock : KaigiClock {
     override fun now(): Instant = Clock.System.now()
+
     override val offset: StateFlow<Duration> = MutableStateFlow(Duration.ZERO)
 }

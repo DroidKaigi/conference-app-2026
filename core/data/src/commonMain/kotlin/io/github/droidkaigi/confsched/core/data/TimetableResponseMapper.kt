@@ -68,4 +68,5 @@ private fun SpeakerResponse.toTimetableSpeaker(): TimetableSpeaker = TimetableSp
 
 // Timestamps arrive as ISO-8601 with offset ("2026-09-02T10:00:00+09:00", wall-clock JST).
 private fun String.date(): String = substringBefore('T')
+
 private fun String.time(): String = substringAfter('T').take(5)

@@ -39,7 +39,10 @@ class FakeFixture<T>(initial: T) {
 // `failWith` sends it to the error fallback.
 abstract class FakeKeyControl<T>(private val fixture: FakeFixture<T>) {
     fun set(value: T) = fixture.set(value)
+
     fun hold() = fixture.hold()
+
     fun release() = fixture.release()
+
     fun failWith(throwable: Throwable) = fixture.failWith(throwable)
 }
