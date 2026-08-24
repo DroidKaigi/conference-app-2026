@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.LocalFileImage
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
@@ -37,12 +39,13 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ca
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_greeting
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_venue
+import io.github.vinceglb.filekit.PlatformFile
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * The card's front face, a "seal": the chosen mascot as a small badge, the user's photo (a
- * placeholder for now — the form doesn't wire a real image yet) in a wobbly circular plate, and
- * their nickname/occupation over the event's name, venue, and dates.
+ * The card's front face, a "seal": the chosen mascot as a small badge, the user's photo in a
+ * wobbly circular plate (a placeholder face when none was picked), and their nickname/occupation
+ * over the event's name, venue, and dates.
  */
 @Composable
 fun ProfileCardFront(
@@ -50,6 +53,7 @@ fun ProfileCardFront(
     occupation: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    avatarImage: PlatformFile?,
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
@@ -83,7 +87,7 @@ fun ProfileCardFront(
         Box(
             modifier = Modifier.align(Alignment.TopCenter).offset(y = ProfileCardFrontDefaults.plateOffsetY),
         ) {
-            ProfilePhotoPlate(seed = seed + 2, sketchiness = sketchiness)
+            ProfilePhotoPlate(seed = seed + 2, sketchiness = sketchiness, avatarImage = avatarImage)
             SpeechBubble(
                 text = stringResource(Res.string.card_greeting),
                 modifier = Modifier
@@ -143,7 +147,7 @@ internal fun CornerBracket(mirrored: Boolean, modifier: Modifier = Modifier, col
 }
 
 @Composable
-private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, modifier: Modifier = Modifier) {
+private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: PlatformFile?, modifier: Modifier = Modifier) {
     val plateSize = ProfileCardFrontDefaults.photoPlateSize
     val shape = SketchEllipseShape(
         seed = seed,
@@ -159,13 +163,21 @@ private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, modifier: Mod
             .sketchBorder(shape, ProfileCardColors.ink),
         contentAlignment = Alignment.Center,
     ) {
-        PlaceholderFace(modifier = Modifier.size(plateSize * 0.55f))
+        if (avatarImage != null) {
+            LocalFileImage(
+                file = avatarImage,
+                contentDescription = null,
+                modifier = Modifier.size(plateSize).clip(shape),
+                contentScale = ContentScale.Crop,
+            )
+        } else {
+            PlaceholderFace(modifier = Modifier.size(plateSize * 0.55f))
+        }
     }
 }
 
 /**
- * A minimal drawn face standing in for the user's photo: the picker only tracks whether an
- * image was chosen, not the image itself, so there is nothing to render yet. Matches the
+ * A minimal drawn face standing in for the user's photo, shown until one is picked. Matches the
  * design's own sample face, which is a placeholder rather than an asset to export.
  */
 @Composable
@@ -256,6 +268,7 @@ private fun ProfileCardFrontPreview(
             occupation = "Software Engineer",
             mascot = Mascot.Koala,
             sketchiness = Sketchiness.Normal,
+            avatarImage = null,
             modifier = Modifier.padding(24.dp),
         )
     }

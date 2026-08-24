@@ -42,7 +42,7 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
-            ProfileCardScreenAction.AddAvatarImage -> form = form.copy(hasAvatarImage = true, avatarImageErrorMessage = null)
+            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file, avatarImageErrorMessage = null)
 
             ProfileCardScreenAction.Submit -> {
                 val validated = form.copy(
@@ -53,7 +53,7 @@ fun profileCardScreenPresenter(
                         !form.link.isValidLink() -> linkInvalidMessage
                         else -> null
                     },
-                    avatarImageErrorMessage = avatarImageRequiredMessage.takeIf { !form.hasAvatarImage },
+                    avatarImageErrorMessage = avatarImageRequiredMessage.takeIf { form.avatarImage == null },
                 )
                 form = validated
                 if (validated.hasNoErrors) isSubmitted = true
@@ -75,7 +75,7 @@ fun profileCardScreenPresenter(
             link = form.link,
             mascot = form.mascot,
             sketchiness = form.sketchiness,
-            hasAvatarImage = form.hasAvatarImage,
+            avatarImage = form.avatarImage,
             isShowingBack = isShowingBack,
         )
     } else {

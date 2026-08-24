@@ -90,6 +90,7 @@ fun ProfileCardScreen(
                         occupation = uiState.occupation,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
+                        avatarImage = uiState.avatarImage,
                         modifier = Modifier.clickable(onClick = onFlipCard),
                     )
                 }
@@ -148,7 +149,7 @@ private fun ProfileCardScreenCardPreview(
                 link = "https://example.com",
                 mascot = Mascot.Koala,
                 sketchiness = Sketchiness.Normal,
-                hasAvatarImage = false,
+                avatarImage = null,
             ),
             onNickNameChange = {},
             onOccupationChange = {},

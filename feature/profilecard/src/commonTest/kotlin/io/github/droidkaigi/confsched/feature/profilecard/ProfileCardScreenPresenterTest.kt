@@ -8,6 +8,7 @@ import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.testing.PresenterTestScope
 import io.github.droidkaigi.confsched.core.testing.compositionLocalProviderWithReturnValue
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
+import io.github.vinceglb.filekit.PlatformFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -18,6 +19,7 @@ import kotlin.test.assertNull
 class ProfileCardScreenPresenterTest {
 
     private val graph = createGraph<ProfileCardScreenTestGraph>()
+    private val sampleAvatarImage = PlatformFile("avatar.png")
 
     // stringResource() reads LocalDensity even for plain strings; the presenter test harness has
     // no rendering surface to provide one, so this stands in for it.
@@ -81,7 +83,7 @@ class ProfileCardScreenPresenterTest {
             uiStates.awaitItem()
             send(ProfileCardScreenAction.UpdateLink("https://example.com/user"))
             uiStates.awaitItem()
-            send(ProfileCardScreenAction.AddAvatarImage)
+            send(ProfileCardScreenAction.UpdateAvatarImage(sampleAvatarImage))
             uiStates.awaitItem()
 
             send(ProfileCardScreenAction.Submit)
@@ -89,7 +91,7 @@ class ProfileCardScreenPresenterTest {
             assertEquals("droidkaigi", afterSubmit.nickName)
             assertEquals("Software Engineer", afterSubmit.occupation)
             assertEquals("https://example.com/user", afterSubmit.link)
-            assertEquals(true, afterSubmit.hasAvatarImage)
+            assertEquals(sampleAvatarImage, afterSubmit.avatarImage)
         }
     }
 
@@ -161,7 +163,7 @@ class ProfileCardScreenPresenterTest {
         uiStates.awaitItem()
         send(ProfileCardScreenAction.UpdateLink("https://example.com/user"))
         uiStates.awaitItem()
-        send(ProfileCardScreenAction.AddAvatarImage)
+        send(ProfileCardScreenAction.UpdateAvatarImage(sampleAvatarImage))
         uiStates.awaitItem()
         send(ProfileCardScreenAction.Submit)
     }

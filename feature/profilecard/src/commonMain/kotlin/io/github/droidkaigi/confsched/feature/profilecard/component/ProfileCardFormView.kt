@@ -99,7 +99,7 @@ fun ProfileCardFormView(
         Text(stringResource(Res.string.profile_image_label), style = MaterialTheme.typography.labelLarge)
         KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
             Icon(
-                imageVector = if (uiState.hasAvatarImage) KaigiIcons.Default.Check else KaigiIcons.Default.Add,
+                imageVector = if (uiState.avatarImage != null) KaigiIcons.Default.Check else KaigiIcons.Default.Add,
                 contentDescription = null,
                 modifier = Modifier.size(KaigiButtonDefaults.iconSize),
             )
