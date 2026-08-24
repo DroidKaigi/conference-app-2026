@@ -2,11 +2,14 @@ package io.github.droidkaigi.confsched.feature.eventmap.component
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -22,15 +25,31 @@ import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.absoluteValue
+import kotlin.math.max
+
+private val FloorToggleThreshold = 100.dp
 
 @Composable
 internal fun FloorMapCard(
     selectedFloor: Floor,
     modifier: Modifier = Modifier,
+    onFloorToggle: () -> Unit,
 ) {
     Crossfade(
         targetState = selectedFloor,
-        modifier = modifier,
+        modifier = modifier.pointerInput(Unit) {
+            var dragAmount = Offset.Zero
+            detectDragGestures(
+                onDragStart = { dragAmount = Offset.Zero },
+                onDrag = { _, amount -> dragAmount += amount },
+                onDragEnd = {
+                    if (max(dragAmount.x.absoluteValue, dragAmount.y.absoluteValue) > FloorToggleThreshold.toPx()) {
+                        onFloorToggle()
+                    }
+                },
+            )
+        },
     ) { targetFloor ->
         SketchCard(
             color = Color.White,
@@ -60,6 +79,7 @@ private fun FloorMapCardPreview(
     KaigiPreviewTheme(colorScheme) {
         FloorMapCard(
             selectedFloor = Floor.Ground,
+            onFloorToggle = {},
         )
     }
 }

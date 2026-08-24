@@ -39,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 fun EventMapScreen(
     uiState: EventMapScreenUiState,
     onFloorClick: (Floor) -> Unit,
+    onFloorToggle: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -69,6 +70,7 @@ fun EventMapScreen(
             item {
                 FloorMapCard(
                     selectedFloor = uiState.selectedFloor,
+                    onFloorToggle = onFloorToggle,
                 )
             }
             item {
@@ -116,6 +118,7 @@ private fun EventMapScreenPreview(
                 projects = Projects.fake().items,
             ),
             onFloorClick = {},
+            onFloorToggle = {},
         )
     }
 }
