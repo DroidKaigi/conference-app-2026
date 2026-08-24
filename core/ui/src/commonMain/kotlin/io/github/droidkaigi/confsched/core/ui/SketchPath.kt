@@ -88,6 +88,24 @@ internal fun Density.sketchHorizontalLinePath(
     return openCurveThrough(positions, offsets, OUTLINE_TANGENT_CLAMP)
 }
 
+internal fun Density.sketchGroundLinePath(
+    width: Float,
+    centerY: Float,
+    amplitude: Dp,
+    period: Dp,
+    seed: Int,
+): Path {
+    val xs = groundLinePositions(width, period.toPx())
+    val reach = amplitude.toPx()
+    val ys = FloatArray(xs.size) { index -> centerY + hashNoise(seed, index) * reach }
+    return openCurveThrough(xs, ys, OUTLINE_TANGENT_CLAMP)
+}
+
+internal fun groundLinePositions(width: Float, period: Float): FloatArray {
+    val cells = max(1, ceil(width / period).toInt())
+    return FloatArray(cells + 1) { index -> min(index * period, width) }
+}
+
 /**
  * A vertical line of [height], wobbling around [centerX].
  *
