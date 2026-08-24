@@ -33,8 +33,8 @@ private val FloorToggleThreshold = 100.dp
 @Composable
 internal fun FloorMapCard(
     selectedFloor: Floor,
-    modifier: Modifier = Modifier,
     onFloorToggle: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val currentOnFloorToggle by rememberUpdatedState(onFloorToggle)
     Crossfade(
