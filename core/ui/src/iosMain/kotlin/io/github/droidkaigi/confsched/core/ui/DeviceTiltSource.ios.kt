@@ -78,9 +78,7 @@ private fun CMAttitude.toDeviceTilt(orientation: UIInterfaceOrientation): Device
 }
 
 private fun interfaceOrientation(): UIInterfaceOrientation =
-    UIApplication.sharedApplication.connectedScenes
-        .filterIsInstance<UIWindowScene>()
-        .firstOrNull()
+    (UIApplication.sharedApplication.connectedScenes.firstOrNull { it is UIWindowScene } as? UIWindowScene)
         ?.interfaceOrientation
         ?: UIInterfaceOrientationPortrait
 
