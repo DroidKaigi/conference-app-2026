@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -34,6 +36,7 @@ internal fun FloorMapCard(
     modifier: Modifier = Modifier,
     onFloorToggle: () -> Unit,
 ) {
+    val currentOnFloorToggle by rememberUpdatedState(onFloorToggle)
     Crossfade(
         targetState = selectedFloor,
         modifier = modifier.pointerInput(Unit) {
@@ -43,7 +46,7 @@ internal fun FloorMapCard(
                 onHorizontalDrag = { _, amount -> dragAmount += amount },
                 onDragEnd = {
                     if (dragAmount.absoluteValue > FloorToggleThreshold.toPx()) {
-                        onFloorToggle()
+                        currentOnFloorToggle()
                     }
                 },
             )
