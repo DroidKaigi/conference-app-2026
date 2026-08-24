@@ -14,7 +14,7 @@ feature/eventmap/src/commonMain/composeResources/
 
 The `droidkaigi.primitive.kmp.compose` [convention plugin](./build-convention-plugins.md) derives the generated `Res` class package from the module path, so `:feature:eventmap` reads its own strings through `io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res` and no module declares that package itself. Compose Resources generates the class only where a `composeResources` directory exists.
 
-A string with no `values-ja` entry falls back to the English base, so a missing translation shows through rather than failing the build.
+A string with no `values-ja` entry falls back to the English base, so a missing translation shows through rather than failing the build. A string whose value is the same in both locales is declared in `values/` only; a `values-ja` entry repeating it is redundant.
 
 ## Reading a string
 

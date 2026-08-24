@@ -14,16 +14,39 @@ class FavoritesWidgetStateTest {
         startsAt: String,
         endsAt: String,
         room: Room = Room.OTTER,
-    ) = TimetableItem(
-        id = TimetableItemId(id),
-        title = MultiLangText(ja = "セッション $id", en = "Session $id"),
-        room = room,
-        speaker = "Speaker A",
-        language = Language.JAPANESE,
-        day = day,
-        startsAt = startsAt,
-        endsAt = endsAt,
-    )
+    ): TimetableItem {
+        val startHour = startsAt.substringBefore(':').toInt()
+        val startMinute = startsAt.substringAfter(':').toInt()
+        val endHour = endsAt.substringBefore(':').toInt()
+        val endMinute = endsAt.substringAfter(':').toInt()
+
+        return TimetableItem(
+            id = TimetableItemId(id),
+            title = MultiLangText(ja = "セッション $id", en = "Session $id"),
+            room = room,
+            speakers = persistentListOf(
+                TimetableSpeaker(
+                    id = TimetableSpeakerId("speaker-$id"),
+                    name = "Speaker A",
+                    tagLine = "",
+                    iconUrl = null,
+                ),
+            ),
+            language = Language.JAPANESE,
+            day = day,
+            startsAt = startsAt,
+            endsAt = endsAt,
+            sessionType = SessionType.NORMAL,
+            startsAtInstant = day.at(hour = startHour, minute = startMinute),
+            endsAtInstant = day.at(hour = endHour, minute = endMinute),
+            description = MultiLangText(ja = "", en = ""),
+            targetAudience = MultiLangText(ja = "", en = ""),
+            category = null,
+            asset = TimetableItemAsset.Empty,
+            hasInterpretation = false,
+            isCancelled = false,
+        )
+    }
 
     private fun timetable(vararg items: TimetableItem) = Timetable(items = items.toList().toPersistentList())
 

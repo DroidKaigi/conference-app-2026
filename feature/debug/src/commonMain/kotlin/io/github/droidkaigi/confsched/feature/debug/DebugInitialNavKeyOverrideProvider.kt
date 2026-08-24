@@ -10,5 +10,5 @@ import io.github.droidkaigi.confsched.core.common.NoopInitialNavKeyOverrideProvi
 @Inject
 @ContributesBinding(AppScope::class, replaces = [NoopInitialNavKeyOverrideProvider::class])
 class DebugInitialNavKeyOverrideProvider : InitialNavKeyOverrideProvider {
-    override val initialNavKeyOverride: NavKey = ServerEnvironmentNavKey
+    override val initialNavStackOverride: List<NavKey> = listOf(ServerEnvironmentNavKey)
 }

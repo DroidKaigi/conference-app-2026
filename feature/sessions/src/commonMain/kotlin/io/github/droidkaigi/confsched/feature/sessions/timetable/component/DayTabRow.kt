@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -31,7 +32,10 @@ internal fun DayTabRow(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().padding(bottom = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.inverseSurface)
+            .padding(bottom = 16.dp),
         contentAlignment = Alignment.Center,
     ) {
         KaigiSingleChoiceSegmentedButtonRow(outlineSeed = DayTabRowDefaults.OUTLINE_SEED) {

@@ -17,6 +17,8 @@ class FakeKaigiLogger : KaigiLogger {
     }
 
     override fun info(message: () -> String) = Unit
+
     override fun warn(message: () -> String) = Unit
+
     override fun error(throwable: Throwable?, message: () -> String) = Unit
 }
