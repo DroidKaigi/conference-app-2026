@@ -63,8 +63,12 @@ private class SubscribedDeviceTiltSource(
     tilts: Flow<DeviceTilt>,
     coroutineScope: CoroutineScope,
 ) : DeviceTiltSource {
-    // No stop timeout: outliving the last consumer is the one thing the sharing policy prevents.
-    private val tilt = tilts.stateIn(coroutineScope, SharingStarted.WhileSubscribed(), DeviceTilt.Level)
+    private val tilt = tilts.stateIn(
+        coroutineScope,
+        // Zero stop timeout: the sensor must not stay registered past the last consumer.
+        SharingStarted.WhileSubscribed(stopTimeoutMillis = 0),
+        DeviceTilt.Level,
+    )
 
     @Composable
     override fun tiltAsState(): State<DeviceTilt> = tilt.collectAsStateWithLifecycle()
