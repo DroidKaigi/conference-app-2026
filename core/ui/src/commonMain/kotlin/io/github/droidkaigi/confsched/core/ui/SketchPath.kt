@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -807,7 +808,11 @@ internal fun Density.sketchVerticalFillPath(
 }
 
 /** Emits [xs] and [ys] as one closed curve, the same conversion the rect outline uses. */
-private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
+private fun closedCurveThrough(
+    xs: FloatArray,
+    ys: FloatArray,
+    controlBounds: Rect? = null,
+): Path {
     val count = xs.size
     return Path().apply {
         moveTo(xs[0], ys[0])
@@ -824,13 +829,27 @@ private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
                 tangentClamp = OUTLINE_TANGENT_CLAMP,
                 out = controls,
             )
-            cubicTo(controls[0], controls[1], controls[2], controls[3], xs[next], ys[next])
+            if (controlBounds == null) {
+                cubicTo(controls[0], controls[1], controls[2], controls[3], xs[next], ys[next])
+            } else {
+                // A Bézier stays inside the convex hull of its endpoints and control points.
+                cubicTo(
+                    controls[0].coerceIn(controlBounds.left, controlBounds.right),
+                    controls[1].coerceIn(controlBounds.top, controlBounds.bottom),
+                    controls[2].coerceIn(controlBounds.left, controlBounds.right),
+                    controls[3].coerceIn(controlBounds.top, controlBounds.bottom),
+                    xs[next],
+                    ys[next],
+                )
+            }
         }
         close()
     }
 }
 
-private val MarkerTremor = 1.75.dp
+private val MarkerRoughness = 1.15.dp
+private val MarkerTremor = 0.32.dp
+private val MarkerSweepWavelength = 30.dp
 private val MarkerTremorWavelength = 12.dp
 private val MarkerAnchorSpacing = 3.dp
 private val MarkerCapLength = 6.dp
@@ -840,55 +859,102 @@ private const val MARKER_OVERSHOOT = 1f
 private const val MARKER_OVERSHOOT_NOISE = 0.8f
 private const val MARKER_CAP_ANCHORS = 3
 
-// Fixed-distance samples keep existing anchors stable while the marker grows.
-internal fun Density.sketchMarkerPath(width: Float, height: Float, seed: Int): Path {
+// How far the nib ramp carries the band past its nominal half-height at the widest point.
+private const val MARKER_NIB_PEAK = (MARKER_NIB + MARKER_NIB_RANGE) / MARKER_NIB
+
+// Keeps the lower edge on independent noise sequences instead of mirroring the upper edge.
+private const val MARKER_EDGE_SEED_OFFSET = 1000
+
+/** Builds a marker band whose fixed x-origin anchors remain stable as [width] grows. */
+internal fun Density.sketchMarkerPath(
+    width: Float,
+    height: Float,
+    startBleed: Float,
+    endBleed: Float,
+    seed: Int,
+): Path {
     val spacing = MarkerAnchorSpacing.toPx()
+    val roughness = MarkerRoughness.toPx()
     val tremor = MarkerTremor.toPx()
-    val wavelength = MarkerTremorWavelength.toPx()
+    if (width <= 0f || height <= (roughness + tremor) * 2f) return Path()
+    val sweepWavelength = MarkerSweepWavelength.toPx()
+    val tremorWavelength = MarkerTremorWavelength.toPx()
     val capLength = min(MarkerCapLength.toPx(), width / 2f)
-    val halfHeight = height / 2f
+    val halfHeight = markerHalfHeight(height, wobble = roughness + tremor)
     val overshoot = (MARKER_OVERSHOOT + MARKER_OVERSHOOT_NOISE * abs(hashNoise(seed, 0))) * spacing
+    val tipHeight = halfHeight / MARKER_NIB_PEAK
+
+    fun edgeOffset(x: Float, edgeSeed: Int): Float {
+        val fromNearestEnd = min(x, width - x)
+        val ramp = if (capLength <= 0f) 1f else smoothstep(min(1f, fromNearestEnd / capLength))
+        val nib = (MARKER_NIB - MARKER_NIB_RANGE + 2f * MARKER_NIB_RANGE * ramp) / MARKER_NIB
+        return halfHeight * nib +
+            roughness * coherentNoise(edgeSeed, x, sweepWavelength) +
+            tremor * coherentNoise(edgeSeed + TREMOR_SEED_OFFSET, x, tremorWavelength)
+    }
 
     val steps = max(1, ceil(width / spacing).toInt())
-    val xs = ArrayList<Float>(steps * 2 + MARKER_CAP_ANCHORS * 2 + 4)
-    val ys = ArrayList<Float>(xs.size)
+    val pointCapacity = steps * 2 + MARKER_CAP_ANCHORS * 2 + 4
+    val xs = ArrayList<Float>(pointCapacity)
+    val ys = ArrayList<Float>(pointCapacity)
 
     for (step in 0..steps) {
         val x = min(step * spacing, width)
         xs += x
-        ys += -edgeOffset(x, halfHeight, capLength, width, tremor, wavelength, seed)
+        ys += -edgeOffset(x, seed)
     }
-    for (index in 1..MARKER_CAP_ANCHORS) {
-        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
-        xs += width + overshoot * sin(angle)
-        ys += -halfHeight * MARKER_NIB / (MARKER_NIB + MARKER_NIB_RANGE) * cos(angle)
-    }
+    val endReach = min(overshoot, endBleed)
+    appendMarkerTip(
+        xs = xs,
+        ys = ys,
+        edgeX = width,
+        direction = 1f,
+        reach = endReach,
+        tipHeight = tipHeight * endReach / overshoot,
+    )
     for (step in steps downTo 0) {
         val x = min(step * spacing, width)
         xs += x
-        ys += edgeOffset(x, halfHeight, capLength, width, tremor, wavelength, seed + TREMOR_SEED_OFFSET)
+        ys += edgeOffset(x, seed + MARKER_EDGE_SEED_OFFSET)
     }
-    for (index in 1..MARKER_CAP_ANCHORS) {
-        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
-        xs += -overshoot * sin(angle)
-        ys += halfHeight * MARKER_NIB / (MARKER_NIB + MARKER_NIB_RANGE) * cos(angle)
-    }
-    return closedCurveThrough(xs.toFloatArray(), ys.toFloatArray())
+    val startReach = min(overshoot, startBleed)
+    appendMarkerTip(
+        xs = xs,
+        ys = ys,
+        edgeX = 0f,
+        direction = -1f,
+        reach = startReach,
+        tipHeight = tipHeight * startReach / overshoot,
+    )
+    return closedCurveThrough(
+        xs = xs.toFloatArray(),
+        ys = ys.toFloatArray(),
+        controlBounds = Rect(
+            left = -startBleed,
+            top = -height / 2f,
+            right = width + endBleed,
+            bottom = height / 2f,
+        ),
+    )
 }
 
-private fun edgeOffset(
-    x: Float,
-    halfHeight: Float,
-    capLength: Float,
-    width: Float,
-    tremor: Float,
-    wavelength: Float,
-    seed: Int,
-): Float {
-    val fromNearestEnd = min(x, width - x)
-    val ramp = if (capLength <= 0f) 1f else smoothstep(min(1f, fromNearestEnd / capLength))
-    val nib = (MARKER_NIB - MARKER_NIB_RANGE + 2f * MARKER_NIB_RANGE * ramp) / MARKER_NIB
-    return halfHeight * nib + tremor * coherentNoise(seed, x, wavelength)
+internal fun markerHalfHeight(height: Float, wobble: Float): Float =
+    max(0f, (height / 2f - wobble) / MARKER_NIB_PEAK)
+
+private fun appendMarkerTip(
+    xs: MutableList<Float>,
+    ys: MutableList<Float>,
+    edgeX: Float,
+    direction: Float,
+    reach: Float,
+    tipHeight: Float,
+) {
+    if (reach <= 0f) return
+    for (index in 1..MARKER_CAP_ANCHORS) {
+        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
+        xs += edgeX + direction * reach * sin(angle)
+        ys += -direction * tipHeight * cos(angle)
+    }
 }
 
 fun stableSketchSeed(value: String): Int {
