@@ -2,12 +2,11 @@ package io.github.droidkaigi.confsched.feature.eventmap.component
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -26,7 +25,6 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
-import kotlin.math.max
 
 private val FloorToggleThreshold = 100.dp
 
@@ -39,12 +37,12 @@ internal fun FloorMapCard(
     Crossfade(
         targetState = selectedFloor,
         modifier = modifier.pointerInput(Unit) {
-            var dragAmount = Offset.Zero
-            detectDragGestures(
-                onDragStart = { dragAmount = Offset.Zero },
-                onDrag = { _, amount -> dragAmount += amount },
+            var dragAmount = 0F
+            detectHorizontalDragGestures(
+                onDragStart = { dragAmount = 0F },
+                onHorizontalDrag = { _, amount -> dragAmount += amount },
                 onDragEnd = {
-                    if (max(dragAmount.x.absoluteValue, dragAmount.y.absoluteValue) > FloorToggleThreshold.toPx()) {
+                    if (dragAmount.absoluteValue > FloorToggleThreshold.toPx()) {
                         onFloorToggle()
                     }
                 },
