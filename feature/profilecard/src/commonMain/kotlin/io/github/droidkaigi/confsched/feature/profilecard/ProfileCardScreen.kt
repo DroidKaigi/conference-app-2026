@@ -2,8 +2,11 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -13,9 +16,13 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
 import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_card
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ProfileCardScreen(
@@ -28,25 +35,32 @@ fun ProfileCardScreen(
     onAddImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
 ) {
-    when (uiState) {
-        is ProfileCardScreenUiState.Form -> ProfileCardFormView(
-            uiState = uiState,
-            onNickNameChange = onNickNameChange,
-            onOccupationChange = onOccupationChange,
-            onLinkChange = onLinkChange,
-            onMascotSelected = onMascotSelected,
-            onSketchinessSelected = onSketchinessSelected,
-            onAddImageClick = onAddImageClick,
-            onSubmitClick = onSubmitClick,
-        )
+    Scaffold(
+        topBar = { KaigiTopAppBar(title = stringResource(Res.string.profile_card)) },
+        contentWindowInsets = WindowInsets(),
+    ) { innerPadding ->
+        when (uiState) {
+            is ProfileCardScreenUiState.Form -> ProfileCardFormView(
+                modifier = Modifier.padding(innerPadding),
+                uiState = uiState,
+                onNickNameChange = onNickNameChange,
+                onOccupationChange = onOccupationChange,
+                onLinkChange = onLinkChange,
+                onMascotSelected = onMascotSelected,
+                onSketchinessSelected = onSketchinessSelected,
+                onAddImageClick = onAddImageClick,
+                onSubmitClick = onSubmitClick,
+            )
 
-        is ProfileCardScreenUiState.Card -> Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(uiState.nickName, style = MaterialTheme.typography.headlineSmall)
+            is ProfileCardScreenUiState.Card -> Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(uiState.nickName, style = MaterialTheme.typography.headlineSmall)
+            }
         }
     }
 }

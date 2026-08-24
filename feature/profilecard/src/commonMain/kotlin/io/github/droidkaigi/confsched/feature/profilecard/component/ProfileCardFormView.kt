@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,6 +27,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
 import io.github.droidkaigi.confsched.core.ui.KaigiOutlinedButton
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.add_image_button
@@ -57,7 +60,9 @@ fun ProfileCardFormView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp, bottom = 16.dp + LocalNavigationBarOccupiedHeight.current),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(stringResource(Res.string.subtitle), style = MaterialTheme.typography.bodyMedium)
