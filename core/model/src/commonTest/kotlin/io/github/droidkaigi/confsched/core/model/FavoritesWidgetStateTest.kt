@@ -36,6 +36,7 @@ class FavoritesWidgetStateTest {
             day = day,
             startsAt = startsAt,
             endsAt = endsAt,
+            sessionType = SessionType.NORMAL,
             startsAtInstant = day.at(hour = startHour, minute = startMinute),
             endsAtInstant = day.at(hour = endHour, minute = endMinute),
             description = MultiLangText(ja = "", en = ""),
