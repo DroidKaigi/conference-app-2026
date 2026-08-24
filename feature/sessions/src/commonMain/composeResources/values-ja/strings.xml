@@ -7,6 +7,9 @@
     <string name="schedule">日時</string>
     <string name="location">会場</string>
     <string name="speaker_overflow">+%1$d名</string>
+    <string name="countdown_banner_title">次のお気に入りセッションまで</string>
+    <string name="countdown_minutes">あと %1$d分</string>
+    <string name="countdown_hours_minutes">あと %1$d時間%2$d分</string>
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
     <string name="archive">アーカイブ</string>
     <string name="archive_video">動画</string>

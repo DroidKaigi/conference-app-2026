@@ -7,6 +7,7 @@ import kotlinx.datetime.asTimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
@@ -24,4 +25,11 @@ enum class DroidKaigi2026Day(val date: LocalDate) {
 
     /** The instant this day reaches [hour]:[minute] at the conference. */
     fun at(hour: Int, minute: Int): Instant = date.atTime(hour, minute).toInstant(ConferenceTimeZone)
+
+    companion object {
+        fun ofOrNull(time: Instant): DroidKaigi2026Day? {
+            val date = time.toLocalDateTime(ConferenceTimeZone).date
+            return entries.find { it.date == date }
+        }
+    }
 }
