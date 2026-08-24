@@ -69,7 +69,7 @@ fun <C : PresenterContext, A, R, S> runPresenterTest(
 
 @OptIn(InternalComposeApi::class)
 @Composable
-private fun <T> compositionLocalProviderWithReturnValue(
+fun <T> compositionLocalProviderWithReturnValue(
     vararg values: ProvidedValue<*>,
     content: @Composable () -> T,
 ): T {
