@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -24,7 +23,7 @@ import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiColorScheme
+import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiIllustrationColors
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -120,15 +119,7 @@ internal fun Lantern(
     val bodyOpacity = if (isLit) 1.0f else 0.22f
     val ribOpacity = if (isLit) 1.0f else 0.45f
 
-    // Determine theme-specific glow color
-    val lanternGlowColor = when (LocalKaigiColorScheme.current) {
-        KaigiColorScheme.MorningMist -> Color(0xFFF0D8A0)
-        KaigiColorScheme.DeepTeal -> Color(0xFFE8BA6E)
-        KaigiColorScheme.CampfireNight -> Color(0xFFE49848)
-        KaigiColorScheme.Terracotta -> Color(0xFFF8E2B6)
-        KaigiColorScheme.SakuraPlum -> Color(0xFFF4D6B0)
-    }
-
+    val lanternGlowColor = LocalKaigiIllustrationColors.current.lanternGlow
     val bodyColor = lanternGlowColor.copy(alpha = bodyOpacity)
     val borderColor = MaterialTheme.colorScheme.primary
 

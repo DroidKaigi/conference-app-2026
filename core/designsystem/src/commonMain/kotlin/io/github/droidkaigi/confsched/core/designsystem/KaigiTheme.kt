@@ -30,31 +30,37 @@ private val CtaOrange = Color(0xFFE04A1E)
 data class KaigiIllustrationColors(
     val skyPanel: Color,
     val onSkyPanel: Color,
+    val lanternGlow: Color,
 )
 
 private val MorningMistIllustrationColors = KaigiIllustrationColors(
     skyPanel = Color(0xFF141B2E),
     onSkyPanel = Color(0xFFE8ECF4),
+    lanternGlow = Color(0xFFF0D8A0),
 )
 
 private val DeepTealIllustrationColors = KaigiIllustrationColors(
     skyPanel = Color(0xFF08202A),
     onSkyPanel = Color(0xFFDCF0EC),
+    lanternGlow = Color(0xFFE8BA6E),
 )
 
 private val SakuraPlumIllustrationColors = KaigiIllustrationColors(
     skyPanel = Color(0xFF1E1220),
     onSkyPanel = Color(0xFFF2E4EE),
+    lanternGlow = Color(0xFFF4D6B0),
 )
 
 private val TerracottaIllustrationColors = KaigiIllustrationColors(
     skyPanel = Color(0xFF21150E),
     onSkyPanel = Color(0xFFF6E8DE),
+    lanternGlow = Color(0xFFF8E2B6),
 )
 
 private val CampfireNightIllustrationColors = KaigiIllustrationColors(
     skyPanel = Color(0xFF1C1512),
     onSkyPanel = Color(0xFFF4E7DC),
+    lanternGlow = Color(0xFFE49848),
 )
 
 private val MorningMist = lightColorScheme(
@@ -221,8 +227,6 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.CampfireNight -> CampfireNight
 }
 
-/** The color scheme in force. */
-val LocalKaigiColorScheme = staticCompositionLocalOf { KaigiColorScheme.MorningMist }
 
 private fun KaigiColorScheme.toIllustrationColors(): KaigiIllustrationColors = when (this) {
     KaigiColorScheme.MorningMist -> MorningMistIllustrationColors
@@ -322,7 +326,6 @@ fun KaigiTheme(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalKaigiColorScheme provides colorScheme,
         LocalKaigiIllustrationColors provides colorScheme.toIllustrationColors(),
         LocalSchemeIsDark provides colorScheme.isDark,
         LocalSketchBaseSeed provides sketchBaseSeed,
