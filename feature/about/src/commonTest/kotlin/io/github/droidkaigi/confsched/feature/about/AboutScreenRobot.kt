@@ -25,7 +25,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     fun setupContent(isDebugMenuAvailable: Boolean = true) {
         setScreenContent {
             AboutScreen(
-                uiState = AboutScreenUiState(title = "About DroidKaigi", versionName = "1.0.0"),
+                uiState = AboutScreenUiState(versionName = "1.0.0"),
                 onOpenVenueWithMap = record(VENUE),
                 onOpenSponsors = record(SPONSORS),
                 onOpenContributors = record(CONTRIBUTORS),

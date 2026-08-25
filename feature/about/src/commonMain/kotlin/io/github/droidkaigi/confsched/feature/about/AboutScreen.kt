@@ -56,6 +56,7 @@ import io.github.droidkaigi.confsched.feature.about.generated.resources.about_lo
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_medium
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_x
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_social_youtube
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_title
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_venue
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_version_format
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_view_map
@@ -98,7 +99,7 @@ fun AboutScreen(
     // The navigation bar floats over the content, so the scroll reserves its room at the bottom.
     val navigationBarHeight = LocalNavigationBarOccupiedHeight.current
     Scaffold(
-        topBar = { KaigiTopAppBar(title = uiState.title) },
+        topBar = { KaigiTopAppBar(title = stringResource(Res.string.about_title)) },
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -265,7 +266,7 @@ private fun AboutScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(title = "About DroidKaigi", versionName = "1.0.0"),
+            uiState = AboutScreenUiState(versionName = "1.0.0"),
             onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
@@ -290,7 +291,7 @@ private fun AboutScreenWithoutDebugMenuPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(title = "About DroidKaigi", versionName = "1.0.0"),
+            uiState = AboutScreenUiState(versionName = "1.0.0"),
             onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
