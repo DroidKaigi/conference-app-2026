@@ -189,6 +189,9 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.CampfireNight -> CampfireNight
 }
 
+/** The color scheme in force. */
+val LocalKaigiColorScheme = staticCompositionLocalOf { KaigiColorScheme.MorningMist }
+
 /**
  * How far every hand-drawn amplitude swings, as chosen in the settings screen.
  *
@@ -276,6 +279,7 @@ fun KaigiTheme(
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
+        LocalKaigiColorScheme provides colorScheme,
         LocalSchemeIsDark provides colorScheme.isDark,
         LocalSketchBaseSeed provides sketchBaseSeed,
         LocalSketchStrength provides sketchStrength,
