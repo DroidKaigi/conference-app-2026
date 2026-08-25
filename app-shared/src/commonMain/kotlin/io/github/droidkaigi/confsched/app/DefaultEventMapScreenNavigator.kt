@@ -8,6 +8,7 @@ import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.EventMapScreenScope
 import io.github.droidkaigi.confsched.feature.eventmap.EventMapScreenNavigator
+import io.github.droidkaigi.confsched.feature.eventmap.StampCollectingNavKey
 
 @Inject
 @SingleIn(EventMapScreenScope::class)
@@ -16,6 +17,10 @@ import io.github.droidkaigi.confsched.feature.eventmap.EventMapScreenNavigator
     binding = binding<EventMapScreenNavigator>(),
 )
 class DefaultEventMapScreenNavigator(
-    appNavigator: AppNavigator,
+    private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
-    EventMapScreenNavigator
+    EventMapScreenNavigator {
+    override fun openStampCollecting() {
+        appNavigator.goTo(StampCollectingNavKey)
+    }
+}

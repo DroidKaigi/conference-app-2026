@@ -8,19 +8,18 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
-import io.github.droidkaigi.confsched.core.common.instantNavTransition
 
 @ContributesIntoSet(UiScope::class)
 @Inject
-class EventMapNavEntryProvider(
-    private val screenGraphFactory: EventMapScreenGraph.Factory,
+class StampCollectingNavEntryProvider(
+    private val screenGraphFactory: StampCollectingScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<EventMapNavKey>(metadata = instantNavTransition()) {
-            val graph = retain(screenGraphFactory::createEventMapScreenGraph)
+        entry<StampCollectingNavKey> { key ->
+            val graph = retain(screenGraphFactory::createStampCollectingScreenGraph)
             context(graph.screenContext) {
-                EventMapScreenRoot(
-                    onNavigateToStampCollecting = graph.screenNavigator::openStampCollecting,
+                StampCollectingScreenRoot(
+                    onNavigateBack = { graph.screenNavigator.back(origin = key) },
                 )
             }
         }

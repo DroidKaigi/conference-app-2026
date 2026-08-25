@@ -29,7 +29,7 @@ import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.feature.eventmap.component.EventItem
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorMapCard
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorTabRow
-import io.github.droidkaigi.confsched.feature.eventmap.component.StampRallyCard
+import io.github.droidkaigi.confsched.feature.eventmap.component.StampCollectingCard
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_introducing
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_title
@@ -40,6 +40,7 @@ fun EventMapScreen(
     uiState: EventMapScreenUiState,
     onFloorClick: (Floor) -> Unit,
     onFloorToggle: () -> Unit,
+    onStampCollectingLearnMoreClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -74,8 +75,8 @@ fun EventMapScreen(
                 )
             }
             item {
-                StampRallyCard(
-                    onLearnMoreClick = { /*TODO*/ },
+                StampCollectingCard(
+                    onLearnMoreClick = onStampCollectingLearnMoreClick,
                 )
             }
             itemsIndexed(uiState.projects) { index, project ->
@@ -119,6 +120,7 @@ private fun EventMapScreenPreview(
             ),
             onFloorClick = {},
             onFloorToggle = {},
+            onStampCollectingLearnMoreClick = {},
         )
     }
 }
