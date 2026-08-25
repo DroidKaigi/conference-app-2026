@@ -63,6 +63,8 @@ fun TimetableItemCard(
     onBookmarkClick: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    titleMark: String = "",
+    titleMarkSeed: Int = seed,
 ) {
     val combinedSeed = combineSketchSeed(seed)
     val shape = SketchRoundRectShape(
@@ -82,11 +84,13 @@ fun TimetableItemCard(
         )
         CardBody(
             title = title,
+            titleMark = titleMark,
             room = room,
             speaker = speaker,
             language = language,
             isCancelled = isCancelled,
             seed = seed,
+            titleMarkSeed = titleMarkSeed,
             modifier = Modifier.clickable(onClick = onClick),
         )
         if (isFavorite) {
@@ -120,11 +124,13 @@ fun TimetableItemCard(
 @Composable
 private fun CardBody(
     title: String,
+    titleMark: String,
     room: Room,
     speaker: String,
     language: Language,
     isCancelled: Boolean,
     seed: Int,
+    titleMarkSeed: Int,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -135,8 +141,10 @@ private fun CardBody(
             CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
         }
         ChipRow(room = room, language = language, seed = seed)
-        Text(
+        SketchMarkedText(
             text = title,
+            mark = titleMark,
+            seed = titleMarkSeed,
             style = MaterialTheme.typography.titleMedium,
             color = if (isCancelled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             textDecoration = if (isCancelled) TextDecoration.LineThrough else null,

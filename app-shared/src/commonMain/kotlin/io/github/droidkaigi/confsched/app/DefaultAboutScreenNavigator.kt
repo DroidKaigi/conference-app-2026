@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.model.AboutScreenScope
 import io.github.droidkaigi.confsched.feature.about.AboutScreenNavigator
 import io.github.droidkaigi.confsched.feature.about.LicensesNavKey
 import io.github.droidkaigi.confsched.feature.contributors.ContributorsNavKey
+import io.github.droidkaigi.confsched.feature.settings.SettingsNavKey
 import io.github.droidkaigi.confsched.feature.sponsors.SponsorsNavKey
 import io.github.droidkaigi.confsched.feature.staff.StaffNavKey
 
@@ -19,6 +20,10 @@ class DefaultAboutScreenNavigator(
     private val appNavigator: AppNavigator,
     private val debugNavKeyProvider: DebugNavKeyProvider,
 ) : AboutScreenNavigator {
+    override fun openSettings() {
+        appNavigator.goTo(SettingsNavKey)
+    }
+
     override fun openSponsors() {
         appNavigator.goTo(SponsorsNavKey)
     }

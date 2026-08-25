@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -24,6 +25,37 @@ import org.jetbrains.compose.resources.Font
 // Tokens that collection leaves undefined keep their existing values, among them the
 // call-to-action orange shared across themes as tertiary.
 private val CtaOrange = Color(0xFFE04A1E)
+
+@Immutable
+data class KaigiIllustrationColors(
+    val skyPanel: Color,
+    val onSkyPanel: Color,
+)
+
+private val MorningMistIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF141B2E),
+    onSkyPanel = Color(0xFFE8ECF4),
+)
+
+private val DeepTealIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF08202A),
+    onSkyPanel = Color(0xFFDCF0EC),
+)
+
+private val SakuraPlumIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF1E1220),
+    onSkyPanel = Color(0xFFF2E4EE),
+)
+
+private val TerracottaIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF21150E),
+    onSkyPanel = Color(0xFFF6E8DE),
+)
+
+private val CampfireNightIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF1C1512),
+    onSkyPanel = Color(0xFFF4E7DC),
+)
 
 private val MorningMist = lightColorScheme(
     primary = Color(0xFF3A4478),
@@ -192,6 +224,14 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
 /** The color scheme in force. */
 val LocalKaigiColorScheme = staticCompositionLocalOf { KaigiColorScheme.MorningMist }
 
+private fun KaigiColorScheme.toIllustrationColors(): KaigiIllustrationColors = when (this) {
+    KaigiColorScheme.MorningMist -> MorningMistIllustrationColors
+    KaigiColorScheme.DeepTeal -> DeepTealIllustrationColors
+    KaigiColorScheme.SakuraPlum -> SakuraPlumIllustrationColors
+    KaigiColorScheme.Terracotta -> TerracottaIllustrationColors
+    KaigiColorScheme.CampfireNight -> CampfireNightIllustrationColors
+}
+
 /**
  * How far every hand-drawn amplitude swings, as chosen in the settings screen.
  *
@@ -204,6 +244,9 @@ val LocalSketchStrength = staticCompositionLocalOf { SketchStrength.Normal }
 val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
     error("LocalSketchBaseSeed must be provided")
 }
+
+/** Illustration-only colors. Morning Mist is the app's light-theme fallback outside [KaigiTheme]. */
+val LocalKaigiIllustrationColors = staticCompositionLocalOf { MorningMistIllustrationColors }
 
 /**
  * Whether the scheme in force is a dark one.
@@ -280,6 +323,7 @@ fun KaigiTheme(
 ) {
     CompositionLocalProvider(
         LocalKaigiColorScheme provides colorScheme,
+        LocalKaigiIllustrationColors provides colorScheme.toIllustrationColors(),
         LocalSchemeIsDark provides colorScheme.isDark,
         LocalSketchBaseSeed provides sketchBaseSeed,
         LocalSketchStrength provides sketchStrength,

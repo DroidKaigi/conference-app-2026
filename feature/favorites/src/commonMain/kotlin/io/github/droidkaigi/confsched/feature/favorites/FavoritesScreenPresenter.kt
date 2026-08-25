@@ -12,8 +12,8 @@ import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
+import io.github.droidkaigi.confsched.core.ui.toTimetableTimeSlots
 import io.github.droidkaigi.confsched.feature.favorites.component.FavoritesListSectionUiState
-import io.github.droidkaigi.confsched.feature.favorites.component.toTimeSlots
 import soil.query.compose.rememberMutation
 
 @Composable
@@ -45,7 +45,7 @@ fun favoritesScreenPresenter(
     return FavoritesScreenUiState(
         selectedDayFilter = selectedDayFilter,
         favoritesListSection = FavoritesListSectionUiState(
-            timeSlots = favoriteItems.toTimeSlots(currentTime),
+            timeSlots = favoriteItems.toTimetableTimeSlots(currentTime),
             dayHeadersVisible = selectedDayFilter == null,
         ),
     )
