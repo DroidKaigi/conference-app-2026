@@ -7,4 +7,6 @@
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
     <string name="show_in_japanese">日本語で表示</string>
     <string name="show_in_english">英語で表示</string>
+    <string name="loading_headline">読み込み中</string>
+    <string name="loading_description">しばらくお待ちください</string>
 </resources>
