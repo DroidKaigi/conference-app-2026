@@ -23,6 +23,7 @@ kotlin {
             api(project(":feature:sessions"))
             api(project(":feature:about"))
             api(project(":feature:settings"))
+            api(project(":feature:search"))
             api(project(":feature:staff"))
             api(project(":feature:contributors"))
             api(project(":feature:sponsors"))
