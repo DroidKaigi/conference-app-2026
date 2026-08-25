@@ -150,7 +150,7 @@ private fun SessionInfoCardPreview(
             room = item.room,
             language = item.language,
             hasInterpretation = item.hasInterpretation,
-            category = item.category?.current(),
+            category = item.category?.name?.current(),
             seed = 620,
             modifier = Modifier.padding(24.dp),
         )

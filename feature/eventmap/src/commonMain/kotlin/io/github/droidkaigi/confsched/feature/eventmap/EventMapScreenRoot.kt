@@ -17,6 +17,7 @@ fun EventMapScreenRoot() {
         EventMapScreen(
             uiState = uiState,
             onFloorClick = { screenChannel.send(EventMapScreenAction.SelectFloor(it)) },
+            onFloorToggle = { screenChannel.send(EventMapScreenAction.ToggleFloor) },
         )
     }
 }

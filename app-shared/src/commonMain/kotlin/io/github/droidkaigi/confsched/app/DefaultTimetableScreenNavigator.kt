@@ -6,6 +6,7 @@ import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableScreenScope
+import io.github.droidkaigi.confsched.feature.search.SearchNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableScreenNavigator
 
@@ -15,5 +16,9 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableScreen
 class DefaultTimetableScreenNavigator(private val appNavigator: AppNavigator) : TimetableScreenNavigator {
     override fun openSessionDetail(id: TimetableItemId) {
         appNavigator.goTo(TimetableItemDetailNavKey(id))
+    }
+
+    override fun openSearch() {
+        appNavigator.goTo(SearchNavKey)
     }
 }

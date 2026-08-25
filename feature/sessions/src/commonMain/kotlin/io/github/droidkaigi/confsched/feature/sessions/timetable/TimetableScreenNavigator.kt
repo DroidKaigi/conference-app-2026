@@ -5,4 +5,6 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
 interface TimetableScreenNavigator : Navigator {
     fun openSessionDetail(id: TimetableItemId)
+
+    fun openSearch()
 }
