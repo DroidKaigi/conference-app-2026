@@ -1,11 +1,22 @@
 <resources>
-    <string name="about_title">DroidKaigi 2026 について</string>
-    <string name="version">バージョン</string>
+    <string name="about_title">DroidKaigiについて</string>
+    <string name="about_logo_description">DroidKaigi 2026</string>
+    <string name="about_description">DroidKaigiはAndroid技術情報の共有とコミュニケーションを目的に開催されるエンジニアが主役のAndroidカンファレンスです。</string>
+    <string name="about_event_date">2026.09.01 (火)〜03(木)</string>
+    <string name="about_venue">ベルサール渋谷ガーデン</string>
+    <string name="about_view_map">地図を見る</string>
+    <string name="credits">クレジット</string>
+    <string name="others">その他</string>
+    <string name="about_version_format">バージョン %1$s</string>
     <string name="sponsors">スポンサー</string>
     <string name="contributors">コントリビューター</string>
     <string name="staff">スタッフ</string>
+    <string name="code_of_conduct">行動規範</string>
     <string name="licenses">ライセンス</string>
-    <string name="licenses_description">このビルドが依存しているオープンソースライブラリ</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="settings">設定</string>
     <string name="debug_menu">デバッグメニュー</string>
-    <string name="debug_menu_description">開発者向けツール（デバッグビルドのみ）</string>
+    <string name="about_social_youtube">YouTube</string>
+    <string name="about_social_x">X</string>
+    <string name="about_social_medium">Medium</string>
 </resources>
