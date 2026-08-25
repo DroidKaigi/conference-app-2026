@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.feature.favorites.component
 
 import io.github.droidkaigi.confsched.core.model.Timetable
-import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeSlot
 import io.github.droidkaigi.confsched.core.ui.toTimetableTimeSlots
