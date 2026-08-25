@@ -51,6 +51,7 @@ fun testTimetableItem(
     asset = TimetableItemAsset.Empty,
     hasInterpretation = false,
     isCancelled = isCancelled,
+    message = null,
 )
 
 private fun DroidKaigi2026Day.at(time: String) =

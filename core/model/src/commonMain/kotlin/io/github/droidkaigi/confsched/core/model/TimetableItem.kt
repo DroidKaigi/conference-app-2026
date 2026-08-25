@@ -27,6 +27,7 @@ data class TimetableItem(
     val asset: TimetableItemAsset,
     val hasInterpretation: Boolean,
     val isCancelled: Boolean,
+    val message: MultiLangText?,
 ) {
     val speakerNames: String get() = speakers.joinToString(", ") { it.name }
 
