@@ -6,11 +6,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
-import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
-import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
-import io.github.droidkaigi.confsched.core.preview.wrapper.PreviewGraph
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,8 +18,6 @@ import soil.query.compose.SwrClientProvider
 
 @OptIn(ExperimentalTestApi::class)
 abstract class Robot(protected val composeUiTest: ComposeUiTest) {
-
-    private val previewImageResolver = createGraph<PreviewGraph>().previewImageResolver
 
     // Stands in for what a nav entry supplies in production: the Soil client and the snackbar host
     // from snackbarNavEntryDecorator, plus the resolver that turns a fake's preview:// URL into a
@@ -38,12 +34,12 @@ abstract class Robot(protected val composeUiTest: ComposeUiTest) {
                 onDispose(clientScope::cancel)
             }
             SwrClientProvider(client = client) {
-                CompositionLocalProvider(
-                    LocalSnackbarHostState provides snackbarHostState,
-                    LocalSketchBaseSeed provides 0,
-                    LocalPreviewImageResolver provides previewImageResolver,
-                    content = content,
-                )
+                KaigiPreviewTheme(colorScheme = KaigiColorScheme.MorningMist) {
+                    CompositionLocalProvider(
+                        LocalSnackbarHostState provides snackbarHostState,
+                        content = content,
+                    )
+                }
             }
         }
         composeUiTest.waitForIdle()
