@@ -32,5 +32,8 @@ data class Timetable(
         )
     }
 
+    fun search(query: SessionSearchQuery): PersistentList<TimetableItem> =
+        items.filter(query::matches).toPersistentList()
+
     companion object
 }

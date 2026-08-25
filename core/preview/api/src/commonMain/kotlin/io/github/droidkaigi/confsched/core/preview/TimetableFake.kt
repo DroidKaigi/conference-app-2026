@@ -162,7 +162,6 @@ private fun fakeItem(
     asset: TimetableItemAsset,
     isCancelled: Boolean,
 ): TimetableItem {
-    // Fake items take HH:mm strings; derive Instants via day.at to avoid full ISO-8601 timestamps.
     val startHour = startsAt.substringBefore(':').toInt()
     val startMinute = startsAt.substringAfter(':').toInt()
     val endHour = endsAt.substringBefore(':').toInt()
