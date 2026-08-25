@@ -21,6 +21,7 @@ class FakeTimetableApi : TimetableApi {
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s2",
@@ -41,6 +42,10 @@ class FakeTimetableApi : TimetableApi {
                         videoUrl = "https://example.com/sessions/s2/video",
                         slideUrl = "https://example.com/sessions/s2/slides",
                     ),
+                    message = LocaledResponse(
+                        ja = "※このセッションは会場が変更されました",
+                        en = "* The room of this session has changed",
+                    ),
                 ),
                 fakeSession(
                     id = "s3",
@@ -55,6 +60,7 @@ class FakeTimetableApi : TimetableApi {
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s4",
@@ -69,6 +75,7 @@ class FakeTimetableApi : TimetableApi {
                     interpretationTarget = false,
                     noShow = true,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s5",
@@ -83,6 +90,7 @@ class FakeTimetableApi : TimetableApi {
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s6",
@@ -100,6 +108,7 @@ class FakeTimetableApi : TimetableApi {
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
             ),
             rooms = listOf(
@@ -157,6 +166,7 @@ class FakeTimetableApi : TimetableApi {
         interpretationTarget: Boolean,
         noShow: Boolean,
         asset: SessionAssetResponse,
+        message: LocaledResponse?,
     ) = SessionResponse(
         id = id,
         title = title,
@@ -168,6 +178,7 @@ class FakeTimetableApi : TimetableApi {
         lengthInMinutes = 40,
         sessionType = sessionType,
         noShow = noShow,
+        message = message,
         targetAudience = LocaledResponse(
             ja = "モダンなAndroidアプリ開発の設計に興味がある方\nKotlin Multiplatformの実践的な適用例を知りたい方\nマルチプラットフォーム対応の知見を自分のプロジェクトに活かしたい方",
             en = "Anyone interested in the design of a modern Android app\nAnyone after a worked example of Kotlin Multiplatform\nAnyone taking multiplatform findings back to their own project",

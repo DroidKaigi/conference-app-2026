@@ -20,10 +20,15 @@ kotlin {
         }
 
         // Metro aggregates the resolver binding from impl at this module's compile time, while impl
-        // stays off production classpaths. Previews render through the Android target only, and
-        // compileOnly is unsupported for Kotlin/Native and Kotlin/Wasm, so the dependency is declared
-        // here instead of in commonMain; the other targets fall back to NoopPreviewImageResolver.
+        // stays off production classpaths. compileOnly is unsupported for Kotlin/Native and
+        // Kotlin/Wasm, so the dependency is declared per target instead of in commonMain; those two
+        // targets fall back to NoopPreviewImageResolver.
         androidMain.dependencies {
+            compileOnly(project(":core:preview:impl"))
+        }
+
+        // The screenshot tests render previews on the JVM target.
+        jvmMain.dependencies {
             compileOnly(project(":core:preview:impl"))
         }
 

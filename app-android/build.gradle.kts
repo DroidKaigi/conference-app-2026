@@ -46,6 +46,8 @@ dependencies {
     implementation(project(":app-shared"))
     implementation(project(":core:preview:api"))
     "devImplementation"(project(":feature:debug"))
+    // Supplies the preview drawables the fake server environment points at; excluded from prod.
+    "devImplementation"(project(":core:preview:impl"))
     "prodImplementation"(libs.firebaseCrashlytics)
     implementation(libs.androidxActivityCompose)
     implementation(libs.androidxGlanceAppwidget)
