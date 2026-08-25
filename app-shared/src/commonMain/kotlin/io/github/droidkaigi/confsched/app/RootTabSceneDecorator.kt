@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
@@ -362,6 +363,7 @@ private fun RootTabRailDragHandle(
                 orientation = Orientation.Horizontal,
                 interactionSource = interactionSource,
             )
+            .pointerHoverIcon(HorizontalResizePointerIcon)
             .semantics {
                 customActions = listOf(
                     CustomAccessibilityAction(
