@@ -193,7 +193,7 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         const val DATE_LABEL = "Date"
         const val CATEGORY_LABEL = "Category"
         const val SESSION_TYPE_LABEL = "Session type"
-        const val LANGUAGE_LABEL = "Supported language"
+        const val LANGUAGE_LABEL = "Language"
 
         const val INITIAL_TITLE = "Take a look around"
         const val NO_MATCH_TITLE = "Nothing found."

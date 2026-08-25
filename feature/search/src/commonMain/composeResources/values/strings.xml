@@ -17,7 +17,7 @@
     <string name="search_filter_date">Date</string>
     <string name="search_filter_category">Category</string>
     <string name="search_filter_session_type">Session type</string>
-    <string name="search_filter_language">Supported language</string>
+    <string name="search_filter_language">Language</string>
     <string name="search_filter_with_count">%1$s %2$d</string>
     <string name="search_filter_expanded">Expanded</string>
     <string name="search_filter_collapsed">Collapsed</string>
