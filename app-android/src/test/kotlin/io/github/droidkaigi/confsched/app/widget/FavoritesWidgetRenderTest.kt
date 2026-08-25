@@ -55,6 +55,7 @@ class FavoritesWidgetRenderTest {
                 asset = TimetableItemAsset.Empty,
                 hasInterpretation = false,
                 isCancelled = false,
+                message = null,
             ),
         ),
     )

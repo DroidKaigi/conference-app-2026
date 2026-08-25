@@ -35,7 +35,7 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
     private val commandChannel = Channel<NavCommand>(Channel.BUFFERED)
     val commands: Flow<NavCommand> = commandChannel.receiveAsFlow()
     fun goTo(key: NavKey) { commandChannel.trySend(NavCommand.Push(key)) }
-    fun back(origin: NavKey? = null) { commandChannel.trySend(NavCommand.Pop(origin)) }
+    override fun back(origin: NavKey? = null) { commandChannel.trySend(NavCommand.Pop(origin)) }
     fun moveToTop(key: NavKey) { commandChannel.trySend(NavCommand.MoveToTop(key)) }
 }
 
@@ -86,17 +86,26 @@ These guards compare each command with current back-stack state rather than usin
 
 ```kotlin
 // feature:sessions — the intent, type-safe and NavKey-free
-interface TimetableScreenNavigator {
+interface TimetableScreenNavigator : Navigator {
     fun openSessionDetail(id: TimetableItemId)
 }
 
 // app-shared — sees every NavKey; @SingleIn the screen's scope, not UiScope
 @Inject
 @SingleIn(TimetableScreenScope::class)
-@ContributesBinding(TimetableScreenScope::class)
-class DefaultTimetableScreenNavigator(private val appNavigator: AppNavigator) : TimetableScreenNavigator {
-    override fun openSessionDetail(id: TimetableItemId) = appNavigator.goTo(TimetableItemDetailNavKey(id))
+@ContributesBinding(
+    scope = TimetableScreenScope::class,
+    binding = binding<TimetableScreenNavigator>(),
+)
+class DefaultTimetableScreenNavigator(
+    private val appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    TimetableScreenNavigator {
+    override fun openSessionDetail(id: TimetableItemId) {
+        appNavigator.goTo(TimetableItemDetailNavKey(id))
+    }
 }
+
 ```
 
 The `ScreenRoot` consumes it as a plain lambda — it never holds the navigator or a `NavKey`, so it stays trivially testable:
@@ -108,7 +117,7 @@ TimetableScreenRoot(
 )
 ```
 
-Because the binding is `@SingleIn` the screen's scope, resolving the navigator from the app or UI graph is a Metro compile error — the DI graph confines it to the NavEntry layer, stronger than a checker or convention. (Only the shell's own calls — `AppNavigator.back()` and the tab bar's `moveToTop()` — stay UI-scoped.)
+Because the binding is `@SingleIn` the screen's scope, resolving the navigator from the app or UI graph is a Metro compile error — the DI graph confines it to the NavEntry layer, stronger than a checker or convention. (Only the shell's own calls — the predictive back and the tab bar's moveToTop() — stay UI-scoped.)
 
 `graph` is the per-screen graph the NavEntry retains — see [NavEntry aggregation](./navigation-entry-aggregation.md) for how entries are registered and aggregated.
 
@@ -122,7 +131,7 @@ entry<SponsorsNavKey> { key ->
     val uriHandler = LocalUriHandler.current
     context(graph.screenContext) {
         SponsorsScreenRoot(
-            onNavigateBack = { appNavigator.back(origin = key) },
+            onNavigateBack = { graph.screenNavigator.back(origin = key) },
             onNavigateToSponsorSite = uriHandler::openUri,
         )
     }

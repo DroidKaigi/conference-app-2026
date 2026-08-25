@@ -3,10 +3,8 @@ package io.github.droidkaigi.confsched.feature.favorites
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.Timetable
-import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import io.github.droidkaigi.confsched.core.testing.testTimetableItem
@@ -15,7 +13,6 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlin.time.Instant
 
 class FavoritesScreenPresenterTest {
 

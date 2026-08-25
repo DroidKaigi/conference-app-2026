@@ -35,6 +35,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             endsAt = "10:20",
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
+            message = null,
         ),
         TimetableItem.fake(),
         fakeItem(
@@ -49,6 +50,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             sessionType = SessionType.CODELABS,
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
+            message = null,
         ),
         fakeItem(
             id = "d1d",
@@ -64,6 +66,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             endsAt = "11:40",
             asset = TimetableItemAsset.Empty,
             isCancelled = true,
+            message = null,
         ),
         fakeItem(
             id = "d1e",
@@ -79,6 +82,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             endsAt = "13:45",
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
+            message = null,
         ),
         fakeItem(
             id = "d2a",
@@ -91,6 +95,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             endsAt = "10:40",
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
+            message = null,
         ),
         fakeItem(
             id = "d2b",
@@ -108,6 +113,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
             category = null,
             asset = TimetableItemAsset.Empty,
             isCancelled = false,
+            message = null,
         ),
     ),
     bookmarks = persistentSetOf(TimetableItemId("d1a"), TimetableItemId("d1b"), TimetableItemId("d2a")),
@@ -136,6 +142,7 @@ fun TimetableItem.Companion.fake(): TimetableItem = fakeItem(
         slideUrl = "https://example.com/sessions/d1b/slides",
     ),
     isCancelled = false,
+    message = null,
 )
 
 fun TimetableItemDetail.Companion.fake(): TimetableItemDetail =
@@ -161,8 +168,8 @@ private fun fakeItem(
     category: SessionCategory? = sampleCategories.first(),
     asset: TimetableItemAsset,
     isCancelled: Boolean,
+    message: MultiLangText?,
 ): TimetableItem {
-    // Fake items take HH:mm strings; derive Instants via day.at to avoid full ISO-8601 timestamps.
     val startHour = startsAt.substringBefore(':').toInt()
     val startMinute = startsAt.substringAfter(':').toInt()
     val endHour = endsAt.substringBefore(':').toInt()
@@ -192,5 +199,6 @@ private fun fakeItem(
         asset = asset,
         hasInterpretation = language == Language.JAPANESE,
         isCancelled = isCancelled,
+        message = message,
     )
 }

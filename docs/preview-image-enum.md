@@ -47,7 +47,7 @@ fun RemoteImage(imageUrl: String, contentDescription: String?) {
 }
 ```
 
-The resolver (provided only by preview / test builds, via `KaigiPreviewWrapper`) matches the preview URL back to the enum, then to its Compose Resource; it returns null for anything else, so production falls through to the network.
+The resolver matches the preview URL back to the enum, then to its Compose Resource; it returns null for anything else, so a release build falls through to the network. Which compositions get a resolver at all is [Preview & sample assets](./preview.md).
 
 ```kotlin
 // core:preview:api — contract + injection point (null in production)

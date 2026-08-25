@@ -20,7 +20,8 @@ import soil.query.compose.SwrClientProvider
 abstract class Robot(protected val composeUiTest: ComposeUiTest) {
 
     // Stands in for what a nav entry supplies in production: the Soil client and the snackbar host
-    // from snackbarNavEntryDecorator. A fresh client per call lets a scenario set up more than once.
+    // from snackbarNavEntryDecorator, plus the resolver that turns a fake's preview:// URL into a
+    // local drawable. A fresh client per call lets a scenario set up more than once.
     protected fun setScreenContent(content: @Composable () -> Unit) {
         val clientScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
         val client = SwrCachePlus(clientScope)
