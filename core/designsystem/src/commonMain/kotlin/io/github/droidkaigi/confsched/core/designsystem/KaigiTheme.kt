@@ -227,7 +227,6 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.CampfireNight -> CampfireNight
 }
 
-
 private fun KaigiColorScheme.toIllustrationColors(): KaigiIllustrationColors = when (this) {
     KaigiColorScheme.MorningMist -> MorningMistIllustrationColors
     KaigiColorScheme.DeepTeal -> DeepTealIllustrationColors
