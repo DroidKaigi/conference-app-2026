@@ -19,8 +19,8 @@ class DebugNavEntryProvider(
             val graph = retain(screenGraphFactory::createDebugScreenGraph)
             context(graph.screenContext) {
                 DebugScreenRoot(
-                    onNavigateToSoilErrors = graph.navigator::openSoilErrors,
-                    onNavigateBack = { graph.navigator.back(origin = key) },
+                    onNavigateToSoilErrors = graph.screenNavigator::openSoilErrors,
+                    onNavigateBack = { graph.screenNavigator.back(origin = key) },
                 )
             }
         }
