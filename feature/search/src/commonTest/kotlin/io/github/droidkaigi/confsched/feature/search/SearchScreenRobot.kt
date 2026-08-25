@@ -128,12 +128,8 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         composeUiTest.onNodeWithText(NO_MATCH_TITLE).assertIsDisplayed()
     }
 
-    fun checkQueryNoMatchDescriptionDisplayed() {
-        composeUiTest.onNodeWithText(QUERY_NO_MATCH_DESCRIPTION).assertIsDisplayed()
-    }
-
-    fun checkFilteredNoMatchDescriptionDisplayed() {
-        composeUiTest.onNodeWithText(FILTERED_NO_MATCH_DESCRIPTION).assertIsDisplayed()
+    fun checkNoMatchDescriptionDisplayed() {
+        composeUiTest.onNodeWithText(NO_MATCH_DESCRIPTION).assertIsDisplayed()
     }
 
     fun clearFilters() {
@@ -196,9 +192,8 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         const val LANGUAGE_LABEL = "Language"
 
         const val INITIAL_TITLE = "Take a look around"
-        const val NO_MATCH_TITLE = "Nothing found."
-        const val QUERY_NO_MATCH_DESCRIPTION = "Try a different search term"
-        const val FILTERED_NO_MATCH_DESCRIPTION = "Removing a filter may turn something up"
+        const val NO_MATCH_TITLE = "No results found."
+        const val NO_MATCH_DESCRIPTION = "Try removing some filters"
         const val CLEAR_FILTERS = "Clear filters"
     }
 }

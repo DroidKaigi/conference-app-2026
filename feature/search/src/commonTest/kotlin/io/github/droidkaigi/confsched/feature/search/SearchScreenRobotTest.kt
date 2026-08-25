@@ -90,7 +90,7 @@ class SearchScreenRobotTest : RobotTest() {
                 }
                 itShould("show the no-match state") {
                     checkNoMatchStateDisplayed()
-                    checkQueryNoMatchDescriptionDisplayed()
+                    checkNoMatchDescriptionDisplayed()
                 }
                 itShould("not offer a filter action when no filter is selected") {
                     checkClearFiltersDoesNotExist()
@@ -104,7 +104,7 @@ class SearchScreenRobotTest : RobotTest() {
                 }
                 itShould("show the no-match state") {
                     checkNoMatchStateDisplayed()
-                    checkFilteredNoMatchDescriptionDisplayed()
+                    checkNoMatchDescriptionDisplayed()
                 }
                 itShould("offer to clear the selected filter") {
                     checkClearFiltersDisplayed()

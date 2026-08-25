@@ -89,3 +89,27 @@ private fun SearchScreenPreview(
         )
     }
 }
+
+@LocaleScreenPreviews
+@Composable
+private fun SearchScreenInitialPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        SearchScreen(
+            uiState = SearchScreenUiState.fake().copy(
+                queryText = "",
+                result = SearchResultUiState.Empty.Initial,
+            ),
+            onQueryTextChange = {},
+            onDayClick = {},
+            onCategoryClick = {},
+            onSessionTypeClick = {},
+            onLanguageClick = {},
+            onClearFiltersClick = {},
+            onBookmarkClick = {},
+            onItemClick = {},
+            onBackClick = {},
+        )
+    }
+}
