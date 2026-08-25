@@ -3,11 +3,12 @@
     <string name="search_back">戻る</string>
     <string name="search_hint">セッションを検索</string>
     <string name="search_clear">消去</string>
+    <string name="search_initial_rummage_box_title">なにを探しますか？</string>
+    <string name="search_initial_constellation_title">探しに行きましょう</string>
     <string name="search_initial_title">のぞいてみましょう</string>
     <string name="search_initial_description">セッション名・登壇者・会場で検索できます</string>
     <string name="search_no_match_title">見つかりませんでした。</string>
-    <string name="search_no_match_query_description">別の検索語を試してみてください</string>
-    <string name="search_no_match_filtered_description">絞り込みを減らすと見つかるかもしれません</string>
+    <string name="search_no_match_description">絞り込みを減らすと見つかるかもしれません</string>
     <string name="search_clear_filters">絞り込みをクリア</string>
     <plurals name="search_result_count">
         <item quantity="other">%1$d件のセッション</item>

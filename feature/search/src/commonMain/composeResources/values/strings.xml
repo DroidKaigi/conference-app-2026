@@ -3,11 +3,12 @@
     <string name="search_back">Back</string>
     <string name="search_hint">Search sessions</string>
     <string name="search_clear">Clear</string>
+    <string name="search_initial_rummage_box_title">Take a look around</string>
+    <string name="search_initial_constellation_title">Take a look around</string>
     <string name="search_initial_title">Take a look around</string>
-    <string name="search_initial_description">Search by session name, speaker or room</string>
-    <string name="search_no_match_title">Nothing found.</string>
-    <string name="search_no_match_query_description">Try a different search term</string>
-    <string name="search_no_match_filtered_description">Removing a filter may turn something up</string>
+    <string name="search_initial_description">Search by session title, speaker, or room</string>
+    <string name="search_no_match_title">No results found.</string>
+    <string name="search_no_match_description">Try removing some filters</string>
     <string name="search_clear_filters">Clear filters</string>
     <plurals name="search_result_count">
         <item quantity="one">%1$d session</item>
