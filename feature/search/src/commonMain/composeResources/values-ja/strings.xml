@@ -1,0 +1,37 @@
+<resources>
+    <string name="search">検索</string>
+    <string name="search_back">戻る</string>
+    <string name="search_hint">セッションを検索</string>
+    <string name="search_clear">消去</string>
+    <string name="search_initial_title">のぞいてみましょう</string>
+    <string name="search_initial_description">セッション名・登壇者・会場で検索できます</string>
+    <string name="search_no_match_title">見つかりませんでした。</string>
+    <string name="search_no_match_query_description">別の検索語を試してみてください</string>
+    <string name="search_no_match_filtered_description">絞り込みを減らすと見つかるかもしれません</string>
+    <string name="search_clear_filters">絞り込みをクリア</string>
+    <plurals name="search_result_count">
+        <item quantity="other">%1$d件のセッション</item>
+    </plurals>
+
+    <string name="search_filter_date">開催日</string>
+    <string name="search_filter_category">カテゴリ</string>
+    <string name="search_filter_session_type">セッション種別</string>
+    <string name="search_filter_language">対応言語</string>
+    <string name="search_filter_with_count">%1$s %2$d</string>
+    <string name="search_filter_expanded">展開済み</string>
+    <string name="search_filter_collapsed">折りたたみ済み</string>
+
+    <string name="session_type_normal">セッション</string>
+    <string name="session_type_welcome_talk">ウェルカムトーク</string>
+    <string name="session_type_reserved">予約枠</string>
+    <string name="session_type_codelabs">コードラボ</string>
+    <string name="session_type_fireside_chat">ファイヤーサイドチャット</string>
+    <string name="session_type_lunch">ランチ</string>
+    <string name="session_type_break">休憩</string>
+    <string name="session_type_after_party">アフターパーティー</string>
+    <string name="session_type_recap">ふりかえり</string>
+
+    <string name="language_japanese">日本語</string>
+    <string name="language_english">英語</string>
+    <string name="language_mixed">日本語と英語</string>
+</resources>
