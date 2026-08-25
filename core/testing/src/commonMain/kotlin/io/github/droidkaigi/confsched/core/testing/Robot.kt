@@ -6,8 +6,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
+import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
+import io.github.droidkaigi.confsched.core.preview.wrapper.PreviewGraph
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,8 +21,11 @@ import soil.query.compose.SwrClientProvider
 @OptIn(ExperimentalTestApi::class)
 abstract class Robot(protected val composeUiTest: ComposeUiTest) {
 
+    private val previewImageResolver = createGraph<PreviewGraph>().previewImageResolver
+
     // Stands in for what a nav entry supplies in production: the Soil client and the snackbar host
-    // from snackbarNavEntryDecorator. A fresh client per call lets a scenario set up more than once.
+    // from snackbarNavEntryDecorator, plus the resolver that turns a fake's preview:// URL into a
+    // local drawable. A fresh client per call lets a scenario set up more than once.
     protected fun setScreenContent(content: @Composable () -> Unit) {
         val clientScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
         val client = SwrCachePlus(clientScope)
@@ -35,6 +41,7 @@ abstract class Robot(protected val composeUiTest: ComposeUiTest) {
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackbarHostState,
                     LocalSketchBaseSeed provides 0,
+                    LocalPreviewImageResolver provides previewImageResolver,
                     content = content,
                 )
             }

@@ -19,6 +19,7 @@ kotlin {
             api(project(":core:common"))
             api(project(":core:data"))
             api(project(":core:designsystem"))
+            api(project(":core:preview:api"))
             api(project(":core:ui"))
             api(project(":feature:sessions"))
             api(project(":feature:about"))
