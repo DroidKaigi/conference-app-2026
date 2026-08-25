@@ -42,6 +42,24 @@ class TimetableResponseMapperTest {
     }
 
     @Test
+    fun a_message_the_payload_carries_reaches_the_session() {
+        val items = timetableResponse(
+            rooms = listOf(roomResponse(81669L, "Narwhal")),
+            sessions = listOf(
+                sessionResponse("s1", roomId = 81669L, language = LanguageResponse.JAPANESE),
+                sessionResponse(
+                    "s2",
+                    roomId = 81669L,
+                    language = LanguageResponse.JAPANESE,
+                    message = LocaledResponse(ja = "会場変更", en = "Room changed"),
+                ),
+            ),
+        ).toTimetableItems()
+
+        assertEquals(listOf(null, MultiLangText(ja = "会場変更", en = "Room changed")), items.map { it.message })
+    }
+
+    @Test
     fun each_language_the_payload_can_carry_maps_to_its_own_value() {
         val items = timetableResponse(
             rooms = listOf(roomResponse(81669L, "Narwhal")),
@@ -241,6 +259,7 @@ class TimetableResponseMapperTest {
         language: LanguageResponse,
         sessionType: SessionTypeResponse = SessionTypeResponse.NORMAL,
         categoryItemId: Long? = null,
+        message: LocaledResponse? = null,
     ) = SessionResponse(
         id = id,
         title = LocaledResponse(ja = "Session $id", en = "Session $id"),
@@ -252,6 +271,7 @@ class TimetableResponseMapperTest {
         lengthInMinutes = 40,
         sessionType = sessionType,
         noShow = false,
+        message = message,
         targetAudience = LocaledResponse(ja = "All", en = "All"),
         interpretationTarget = false,
         asset = SessionAssetResponse(),

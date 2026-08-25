@@ -70,6 +70,7 @@ private fun TimetableResponse.toTimetableItems(
                 ),
                 hasInterpretation = session.interpretationTarget,
                 isCancelled = session.noShow,
+                message = session.message?.toMultiLangText(),
             )
         }
 }
