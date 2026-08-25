@@ -6,7 +6,6 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.common.Navigator
-import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.model.ServerEnvironmentScreenScope
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 
