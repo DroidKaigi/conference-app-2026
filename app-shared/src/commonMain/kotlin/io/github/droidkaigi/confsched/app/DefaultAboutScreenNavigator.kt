@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.app
 
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DebugNavKeyProvider
@@ -14,6 +15,7 @@ import io.github.droidkaigi.confsched.feature.sponsors.SponsorsNavKey
 import io.github.droidkaigi.confsched.feature.staff.StaffNavKey
 
 @Inject
+@SingleIn(AboutScreenScope::class)
 @ContributesBinding(
     scope = AboutScreenScope::class,
     binding = binding<AboutScreenNavigator>(),
