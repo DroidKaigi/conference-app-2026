@@ -6,6 +6,6 @@ abstract class DefaultScreenNavigator(
     private val appNavigator: AppNavigator,
 ) : Navigator {
     override fun back(origin: NavKey?) {
-        appNavigator.back()
+        appNavigator.back(origin = origin)
     }
 }

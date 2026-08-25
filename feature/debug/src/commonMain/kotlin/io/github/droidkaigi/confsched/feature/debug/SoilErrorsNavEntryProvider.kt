@@ -19,7 +19,7 @@ class SoilErrorsNavEntryProvider(
             val graph = retain(screenGraphFactory::createSoilErrorsScreenGraph)
             context(graph.screenContext) {
                 SoilErrorsScreenRoot(
-                    onNavigateBack = graph.screenNavigator.back(origin = key),
+                    onNavigateBack = { graph.screenNavigator.back(origin = key) },
                 )
             }
         }

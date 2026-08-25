@@ -20,7 +20,7 @@ class DebugNavEntryProvider(
             context(graph.screenContext) {
                 DebugScreenRoot(
                     onNavigateToSoilErrors = graph.navigator::openSoilErrors,
-                    onNavigateBack = graph.navigator.back(origin = key),
+                    onNavigateBack = { graph.navigator.back(origin = key) },
                 )
             }
         }
