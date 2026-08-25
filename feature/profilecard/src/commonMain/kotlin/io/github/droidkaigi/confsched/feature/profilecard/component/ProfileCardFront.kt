@@ -24,11 +24,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.LocalFileImage
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
@@ -39,7 +39,6 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ca
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_greeting
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_venue
-import io.github.vinceglb.filekit.PlatformFile
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -53,7 +52,7 @@ fun ProfileCardFront(
     occupation: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
-    avatarImage: PlatformFile?,
+    avatarImage: AvatarImage?,
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
@@ -147,7 +146,7 @@ internal fun CornerBracket(mirrored: Boolean, modifier: Modifier = Modifier, col
 }
 
 @Composable
-private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: PlatformFile?, modifier: Modifier = Modifier) {
+private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: AvatarImage?, modifier: Modifier = Modifier) {
     val plateSize = ProfileCardFrontDefaults.photoPlateSize
     val shape = SketchEllipseShape(
         seed = seed,
@@ -164,8 +163,8 @@ private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: 
         contentAlignment = Alignment.Center,
     ) {
         if (avatarImage != null) {
-            LocalFileImage(
-                file = avatarImage,
+            AsyncImage(
+                model = avatarImage.bytes,
                 contentDescription = null,
                 modifier = Modifier.size(plateSize).clip(shape),
                 contentScale = ContentScale.Crop,

@@ -8,7 +8,8 @@ import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.testing.PresenterTestScope
 import io.github.droidkaigi.confsched.core.testing.compositionLocalProviderWithReturnValue
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
-import io.github.vinceglb.filekit.PlatformFile
+import io.github.droidkaigi.confsched.feature.profilecard.component.AvatarImage
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -19,7 +20,7 @@ import kotlin.test.assertNull
 class ProfileCardScreenPresenterTest {
 
     private val graph = createGraph<ProfileCardScreenTestGraph>()
-    private val sampleAvatarImage = PlatformFile("avatar.png")
+    private val sampleAvatarImage = AvatarImage(byteArrayOf(1, 2, 3))
 
     // stringResource() reads LocalDensity even for plain strings; the presenter test harness has
     // no rendering surface to provide one, so this stands in for it.
@@ -153,6 +154,23 @@ class ProfileCardScreenPresenterTest {
             send(ProfileCardScreenAction.Submit)
             val afterResubmit = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
             assertEquals(false, afterResubmit.isShowingBack)
+        }
+    }
+
+    @Test
+    fun a_previously_persisted_image_loads_back_when_the_presenter_starts() {
+        runTest {
+            graph.presenterContext.profileImageStore.saveImage(LOCAL_PROFILE_ID, sampleAvatarImage.bytes)
+        }
+
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = presenter,
+        ) {
+            assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+
+            val restored = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertEquals(sampleAvatarImage, restored.avatarImage)
         }
     }
 
