@@ -847,8 +847,6 @@ private fun closedCurveThrough(
     }
 }
 
-private val MarkerRoughness = 1.15.dp
-private val MarkerTremor = 0.32.dp
 private val MarkerSweepWavelength = 30.dp
 private val MarkerTremorWavelength = 12.dp
 private val MarkerAnchorSpacing = 3.dp
@@ -872,15 +870,17 @@ internal fun Density.sketchMarkerPath(
     startBleed: Float,
     endBleed: Float,
     seed: Int,
+    roughness: Dp,
+    tremor: Dp,
 ): Path {
     val spacing = MarkerAnchorSpacing.toPx()
-    val roughness = MarkerRoughness.toPx()
-    val tremor = MarkerTremor.toPx()
-    if (width <= 0f || height <= (roughness + tremor) * 2f) return Path()
+    val roughnessPx = roughness.toPx()
+    val tremorPx = tremor.toPx()
+    if (width <= 0f || height <= (roughnessPx + tremorPx) * 2f) return Path()
     val sweepWavelength = MarkerSweepWavelength.toPx()
     val tremorWavelength = MarkerTremorWavelength.toPx()
     val capLength = min(MarkerCapLength.toPx(), width / 2f)
-    val halfHeight = markerHalfHeight(height, wobble = roughness + tremor)
+    val halfHeight = markerHalfHeight(height, wobble = roughnessPx + tremorPx)
     val overshoot = (MARKER_OVERSHOOT + MARKER_OVERSHOOT_NOISE * abs(hashNoise(seed, 0))) * spacing
     val tipHeight = halfHeight / MARKER_NIB_PEAK
 
@@ -889,8 +889,8 @@ internal fun Density.sketchMarkerPath(
         val ramp = if (capLength <= 0f) 1f else smoothstep(min(1f, fromNearestEnd / capLength))
         val nib = (MARKER_NIB - MARKER_NIB_RANGE + 2f * MARKER_NIB_RANGE * ramp) / MARKER_NIB
         return halfHeight * nib +
-            roughness * coherentNoise(edgeSeed, x, sweepWavelength) +
-            tremor * coherentNoise(edgeSeed + TREMOR_SEED_OFFSET, x, tremorWavelength)
+            roughnessPx * coherentNoise(edgeSeed, x, sweepWavelength) +
+            tremorPx * coherentNoise(edgeSeed + TREMOR_SEED_OFFSET, x, tremorWavelength)
     }
 
     val steps = max(1, ceil(width / spacing).toInt())

@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -22,6 +23,8 @@ class SketchMarkerPathBoundsTest {
                                 startBleed = startBleed,
                                 endBleed = endBleed,
                                 seed = seed,
+                                roughness = 1.15.dp,
+                                tremor = 0.32.dp,
                             ).getBounds()
                         }
                         val context = "seed=$seed, width=$width, height=$height, " +

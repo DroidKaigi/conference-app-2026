@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -37,6 +38,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.floor
+
+private val MarkerRoughness = 1.15.dp
+private val MarkerTremor = 0.32.dp
 
 @Composable
 fun SketchMarkedText(
@@ -66,6 +70,9 @@ fun SketchMarkedText(
         return
     }
 
+    val combinedSeed = combineSketchSeed(seed)
+    val markerRoughness = scaleSketchAmplitude(MarkerRoughness)
+    val markerTremor = scaleSketchAmplitude(MarkerTremor)
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
     var previousMark by remember(text) { mutableStateOf("") }
     var previousMatches by remember(text) { mutableStateOf(emptyList<IntRange>()) }
@@ -151,7 +158,9 @@ fun SketchMarkedText(
                 drawMarkerRuns(
                     layout = result,
                     matches = previous.matches,
-                    seed = seed,
+                    seed = combinedSeed,
+                    roughness = markerRoughness,
+                    tremor = markerTremor,
                     markColor = markColor.copy(
                         alpha = markColor.alpha * previous.alpha * (1f - revealed),
                     ),
@@ -161,7 +170,9 @@ fun SketchMarkedText(
             drawMarkerRuns(
                 layout = result,
                 matches = matches,
-                seed = seed,
+                seed = combinedSeed,
+                roughness = markerRoughness,
+                tremor = markerTremor,
                 markColor = markColor.copy(alpha = markColor.alpha * revealed),
                 revealedCharacters = revealedCharacters.value,
             )
@@ -238,12 +249,22 @@ private fun DrawScope.drawMarkerRuns(
     layout: TextLayoutResult,
     matches: List<IntRange>,
     seed: Int,
+    roughness: Dp,
+    tremor: Dp,
     markColor: Color,
     revealedCharacters: Float,
 ) {
     if (revealedCharacters <= 0f || markColor.alpha <= 0f) return
     for (range in matches) {
-        drawMarkerRun(layout, range, seed, markColor, revealedCharacters)
+        drawMarkerRun(
+            layout = layout,
+            range = range,
+            seed = seed,
+            roughness = roughness,
+            tremor = tremor,
+            markColor = markColor,
+            revealedCharacters = revealedCharacters,
+        )
     }
 }
 
@@ -251,6 +272,8 @@ private fun DrawScope.drawMarkerRun(
     layout: TextLayoutResult,
     range: IntRange,
     seed: Int,
+    roughness: Dp,
+    tremor: Dp,
     markColor: Color,
     revealedCharacters: Float,
 ) {
@@ -283,6 +306,8 @@ private fun DrawScope.drawMarkerRun(
             startBleed = bleedBefore(layout, start, line),
             endBleed = bleedAfter(layout, end, line),
             seed = markerSeed(seed, range.first, line),
+            roughness = roughness,
+            tremor = tremor,
         )
         translate(left = startX, top = centreY) {
             scale(scaleX = horizontalScale, scaleY = 1f, pivot = Offset.Zero) {
