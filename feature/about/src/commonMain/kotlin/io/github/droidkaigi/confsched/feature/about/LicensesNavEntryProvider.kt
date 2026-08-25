@@ -16,10 +16,10 @@ class LicensesNavEntryProvider(
     private val screenGraphFactory: LicensesScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<LicensesNavKey> {
+        entry<LicensesNavKey> { key ->
             val graph = retain(screenGraphFactory::createLicensesScreenGraph)
             context(graph.screenContext) {
-                LicensesScreenRoot(onNavigateBack = graph.screenNavigator::back)
+                LicensesScreenRoot(onNavigateBack = { graph.screenNavigator.back(origin = key) })
             }
         }
     }

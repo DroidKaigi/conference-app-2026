@@ -14,6 +14,7 @@ kotlin {
             api(libs.composeComponentsResources)
             api(libs.composeFoundation)
             api(libs.composeMaterial3)
+            implementation(libs.composeMaterial3AdaptiveNavigation3)
             api(libs.composeUi)
             api(libs.soilQueryCore)
             api(libs.soilQueryCompose)
@@ -21,6 +22,9 @@ kotlin {
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
             implementation(libs.ktorClientCore)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
         jvmMain.dependencies {
             implementation(libs.ktorClientCio)

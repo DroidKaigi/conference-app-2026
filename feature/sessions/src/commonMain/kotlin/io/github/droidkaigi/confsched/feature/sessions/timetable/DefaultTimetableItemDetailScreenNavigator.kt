@@ -7,6 +7,7 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetailScreenScope
+import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
 @Inject
 @ContributesBinding(
@@ -14,6 +15,10 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemDetailScreenScope
     binding = binding<TimetableItemDetailScreenNavigator>(),
 )
 class DefaultTimetableItemDetailScreenNavigator(
-    appNavigator: AppNavigator,
+    private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
-    TimetableItemDetailScreenNavigator
+    TimetableItemDetailScreenNavigator {
+    override fun openSessionDetail(id: TimetableItemId) {
+        appNavigator.goTo(TimetableItemDetailNavKey(id))
+    }
+}

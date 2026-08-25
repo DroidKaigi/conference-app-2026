@@ -32,6 +32,7 @@ private class RootScene<T : Any>(private val entry: NavEntry<T>) : Scene<T> {
     override val content: @Composable () -> Unit = { entry.Content() }
 
     override fun equals(other: Any?): Boolean = other is RootScene<*> && entry == other.entry
+
     override fun hashCode(): Int = entry.hashCode()
 }
 

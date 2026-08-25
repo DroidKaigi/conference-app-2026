@@ -16,11 +16,11 @@ class SoilErrorsNavEntryProvider(
     private val screenGraphFactory: SoilErrorsScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<SoilErrorsNavKey> {
+        entry<SoilErrorsNavKey> { key ->
             val graph = retain(screenGraphFactory::createSoilErrorsScreenGraph)
             context(graph.screenContext) {
                 SoilErrorsScreenRoot(
-                    onNavigateBack = graph.screenNavigator::back,
+                    onNavigateBack = graph.screenNavigator.back(origin = key),
                 )
             }
         }

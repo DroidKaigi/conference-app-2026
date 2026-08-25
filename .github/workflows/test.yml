@@ -11,6 +11,7 @@ on:
       - '**/src/**/resources/**'
       - 'core/data/openapi/**'
       - 'gradle/wrapper/**'
+      - '.github/actions/setup-java/**'
       - '.github/workflows/test.yml'
   push:
     branches: [main]
@@ -23,6 +24,7 @@ on:
       - '**/src/**/resources/**'
       - 'core/data/openapi/**'
       - 'gradle/wrapper/**'
+      - '.github/actions/setup-java/**'
       - '.github/workflows/test.yml'
 
 concurrency:
@@ -31,17 +33,13 @@ concurrency:
 
 jobs:
   # Everything that runs on a host JVM: the JVM-only modules, every multiplatform module's JVM
-  # target, and :app-android's unit-test variants. The feature modules' androidHostTest source set
-  # holds the preview screenshot tests, which the screenshot-goldens job below drives instead.
+  # target, and :app-android's unit-test variants. The preview screenshot tests also live in the
+  # feature modules' jvmTest, but recording goldens is the screenshot-goldens job's task below.
   unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
+      - uses: ./.github/actions/setup-java
       # --continue reports every failing module in one run.
       - name: Run unit tests
         run: ./gradlew test jvmTest --continue
@@ -65,13 +63,9 @@ jobs:
       actions: write # for upload-artifact
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: gradle
+      - uses: ./.github/actions/setup-java
       - name: Record preview screenshots
-        run: ./gradlew recordRoborazziAndroidHostTest --continue
+        run: ./gradlew recordRoborazziJvm --continue
       - name: Upload goldens
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:

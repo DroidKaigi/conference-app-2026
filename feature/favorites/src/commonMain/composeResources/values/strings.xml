@@ -1,7 +1,6 @@
 <resources>
     <string name="favorites">Favorites</string>
-    <string name="remove_favorite">Remove favorite</string>
     <string name="day_filter_all">All</string>
-    <string name="favorites_empty_title">No favorite sessions found.</string>
-    <string name="favorites_empty_description">Add sessions you’re interested in to your favorites.</string>
+    <string name="favorites_empty_title">No favorites</string>
+    <string name="favorites_empty_description">Save the sessions you’re interested in</string>
 </resources>

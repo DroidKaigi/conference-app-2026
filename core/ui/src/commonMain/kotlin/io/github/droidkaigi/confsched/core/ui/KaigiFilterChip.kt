@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +21,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Check
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -60,8 +61,9 @@ fun KaigiFilterChip(
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     borderColor: Color = MaterialTheme.colorScheme.outline,
 ) {
+    val combinedSeed = combineSketchSeed(seed)
     val shape = SketchEllipseShape(
-        seed = seed,
+        seed = combinedSeed,
         roughness = KaigiFilterChipDefaults.roughness,
         tremor = KaigiFilterChipDefaults.tremor,
         borderThickness = KaigiFilterChipDefaults.borderThickness,
@@ -87,7 +89,7 @@ fun KaigiFilterChip(
         ) {
             if (selected) {
                 Icon(
-                    imageVector = Icons.Filled.Check,
+                    imageVector = KaigiIcons.Default.Check,
                     contentDescription = null,
                     tint = selectedContentColor,
                     modifier = Modifier.size(KaigiFilterChipDefaults.iconSize),
@@ -115,8 +117,8 @@ object KaigiFilterChipDefaults {
     val iconSpacing = 4.dp
     val iconSize = 18.dp
     val borderThickness = 1.5.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
     val labelStyle
         @Composable get() = MaterialTheme.typography.labelLarge

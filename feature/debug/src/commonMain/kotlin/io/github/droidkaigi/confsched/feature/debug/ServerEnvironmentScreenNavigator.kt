@@ -26,6 +26,6 @@ class DefaultServerEnvironmentScreenNavigator(
 ) : DefaultScreenNavigator(appNavigator),
     ServerEnvironmentScreenNavigator {
     override fun openTimetable() {
-        appNavigator.goTo(TimetableNavKey)
+        appNavigator.replaceTop(TimetableNavKey)
     }
 }

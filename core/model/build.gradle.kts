@@ -21,6 +21,9 @@ kotlin {
             api(libs.aboutlibrariesCore)
             implementation(libs.kotlinxSerializationJson)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
     }
 }
 

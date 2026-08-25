@@ -62,7 +62,7 @@ class SponsorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkPlanSectionDisplayed(title: String) {
-        composeUiTest.onNodeWithText(title).assertIsDisplayed()
+        composeUiTest.onNodeWithContentDescription(title).assertIsDisplayed()
     }
 
     fun checkSponsorDisplayed(name: String) {
@@ -74,7 +74,7 @@ class SponsorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkPlanSectionDoesNotExist(title: String) {
-        composeUiTest.onNodeWithText(title).assertDoesNotExist()
+        composeUiTest.onNodeWithContentDescription(title).assertDoesNotExist()
     }
 
     fun checkOpenedSites(vararg links: String) {

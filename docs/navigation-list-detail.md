@@ -1,12 +1,10 @@
 # List-detail scenes (ListDetailSceneStrategy)
 
-On EXPANDED windows — 840dp wide and up — the session screens render as **list-detail**: the timetable stays visible as the list pane while the session detail opens beside it. A MEDIUM window is one pane, because the Material-recommended directive splits the layout horizontally only from the expanded width breakpoint. This is the standard Material3 adaptive strategy, `org.jetbrains.compose.material3.adaptive:adaptive-navigation3`, passed to `NavDisplay`'s `sceneStrategies`:
+On EXPANDED windows — 840dp wide and up — the session screens render as **list-detail**: the timetable stays visible as the list pane while the session detail opens beside it. A MEDIUM window is one pane, because the Material-recommended directive splits the layout horizontally only from the expanded width breakpoint. The strategy is the standard Material3 adaptive one, `org.jetbrains.compose.material3.adaptive:adaptive-navigation3`, wrapped as `rememberKaigiListDetailSceneStrategy` (`app-shared/.../KaigiListDetailSceneStrategy.kt`) to carry the app's pane separation and drag behavior, and passed to `NavDisplay`'s `sceneStrategies`:
 
 ```kotlin
-val listDetailSceneStrategy = rememberListDetailSceneStrategy<NavKey>()
-
 // rootSceneStrategy is FIRST: see "Ordering" below.
-sceneStrategies = listOf(rootSceneStrategy, listDetailSceneStrategy, SinglePaneSceneStrategy())
+sceneStrategies = listOf(rootSceneStrategy, rememberKaigiListDetailSceneStrategy(), SinglePaneSceneStrategy())
 ```
 
 The library resolves for every target this app ships: android, jvm (desktop), iosArm64, iosSimulatorArm64, and wasmJs.
@@ -53,6 +51,31 @@ IconButton(onClick = onBack) { // the same pop, whichever icon shows
 }
 ```
 
-So the adaptive icon comes entirely from a library-provided local; the app defines no pane primitives of its own.
+So the adaptive icon comes entirely from a library-provided local.
+
+## Pane separation (LocalPanePartitionSpacerSize)
+
+The scaffold's own gutter is closed: `rememberKaigiListDetailSceneStrategy` copies the Material directive with `horizontalPartitionSpacerSize = 0.dp`, so the two panes' backgrounds meet at the seam with no stripe of window background between them. The separation belongs to the panes instead, and travels as a `CompositionLocal`:
+
+- **Provider** — `KaigiNavDisplay` provides `LocalPanePartitionSpacerSize` (`core/ui`) around the whole `NavDisplay`. The value is the width a pane must reserve toward the shared boundary.
+- **Consumer** — a pane applies the value only while it is actually beside another pane, using the same `LocalListDetailSceneScope` gate as the adaptive icon. The inset must sit **inside** any background that runs to the pane edge; padding applied outside the background reopens the stripe the directive closed.
+
+```kotlin
+val paneSpacerInset = if (LocalListDetailSceneScope.current != null) {
+    LocalPanePartitionSpacerSize.current
+} else {
+    0.dp
+}
+```
+
+`TimetableItemDetailScreen` is the reference consumer: its top-bar close button and summary card take the inset as padding, and `TimetableItemDetailHeadline` takes it as a `startInset` parameter applied between its background and its content. A new detail pane must follow the same pattern — nothing enforces the contract mechanically, and a pane that skips it butts its content against the seam.
+
+## Resizing the split
+
+The scaffold shows a drag handle on the seam (`paneExpansionDragHandle`). Releasing a drag settles the split onto the nearest of three anchors — list at `PaneMinWidth`, 50:50, and detail at `PaneMinWidth` — so the edge anchors are the panes' resting minimum widths. While the pointer is down, `PaneExpansionDragBounds` rubber-bands the seam past the edge anchors through the state's `consumeDragDelta` hook: resistance grows with distance and movement stops entirely at `PaneMaxOvershoot`, while deltas back toward the bounds pass through untouched so the release animation is unaffected.
+
+The handle slot also draws a narrow gradient band on the list side of the seam. Panes are clipped to their own bounds, so the detail pane cannot cast a real shadow across the seam; the band, drawn from the handle slot placed above both panes, stands in for that elevation cue.
+
+All of this lives in `app-shared/.../KaigiListDetailSceneStrategy.kt`; the geometry assumes left-to-right layout, which holds for every locale the app ships.
 
 Related: [Root tab bar (RootTabSceneDecorator)](./navigation-root-tab-bar.md) · [Root NavEntry emulation (RootSceneStrategy)](./navigation-predictive-back-tabs.md)

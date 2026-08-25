@@ -5,7 +5,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
+import io.github.droidkaigi.confsched.core.model.AppearanceSettings
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
+import io.github.droidkaigi.confsched.core.model.SketchStrength
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 
 /**
@@ -20,10 +23,18 @@ import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 @Composable
 fun KaigiPreviewTheme(
     colorScheme: KaigiColorScheme,
+    fontFamily: KaigiFontFamily = AppearanceSettings.Default.fontFamily,
+    sketchStrength: SketchStrength = AppearanceSettings.Default.sketchStrength,
     content: @Composable () -> Unit,
 ) {
     val resolver = remember { createGraph<PreviewGraph>().previewImageResolver }
     CompositionLocalProvider(LocalPreviewImageResolver provides resolver) {
-        KaigiTheme(colorScheme = colorScheme, content = content)
+        KaigiTheme(
+            colorScheme = colorScheme,
+            fontFamily = fontFamily,
+            sketchStrength = sketchStrength,
+            sketchBaseSeed = 0,
+            content = content,
+        )
     }
 }

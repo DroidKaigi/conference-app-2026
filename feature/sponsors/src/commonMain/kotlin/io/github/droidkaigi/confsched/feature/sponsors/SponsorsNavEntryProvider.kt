@@ -17,12 +17,12 @@ class SponsorsNavEntryProvider(
     private val screenGraphFactory: SponsorsScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<SponsorsNavKey> {
+        entry<SponsorsNavKey> { key ->
             val graph = retain(screenGraphFactory::createSponsorsScreenGraph)
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 SponsorsScreenRoot(
-                    onNavigateBack = graph.screenNavigator::back,
+                    onNavigateBack = { graph.screenNavigator.back(origin = key) },
                     onNavigateToSponsorSite = uriHandler::openUri,
                 )
             }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Your favorited session schedule at a glance</string>
+    <string name="widget_brand">DroidKaigi</string>
+    <string name="widget_brand_full">DroidKaigi 2026</string>
+    <string name="widget_countdown_prefix">in</string>
+    <string name="widget_countdown_unit">days</string>
+    <string name="widget_countdown_dates">%1$d/%2$d – %3$d/%4$d</string>
+    <string name="widget_countdown_note">See you at the venue</string>
+    <string name="widget_next_label">Up next</string>
+    <string name="widget_live_small_label">Now</string>
+    <string name="widget_schedule_label">My favorites</string>
+    <string name="widget_favorites_label">Favorites</string>
+    <string name="widget_live_badge">LIVE</string>
+    <string name="widget_empty_small">Add favorites and your next session appears here.</string>
+    <string name="widget_empty_medium">Sessions you favorite are listed here with their start times.</string>
+    <string name="widget_empty_hint">Tap to browse sessions</string>
+    <string name="widget_post_message">Thank you for joining us. See you next time.</string>
+    <string name="widget_same_slot_more_small">+%1$d more</string>
+    <string name="widget_same_slot_more_row">+%1$d more</string>
+</resources>

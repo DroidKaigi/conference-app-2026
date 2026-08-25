@@ -17,12 +17,12 @@ class ContributorsNavEntryProvider(
     private val screenGraphFactory: ContributorsScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<ContributorsNavKey> {
+        entry<ContributorsNavKey> { key ->
             val graph = retain(screenGraphFactory::createContributorsScreenGraph)
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {
                 ContributorsScreenRoot(
-                    onNavigateBack = graph.screenNavigator::back,
+                    onNavigateBack = { graph.screenNavigator.back(origin = key) },
                     onNavigateToContributorProfile = uriHandler::openUri,
                 )
             }

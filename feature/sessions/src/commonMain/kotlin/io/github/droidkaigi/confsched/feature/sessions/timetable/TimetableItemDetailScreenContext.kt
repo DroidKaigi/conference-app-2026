@@ -6,6 +6,8 @@ import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableIdsSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
+import io.github.droidkaigi.confsched.core.model.SessionMemoMutationKey
+import io.github.droidkaigi.confsched.core.model.SessionMemosSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetailScreenScope
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
@@ -13,6 +15,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 @Inject
 class TimetableItemDetailPresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
+    val sessionMemoMutationKey: SessionMemoMutationKey,
 ) : PresenterContext
 
 @Inject
@@ -21,5 +24,6 @@ class TimetableItemDetailScreenContext(
     val timetableItemId: TimetableItemId,
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    val sessionMemosSubscriptionKey: SessionMemosSubscriptionKey,
     val presenterContext: TimetableItemDetailPresenterContext,
 ) : ScreenContext

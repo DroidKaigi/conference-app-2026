@@ -24,7 +24,9 @@ class ScenarioBuilder<R> {
 
 internal sealed interface Node<R> {
     data class Group<R>(val description: String, val children: List<Node<R>>) : Node<R>
+
     data class Setup<R>(val block: R.() -> Unit) : Node<R>
+
     data class Check<R>(val description: String, val block: R.() -> Unit) : Node<R>
 }
 
