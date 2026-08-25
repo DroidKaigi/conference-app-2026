@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.CollapsingHeaderLayout
 import io.github.droidkaigi.confsched.core.ui.rememberCollapsingHeaderEnterAlwaysState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.DayTabRow
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableGridSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableHeader
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSection
 
@@ -48,12 +50,21 @@ fun TimetableScreen(
             },
             modifier = Modifier.fillMaxSize().padding(innerPadding),
         ) { contentPadding ->
-            TimetableListSection(
-                uiState = uiState.timetableListSection,
-                contentPadding = contentPadding,
-                onBookmarkClick = onBookmarkClick,
-                onItemClick = onItemClick,
-            )
+            when (uiState.viewMode) {
+                TimetableViewMode.List -> TimetableListSection(
+                    uiState = uiState.timetableListSection,
+                    contentPadding = contentPadding,
+                    onBookmarkClick = onBookmarkClick,
+                    onItemClick = onItemClick,
+                )
+
+                TimetableViewMode.Grid -> Box(modifier = Modifier.fillMaxSize().padding(contentPadding)) {
+                    TimetableGridSection(
+                        uiState = uiState.timetableGridSection,
+                        onItemClick = onItemClick,
+                    )
+                }
+            }
         }
     }
 }
@@ -66,6 +77,23 @@ private fun TimetableScreenPreview(
     KaigiPreviewTheme(colorScheme) {
         TimetableScreen(
             uiState = TimetableScreenUiState.fake(),
+            onBookmarkClick = {},
+            onDayClick = {},
+            onItemClick = {},
+            onSearchClick = {},
+            onUiTypeChangeClick = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun TimetableScreenGridPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        TimetableScreen(
+            uiState = TimetableScreenUiState.fake().copy(viewMode = TimetableViewMode.Grid),
             onBookmarkClick = {},
             onDayClick = {},
             onItemClick = {},
