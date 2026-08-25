@@ -20,6 +20,7 @@ class StampCollectingScreenPresenterTest {
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(listOf(PrizeGroup.A, PrizeGroup.B, PrizeGroup.C), initial.prizeGroups.map { it.group })
+            assertEquals(Prizes.fake().items, initial.prizes)
         }
     }
 }

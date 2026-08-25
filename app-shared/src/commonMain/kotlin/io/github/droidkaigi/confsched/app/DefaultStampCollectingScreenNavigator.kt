@@ -7,6 +7,7 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.StampCollectingScreenScope
+import io.github.droidkaigi.confsched.feature.eventmap.PrizeOverlayNavKey
 import io.github.droidkaigi.confsched.feature.eventmap.StampCollectingScreenNavigator
 
 @Inject
@@ -16,6 +17,10 @@ import io.github.droidkaigi.confsched.feature.eventmap.StampCollectingScreenNavi
     binding = binding<StampCollectingScreenNavigator>(),
 )
 class DefaultStampCollectingScreenNavigator(
-    appNavigator: AppNavigator,
+    private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
-    StampCollectingScreenNavigator
+    StampCollectingScreenNavigator {
+    override fun openPrize(page: Int) {
+        appNavigator.goTo(PrizeOverlayNavKey(page))
+    }
+}

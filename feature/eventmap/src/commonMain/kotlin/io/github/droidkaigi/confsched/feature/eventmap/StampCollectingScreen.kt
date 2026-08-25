@@ -44,6 +44,7 @@ private const val PRIZE_SEED_STRIDE = 10
 fun StampCollectingScreen(
     uiState: StampCollectingScreenUiState,
     onBackClick: () -> Unit,
+    onPrizeClick: (page: Int) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -101,6 +102,7 @@ fun StampCollectingScreen(
                 PrizeGroupSection(
                     group = group,
                     seed = PRIZE_SEED_BASE + index * PRIZE_SEED_STRIDE,
+                    onPrizeClick = { prize -> onPrizeClick(uiState.prizes.indexOf(prize)) },
                 )
             }
         }
@@ -116,6 +118,7 @@ private fun StampCollectingScreenPreview(
         StampCollectingScreen(
             uiState = StampCollectingScreenUiState.of(Prizes.fake()),
             onBackClick = {},
+            onPrizeClick = {},
         )
     }
 }

@@ -13,6 +13,8 @@ data class StampCollectingPrizeGroup(
 
 data class StampCollectingScreenUiState(
     val prizeGroups: PersistentList<StampCollectingPrizeGroup>,
+    /** Every prize in group order — the pages the prize overlay swipes through. */
+    val prizes: PersistentList<Prize>,
 ) {
     companion object {
         fun of(prizes: Prizes): StampCollectingScreenUiState {
@@ -23,7 +25,10 @@ data class StampCollectingScreenUiState(
                 }
                 .sortedBy(StampCollectingPrizeGroup::group)
                 .toPersistentList()
-            return StampCollectingScreenUiState(prizeGroups = prizeGroups)
+            return StampCollectingScreenUiState(
+                prizeGroups = prizeGroups,
+                prizes = prizeGroups.flatMap(StampCollectingPrizeGroup::prizes).toPersistentList(),
+            )
         }
     }
 }

@@ -34,12 +34,40 @@ class StampCollectingScreenRobotTest : RobotTest() {
                     checkTextDisplayed("Prize 1")
                 }
             }
+            describe("and a prize card is tapped") {
+                doIt {
+                    scrollToText("Prize 1")
+                    clickPrize("Prize 1")
+                }
+                itShould("ask for the overlay on that prize") {
+                    checkPrizeOpened(page = 0)
+                }
+            }
             describe("and back is tapped") {
                 doIt {
                     clickBack()
                 }
                 itShould("leave the screen once") {
                     checkBackInvoked(times = 1)
+                }
+            }
+        }
+
+        describe("when the prize overlay opens on the second prize") {
+            doIt {
+                setupOverlayContent(initialPage = 1)
+            }
+            itShould("show that prize with its group and its position") {
+                checkTextDisplayed("GROUP A")
+                checkTextDisplayed("Prize 2")
+                checkTextDisplayed("2 / 8")
+            }
+            describe("and close is tapped") {
+                doIt {
+                    clickOverlayClose()
+                }
+                itShould("ask to close once") {
+                    checkOverlayCloseInvoked(times = 1)
                 }
             }
         }

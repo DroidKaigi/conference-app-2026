@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Prize
 import io.github.droidkaigi.confsched.core.model.Prizes
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -33,6 +34,7 @@ private val PrizeSpacing = 12.dp
 internal fun PrizeGroupSection(
     group: StampCollectingPrizeGroup,
     seed: Int,
+    onPrizeClick: (Prize) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -53,6 +55,7 @@ internal fun PrizeGroupSection(
                             name = prize.name.current(),
                             imageUrl = prize.imageUrl,
                             seed = seed + index,
+                            onClick = { onPrizeClick(prize) },
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -74,6 +77,7 @@ private fun PrizeGroupSectionPreview(
         PrizeGroupSection(
             group = StampCollectingScreenUiState.of(Prizes.fake()).prizeGroups.first(),
             seed = 210,
+            onPrizeClick = {},
             modifier = Modifier.padding(16.dp),
         )
     }

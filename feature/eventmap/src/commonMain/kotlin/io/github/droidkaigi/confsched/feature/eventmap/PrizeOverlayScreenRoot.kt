@@ -6,20 +6,21 @@ import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import soil.query.compose.rememberQuery
 
 @Composable
-context(screenContext: StampCollectingScreenContext)
-fun StampCollectingScreenRoot(
+context(screenContext: PrizeOverlayScreenContext)
+fun PrizeOverlayScreenRoot(
     onNavigateBack: () -> Unit,
-    onNavigateToPrize: (page: Int) -> Unit,
 ) {
     SoilDataBoundary(state = rememberQuery(screenContext.prizesQueryKey)) { prizes ->
         val uiState = context(screenContext.presenterContext) {
-            stampCollectingScreenPresenter(prizes = prizes)
+            prizeOverlayScreenPresenter(
+                prizes = prizes,
+                initialPage = screenContext.navKey.page,
+            )
         }
 
-        StampCollectingScreen(
+        PrizeOverlayScreen(
             uiState = uiState,
-            onBackClick = onNavigateBack,
-            onPrizeClick = onNavigateToPrize,
+            onCloseClick = onNavigateBack,
         )
     }
 }
