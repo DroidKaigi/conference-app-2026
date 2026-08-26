@@ -91,7 +91,9 @@ fun TimetableItemCard(
             isCancelled = isCancelled,
             seed = seed,
             titleMarkSeed = titleMarkSeed,
-            modifier = Modifier.clickable(onClick = onClick),
+            // Clip the click node to the sketched outline so the press ripple follows the drawn
+            // round rect instead of squaring off its corners. CardBody shares the card's bounds.
+            modifier = Modifier.clip(shape).clickable(onClick = onClick),
         )
         if (isFavorite) {
             room.mascot?.let { mascot ->

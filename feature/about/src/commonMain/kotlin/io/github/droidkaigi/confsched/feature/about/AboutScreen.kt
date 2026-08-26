@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -208,20 +209,22 @@ fun AboutScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    // The mark is a ring drawn into the artwork, so the ripple is clipped to a circle
+                    // to keep the press feedback inside it rather than squaring off around it.
                     Image(
                         painter = painterResource(Res.drawable.ic_social_youtube),
                         contentDescription = stringResource(Res.string.about_social_youtube),
-                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenYoutube),
+                        modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenYoutube),
                     )
                     Image(
                         painter = painterResource(Res.drawable.ic_social_x),
                         contentDescription = stringResource(Res.string.about_social_x),
-                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenX),
+                        modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenX),
                     )
                     Image(
                         painter = painterResource(Res.drawable.ic_social_medium),
                         contentDescription = stringResource(Res.string.about_social_medium),
-                        modifier = Modifier.size(48.dp).clickable(onClick = onOpenMedium),
+                        modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenMedium),
                     )
                 }
                 Icon(

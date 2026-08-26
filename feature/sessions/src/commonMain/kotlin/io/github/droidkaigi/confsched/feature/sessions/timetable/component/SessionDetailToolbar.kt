@@ -27,6 +27,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchDefaults
+import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
@@ -59,12 +60,14 @@ internal fun SessionDetailToolbar(
                         imageVector = KaigiIcons.Default.CalendarAddOn,
                         contentDescription = stringResource(Res.string.add_to_calendar),
                         onClick = onCalendarClick,
+                        seed = SessionDetailToolbarDefaults.CALENDAR_SEED,
                     )
                 }
                 ToolbarAction(
                     imageVector = KaigiIcons.Default.Share,
                     contentDescription = stringResource(Res.string.share),
                     onClick = onShareClick,
+                    seed = SessionDetailToolbarDefaults.SHARE_SEED,
                 )
             }
         }
@@ -73,6 +76,7 @@ internal fun SessionDetailToolbar(
                 imageVector = if (isFavorite) KaigiIcons.Default.FavoriteFilled else KaigiIcons.Default.FavoriteBorder,
                 contentDescription = stringResource(if (isFavorite) Res.string.remove_favorite else Res.string.add_favorite),
                 onClick = onBookmarkClick,
+                seed = SessionDetailToolbarDefaults.FAVORITE_SEED,
                 modifier = Modifier.padding(8.dp),
             )
         }
@@ -105,11 +109,20 @@ private fun ToolbarAction(
     imageVector: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
+    seed: Int,
     modifier: Modifier = Modifier,
 ) {
+    // Give each action its own sketched outline so the press ripple reads per button and follows
+    // the hand-drawn shape rather than filling a square inside the rounded surface.
+    val shape = SketchEllipseShape(
+        seed = combineSketchSeed(seed),
+        roughness = SketchDefaults.roughness,
+        tremor = SketchDefaults.tremor,
+    )
     Box(
         modifier = modifier
             .size(SessionDetailToolbarDefaults.actionSize)
+            .clip(shape)
             .clickable(role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -125,6 +138,11 @@ private fun ToolbarAction(
 private object SessionDetailToolbarDefaults {
     const val TOOLBAR_SEED = 932
     const val FAB_SEED = 933
+
+    // Distinct per action so the three ripple outlines do not repeat.
+    const val CALENDAR_SEED = 934
+    const val SHARE_SEED = 935
+    const val FAVORITE_SEED = 936
 
     val cornerRadius = 20.dp
     val borderThickness = 2.dp
