@@ -9,6 +9,8 @@ import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class ProfileCardScreenPresenterTest {
 
@@ -107,6 +109,53 @@ class ProfileCardScreenPresenterTest {
                 ),
                 uiState,
             )
+        }
+    }
+
+    @Test
+    fun submitting_an_empty_form_reports_every_field_as_required_and_stays_on_the_form() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.Submit)
+            val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertEquals(ProfileCardFormError.NickNameRequired, form.nickNameError)
+            assertEquals(ProfileCardFormError.OccupationRequired, form.occupationError)
+            assertEquals(ProfileCardFormError.LinkRequired, form.linkError)
+            assertEquals(ProfileCardFormError.AvatarImageRequired, form.avatarImageError)
+            assertTrue(graph.profileCardMutationKey.invocations.isEmpty)
+        }
+    }
+
+    @Test
+    fun submitting_a_link_that_is_not_an_http_url_reports_it_as_malformed() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateLink("example.com"))
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.Submit)
+            assertEquals(ProfileCardFormError.LinkMalformed, assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem()).linkError)
+        }
+    }
+
+    @Test
+    fun editing_a_field_clears_only_that_fields_error() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.Submit)
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateNickName("Speaker A"))
+            val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertNull(form.nickNameError)
+            assertEquals(ProfileCardFormError.OccupationRequired, form.occupationError)
         }
     }
 }

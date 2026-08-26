@@ -14,6 +14,10 @@ sealed interface ProfileCardScreenUiState {
         val sketchiness: Sketchiness = ProfileCard.DefaultSketchiness,
         val avatarImage: AvatarImage? = null,
         val isSubmitting: Boolean = false,
+        val nickNameError: ProfileCardFormError? = null,
+        val occupationError: ProfileCardFormError? = null,
+        val linkError: ProfileCardFormError? = null,
+        val avatarImageError: ProfileCardFormError? = null,
     ) : ProfileCardScreenUiState
 
     data class Card(
@@ -25,4 +29,12 @@ sealed interface ProfileCardScreenUiState {
         val avatarImage: AvatarImage?,
         val isShowingBack: Boolean = false,
     ) : ProfileCardScreenUiState
+}
+
+enum class ProfileCardFormError {
+    NickNameRequired,
+    OccupationRequired,
+    LinkRequired,
+    LinkMalformed,
+    AvatarImageRequired,
 }

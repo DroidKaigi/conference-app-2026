@@ -32,28 +32,34 @@ fun profileCardScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName)
+            is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName, nickNameError = null)
 
-            is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation)
+            is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation, occupationError = null)
 
-            is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link)
+            is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link, linkError = null)
 
             is ProfileCardScreenAction.UpdateMascot -> form = form.copy(mascot = action.mascot)
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
-            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage)
+            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
 
-            ProfileCardScreenAction.Submit -> mutation.mutateAsync(
-                ProfileCard(
-                    nickName = currentForm.nickName,
-                    occupation = currentForm.occupation,
-                    link = currentForm.link,
-                    mascot = currentForm.mascot,
-                    sketchiness = currentForm.sketchiness,
-                    avatarImage = currentForm.avatarImage,
-                ),
-            )
+            ProfileCardScreenAction.Submit -> {
+                val validated = currentForm.validated()
+                form = validated
+                if (validated.hasNoError) {
+                    mutation.mutateAsync(
+                        ProfileCard(
+                            nickName = validated.nickName,
+                            occupation = validated.occupation,
+                            link = validated.link,
+                            mascot = validated.mascot,
+                            sketchiness = validated.sketchiness,
+                            avatarImage = validated.avatarImage,
+                        ),
+                    )
+                }
+            }
 
             ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
 
@@ -101,3 +107,22 @@ private fun ProfileCard?.toForm(): ProfileCardScreenUiState.Form = if (this == n
         avatarImage = avatarImage,
     )
 }
+
+private fun ProfileCardScreenUiState.Form.validated(): ProfileCardScreenUiState.Form = copy(
+    nickNameError = ProfileCardFormError.NickNameRequired.takeIf { nickName.isBlank() },
+    occupationError = ProfileCardFormError.OccupationRequired.takeIf { occupation.isBlank() },
+    linkError = when {
+        link.isBlank() -> ProfileCardFormError.LinkRequired
+        !LINK_PATTERN.matches(link) -> ProfileCardFormError.LinkMalformed
+        else -> null
+    },
+    avatarImageError = ProfileCardFormError.AvatarImageRequired.takeIf { avatarImage == null },
+)
+
+private val ProfileCardScreenUiState.Form.hasNoError: Boolean
+    get() = nickNameError == null &&
+        occupationError == null &&
+        linkError == null &&
+        avatarImageError == null
+
+private val LINK_PATTERN = Regex("""^https?://[^\s/?#.]+(?:\.[^\s/?#.]+)+(?:[/?#]\S*)?$""")

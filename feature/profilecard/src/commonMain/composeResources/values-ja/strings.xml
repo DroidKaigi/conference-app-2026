@@ -22,4 +22,9 @@
     <string name="card_scan_me">SCAN ME</string>
     <string name="share_button">共有する</string>
     <string name="edit_button">編集する</string>
+    <string name="nickname_error">ニックネームを入力してください</string>
+    <string name="occupation_error">職種を入力してください</string>
+    <string name="link_error">リンクを入力してください</string>
+    <string name="link_malformed_error">http:// または https:// で始まるリンクを入力してください</string>
+    <string name="profile_image_error">画像を追加してください</string>
 </resources>

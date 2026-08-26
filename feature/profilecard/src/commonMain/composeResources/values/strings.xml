@@ -22,4 +22,9 @@
     <string name="card_scan_me">SCAN ME</string>
     <string name="share_button">Share</string>
     <string name="edit_button">Edit</string>
+    <string name="nickname_error">Please enter a nickname</string>
+    <string name="occupation_error">Please enter an occupation</string>
+    <string name="link_error">Please enter a link</string>
+    <string name="link_malformed_error">Please enter a link starting with http:// or https://</string>
+    <string name="profile_image_error">Please add an image</string>
 </resources>
