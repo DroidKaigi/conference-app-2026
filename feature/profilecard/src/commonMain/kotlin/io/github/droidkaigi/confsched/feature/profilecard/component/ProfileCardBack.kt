@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -140,7 +141,14 @@ private fun QrPlate(link: String, seed: Int, sketchiness: Sketchiness, modifier:
                 .background(ProfileCardColors.brightPlate)
                 .padding(ProfileCardBackDefaults.qrPlateInset),
         ) {
-            QrPattern(link = link, modifier = Modifier.fillMaxWidth())
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(ProfileCardBackDefaults.qrPaperCornerRadius))
+                    .background(ProfileCardColors.qrPaper)
+                    .padding(ProfileCardBackDefaults.qrQuietZone),
+            ) {
+                QrPattern(link = link, modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -158,7 +166,7 @@ private fun QrPattern(link: String, modifier: Modifier = Modifier) {
                 .map { row -> row.map(QRCodeSquare::dark) }
         }
     }
-    Canvas(modifier = modifier.size(ProfileCardBackDefaults.qrPlateSize - ProfileCardBackDefaults.qrPlateInset * 2)) {
+    Canvas(modifier = modifier.size(ProfileCardBackDefaults.qrPlateSize - (ProfileCardBackDefaults.qrPlateInset + ProfileCardBackDefaults.qrQuietZone) * 2)) {
         if (modules.isEmpty()) return@Canvas
         val cell = size.width / modules.size
         modules.forEachIndexed { row, cells ->
@@ -300,6 +308,8 @@ private object ProfileCardBackDefaults {
     val qrFrameSize = 190.dp
     val qrPlateSize = 154.dp
     val qrPlateInset = 11.dp
+    val qrPaperCornerRadius = 4.dp
+    val qrQuietZone = 14.dp
     val qrErrorCorrectionLevel = ErrorCorrectionLevel.MEDIUM
     val mascotOffset = DpOffset(94.dp, 403.dp)
 

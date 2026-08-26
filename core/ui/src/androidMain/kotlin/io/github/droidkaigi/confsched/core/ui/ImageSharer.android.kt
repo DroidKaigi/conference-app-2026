@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -30,6 +31,8 @@ private fun CoroutineScope.shareImage(context: Context, bytes: ByteArray) {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
             putExtra(Intent.EXTRA_STREAM, uri)
+            // The share sheet renders its preview thumbnail from the clip data, not the extra.
+            clipData = ClipData.newUri(context.contentResolver, null, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         context.startActivity(Intent.createChooser(intent, null))
