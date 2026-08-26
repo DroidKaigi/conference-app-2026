@@ -3,15 +3,24 @@ package io.github.droidkaigi.confsched.core.data
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlin.time.Clock
 
+/**
+ * Holds the profile card's avatar bytes and hands back the path they were written to. On wasmJs
+ * that path is an IndexedDB key rather than a filesystem path.
+ */
 @Inject
 @SingleIn(AppScope::class)
-class ProfileImageStore(private val store: FileStorage) {
-    suspend fun loadImage(profileId: String): ByteArray? = store.get(keyOf(profileId))
+class ProfileImageStore(private val fileStorage: FileStorage) {
+    // A fresh path per save: the stored record must differ when only the image changes, or the
+    // subscription's distinctUntilChanged keeps showing the previous avatar.
+    suspend fun save(bytes: ByteArray): String {
+        val path = "profile/avatar-${Clock.System.now().toEpochMilliseconds()}"
+        fileStorage.put(path, bytes)
+        return path
+    }
 
-    suspend fun saveImage(profileId: String, bytes: ByteArray) = store.put(keyOf(profileId), bytes)
+    suspend fun load(path: String): ByteArray? = fileStorage.get(path)
 
-    suspend fun deleteImage(profileId: String) = store.delete(keyOf(profileId))
-
-    private fun keyOf(profileId: String): String = "profile.image.$profileId"
+    suspend fun delete(path: String) = fileStorage.delete(path)
 }

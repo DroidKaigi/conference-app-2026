@@ -21,6 +21,8 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Add
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -107,6 +109,7 @@ fun ProfileCardFormView(
             onClick = onSubmitClick,
             seed = ProfileCardFormViewDefaults.submitButtonSeed,
             modifier = Modifier.fillMaxWidth(),
+            enabled = !uiState.isSubmitting,
         ) {
             Text(stringResource(Res.string.create_card_button), style = KaigiButtonDefaults.labelStyle)
         }

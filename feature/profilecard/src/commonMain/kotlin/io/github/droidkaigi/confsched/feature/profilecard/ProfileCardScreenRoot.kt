@@ -1,32 +1,47 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.runtime.Composable
+import io.github.droidkaigi.confsched.core.common.ActionResultEffect
+import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
-import io.github.vinceglb.filekit.dialogs.FileKitType
-import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.rememberImagePicker
+import soil.query.compose.rememberSubscription
 
 @Composable
 context(screenContext: ProfileCardScreenContext)
 fun ProfileCardScreenRoot() {
-    val screenChannel = retainScreenChannel<ProfileCardScreenAction, Nothing>()
-    val imagePickerLauncher = rememberFilePickerLauncher(type = FileKitType.Image) { file ->
-        if (file != null) screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(file))
-    }
+    SoilDataBoundary(
+        state = rememberSubscription(screenContext.profileCardSubscriptionKey),
+    ) { storedCard ->
+        val screenChannel = retainScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>()
+        val snackbarHostState = LocalSnackbarHostState.current
+        val launchImagePicker = rememberImagePicker { bytes ->
+            screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes)))
+        }
 
-    val uiState = context(screenContext.presenterContext) {
-        profileCardScreenPresenter(screenChannel = screenChannel)
+        ActionResultEffect(screenChannel) { result ->
+            when (result) {
+                is ProfileCardScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+            }
+        }
+
+        val uiState = context(screenContext.presenterContext) {
+            profileCardScreenPresenter(screenChannel = screenChannel, storedCard = storedCard)
+        }
+        ProfileCardScreen(
+            uiState = uiState,
+            onNickNameChange = { screenChannel.send(ProfileCardScreenAction.UpdateNickName(it)) },
+            onOccupationChange = { screenChannel.send(ProfileCardScreenAction.UpdateOccupation(it)) },
+            onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
+            onMascotSelected = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
+            onSketchinessSelected = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
+            onAddImageClick = launchImagePicker,
+            onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
+            onFlipCard = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
+            onEditCard = { screenChannel.send(ProfileCardScreenAction.EditCard) },
+        )
     }
-    ProfileCardScreen(
-        uiState = uiState,
-        onNickNameChange = { screenChannel.send(ProfileCardScreenAction.UpdateNickName(it)) },
-        onOccupationChange = { screenChannel.send(ProfileCardScreenAction.UpdateOccupation(it)) },
-        onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
-        onMascotSelected = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
-        onSketchinessSelected = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
-        onAddImageClick = imagePickerLauncher::launch,
-        onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
-        onFlipCard = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
-        onEditCard = { screenChannel.send(ProfileCardScreenAction.EditCard) },
-    )
 }

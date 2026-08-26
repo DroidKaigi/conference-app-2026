@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -36,16 +37,6 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sk
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
-/**
- * How far the card's hand-sketched outlines wobble from a straight line, expressed as the
- * multiplier applied to the amplitude the card's own size derives.
- */
-enum class Sketchiness(val amplitudeMultiplier: Float) {
-    Subtle(0.5f),
-    Normal(1.6f),
-    Playful(3.4f),
-}
 
 private val Sketchiness.label: String
     @Composable get() = when (this) {

@@ -3,19 +3,32 @@ package io.github.droidkaigi.confsched.feature.profilecard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
+import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
+import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.common.toUserMessage
+import io.github.droidkaigi.confsched.core.model.ProfileCard
+import soil.query.compose.rememberMutation
 
 @Composable
-context(_: ProfileCardPresenterContext)
+context(presenterContext: ProfileCardPresenterContext)
 fun profileCardScreenPresenter(
-    screenChannel: ScreenChannel<ProfileCardScreenAction, Nothing>,
+    screenChannel: ScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>,
+    storedCard: ProfileCard?,
 ): ProfileCardScreenUiState {
+    val mutation = rememberMutation(presenterContext.profileCardMutationKey)
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
-    var isSubmitted by retain { mutableStateOf(false) }
+    var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
+
+    // Submit and EditCard read the form and the card of the composition they fire in rather than
+    // the ones the effect was launched with.
+    val currentForm by rememberUpdatedState(form)
+    val currentStoredCard by rememberUpdatedState(storedCard)
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -29,30 +42,62 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
-            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file)
+            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage)
 
-            ProfileCardScreenAction.Submit -> isSubmitted = true
+            ProfileCardScreenAction.Submit -> mutation.mutateAsync(
+                ProfileCard(
+                    nickName = currentForm.nickName,
+                    occupation = currentForm.occupation,
+                    link = currentForm.link,
+                    mascot = currentForm.mascot,
+                    sketchiness = currentForm.sketchiness,
+                    avatarImage = currentForm.avatarImage,
+                ),
+            )
 
             ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
 
             ProfileCardScreenAction.EditCard -> {
-                isSubmitted = false
+                form = currentStoredCard.toForm()
+                isEditing = true
                 isShowingBack = false
             }
         }
     }
 
-    return if (isSubmitted) {
+    MutationSuccessEffect(mutation) {
+        isEditing = false
+        mutation.reset()
+    }
+    MutationErrorEffect(mutation) { error ->
+        screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
+        mutation.reset()
+    }
+
+    return if (storedCard == null || isEditing) {
+        form.copy(isSubmitting = mutation.isPending)
+    } else {
         ProfileCardScreenUiState.Card(
-            nickName = form.nickName,
-            occupation = form.occupation,
-            link = form.link,
-            mascot = form.mascot,
-            sketchiness = form.sketchiness,
-            avatarImage = form.avatarImage,
+            nickName = storedCard.nickName,
+            occupation = storedCard.occupation,
+            link = storedCard.link,
+            mascot = storedCard.mascot,
+            sketchiness = storedCard.sketchiness,
+            avatarImage = storedCard.avatarImage,
             isShowingBack = isShowingBack,
         )
-    } else {
-        form
     }
+}
+
+private fun ProfileCard?.toForm(): ProfileCardScreenUiState.Form = if (this == null) {
+    ProfileCardScreenUiState.Form()
+} else {
+    ProfileCardScreenUiState.Form(
+        nickName = nickName,
+        occupation = occupation,
+        link = link,
+        mascot = mascot,
+        sketchiness = sketchiness,
+        avatarImage = avatarImage,
+    )
 }

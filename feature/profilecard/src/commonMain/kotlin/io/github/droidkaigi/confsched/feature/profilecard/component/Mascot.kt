@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
@@ -33,14 +34,6 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.la
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.meerkat
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
-
-enum class Mascot {
-    Hall,
-    Jellyfish,
-    Koala,
-    Ladybug,
-    Meerkat,
-}
 
 private val Mascot.drawableResource: DrawableResource
     get() = when (this) {

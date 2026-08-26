@@ -10,12 +10,14 @@ class PersistedDataResetter(
     private val appearanceSettingsStore: AppearanceSettingsStore,
     private val favoritesStore: FavoritesStore,
     private val sessionMemoStore: SessionMemoStore,
+    private val profileCardDataStore: ProfileCardDataStore,
     private val fileStorage: FileStorage,
 ) {
     suspend fun clearAll() {
         appearanceSettingsStore.clear()
         favoritesStore.clear()
         sessionMemoStore.clear()
+        profileCardDataStore.clear()
         fileStorage.clear()
     }
 }
