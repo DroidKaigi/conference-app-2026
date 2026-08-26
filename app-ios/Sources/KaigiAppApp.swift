@@ -15,13 +15,26 @@ struct KaigiAppApp: App {
         WindowGroup {
             ZStack(alignment: .bottom) {
                 KaigiAppView(host: host)
+                    .osCondition { view in
+                        if #available(iOS 26.0, *) {
+                            view
+                        } else {
+                            view.ignoresSafeArea(.all, edges: [.top, .leading, .trailing])
+                        }
+                    }
                 RootTabBarView(
                     currentTab: host.currentTab.asAsyncSequence().map { $0?.tab },
                     palette: host.tabBarPalette.asAsyncSequence(),
                     select: host.selectTab(tab:)
                 )
             }
-            .ignoresSafeArea()
+            .osCondition { view in
+                if #available(iOS 26.0, *) {
+                    view.ignoresSafeArea()
+                } else {
+                    view
+                }
+            }
         }
     }
 }
@@ -46,4 +59,12 @@ private struct KaigiAppView: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+private extension View {
+    @ViewBuilder public func osCondition<Content: View>(
+        @ViewBuilder modifier: (Self) -> Content
+    ) -> some View {
+        modifier(self)
+    }
 }
