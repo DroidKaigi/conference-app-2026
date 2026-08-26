@@ -32,6 +32,8 @@ buildkonfig = "0.22.0"
 # Coil 3's network fetcher artifact (coil-network-ktor3) is only published at 3.2.0 in this stack, so
 # pin every Coil module to 3.2.0 to keep coil-core consistent across compose + network artifacts.
 coil = "3.2.0"
+# KMP file/media picker (Android/iOS/Desktop/Wasm); filekit-coil is a Coil3 Fetcher for PlatformFile.
+filekit = "0.15.0"
 # The JetWhale agent runtime requires 3.5.2, which conflict resolution would raise this to anyway;
 # declaring it keeps the catalog reading as what actually resolves.
 ktor = "3.5.2"
@@ -120,6 +122,9 @@ kspSymbolProcessingApi = { module = "com.google.devtools.ksp:symbol-processing-a
 kotlinPoetKsp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
 coilCompose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coilNetworkKtor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+filekitCore = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
+filekitDialogsCompose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
+filekitCoil = { module = "io.github.vinceglb:filekit-coil", version.ref = "filekit" }
 ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }

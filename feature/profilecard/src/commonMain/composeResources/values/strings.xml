@@ -1,3 +1,25 @@
 <resources>
     <string name="profile_card">Profile card</string>
+    <string name="subtitle">Create a profile card to introduce yourself at the venue and on social media!</string>
+    <string name="nickname_label">Nickname</string>
+    <string name="nickname_placeholder">droidkaigi</string>
+    <string name="occupation_label">Occupation</string>
+    <string name="occupation_placeholder">Software Engineer</string>
+    <string name="link_label">Link (e.g. X, Instagram...)</string>
+    <string name="link_placeholder">https://example.com/user</string>
+    <string name="profile_image_label">Profile Image</string>
+    <string name="add_image_button">Add Image</string>
+    <string name="mascot_label">Mascot</string>
+    <string name="sketchiness_label">Sketchiness</string>
+    <string name="sketchiness_subtle">Subtle</string>
+    <string name="sketchiness_normal">Normal</string>
+    <string name="sketchiness_playful">Playful</string>
+    <string name="create_card_button">Create Card</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
+    <string name="share_button">Share</string>
+    <string name="edit_button">Edit</string>
 </resources>
