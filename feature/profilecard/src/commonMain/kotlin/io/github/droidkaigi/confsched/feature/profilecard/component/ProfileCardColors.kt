@@ -6,21 +6,25 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * The finished card's palette, drawn from the app's active [io.github.droidkaigi.confsched.core.model.KaigiColorScheme]
- * so the card follows whichever theme the reader has chosen, the way issue #81 requires.
- *
- * [duskBand] and [plate] lean on `inverseSurface`/`surfaceContainerHigh`, a pair every scheme
- * defines to contrast with each other regardless of which one reads lighter in a given theme,
- * so content drawn in [plate] stays legible on a [duskBand] background either way.
+ * so the card follows whichever theme the reader has chosen, the way issue #81 requires. Mirrors
+ * the Figma source's own variable bindings (`md3/primary`, `md3/secondaryContainer`, `md3/surface`)
+ * rather than a hand-picked pair, so [onDuskBand]/[onBanner] stay legible on [duskBand]/[banner].
  */
 object ProfileCardColors {
     val plate: Color
-        @Composable get() = MaterialTheme.colorScheme.surfaceContainerHigh
+        @Composable get() = MaterialTheme.colorScheme.surface
 
     val duskBand: Color
-        @Composable get() = MaterialTheme.colorScheme.inverseSurface
+        @Composable get() = MaterialTheme.colorScheme.primary
+
+    val onDuskBand: Color
+        @Composable get() = MaterialTheme.colorScheme.onPrimary
 
     val banner: Color
-        @Composable get() = MaterialTheme.colorScheme.tertiaryContainer
+        @Composable get() = MaterialTheme.colorScheme.secondaryContainer
+
+    val onBanner: Color
+        @Composable get() = MaterialTheme.colorScheme.onSecondaryContainer
 
     val ink: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface
