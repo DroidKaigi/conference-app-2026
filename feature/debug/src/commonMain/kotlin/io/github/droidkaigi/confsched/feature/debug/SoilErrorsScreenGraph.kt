@@ -9,6 +9,8 @@ import io.github.droidkaigi.confsched.core.model.SoilErrorsScreenScope
 interface SoilErrorsScreenGraph {
     val screenContext: SoilErrorsScreenContext
 
+    val screenNavigator: SoilErrorsScreenNavigator
+
     @GraphExtension.Factory
     @ContributesTo(UiScope::class)
     fun interface Factory {

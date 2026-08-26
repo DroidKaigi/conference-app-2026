@@ -1,0 +1,18 @@
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="font">Font</string>
+    <string name="font_default">Default</string>
+    <string name="font_courier_prime">Courier Prime</string>
+    <string name="font_noto_sans">Noto Sans</string>
+    <string name="hand_drawn_strength">Hand-drawn strength</string>
+    <string name="hand_drawn_strength_subtle">Subtle</string>
+    <string name="hand_drawn_strength_normal">Normal</string>
+    <string name="hand_drawn_strength_playful">Playful</string>
+    <string name="theme">Theme</string>
+    <string name="theme_random">Random\nOn launch</string>
+    <string name="theme_morning_mist">Morning Mist</string>
+    <string name="theme_deep_teal">Deep Teal</string>
+    <string name="theme_campfire_night">Campfire Night</string>
+    <string name="theme_terracotta">Terracotta</string>
+    <string name="theme_sakura_plum">Sakura Plum</string>
+</resources>

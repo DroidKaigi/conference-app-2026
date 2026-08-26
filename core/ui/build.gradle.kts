@@ -14,6 +14,7 @@ kotlin {
             api(libs.composeComponentsResources)
             api(libs.composeFoundation)
             api(libs.composeMaterial3)
+            implementation(libs.composeMaterial3AdaptiveNavigation3)
             api(libs.composeUi)
             api(libs.soilQueryCore)
             api(libs.soilQueryCompose)
@@ -24,6 +25,9 @@ kotlin {
             // PlatformFile appears in RemoteImage.kt's public API (LocalFileImage).
             api(libs.filekitCore)
             implementation(libs.filekitCoil)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
         jvmMain.dependencies {
             implementation(libs.ktorClientCio)

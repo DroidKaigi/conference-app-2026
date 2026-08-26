@@ -1,10 +1,12 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.floor
@@ -86,6 +88,24 @@ internal fun Density.sketchHorizontalLinePath(
     return openCurveThrough(positions, offsets, OUTLINE_TANGENT_CLAMP)
 }
 
+internal fun Density.sketchGroundLinePath(
+    width: Float,
+    centerY: Float,
+    amplitude: Dp,
+    period: Dp,
+    seed: Int,
+): Path {
+    val xs = groundLinePositions(width, period.toPx())
+    val reach = amplitude.toPx()
+    val ys = FloatArray(xs.size) { index -> centerY + hashNoise(seed, index) * reach }
+    return openCurveThrough(xs, ys, OUTLINE_TANGENT_CLAMP)
+}
+
+internal fun groundLinePositions(width: Float, period: Float): FloatArray {
+    val cells = max(1, ceil(width / period).toInt())
+    return FloatArray(cells + 1) { index -> min(index * period, width) }
+}
+
 /**
  * A vertical line of [height], wobbling around [centerX].
  *
@@ -130,17 +150,40 @@ internal fun Density.sketchVerticalWavyLinePath(
     noiseAmount: Float,
     seed: Int,
 ): Path {
-    val reach = amplitude.toPx()
     val pitch = wavelength.toPx()
     val steps = max(2, (height / pitch * POINTS_PER_WAVE).roundToInt())
     val ys = FloatArray(steps + 1) { height * it / steps }
     val xs = FloatArray(steps + 1) { index ->
-        val turns = ys[index] / pitch
-        val swell = 1f + coherentNoise(seed, ys[index], pitch) * noiseAmount
-        centerX + sin(turns * TWO_PI) * reach * swell
+        sketchVerticalWavyLineXAt(
+            y = ys[index],
+            centerX = centerX,
+            amplitude = amplitude,
+            wavelength = wavelength,
+            noiseAmount = noiseAmount,
+            seed = seed,
+        )
     }
 
     return openCurveThrough(xs, ys, WAVY_TANGENT_CLAMP)
+}
+
+/**
+ * Returns the exact x-coordinate of the wavy line at [y], using the same logic as
+ * [sketchVerticalWavyLinePath].
+ */
+internal fun Density.sketchVerticalWavyLineXAt(
+    y: Float,
+    centerX: Float,
+    amplitude: Dp,
+    wavelength: Dp,
+    noiseAmount: Float,
+    seed: Int,
+): Float {
+    val reach = amplitude.toPx()
+    val pitch = wavelength.toPx()
+    val turns = y / pitch
+    val swell = 1f + coherentNoise(seed, y, pitch) * noiseAmount
+    return centerX + sin(turns * TWO_PI) * reach * swell
 }
 
 /**
@@ -783,7 +826,11 @@ internal fun Density.sketchVerticalFillPath(
 }
 
 /** Emits [xs] and [ys] as one closed curve, the same conversion the rect outline uses. */
-private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
+private fun closedCurveThrough(
+    xs: FloatArray,
+    ys: FloatArray,
+    controlBounds: Rect? = null,
+): Path {
     val count = xs.size
     return Path().apply {
         moveTo(xs[0], ys[0])
@@ -800,8 +847,139 @@ private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
                 tangentClamp = OUTLINE_TANGENT_CLAMP,
                 out = controls,
             )
-            cubicTo(controls[0], controls[1], controls[2], controls[3], xs[next], ys[next])
+            if (controlBounds == null) {
+                cubicTo(controls[0], controls[1], controls[2], controls[3], xs[next], ys[next])
+            } else {
+                // A Bézier stays inside the convex hull of its endpoints and control points.
+                cubicTo(
+                    controls[0].coerceIn(controlBounds.left, controlBounds.right),
+                    controls[1].coerceIn(controlBounds.top, controlBounds.bottom),
+                    controls[2].coerceIn(controlBounds.left, controlBounds.right),
+                    controls[3].coerceIn(controlBounds.top, controlBounds.bottom),
+                    xs[next],
+                    ys[next],
+                )
+            }
         }
         close()
     }
+}
+
+private val MarkerSweepWavelength = 30.dp
+private val MarkerTremorWavelength = 12.dp
+private val MarkerAnchorSpacing = 3.dp
+private val MarkerCapLength = 6.dp
+private const val MARKER_NIB = 1.6f
+private const val MARKER_NIB_RANGE = 0.4f
+private const val MARKER_OVERSHOOT = 1f
+private const val MARKER_OVERSHOOT_NOISE = 0.8f
+private const val MARKER_CAP_ANCHORS = 3
+
+// How far the nib ramp carries the band past its nominal half-height at the widest point.
+private const val MARKER_NIB_PEAK = (MARKER_NIB + MARKER_NIB_RANGE) / MARKER_NIB
+
+// Keeps the lower edge on independent noise sequences instead of mirroring the upper edge.
+private const val MARKER_EDGE_SEED_OFFSET = 1000
+
+/** Builds a marker band whose fixed x-origin anchors remain stable as [width] grows. */
+internal fun Density.sketchMarkerPath(
+    width: Float,
+    height: Float,
+    startBleed: Float,
+    endBleed: Float,
+    seed: Int,
+    roughness: Dp,
+    tremor: Dp,
+): Path {
+    val spacing = MarkerAnchorSpacing.toPx()
+    val roughnessPx = roughness.toPx()
+    val tremorPx = tremor.toPx()
+    if (width <= 0f || height <= (roughnessPx + tremorPx) * 2f) return Path()
+    val sweepWavelength = MarkerSweepWavelength.toPx()
+    val tremorWavelength = MarkerTremorWavelength.toPx()
+    val capLength = min(MarkerCapLength.toPx(), width / 2f)
+    val halfHeight = markerHalfHeight(height, wobble = roughnessPx + tremorPx)
+    val overshoot = (MARKER_OVERSHOOT + MARKER_OVERSHOOT_NOISE * abs(hashNoise(seed, 0))) * spacing
+    val tipHeight = halfHeight / MARKER_NIB_PEAK
+
+    fun edgeOffset(x: Float, edgeSeed: Int): Float {
+        val fromNearestEnd = min(x, width - x)
+        val ramp = if (capLength <= 0f) 1f else smoothstep(min(1f, fromNearestEnd / capLength))
+        val nib = (MARKER_NIB - MARKER_NIB_RANGE + 2f * MARKER_NIB_RANGE * ramp) / MARKER_NIB
+        return halfHeight * nib +
+            roughnessPx * coherentNoise(edgeSeed, x, sweepWavelength) +
+            tremorPx * coherentNoise(edgeSeed + TREMOR_SEED_OFFSET, x, tremorWavelength)
+    }
+
+    val steps = max(1, ceil(width / spacing).toInt())
+    val pointCapacity = steps * 2 + MARKER_CAP_ANCHORS * 2 + 4
+    val xs = ArrayList<Float>(pointCapacity)
+    val ys = ArrayList<Float>(pointCapacity)
+
+    for (step in 0..steps) {
+        val x = min(step * spacing, width)
+        xs += x
+        ys += -edgeOffset(x, seed)
+    }
+    val endReach = min(overshoot, endBleed)
+    appendMarkerTip(
+        xs = xs,
+        ys = ys,
+        edgeX = width,
+        direction = 1f,
+        reach = endReach,
+        tipHeight = tipHeight * endReach / overshoot,
+    )
+    for (step in steps downTo 0) {
+        val x = min(step * spacing, width)
+        xs += x
+        ys += edgeOffset(x, seed + MARKER_EDGE_SEED_OFFSET)
+    }
+    val startReach = min(overshoot, startBleed)
+    appendMarkerTip(
+        xs = xs,
+        ys = ys,
+        edgeX = 0f,
+        direction = -1f,
+        reach = startReach,
+        tipHeight = tipHeight * startReach / overshoot,
+    )
+    return closedCurveThrough(
+        xs = xs.toFloatArray(),
+        ys = ys.toFloatArray(),
+        controlBounds = Rect(
+            left = -startBleed,
+            top = -height / 2f,
+            right = width + endBleed,
+            bottom = height / 2f,
+        ),
+    )
+}
+
+internal fun markerHalfHeight(height: Float, wobble: Float): Float =
+    max(0f, (height / 2f - wobble) / MARKER_NIB_PEAK)
+
+private fun appendMarkerTip(
+    xs: MutableList<Float>,
+    ys: MutableList<Float>,
+    edgeX: Float,
+    direction: Float,
+    reach: Float,
+    tipHeight: Float,
+) {
+    if (reach <= 0f) return
+    for (index in 1..MARKER_CAP_ANCHORS) {
+        val angle = (PI * index / (MARKER_CAP_ANCHORS + 1)).toFloat()
+        xs += edgeX + direction * reach * sin(angle)
+        ys += -direction * tipHeight * cos(angle)
+    }
+}
+
+fun stableSketchSeed(value: String): Int {
+    var hash = SEED_MULTIPLIER
+    for (index in value.indices) {
+        hash = (hash xor value[index].code) * INDEX_MULTIPLIER
+        hash = hash xor (hash ushr 13)
+    }
+    return hash
 }

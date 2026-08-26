@@ -4,7 +4,7 @@ Compose `@Preview`s need sample data and images, but those assets must **not shi
 
 ## Module split (production isolation)
 
-- `:core:preview:api` — the contract and the sample data: a type-safe `PreviewImage` enum, the `PreviewImageResolver` interface, `LocalPreviewImageResolver` (default `null`), the `PreviewScope` marker, `NoopPreviewImageResolver` (the `@ContributesBinding(PreviewScope)` default, which resolves nothing), and the model `fake()` builders. No image binaries.
+- `:core:preview:api` — the contract and the sample data: a type-safe `PreviewImage` enum, the `PreviewImageResolver` interface, `LocalPreviewImageResolver` (default `null`), the `PreviewScope` marker, `NoopPreviewImageResolver` (the `@ContributesBinding(PreviewScope)` default, which resolves nothing), `PreviewImageResolverDefaults` (the same for the app graph), and the model `fake()` builders. No image binaries.
 - `:core:preview:impl` — the image binaries (Compose Resources) and `DefaultPreviewImageResolver`, contributed with `@ContributesBinding(PreviewScope, replaces = [NoopPreviewImageResolver::class])` so it overrides the no-op default wherever `:impl` is on the classpath.
 - `:core:preview:wrapper` — the Metro `PreviewGraph` (`@DependencyGraph(PreviewScope)`), `KaigiPreviewTheme`, and the wrapper features attach to their previews.
 
@@ -29,7 +29,7 @@ core/preview/
      KaigiPreviewWrapper.kt           # applies it under one fixed colour scheme
 ```
 
-`KaigiPreviewTheme` and `PreviewGraph` live in `:wrapper`, not `:impl` or `:api`. The wrapper takes `:core:preview:impl` as a `compileOnly` dependency: Metro aggregates the contributed `DefaultPreviewImageResolver` binding at the wrapper's compile time, while `:impl` stays off production classpaths. Kotlin/Native and wasm rely on partial linkage to tolerate the dangling reference, and neither ever runs in production. Keeping the graph out of `:api` also avoids a cycle: `:api -> :impl` would clash with `:impl -> :api`.
+`KaigiPreviewTheme` and `PreviewGraph` live in `:wrapper`, not `:impl` or `:api`. The wrapper takes `:core:preview:impl` as a `compileOnly` dependency on the Android and JVM targets — the two that render previews — so Metro aggregates the contributed `DefaultPreviewImageResolver` binding at the wrapper's compile time, while `:impl` stays off production classpaths. Kotlin/Native and wasm rely on partial linkage to tolerate the dangling reference, and neither ever runs in production. Keeping the graph out of `:api` also avoids a cycle: `:api -> :impl` would clash with `:impl -> :api`.
 
 Production depends on `:core:preview:wrapper` (through the feature convention, see below) but never on `:core:preview:impl`, so the image binaries are physically excluded from release. Only preview / test builds put `:impl` on the classpath, sharing the same sample data with screenshot tests and fake builds.
 
@@ -118,10 +118,13 @@ The type-safe preview-image enum is generated separately — see [Preview image 
 
 The `droidkaigi.convention.kmp-feature` plugin gives every feature `implementation(project(":core:preview:wrapper"))` in `commonMain`, so `KaigiPreviewWrapper` is referenceable next to each `@Preview`. The wrapper carries `:core:preview:impl` only as `compileOnly`, so the image binaries and `DefaultPreviewImageResolver` never reach production runtime classpaths; where `:impl` is absent, the Metro graph falls back to `NoopPreviewImageResolver` and previews would render blank (which never happens in production, since previews render only on preview / screenshot classpaths).
 
+`KaigiApp` always provides `LocalPreviewImageResolver` from the app graph. What varies is the resolver behind it: a release build binds `PreviewImageResolverDefaults`, which resolves nothing, so every image URL takes the network path. Providing it unconditionally keeps the composition uniform; the binding, not the provider, is what a release build withholds.
+
 `:core:preview:impl` still has to be on the classpath that *renders* previews, yet it is absent from `releaseRuntimeClasspath`. The non-production paths that pull it in:
 
 - **Android Studio `@Preview` rendering** — the `kmp-feature` convention adds `"androidRuntimeClasspath"(project(":core:preview:impl"))` (and `compileOnly(project(":core:preview:impl"))` in `androidMain`) so the drawable resources are visible to the IDE preview renderer; the `kmp.compose` primitive adds `"androidRuntimeClasspath"(libs.composeUiTooling)` for `ComposeViewAdapter`. Neither configuration feeds the release runtime classpath.
-- **Tests / CI** — depend on `:core:preview:impl` from a test source set (e.g. `jvmTest`). `:core:preview:wrapper`'s `PreviewWiringTest` proves `PreviewGraph` resolves the contributed `DefaultPreviewImageResolver` from there, and maps `preview://` URLs to `DrawableResource`s.
+- **Tests / CI** — depend on `:core:preview:impl` from a test source set (e.g. `jvmTest`). `:core:preview:wrapper`'s `PreviewWiringTest` proves `PreviewGraph` resolves the contributed `DefaultPreviewImageResolver` from there, and maps `preview://` URLs to `DrawableResource`s. `Robot` provides that resolver to the screen it composes, so a robot capture resolves the same URLs a preview does.
+- **The Android dev flavour** — `devImplementation(project(":core:preview:impl"))` plus a binding that replaces `PreviewImageResolverDefaults`, so the fake server environment's `preview://` URLs render as drawables. The prod flavour keeps the default, which resolves nothing.
 
 ## Android Studio preview rendering
 

@@ -294,8 +294,8 @@ object KaigiNavigationBarDefaults {
 
     val cornerRadius = 28.dp
     val indicatorSize = 40.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 }
 
 object KaigiNavigationRailDefaults {

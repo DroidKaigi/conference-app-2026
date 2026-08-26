@@ -12,7 +12,6 @@ import io.github.droidkaigi.confsched.core.common.RootSceneStrategy
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
-import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @ContributesIntoSet(UiScope::class)
@@ -28,8 +27,7 @@ class TimetableNavEntryProvider(
             context(graph.screenContext) {
                 TimetableScreenRoot(
                     onNavigateToDetail = graph.screenNavigator::openSessionDetail,
-                    // The search screen does not exist yet; route this to the navigator once it lands.
-                    onNavigateToSearch = {},
+                    onNavigateToSearch = graph.screenNavigator::openSearch,
                 )
             }
         }

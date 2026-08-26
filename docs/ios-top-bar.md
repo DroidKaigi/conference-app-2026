@@ -25,7 +25,7 @@ A native top bar cannot be expressed as one small model — a title, a back flag
 - **Actions are sub-models, not a flag.** Each action carries an icon whose Material `ImageVector` does not cross Swift Export — the tab bar already meets this by mapping each destination to an SF Symbol name on the Swift side — plus a content description, an enabled state, and a callback that does per-screen work. Each action is its own bridged value with a reverse call channel, and the set tracks the screen graph rather than sealing one component.
 - **The leading control is not a boolean.** It is one of none, back, or close, and it changes with runtime state: the session detail shows a close control in the list-detail pane and a back arrow otherwise.
 - **The title can be dynamic.** About reads its bar title from its `UiState`.
-- **The band is shared with hand-drawn chrome.** The Timetable day picker sits on the bar's surface, and the session detail headline continues it. A native bar draws its own material, so this seam would split mid-surface.
+- **The band is shared with hand-drawn chrome.** The Timetable day picker sits on the bar's surface, folding behind it as the list scrolls, and the session detail headline continues it. A native bar draws its own material, so this seam would split mid-surface.
 
 ## Scroll-driven behavior
 

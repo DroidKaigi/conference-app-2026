@@ -25,3 +25,7 @@ ktlint_standard_context-receiver-wrapping = disabled
 # Without a line-length limit, both collapse wrapped declarations onto one line.
 ktlint_standard_function-signature = disabled
 ktlint_standard_function-expression-body = disabled
+
+# Off by default in the intellij_idea style.
+ktlint_standard_blank-line-before-declaration = enabled
+ktlint_standard_no-unused-imports = enabled

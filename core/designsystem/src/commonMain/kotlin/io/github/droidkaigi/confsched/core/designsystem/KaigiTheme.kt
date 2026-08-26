@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -16,12 +17,45 @@ import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaig
 import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_medium
 import io.github.droidkaigi.confsched.core.designsystem.generated.resources.kaigi_sans_regular
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
+import io.github.droidkaigi.confsched.core.model.SketchStrength
 import org.jetbrains.compose.resources.Font
 
 // Palettes come from the Figma file's `DroidKaigi 2026 Material Theme` collection.
 // Tokens that collection leaves undefined keep their existing values, among them the
 // call-to-action orange shared across themes as tertiary.
 private val CtaOrange = Color(0xFFE04A1E)
+
+@Immutable
+data class KaigiIllustrationColors(
+    val skyPanel: Color,
+    val onSkyPanel: Color,
+)
+
+private val MorningMistIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF141B2E),
+    onSkyPanel = Color(0xFFE8ECF4),
+)
+
+private val DeepTealIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF08202A),
+    onSkyPanel = Color(0xFFDCF0EC),
+)
+
+private val SakuraPlumIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF1E1220),
+    onSkyPanel = Color(0xFFF2E4EE),
+)
+
+private val TerracottaIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF21150E),
+    onSkyPanel = Color(0xFFF6E8DE),
+)
+
+private val CampfireNightIllustrationColors = KaigiIllustrationColors(
+    skyPanel = Color(0xFF1C1512),
+    onSkyPanel = Color(0xFFF4E7DC),
+)
 
 private val MorningMist = lightColorScheme(
     primary = Color(0xFF3A4478),
@@ -187,10 +221,29 @@ fun KaigiColorScheme.toMaterialColorScheme(): ColorScheme = when (this) {
     KaigiColorScheme.CampfireNight -> CampfireNight
 }
 
+private fun KaigiColorScheme.toIllustrationColors(): KaigiIllustrationColors = when (this) {
+    KaigiColorScheme.MorningMist -> MorningMistIllustrationColors
+    KaigiColorScheme.DeepTeal -> DeepTealIllustrationColors
+    KaigiColorScheme.SakuraPlum -> SakuraPlumIllustrationColors
+    KaigiColorScheme.Terracotta -> TerracottaIllustrationColors
+    KaigiColorScheme.CampfireNight -> CampfireNightIllustrationColors
+}
+
+/**
+ * How far every hand-drawn amplitude swings, as chosen in the settings screen.
+ *
+ * Un-provided it reads as [SketchStrength.Normal], the strength the app ships at, so a drawing
+ * composed outside [KaigiTheme] still comes out at its own figures.
+ */
+val LocalSketchStrength = staticCompositionLocalOf { SketchStrength.Normal }
+
 /** The app-wide base seed combined with each sketch element's stable seed. */
 val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
     error("LocalSketchBaseSeed must be provided")
 }
+
+/** Illustration-only colors. Morning Mist is the app's light-theme fallback outside [KaigiTheme]. */
+val LocalKaigiIllustrationColors = staticCompositionLocalOf { MorningMistIllustrationColors }
 
 /**
  * Whether the scheme in force is a dark one.
@@ -222,44 +275,58 @@ private fun kaigiFontFamilies(): Pair<FontFamily, FontFamily> {
     return display to standard
 }
 
-// Only the family changes per role; sizes, line heights, and letter spacing must keep
-// the Material defaults the design file records.
+/**
+ * The type set [fontFamily] installs. Only the family changes per role; sizes, line heights, and
+ * letter spacing keep the Material defaults the design file records.
+ *
+ * Public for a control that has to set text in a font other than the one in force, such as the
+ * settings screen naming each font option in the face that option selects.
+ */
 @Composable
-private fun kaigiTypography(): Typography {
+fun kaigiTypography(fontFamily: KaigiFontFamily): Typography {
     val (display, standard) = kaigiFontFamilies()
+    val (displayRole, textRole) = when (fontFamily) {
+        KaigiFontFamily.Default -> display to standard
+        KaigiFontFamily.CourierPrime -> display to display
+        KaigiFontFamily.NotoSans -> standard to standard
+    }
     val defaults = Typography()
     return Typography(
-        displayLarge = defaults.displayLarge.copy(fontFamily = display),
-        displayMedium = defaults.displayMedium.copy(fontFamily = display),
-        displaySmall = defaults.displaySmall.copy(fontFamily = display),
-        headlineLarge = defaults.headlineLarge.copy(fontFamily = display),
-        headlineMedium = defaults.headlineMedium.copy(fontFamily = display),
-        headlineSmall = defaults.headlineSmall.copy(fontFamily = display),
-        titleLarge = defaults.titleLarge.copy(fontFamily = standard),
-        titleMedium = defaults.titleMedium.copy(fontFamily = standard),
-        titleSmall = defaults.titleSmall.copy(fontFamily = standard),
-        bodyLarge = defaults.bodyLarge.copy(fontFamily = standard),
-        bodyMedium = defaults.bodyMedium.copy(fontFamily = standard),
-        bodySmall = defaults.bodySmall.copy(fontFamily = standard),
-        labelLarge = defaults.labelLarge.copy(fontFamily = standard),
-        labelMedium = defaults.labelMedium.copy(fontFamily = standard),
-        labelSmall = defaults.labelSmall.copy(fontFamily = standard),
+        displayLarge = defaults.displayLarge.copy(fontFamily = displayRole),
+        displayMedium = defaults.displayMedium.copy(fontFamily = displayRole),
+        displaySmall = defaults.displaySmall.copy(fontFamily = displayRole),
+        headlineLarge = defaults.headlineLarge.copy(fontFamily = displayRole),
+        headlineMedium = defaults.headlineMedium.copy(fontFamily = displayRole),
+        headlineSmall = defaults.headlineSmall.copy(fontFamily = displayRole),
+        titleLarge = defaults.titleLarge.copy(fontFamily = textRole),
+        titleMedium = defaults.titleMedium.copy(fontFamily = textRole),
+        titleSmall = defaults.titleSmall.copy(fontFamily = textRole),
+        bodyLarge = defaults.bodyLarge.copy(fontFamily = textRole),
+        bodyMedium = defaults.bodyMedium.copy(fontFamily = textRole),
+        bodySmall = defaults.bodySmall.copy(fontFamily = textRole),
+        labelLarge = defaults.labelLarge.copy(fontFamily = textRole),
+        labelMedium = defaults.labelMedium.copy(fontFamily = textRole),
+        labelSmall = defaults.labelSmall.copy(fontFamily = textRole),
     )
 }
 
 @Composable
 fun KaigiTheme(
     colorScheme: KaigiColorScheme,
+    fontFamily: KaigiFontFamily,
+    sketchStrength: SketchStrength,
     sketchBaseSeed: Int,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
+        LocalKaigiIllustrationColors provides colorScheme.toIllustrationColors(),
         LocalSchemeIsDark provides colorScheme.isDark,
         LocalSketchBaseSeed provides sketchBaseSeed,
+        LocalSketchStrength provides sketchStrength,
     ) {
         MaterialTheme(
             colorScheme = colorScheme.toMaterialColorScheme(),
-            typography = kaigiTypography(),
+            typography = kaigiTypography(fontFamily),
             content = content,
         )
     }

@@ -8,11 +8,12 @@ import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
+import io.github.droidkaigi.confsched.core.ui.toTimetableTimeSlots
 import io.github.droidkaigi.confsched.feature.favorites.component.FavoritesListSectionUiState
-import io.github.droidkaigi.confsched.feature.favorites.component.toTimeSlots
 import soil.query.compose.rememberMutation
 
 @Composable
@@ -23,6 +24,7 @@ fun favoritesScreenPresenter(
 ): FavoritesScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDayFilter by retain { mutableStateOf<DroidKaigi2026Day?>(null) }
+    val currentTime = presenterContext.clock.rememberCurrentTime()
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -43,7 +45,7 @@ fun favoritesScreenPresenter(
     return FavoritesScreenUiState(
         selectedDayFilter = selectedDayFilter,
         favoritesListSection = FavoritesListSectionUiState(
-            timeSlots = favoriteItems.toTimeSlots(),
+            timeSlots = favoriteItems.toTimetableTimeSlots(currentTime),
             dayHeadersVisible = selectedDayFilter == null,
         ),
     )

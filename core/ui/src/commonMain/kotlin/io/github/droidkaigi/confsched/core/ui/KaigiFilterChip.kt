@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +23,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -47,6 +50,9 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
  * @param selectedContentColor the colour the tick, [label] and the outline take while [selected].
  * @param contentColor the colour [label] takes while not [selected].
  * @param borderColor the colour of the outline while not [selected].
+ * @param role the accessibility role for this chip's interaction.
+ * @param trailingIcon the content following [label], most often a caret on a chip that opens a
+ *   menu rather than toggling on its own. It draws in the same colour as [label].
  */
 @Composable
 fun KaigiFilterChip(
@@ -59,6 +65,8 @@ fun KaigiFilterChip(
     selectedContentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     borderColor: Color = MaterialTheme.colorScheme.outline,
+    role: Role = Role.RadioButton,
+    trailingIcon: @Composable () -> Unit = {},
 ) {
     val combinedSeed = combineSketchSeed(seed)
     val shape = SketchEllipseShape(
@@ -76,7 +84,7 @@ fun KaigiFilterChip(
             )
             .sketchBorder(shape, if (selected) selectedContentColor else borderColor)
             .clip(shape)
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
+            .selectable(selected = selected, role = role, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Row(
@@ -105,6 +113,10 @@ fun KaigiFilterChip(
                 },
                 color = if (selected) selectedContentColor else contentColor,
             )
+            CompositionLocalProvider(
+                LocalContentColor provides if (selected) selectedContentColor else contentColor,
+                content = trailingIcon,
+            )
         }
     }
 }
@@ -116,8 +128,8 @@ object KaigiFilterChipDefaults {
     val iconSpacing = 4.dp
     val iconSize = 18.dp
     val borderThickness = 1.5.dp
-    val roughness = 0.4.dp
-    val tremor = 0.15.dp
+    val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
+    val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
     val labelStyle
         @Composable get() = MaterialTheme.typography.labelLarge

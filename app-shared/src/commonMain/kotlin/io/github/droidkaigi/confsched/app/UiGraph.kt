@@ -12,7 +12,8 @@ import io.github.droidkaigi.confsched.core.common.MergedNavKeySerializersProvide
 import io.github.droidkaigi.confsched.core.common.SemanticsDebuggingEffect
 import io.github.droidkaigi.confsched.core.common.SoilErrorMonitor
 import io.github.droidkaigi.confsched.core.common.UiScope
-import io.github.droidkaigi.confsched.core.data.ThemeColorSchemeSubscriptionKey
+import io.github.droidkaigi.confsched.core.model.AppearanceSubscriptionKey
+import io.github.droidkaigi.confsched.core.preview.PreviewImageResolver
 import soil.query.SwrClientPlus
 
 @GraphExtension(UiScope::class)
@@ -31,5 +32,6 @@ interface UiGraph {
     val clockOverlay: ClockOverlay
     val soilErrorMonitor: SoilErrorMonitor
     val swrClient: SwrClientPlus
-    val themeColorSchemeSubscriptionKey: ThemeColorSchemeSubscriptionKey
+    val appearanceSubscriptionKey: AppearanceSubscriptionKey
+    val previewImageResolver: PreviewImageResolver
 }

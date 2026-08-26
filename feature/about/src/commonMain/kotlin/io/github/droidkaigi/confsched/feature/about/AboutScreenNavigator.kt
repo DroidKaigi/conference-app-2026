@@ -3,6 +3,8 @@ package io.github.droidkaigi.confsched.feature.about
 import io.github.droidkaigi.confsched.core.common.Navigator
 
 interface AboutScreenNavigator : Navigator {
+    fun openSettings()
+
     fun openSponsors()
 
     fun openContributors()
@@ -13,5 +15,6 @@ interface AboutScreenNavigator : Navigator {
 
     /** False when the build does not include the debug feature. */
     val isDebugMenuAvailable: Boolean
+
     fun openDebug()
 }
