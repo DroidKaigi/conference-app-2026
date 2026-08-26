@@ -7,13 +7,6 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.avatar_image_required_error
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_invalid_error
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_required_error
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_required_error
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_required_error
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 context(_: ProfileCardPresenterContext)
@@ -24,40 +17,17 @@ fun profileCardScreenPresenter(
     var isSubmitted by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
 
-    val nicknameRequiredMessage = stringResource(Res.string.nickname_required_error)
-    val occupationRequiredMessage = stringResource(Res.string.occupation_required_error)
-    val linkRequiredMessage = stringResource(Res.string.link_required_error)
-    val linkInvalidMessage = stringResource(Res.string.link_invalid_error)
-    val avatarImageRequiredMessage = stringResource(Res.string.avatar_image_required_error)
-
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName, nickNameErrorMessage = null)
-
-            is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation, occupationErrorMessage = null)
-
-            is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link, linkErrorMessage = null)
-
+            is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName)
+            is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation)
+            is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link)
             is ProfileCardScreenAction.UpdateMascot -> form = form.copy(mascot = action.mascot)
-
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
-            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file, avatarImageErrorMessage = null)
+            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file)
 
-            ProfileCardScreenAction.Submit -> {
-                val validated = form.copy(
-                    nickNameErrorMessage = nicknameRequiredMessage.takeIf { form.nickName.isBlank() },
-                    occupationErrorMessage = occupationRequiredMessage.takeIf { form.occupation.isBlank() },
-                    linkErrorMessage = when {
-                        form.link.isBlank() -> linkRequiredMessage
-                        !form.link.isValidLink() -> linkInvalidMessage
-                        else -> null
-                    },
-                    avatarImageErrorMessage = avatarImageRequiredMessage.takeIf { form.avatarImage == null },
-                )
-                form = validated
-                if (validated.hasNoErrors) isSubmitted = true
-            }
+            ProfileCardScreenAction.Submit -> isSubmitted = true
 
             ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
 
@@ -82,13 +52,3 @@ fun profileCardScreenPresenter(
         form
     }
 }
-
-private val ProfileCardScreenUiState.Form.hasNoErrors: Boolean
-    get() = nickNameErrorMessage == null &&
-        occupationErrorMessage == null &&
-        linkErrorMessage == null &&
-        avatarImageErrorMessage == null
-
-private val linkRegex = Regex("^(?:https?://)?(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z0-9-]{2,}(?:/\\S*)?$")
-
-private fun String.isValidLink(): Boolean = linkRegex.matches(this)

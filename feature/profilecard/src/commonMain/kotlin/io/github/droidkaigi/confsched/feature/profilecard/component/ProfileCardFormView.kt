@@ -72,8 +72,6 @@ fun ProfileCardFormView(
             onValueChange = onNickNameChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.nickname_placeholder)) },
-            supportingText = uiState.nickNameErrorMessage?.let { message -> { Text(message) } },
-            isError = uiState.nickNameErrorMessage != null,
             singleLine = true,
         )
         Text(stringResource(Res.string.occupation_label), style = MaterialTheme.typography.labelLarge)
@@ -82,8 +80,6 @@ fun ProfileCardFormView(
             onValueChange = onOccupationChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.occupation_placeholder)) },
-            supportingText = uiState.occupationErrorMessage?.let { message -> { Text(message) } },
-            isError = uiState.occupationErrorMessage != null,
             singleLine = true,
         )
         Text(stringResource(Res.string.link_label), style = MaterialTheme.typography.labelLarge)
@@ -92,8 +88,6 @@ fun ProfileCardFormView(
             onValueChange = onLinkChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text(stringResource(Res.string.link_placeholder)) },
-            supportingText = uiState.linkErrorMessage?.let { message -> { Text(message) } },
-            isError = uiState.linkErrorMessage != null,
             singleLine = true,
         )
         Text(stringResource(Res.string.profile_image_label), style = MaterialTheme.typography.labelLarge)
@@ -104,9 +98,6 @@ fun ProfileCardFormView(
                 modifier = Modifier.size(KaigiButtonDefaults.iconSize),
             )
             Text(stringResource(Res.string.add_image_button), style = KaigiButtonDefaults.labelStyle)
-        }
-        uiState.avatarImageErrorMessage?.let { message ->
-            Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
         Text(stringResource(Res.string.mascot_label), style = MaterialTheme.typography.labelLarge)
         MascotPicker(selected = uiState.mascot, onMascotSelected = onMascotSelected)

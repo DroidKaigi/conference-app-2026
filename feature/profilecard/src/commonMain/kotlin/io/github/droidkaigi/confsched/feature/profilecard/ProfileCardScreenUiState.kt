@@ -12,10 +12,6 @@ sealed interface ProfileCardScreenUiState {
         val mascot: Mascot = Mascot.Koala,
         val sketchiness: Sketchiness = Sketchiness.Normal,
         val avatarImage: PlatformFile? = null,
-        val nickNameErrorMessage: String? = null,
-        val occupationErrorMessage: String? = null,
-        val linkErrorMessage: String? = null,
-        val avatarImageErrorMessage: String? = null,
     ) : ProfileCardScreenUiState
 
     data class Card(

@@ -15,11 +15,6 @@
     <string name="sketchiness_normal">ふつう</string>
     <string name="sketchiness_playful">のびのび</string>
     <string name="create_card_button">カードを作成する</string>
-    <string name="nickname_required_error">ニックネームを入力してください</string>
-    <string name="occupation_required_error">職種を入力してください</string>
-    <string name="link_required_error">リンクを入力してください</string>
-    <string name="link_invalid_error">URLの形式が正しくありません</string>
-    <string name="avatar_image_required_error">画像を追加してください</string>
     <string name="card_event_label">DROIDKAIGI 2026</string>
     <string name="card_greeting">Hi!!!!</string>
     <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
