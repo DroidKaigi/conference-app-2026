@@ -80,6 +80,7 @@ fun ProfileCardScreen(
                 if (uiState.isShowingBack) {
                     ProfileCardBack(
                         nickName = uiState.nickName,
+                        link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
                         modifier = Modifier.clickable(onClick = onFlipCard),

@@ -43,6 +43,9 @@ jetwhaleHostCompose = "1.11.1"
 droidkaigiApp = "0.1.0"
 # KMP logger with platform-native writers (Logcat / os_log / SLF4J / console), wasmJs-capable.
 kermit = "2.1.0"
+# QR encoder used for the profile card's back face; only its module matrix is consumed, the drawing
+# stays in the app's own Canvas code.
+qrcodeKotlin = "4.5.0"
 # Retrofit-style declarative HTTP clients over Ktor (KSP-generated implementations).
 ktorfit = "2.7.5"
 # Collects the open source dependencies of each platform entry module and their licenses; the Gradle
@@ -130,6 +133,7 @@ ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-js
 ktorfitLib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 ktorfitKsp = { module = "de.jensklingenberg.ktorfit:ktorfit-ksp", version.ref = "ktorfit" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+qrcodeKotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
 aboutlibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
 # Ready-made Material 3 list, detail expansion and license dialog over the collected libraries.
 aboutlibrariesComposeM3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }

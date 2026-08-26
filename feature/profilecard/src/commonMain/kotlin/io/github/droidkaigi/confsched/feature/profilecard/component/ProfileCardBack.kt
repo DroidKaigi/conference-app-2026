@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,16 +38,18 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Re
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_scan_me
 import org.jetbrains.compose.resources.stringResource
-import kotlin.random.Random
+import qrcode.internals.QRCodeSquare
+import qrcode.raw.ErrorCorrectionLevel
+import qrcode.raw.QRCodeProcessor
 
 /**
- * The card's back face, a "scene": a QR plate (a placeholder for now — no scanner-code
- * generator is wired up yet) under a banner, and the chosen mascot standing on a gently rolling
- * ground line beside a small flag.
+ * The card's back face, a "scene": a QR plate encoding the card's link under a banner, and the
+ * chosen mascot standing on a gently rolling ground line beside a small flag.
  */
 @Composable
 fun ProfileCardBack(
     nickName: String,
+    link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
     modifier: Modifier = Modifier,
@@ -84,6 +87,7 @@ fun ProfileCardBack(
             modifier = Modifier.align(Alignment.TopEnd).padding(ProfileCardBackDefaults.cornerPadding),
         )
         QrPlate(
+            link = link,
             seed = seed + 1,
             sketchiness = sketchiness,
             modifier = Modifier
@@ -122,7 +126,7 @@ fun ProfileCardBack(
  * the Figma "QR Frame"/"QR Plate" pair, which are two nested shapes, not one bordered square.
  */
 @Composable
-private fun QrPlate(seed: Int, sketchiness: Sketchiness, modifier: Modifier = Modifier) {
+private fun QrPlate(link: String, seed: Int, sketchiness: Sketchiness, modifier: Modifier = Modifier) {
     val frameSize = ProfileCardBackDefaults.qrFrameSize
     val frameShape = SketchRoundRectShape(
         seed = seed,
@@ -153,31 +157,34 @@ private fun QrPlate(seed: Int, sketchiness: Sketchiness, modifier: Modifier = Mo
                 .sketchBorder(plateShape, ProfileCardColors.ink)
                 .padding(ProfileCardBackDefaults.qrPlateInset),
         ) {
-            QrPattern(seed = seed, modifier = Modifier.fillMaxWidth())
+            QrPattern(link = link, modifier = Modifier.fillMaxWidth())
         }
     }
 }
 
-/** A grid of dark squares that reads as a QR code at a glance, not a real scannable one. */
+/** The modules of a real QR code encoding [link], painted in ink; a blank link leaves the plate empty. */
 @Composable
-private fun QrPattern(seed: Int, modifier: Modifier = Modifier) {
+private fun QrPattern(link: String, modifier: Modifier = Modifier) {
     val ink = ProfileCardColors.ink
+    val modules = remember(link) {
+        if (link.isBlank()) {
+            emptyList()
+        } else {
+            QRCodeProcessor(link, ProfileCardBackDefaults.qrErrorCorrectionLevel)
+                .encode()
+                .map { row -> row.map(QRCodeSquare::dark) }
+        }
+    }
     Canvas(modifier = modifier.size(ProfileCardBackDefaults.qrPlateSize - ProfileCardBackDefaults.qrPlateInset * 2)) {
-        val random = Random(seed)
-        val cellCount = ProfileCardBackDefaults.qrCellCount
-        val cell = size.width / cellCount
-        for (row in 0 until cellCount) {
-            for (column in 0 until cellCount) {
-                // Real QR codes mark only three corners as finder patterns, never bottom-right.
-                val inFinderCorner = (row < 3 && column < 3) ||
-                    (row < 3 && column > cellCount - 4) ||
-                    (row > cellCount - 4 && column < 3)
-                val filled = inFinderCorner || random.nextFloat() < 0.45f
-                if (filled) {
+        if (modules.isEmpty()) return@Canvas
+        val cell = size.width / modules.size
+        modules.forEachIndexed { row, cells ->
+            cells.forEachIndexed { column, dark ->
+                if (dark) {
                     drawRect(
                         color = ink,
                         topLeft = Offset(column * cell, row * cell),
-                        size = Size(cell * 0.9f, cell * 0.9f),
+                        size = Size(cell, cell),
                     )
                 }
             }
@@ -343,7 +350,7 @@ private object ProfileCardBackDefaults {
     val qrPlateSize = 154.dp
     val qrPlateInset = 11.dp
     val qrPlateOffsetY = 165.dp
-    val qrCellCount = 12
+    val qrErrorCorrectionLevel = ErrorCorrectionLevel.MEDIUM
     val groundOffsetY = 362.dp
     val groundSceneHeight = 112.dp
     val groundLineInset = (-16).dp
@@ -407,6 +414,7 @@ private fun ProfileCardBackPreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardBack(
             nickName = "droidkaigi",
+            link = "https://example.com",
             mascot = Mascot.Koala,
             sketchiness = Sketchiness.Normal,
             modifier = Modifier.padding(24.dp),
