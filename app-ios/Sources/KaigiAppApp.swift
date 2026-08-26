@@ -13,28 +13,8 @@ struct KaigiAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack(alignment: .bottom) {
-                KaigiAppView(host: host)
-                    .osCondition { view in
-                        if #available(iOS 26.0, *) {
-                            view
-                        } else {
-                            view.ignoresSafeArea(.all, edges: [.top, .leading, .trailing])
-                        }
-                    }
-                RootTabBarView(
-                    currentTab: host.currentTab.asAsyncSequence().map { $0?.tab },
-                    palette: host.tabBarPalette.asAsyncSequence(),
-                    select: host.selectTab(tab:)
-                )
-            }
-            .osCondition { view in
-                if #available(iOS 26.0, *) {
-                    view.ignoresSafeArea()
-                } else {
-                    view
-                }
-            }
+            RootView(host: host)
+                .ignoresSafeArea()
         }
     }
 }
@@ -51,20 +31,12 @@ private func swiftPackageLicensesJson() -> String {
     return json
 }
 
-private struct KaigiAppView: UIViewControllerRepresentable {
+private struct RootView: UIViewControllerRepresentable {
     let host: KaigiAppHost
 
     func makeUIViewController(context: Context) -> UIViewController {
-        host.viewController()
+        RootViewController(host: host)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-}
-
-private extension View {
-    @ViewBuilder public func osCondition<Content: View>(
-        @ViewBuilder modifier: (Self) -> Content
-    ) -> some View {
-        modifier(self)
-    }
 }
