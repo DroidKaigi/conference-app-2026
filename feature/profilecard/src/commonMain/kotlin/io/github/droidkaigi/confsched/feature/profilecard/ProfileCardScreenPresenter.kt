@@ -45,6 +45,8 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
 
+            ProfileCardScreenAction.RemoveAvatarImage -> form = form.copy(avatarImage = null)
+
             ProfileCardScreenAction.Submit -> {
                 val validated = currentForm.validated()
                 form = validated

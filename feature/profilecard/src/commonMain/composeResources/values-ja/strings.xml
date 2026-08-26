@@ -6,6 +6,7 @@
     <string name="link_label">リンク（ex.X、Instagram...）</string>
     <string name="profile_image_label">プロフィール画像</string>
     <string name="add_image_button">画像を追加</string>
+    <string name="remove_image_button">画像を削除</string>
     <string name="mascot_label">マスコット</string>
     <string name="sketchiness_label">手書きの強さ</string>
     <string name="sketchiness_subtle">ひかえめ</string>

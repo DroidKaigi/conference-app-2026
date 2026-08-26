@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -167,32 +168,34 @@ private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: 
  */
 @Composable
 private fun PlaceholderFace(modifier: Modifier = Modifier, color: Color = ProfileCardColors.onBanner) {
-    Canvas(modifier = modifier) {
-        val plate = size.minDimension
-        val eyeStroke = Stroke(width = plate * 0.013f, cap = StrokeCap.Round)
-        val eyeSize = Size(plate * 0.045f, plate * 0.053f)
-        listOf(0.5f - 0.145f, 0.5f + 0.145f).forEach { eyeX ->
-            drawArc(
-                color = color,
-                startAngle = -70f,
-                sweepAngle = 140f,
-                useCenter = false,
-                topLeft = Offset(size.width * eyeX - eyeSize.width / 2f, size.height * 0.427f - eyeSize.height / 2f),
-                size = eyeSize,
-                style = eyeStroke,
-            )
-        }
-        val smileSize = Size(plate * 0.20f, plate * 0.117f)
+    Canvas(modifier = modifier) { drawPlaceholderFace(color) }
+}
+
+internal fun DrawScope.drawPlaceholderFace(color: Color) {
+    val plate = size.minDimension
+    val eyeStroke = Stroke(width = plate * 0.013f, cap = StrokeCap.Round)
+    val eyeSize = Size(plate * 0.045f, plate * 0.053f)
+    listOf(0.5f - 0.145f, 0.5f + 0.145f).forEach { eyeX ->
         drawArc(
             color = color,
-            startAngle = 20f,
+            startAngle = -70f,
             sweepAngle = 140f,
             useCenter = false,
-            topLeft = Offset(size.width / 2f - smileSize.width / 2f, size.height * 0.505f),
-            size = smileSize,
-            style = Stroke(width = plate * 0.017f, cap = StrokeCap.Round),
+            topLeft = Offset(size.width * eyeX - eyeSize.width / 2f, size.height * 0.427f - eyeSize.height / 2f),
+            size = eyeSize,
+            style = eyeStroke,
         )
     }
+    val smileSize = Size(plate * 0.20f, plate * 0.117f)
+    drawArc(
+        color = color,
+        startAngle = 20f,
+        sweepAngle = 140f,
+        useCenter = false,
+        topLeft = Offset(size.width / 2f - smileSize.width / 2f, size.height * 0.505f),
+        size = smileSize,
+        style = Stroke(width = plate * 0.017f, cap = StrokeCap.Round),
+    )
 }
 
 @Composable

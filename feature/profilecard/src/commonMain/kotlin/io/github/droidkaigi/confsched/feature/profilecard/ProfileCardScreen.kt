@@ -16,6 +16,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardView
+import io.github.droidkaigi.confsched.feature.profilecard.component.sampleAvatarImage
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_card
 import org.jetbrains.compose.resources.stringResource
@@ -30,6 +31,7 @@ fun ProfileCardScreen(
     onMascotSelected: (Mascot) -> Unit,
     onSketchinessSelected: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
+    onRemoveImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
     onFlipCard: () -> Unit,
     onEditCard: () -> Unit,
@@ -49,6 +51,7 @@ fun ProfileCardScreen(
                 onMascotSelected = onMascotSelected,
                 onSketchinessSelected = onSketchinessSelected,
                 onAddImageClick = onAddImageClick,
+                onRemoveImageClick = onRemoveImageClick,
                 onSubmitClick = onSubmitClick,
             )
 
@@ -84,6 +87,7 @@ private fun ProfileCardScreenFormPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},
@@ -111,6 +115,7 @@ private fun ProfileCardScreenFormErrorPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},
@@ -141,6 +146,7 @@ private fun ProfileCardScreenCardPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},
@@ -173,6 +179,36 @@ private fun ProfileCardScreenCardBackPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
+            onSubmitClick = {},
+            onFlipCard = {},
+            onEditCard = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun ProfileCardScreenFormWithImagePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            colorScheme = colorScheme,
+            onShare = {},
+            uiState = ProfileCardScreenUiState.Form(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+                avatarImage = sampleAvatarImage(),
+            ),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotSelected = {},
+            onSketchinessSelected = {},
+            onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},

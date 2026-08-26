@@ -1,10 +1,13 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -14,24 +17,41 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Add
-import io.github.droidkaigi.confsched.core.designsystem.icon.Check
+import io.github.droidkaigi.confsched.core.designsystem.icon.Close
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.ByteArrayImage
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
 import io.github.droidkaigi.confsched.core.ui.KaigiOutlinedButton
 import io.github.droidkaigi.confsched.core.ui.KaigiTextField
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
+import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
+import io.github.droidkaigi.confsched.core.ui.encodeToPng
+import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardFormError
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
@@ -47,6 +67,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.oc
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_label
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.remove_image_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.subtitle
 import org.jetbrains.compose.resources.StringResource
@@ -61,6 +82,7 @@ fun ProfileCardFormView(
     onMascotSelected: (Mascot) -> Unit,
     onSketchinessSelected: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
+    onRemoveImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -105,13 +127,23 @@ fun ProfileCardFormView(
             ProfileCardFormErrorText(uiState.linkError)
         }
         ProfileCardFormSection(label = stringResource(Res.string.profile_image_label)) {
-            KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
-                Icon(
-                    imageVector = if (uiState.avatarImage != null) KaigiIcons.Default.Check else KaigiIcons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+            val avatarImage = uiState.avatarImage
+            if (avatarImage == null) {
+                KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
+                    Icon(
+                        imageVector = KaigiIcons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                    )
+                    Text(stringResource(Res.string.add_image_button), style = ProfileCardTextStyles.accent)
+                }
+            } else {
+                ProfileImagePreview(
+                    avatarImage = avatarImage,
+                    sketchiness = uiState.sketchiness,
+                    onClick = onAddImageClick,
+                    onRemoveClick = onRemoveImageClick,
                 )
-                Text(stringResource(Res.string.add_image_button), style = ProfileCardTextStyles.accent)
             }
             ProfileCardFormErrorText(uiState.avatarImageError)
         }
@@ -128,6 +160,81 @@ fun ProfileCardFormView(
             enabled = !uiState.isSubmitting,
         ) {
             Text(stringResource(Res.string.create_card_button), style = ProfileCardTextStyles.accent)
+        }
+    }
+}
+
+/**
+ * The picked photograph, centre-cropped into the same wobbly mat the card front sets it in, with
+ * the contour over it and a close button to discard it. Tapping the photograph re-opens the picker.
+ */
+@Composable
+private fun ProfileImagePreview(
+    avatarImage: AvatarImage,
+    sketchiness: Sketchiness,
+    onClick: () -> Unit,
+    onRemoveClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val previewSize = ProfileCardFormViewDefaults.imagePreviewSize
+    val shape = SketchEllipseShape(
+        seed = ProfileCardFormViewDefaults.imagePreviewSeed,
+        roughness = profileCardRoughness(previewSize, sketchiness),
+        tremor = profileCardTremor(previewSize, sketchiness),
+        sweepWavelength = ProfileCardSweepWavelength,
+        borderThickness = ProfileCardFormViewDefaults.matBorderThickness,
+    )
+    Box(modifier = modifier.size(previewSize)) {
+        ByteArrayImage(
+            bytes = avatarImage.bytes,
+            contentDescription = stringResource(Res.string.profile_image_label),
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape)
+                .background(MaterialTheme.colorScheme.surfaceBright)
+                .clickable(onClick = onClick),
+            contentScale = ContentScale.Crop,
+        )
+        // Drawn over the photograph rather than under it, so the whole stroke reads at its width.
+        Box(modifier = Modifier.fillMaxSize().sketchBorder(shape, MaterialTheme.colorScheme.onSurface))
+        RemoveImageButton(
+            onClick = onRemoveClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = ProfileCardFormViewDefaults.removeButtonOffset.x, y = ProfileCardFormViewDefaults.removeButtonOffset.y),
+        )
+    }
+}
+
+@Composable
+private fun RemoveImageButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val ringShape = SketchEllipseShape(
+        seed = ProfileCardFormViewDefaults.removeButtonSeed,
+        roughness = MascotOptionDefaults.roughness,
+        tremor = MascotOptionDefaults.tremor,
+        sweepWavelength = ProfileCardSweepWavelength,
+        borderThickness = ProfileCardFormViewDefaults.ringBorderThickness,
+    )
+    Box(
+        modifier = modifier
+            .size(ProfileCardFormViewDefaults.removeButtonHitTarget)
+            .clickable(role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(ProfileCardFormViewDefaults.removeButtonRingSize)
+                .clip(ringShape)
+                .background(MaterialTheme.colorScheme.surfaceBright)
+                .sketchBorder(ringShape, MaterialTheme.colorScheme.primary),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = KaigiIcons.Default.Close,
+                contentDescription = stringResource(Res.string.remove_image_button),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(ProfileCardFormViewDefaults.removeButtonGlyphSize),
+            )
         }
     }
 }
@@ -169,8 +276,38 @@ private object ProfileCardFormViewDefaults {
     val occupationFieldSeed = 702
     val linkFieldSeed = 703
     val addImageButtonSeed = 710
+    val imagePreviewSeed = 711
+    val removeButtonSeed = 712
     val submitButtonSeed = 720
+    val imagePreviewSize = 96.dp
+    val matBorderThickness = 1.5.dp
+    val ringBorderThickness = 1.5.dp
+    val removeButtonHitTarget = 40.dp
+    val removeButtonRingSize = 30.dp
+    val removeButtonGlyphSize = 20.dp
+
+    // The ring is centred on the mat's contour at 45 degrees, which leaves its hit target half a
+    // dp outside the top-end corner of the box the mat fills.
+    val removeButtonOffset = DpOffset(0.5.dp, (-0.5).dp)
 }
+
+/**
+ * The photograph the previews stand in for, drawn rather than shipped as a file: the same face the
+ * card front falls back to, over the sample skin tone the design file uses for its own mock image.
+ */
+internal fun sampleAvatarImage(): AvatarImage {
+    val side = 96
+    val bitmap = ImageBitmap(side, side)
+    CanvasDrawScope().draw(Density(1f), LayoutDirection.Ltr, Canvas(bitmap), Size(side.toFloat(), side.toFloat())) {
+        drawRect(SampleAvatarSkin)
+        drawPlaceholderFace(SampleAvatarInk)
+    }
+    return AvatarImage(bitmap.encodeToPng())
+}
+
+private val SampleAvatarSkin = Color(0xFFE8D8B8)
+
+private val SampleAvatarInk = Color(0xFF3B2F1F)
 
 @LocalePreviews
 @Composable
@@ -190,6 +327,7 @@ private fun ProfileCardFormViewPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
         )
     }
@@ -214,6 +352,32 @@ private fun ProfileCardFormViewErrorPreview(
             onMascotSelected = {},
             onSketchinessSelected = {},
             onAddImageClick = {},
+            onRemoveImageClick = {},
+            onSubmitClick = {},
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun ProfileCardFormViewWithImagePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardFormView(
+            uiState = ProfileCardScreenUiState.Form(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+                avatarImage = sampleAvatarImage(),
+            ),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotSelected = {},
+            onSketchinessSelected = {},
+            onAddImageClick = {},
+            onRemoveImageClick = {},
             onSubmitClick = {},
         )
     }

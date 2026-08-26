@@ -161,6 +161,24 @@ class ProfileCardScreenPresenterTest {
     }
 
     @Test
+    fun removing_the_picked_image_clears_it_and_leaves_it_required() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.RemoveAvatarImage)
+            assertNull(assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem()).avatarImage)
+            send(ProfileCardScreenAction.Submit)
+            val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertEquals(ProfileCardFormError.AvatarImageRequired, form.avatarImageError)
+            assertTrue(graph.profileCardMutationKey.invocations.isEmpty)
+        }
+    }
+
+    @Test
     fun sharing_the_card_hands_back_an_encoded_image() {
         runPresenterTest(
             presenterContext = graph.presenterContext,

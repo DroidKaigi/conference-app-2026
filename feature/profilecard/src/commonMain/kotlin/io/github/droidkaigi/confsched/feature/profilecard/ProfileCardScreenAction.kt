@@ -18,6 +18,8 @@ sealed interface ProfileCardScreenAction {
 
     data class UpdateAvatarImage(val avatarImage: AvatarImage) : ProfileCardScreenAction
 
+    data object RemoveAvatarImage : ProfileCardScreenAction
+
     data object Submit : ProfileCardScreenAction
 
     data object FlipCard : ProfileCardScreenAction

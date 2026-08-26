@@ -6,6 +6,7 @@
     <string name="link_label">Link (e.g. X, Instagram...)</string>
     <string name="profile_image_label">Profile Image</string>
     <string name="add_image_button">Add Image</string>
+    <string name="remove_image_button">Remove image</string>
     <string name="mascot_label">Mascot</string>
     <string name="sketchiness_label">Sketchiness</string>
     <string name="sketchiness_subtle">Subtle</string>
