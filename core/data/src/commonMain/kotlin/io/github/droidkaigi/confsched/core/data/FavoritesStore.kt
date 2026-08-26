@@ -1,30 +1,43 @@
 package io.github.droidkaigi.confsched.core.data
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @Inject
 @SingleIn(AppScope::class)
-class FavoritesStore {
-    private val state = MutableStateFlow<PersistentSet<TimetableItemId>>(persistentSetOf())
+class FavoritesStore(@FavoritesDataStoreQualifier private val dataStore: DataStore<Preferences>) {
 
-    fun favoriteIds(): Flow<PersistentSet<TimetableItemId>> = state.asStateFlow()
+    fun favoriteIds(): Flow<PersistentSet<TimetableItemId>> = dataStore.data
+        .map { it.readFavoriteIds() }
+        .distinctUntilChanged()
 
-    fun toggle(id: TimetableItemId) {
-        state.update { current ->
-            if (id in current) current.removing(id) else current.adding(id)
+    suspend fun toggle(id: TimetableItemId) {
+        dataStore.edit { preferences ->
+            val current = preferences[FAVORITE_IDS_KEY].orEmpty()
+            preferences[FAVORITE_IDS_KEY] = if (id.value in current) current - id.value else current + id.value
         }
     }
 
-    fun clear() {
-        state.value = persistentSetOf()
+    suspend fun clear() {
+        dataStore.edit { it.clear() }
+    }
+
+    private fun Preferences.readFavoriteIds(): PersistentSet<TimetableItemId> =
+        this[FAVORITE_IDS_KEY]?.map(::TimetableItemId)?.toPersistentSet() ?: persistentSetOf()
+
+    private companion object {
+        val FAVORITE_IDS_KEY = stringSetPreferencesKey("favoriteIds")
     }
 }
