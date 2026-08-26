@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.designsystem.icon.Share
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -75,7 +79,7 @@ fun ProfileCardScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(ProfileCardScreenDefaults.cardSpacing),
             ) {
                 if (uiState.isShowingBack) {
                     ProfileCardBack(
@@ -95,17 +99,25 @@ fun ProfileCardScreen(
                         modifier = Modifier.clickable(onClick = onFlipCard),
                     )
                 }
-                KaigiButton(
-                    onClick = {},
-                    seed = ProfileCardScreenDefaults.shareButtonSeed,
-                    containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.24f),
-                    contentColor = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth(),
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ProfileCardScreenDefaults.actionSpacing),
                 ) {
-                    Text(stringResource(Res.string.share_button), style = KaigiButtonDefaults.labelStyle)
-                }
-                TextButton(onClick = onEditCard) {
-                    Text(stringResource(Res.string.edit_button))
+                    KaigiButton(
+                        onClick = {},
+                        seed = ProfileCardScreenDefaults.shareButtonSeed,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Icon(
+                            imageVector = KaigiIcons.Default.Share,
+                            contentDescription = null,
+                            modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                        )
+                        Text(stringResource(Res.string.share_button), style = KaigiButtonDefaults.labelStyle)
+                    }
+                    TextButton(onClick = onEditCard) {
+                        Text(stringResource(Res.string.edit_button), style = KaigiButtonDefaults.labelStyle)
+                    }
                 }
             }
         }
@@ -114,6 +126,8 @@ fun ProfileCardScreen(
 
 private object ProfileCardScreenDefaults {
     val shareButtonSeed = 730
+    val cardSpacing = 24.dp
+    val actionSpacing = 12.dp
 }
 
 @LocaleScreenPreviews
