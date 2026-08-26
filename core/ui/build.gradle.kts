@@ -31,6 +31,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidxActivityCompose)
+            implementation(libs.androidxCore)
             implementation(libs.ktorClientOkhttp)
         }
         wasmJsMain.dependencies {
