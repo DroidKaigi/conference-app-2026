@@ -1,11 +1,23 @@
 <resources>
-    <string name="about_title">About DroidKaigi 2026</string>
-    <string name="version">Version</string>
+    <string name="about_title">About DroidKaigi</string>
+    <string name="about_logo_description">DroidKaigi 2026</string>
+    <string name="about_description">DroidKaigi is an Android conference by and for engineers, held to share Android technical knowledge and bring the community together.</string>
+    <string name="about_event_date">2026.09.01 (Tue) – 03 (Thu)</string>
+    <string name="about_venue">Bellesalle Shibuya Garden</string>
+    <string name="about_view_map">View map</string>
+    <string name="about_android_trademark">Android is a trademark of Google LLC. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
+    <string name="credits">Credits</string>
+    <string name="others">Others</string>
+    <string name="about_version_format">Version %1$s</string>
     <string name="sponsors">Sponsors</string>
     <string name="contributors">Contributors</string>
     <string name="staff">Staff</string>
+    <string name="code_of_conduct">Code of conduct</string>
     <string name="licenses">Licenses</string>
-    <string name="licenses_description">Open source libraries this build depends on</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="settings">Settings</string>
     <string name="debug_menu">Debug menu</string>
-    <string name="debug_menu_description">Developer tools (debug builds only)</string>
+    <string name="about_social_youtube">YouTube</string>
+    <string name="about_social_x">X</string>
+    <string name="about_social_medium">Medium</string>
 </resources>

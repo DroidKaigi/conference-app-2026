@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.model.ServerEnvironmentScreenScope
 @GraphExtension(ServerEnvironmentScreenScope::class)
 interface ServerEnvironmentScreenGraph {
     val screenContext: ServerEnvironmentScreenContext
+    val screenNavigator: ServerEnvironmentScreenNavigator
 
     @Provides
     private fun provideMutationTag(): MutationTag = MutationTag("ServerEnvironmentScreen")

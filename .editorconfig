@@ -28,3 +28,4 @@ ktlint_standard_function-expression-body = disabled
 
 # Off by default in the intellij_idea style.
 ktlint_standard_blank-line-before-declaration = enabled
+ktlint_standard_no-unused-imports = enabled

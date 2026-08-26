@@ -6,6 +6,7 @@ import androidx.compose.runtime.retain.retain
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
+import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
 import io.github.droidkaigi.confsched.core.ui.SetupRemoteImageLoader
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
@@ -28,7 +29,10 @@ fun KaigiApp() {
 
     SetupRemoteImageLoader()
 
-    CompositionLocalProvider(LocalDeviceTiltSource provides rememberDeviceTiltSource()) {
+    CompositionLocalProvider(
+        LocalDeviceTiltSource provides rememberDeviceTiltSource(),
+        LocalPreviewImageResolver provides uiGraph.previewImageResolver,
+    ) {
         SwrClientProvider(client = uiGraph.swrClient) {
             SoilDataBoundary(
                 state = rememberSubscription(uiGraph.appearanceSubscriptionKey),

@@ -1,3 +1,25 @@
 <resources>
     <string name="profile_card">プロフィールカード</string>
+    <string name="subtitle">会場やSNSで自分を紹介できるプロフィールカードを作ってみましょう!</string>
+    <string name="nickname_label">ニックネーム</string>
+    <string name="nickname_placeholder">droidkaigi</string>
+    <string name="occupation_label">職種</string>
+    <string name="occupation_placeholder">Software Engineer</string>
+    <string name="link_label">リンク (ex.X, Instagram...)</string>
+    <string name="link_placeholder">https://example.com/user</string>
+    <string name="profile_image_label">プロフィール画像</string>
+    <string name="add_image_button">画像を追加</string>
+    <string name="mascot_label">マスコット</string>
+    <string name="sketchiness_label">手書きの強さ</string>
+    <string name="sketchiness_subtle">ひかえめ</string>
+    <string name="sketchiness_normal">ふつう</string>
+    <string name="sketchiness_playful">のびのび</string>
+    <string name="create_card_button">カードを作成する</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
+    <string name="share_button">共有する</string>
+    <string name="edit_button">編集する</string>
 </resources>

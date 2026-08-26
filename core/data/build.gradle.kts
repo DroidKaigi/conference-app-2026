@@ -18,6 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:model"))
             implementation(project(":core:common"))
+            implementation(project(":core:preview:api"))
             api(libs.androidxDatastoreCore)
             api(libs.androidxDatastorePreferencesCore)
             implementation(libs.soilQueryCore)

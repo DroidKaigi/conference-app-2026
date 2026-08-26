@@ -23,6 +23,12 @@ kotlin {
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
             implementation(libs.ktorClientCore)
+            // PlatformFile appears in RemoteImage.kt's public API (LocalFileImage).
+            api(libs.filekitCore)
+            implementation(libs.filekitCoil)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
         jvmMain.dependencies {
             implementation(libs.ktorClientCio)

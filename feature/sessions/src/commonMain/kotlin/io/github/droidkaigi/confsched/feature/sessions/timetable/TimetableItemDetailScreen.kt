@@ -4,21 +4,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.icon.Close
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
@@ -30,7 +27,6 @@ import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
 import io.github.droidkaigi.confsched.core.ui.plus
-import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SameSlotSessionsSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionArchiveSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
@@ -40,7 +36,6 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Sessi
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionInfoCard
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionMemoField
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionTargetAudienceSection
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -102,6 +97,22 @@ fun TimetableItemDetailScreen(
                     seed = TimetableItemDetailScreenDefaults.HEADER_SEED,
                     startInset = paneSpacerInset,
                 )
+            }
+            item.message?.let { message ->
+                item {
+                    Text(
+                        text = message.of(displayLanguage),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .padding(start = paneSpacerInset)
+                            .padding(
+                                start = TimetableItemDetailScreenDefaults.contentInset,
+                                end = TimetableItemDetailScreenDefaults.contentInset,
+                                top = 20.dp,
+                            ),
+                    )
+                }
             }
             item {
                 SessionInfoCard(
@@ -218,7 +229,7 @@ private fun TimetableItemDetailScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         TimetableItemDetailScreen(
-            uiState = TimetableItemDetailScreenUiState.fake(isCancelled = false, displayLanguage = currentDisplayLanguage()),
+            uiState = TimetableItemDetailScreenUiState.fake(isCancelled = false, message = null, displayLanguage = currentDisplayLanguage()),
             onBookmarkClick = {},
             onDescriptionExpansionToggleClick = {},
             onDisplayLanguageToggleClick = {},
@@ -240,7 +251,36 @@ private fun TimetableItemDetailScreenCancelledPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         TimetableItemDetailScreen(
-            uiState = TimetableItemDetailScreenUiState.fake(isCancelled = true, displayLanguage = currentDisplayLanguage()),
+            uiState = TimetableItemDetailScreenUiState.fake(isCancelled = true, message = null, displayLanguage = currentDisplayLanguage()),
+            onBookmarkClick = {},
+            onDescriptionExpansionToggleClick = {},
+            onDisplayLanguageToggleClick = {},
+            onMemoChange = {},
+            onArchiveVideoClick = {},
+            onArchiveSlideClick = {},
+            onCalendarClick = {},
+            onShareClick = {},
+            onSessionClick = {},
+            onBackClick = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun TimetableItemDetailScreenMessagePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        TimetableItemDetailScreen(
+            uiState = TimetableItemDetailScreenUiState.fake(
+                isCancelled = false,
+                message = MultiLangText(
+                    ja = "※このセッションは会場が変更されました",
+                    en = "* The room of this session has changed",
+                ),
+                displayLanguage = currentDisplayLanguage(),
+            ),
             onBookmarkClick = {},
             onDescriptionExpansionToggleClick = {},
             onDisplayLanguageToggleClick = {},

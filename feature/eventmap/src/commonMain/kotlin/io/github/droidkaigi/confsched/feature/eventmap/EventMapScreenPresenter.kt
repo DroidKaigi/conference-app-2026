@@ -21,6 +21,7 @@ fun eventMapScreenPresenter(
     ActionEffect(screenChannel) { action ->
         when (action) {
             is EventMapScreenAction.SelectFloor -> selectedFloor = action.floor
+            is EventMapScreenAction.ToggleFloor -> selectedFloor = selectedFloor.toggle()
         }
     }
 

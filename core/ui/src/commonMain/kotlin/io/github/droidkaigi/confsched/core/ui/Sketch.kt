@@ -150,6 +150,41 @@ fun SketchHorizontalDivider(
     )
 }
 
+/** A ground line whose point count grows with its width while its wavelength stays fixed. */
+@Composable
+fun SketchGroundLine(
+    seed: Int,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    thickness: Dp = 2.dp,
+    amplitude: Dp = 1.6.dp,
+    period: Dp = 26.dp,
+) {
+    require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
+    require(period > 0.dp) { "period must be positive, was $period" }
+    val resolvedAmplitude = scaleSketchAmplitude(amplitude)
+    val combinedSeed = combineSketchSeed(seed)
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(thickness + resolvedAmplitude * 2)
+            .drawWithCache {
+                val path = sketchGroundLinePath(
+                    width = size.width,
+                    centerY = size.height / 2f,
+                    amplitude = resolvedAmplitude,
+                    period = period,
+                    seed = combinedSeed,
+                )
+                val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
+                onDrawBehind {
+                    drawPath(path = path, color = color, style = stroke)
+                }
+            },
+    )
+}
+
 /**
  * A vertical rule drawn as a single hand-sketched stroke.
  *

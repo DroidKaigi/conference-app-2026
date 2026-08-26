@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.core.designsystem
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable

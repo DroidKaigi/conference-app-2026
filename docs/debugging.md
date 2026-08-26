@@ -9,7 +9,7 @@ The `DebugScreen` is wired like any other screen (`DebugNavKey` + `DebugScreenCo
 The menu's **Clear persisted data** button wipes the app's persisted (and in-memory session) state in one call, so a tester can return the app to a clean slate. It is aggregated by `PersistedDataResetter` (`:core:data`, `AppScope`):
 
 - **Preferences DataStore** (theme) — `ThemeStore.clear()` (`dataStore.edit { it.clear() }`, clearing the whole preferences file).
-- **Favorites** — `FavoritesStore.clear()` (currently an in-memory stand-in).
+- **Favorites** — `FavoritesStore.clear()` (clearing the favorites preferences file).
 - **Blobs** (e.g. the profile image) — `FileStorage.clear()`, implemented per platform: delete the blob directory on JVM/Android/iOS, and `IDBObjectStore.clear()` on the Web (wasmJs) IndexedDB actual.
 
 `DebugPresenterContext` holds the `PersistedDataResetter`. The button sends a `ClearData` action, and the presenter runs `clearAll()` inside `ActionEffect`, flipping the state that shows a "cleared ✓" confirmation.

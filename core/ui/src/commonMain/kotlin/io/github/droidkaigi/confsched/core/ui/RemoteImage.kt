@@ -10,6 +10,8 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.coil.addPlatformFileSupport
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -40,10 +42,28 @@ fun RemoteImage(
 }
 
 @Composable
+fun LocalFileImage(
+    file: PlatformFile,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
+    AsyncImage(
+        model = file,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        contentScale = contentScale,
+    )
+}
+
+@Composable
 fun SetupRemoteImageLoader() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
-            .components { add(KtorNetworkFetcherFactory()) }
+            .components {
+                add(KtorNetworkFetcherFactory())
+                addPlatformFileSupport()
+            }
             .memoryCache {
                 MemoryCache.Builder()
                     .maxSizePercent(context, percent = 0.25)

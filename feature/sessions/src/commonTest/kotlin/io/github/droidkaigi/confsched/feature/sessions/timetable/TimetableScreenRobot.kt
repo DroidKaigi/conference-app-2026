@@ -27,6 +27,7 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     private val graph = createGraph<TimetableScreenTestGraph>()
 
     private var restingDayTabsTop: Dp = Dp.Unspecified
+    private var searchOpened = false
 
     fun setupTimetable(timetable: Timetable) {
         graph.timetableQueryKey.set(timetable)
@@ -35,9 +36,17 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     fun setupContent() {
         setScreenContent {
             context(graph.screenContext) {
-                TimetableScreenRoot(onNavigateToDetail = {}, onNavigateToSearch = {})
+                TimetableScreenRoot(
+                    onNavigateToDetail = {},
+                    onNavigateToSearch = { searchOpened = true },
+                )
             }
         }
+    }
+
+    fun clickSearch() {
+        composeUiTest.onNodeWithContentDescription("Search").performClick()
+        composeUiTest.waitForIdle()
     }
 
     fun clickDayTab(day: DroidKaigi2026Day) {
@@ -97,4 +106,8 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
 
     private fun dayTabsBounds(): DpRect =
         composeUiTest.onNodeWithText(DroidKaigi2026Day.Day1.label).getUnclippedBoundsInRoot()
+
+    fun checkSearchOpened() {
+        assertTrue(searchOpened)
+    }
 }

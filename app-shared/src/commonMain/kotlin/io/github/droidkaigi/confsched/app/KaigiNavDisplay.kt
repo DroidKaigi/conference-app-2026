@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import io.github.droidkaigi.confsched.core.common.rememberRootSceneStrategy
@@ -37,6 +38,8 @@ internal fun KaigiNavDisplay(
                     rememberSnackbarNavEntryDecorator(),
                 ),
                 sceneStrategies = listOf(
+                    // An overlay strategy has to come before the strategies that claim a pane.
+                    DialogSceneStrategy(),
                     rememberRootSceneStrategy(),
                     rememberKaigiListDetailSceneStrategy(),
                     SinglePaneSceneStrategy(),
