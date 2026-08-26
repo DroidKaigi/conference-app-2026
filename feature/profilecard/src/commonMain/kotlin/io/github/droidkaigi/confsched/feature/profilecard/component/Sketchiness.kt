@@ -108,6 +108,7 @@ private fun SketchinessOption(
         seed = SketchinessPickerDefaults.outlineSeed + sketchiness.ordinal,
         roughness = SketchinessOptionDefaults.roughness,
         tremor = SketchinessOptionDefaults.tremor,
+        sweepWavelength = ProfileCardSweepWavelength,
         cornerRadius = SketchinessOptionDefaults.cornerRadius,
         borderThickness = if (selected) {
             SketchinessOptionDefaults.selectedBorderThickness

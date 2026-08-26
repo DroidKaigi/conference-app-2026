@@ -112,6 +112,7 @@ private fun MascotOption(
         seed = seed,
         roughness = MascotOptionDefaults.roughness,
         tremor = MascotOptionDefaults.tremor,
+        sweepWavelength = ProfileCardSweepWavelength,
         borderThickness = MascotOptionDefaults.borderThickness,
     )
     Box(
