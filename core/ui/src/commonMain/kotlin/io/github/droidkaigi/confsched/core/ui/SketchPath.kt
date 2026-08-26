@@ -782,46 +782,6 @@ internal fun Density.sketchVerticalFillPath(
     }
 }
 
-/**
- * A closed path enclosing the region to one side of a hand-drawn horizontal line.
- *
- * Produces the same curve [sketchHorizontalLinePath] strokes at [centerY], then closes it
- * against the top (y = 0) or bottom (y = [height]) boundary. Pass to a canvas clip so the
- * fill of a selected region meets the divider down its centre instead of at a straight
- * layout edge.
- *
- * @param fillTop when true the region extends from the divider to y = 0;
- *   when false it extends from the divider to y = [height].
- */
-internal fun Density.sketchHorizontalFillPath(
-    width: Float,
-    height: Float,
-    centerY: Float,
-    roughness: Dp,
-    tremor: Dp,
-    sweepWavelength: Dp,
-    tremorWavelength: Dp,
-    seed: Int,
-    fillTop: Boolean,
-): Path {
-    val positions = sketchLinePositions(width, tremorWavelength)
-    val offsets = sketchLineOffsets(
-        positions = positions,
-        center = centerY,
-        roughness = roughness,
-        tremor = tremor,
-        sweepWavelength = sweepWavelength,
-        tremorWavelength = tremorWavelength,
-        seed = seed,
-    )
-    val boundaryY = if (fillTop) 0f else height
-    return openCurveThrough(positions, offsets, OUTLINE_TANGENT_CLAMP).apply {
-        lineTo(width, boundaryY)
-        lineTo(0f, boundaryY)
-        close()
-    }
-}
-
 /** Emits [xs] and [ys] as one closed curve, the same conversion the rect outline uses. */
 private fun closedCurveThrough(xs: FloatArray, ys: FloatArray): Path {
     val count = xs.size
