@@ -15,8 +15,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -31,19 +34,25 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.edit_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ProfileCardView(
     uiState: ProfileCardScreenUiState.Card,
+    colorScheme: KaigiColorScheme,
     onFlipCard: () -> Unit,
     onEditCard: () -> Unit,
+    onShare: (ImageBitmap) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val shareImageLayer = rememberGraphicsLayer()
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -75,13 +84,34 @@ fun ProfileCardView(
                     modifier = Modifier.clickable(onClick = onFlipCard),
                 )
             }
-            ProfileCardActions(onEditCard = onEditCard)
+            ProfileCardActions(
+                isSharing = uiState.isSharing,
+                onShareClick = { coroutineScope.launch { onShare(shareImageLayer.toImageBitmap()) } },
+                onEditCard = onEditCard,
+            )
+        }
+        // Recorded regardless of which face is turned up, so the share image always carries both.
+        RecordedOffScreen(layer = shareImageLayer) { recordingModifier ->
+            ProfileCardShareImage(
+                nickName = uiState.nickName,
+                occupation = uiState.occupation,
+                link = uiState.link,
+                mascot = uiState.mascot,
+                sketchiness = uiState.sketchiness,
+                avatarImage = uiState.avatarImage,
+                colorScheme = colorScheme,
+                modifier = recordingModifier,
+            )
         }
     }
 }
 
 @Composable
-private fun ProfileCardActions(onEditCard: () -> Unit) {
+private fun ProfileCardActions(
+    isSharing: Boolean,
+    onShareClick: () -> Unit,
+    onEditCard: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -89,8 +119,9 @@ private fun ProfileCardActions(onEditCard: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         KaigiButton(
-            onClick = {},
+            onClick = onShareClick,
             seed = ProfileCardViewDefaults.shareButtonSeed,
+            enabled = !isSharing,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Icon(
@@ -138,8 +169,10 @@ private fun ProfileCardViewPreview(
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
             ),
+            colorScheme = colorScheme,
             onFlipCard = {},
             onEditCard = {},
+            onShare = {},
         )
     }
 }
@@ -150,6 +183,6 @@ private fun ProfileCardActionsPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardActions(onEditCard = {})
+        ProfileCardActions(isSharing = false, onShareClick = {}, onEditCard = {})
     }
 }

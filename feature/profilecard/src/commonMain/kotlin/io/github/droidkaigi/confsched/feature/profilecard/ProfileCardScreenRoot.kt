@@ -8,23 +8,27 @@ import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberImagePicker
+import io.github.droidkaigi.confsched.core.ui.rememberImageSharer
 import soil.query.compose.rememberSubscription
 
 @Composable
 context(screenContext: ProfileCardScreenContext)
 fun ProfileCardScreenRoot() {
     SoilDataBoundary(
-        state = rememberSubscription(screenContext.profileCardSubscriptionKey),
-    ) { storedCard ->
+        state1 = rememberSubscription(screenContext.profileCardSubscriptionKey),
+        state2 = rememberSubscription(screenContext.appearanceSubscriptionKey),
+    ) { storedCard, appearance ->
         val screenChannel = retainScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>()
         val snackbarHostState = LocalSnackbarHostState.current
         val launchImagePicker = rememberImagePicker { bytes ->
             screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes)))
         }
+        val shareImage = rememberImageSharer()
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is ProfileCardScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is ProfileCardScreenActionResult.ShareImage -> shareImage(result.image.pngBytes)
             }
         }
 
@@ -33,6 +37,7 @@ fun ProfileCardScreenRoot() {
         }
         ProfileCardScreen(
             uiState = uiState,
+            colorScheme = appearance.colorScheme,
             onNickNameChange = { screenChannel.send(ProfileCardScreenAction.UpdateNickName(it)) },
             onOccupationChange = { screenChannel.send(ProfileCardScreenAction.UpdateOccupation(it)) },
             onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
@@ -42,6 +47,7 @@ fun ProfileCardScreenRoot() {
             onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
             onFlipCard = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
             onEditCard = { screenChannel.send(ProfileCardScreenAction.EditCard) },
+            onShare = { screenChannel.send(ProfileCardScreenAction.Share(it)) },
         )
     }
 }

@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
+import androidx.compose.ui.graphics.ImageBitmap
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Mascot
@@ -156,6 +157,19 @@ class ProfileCardScreenPresenterTest {
             val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
             assertNull(form.nickNameError)
             assertEquals(ProfileCardFormError.OccupationRequired, form.occupationError)
+        }
+    }
+
+    @Test
+    fun sharing_the_card_hands_back_an_encoded_image() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = storedCard) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.Share(ImageBitmap(width = 1, height = 1)))
+            val result = assertIs<ProfileCardScreenActionResult.ShareImage>(results.awaitItem())
+            assertTrue(result.image.pngBytes.isNotEmpty())
         }
     }
 }

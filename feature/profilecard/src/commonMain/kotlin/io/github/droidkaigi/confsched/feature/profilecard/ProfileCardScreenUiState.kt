@@ -28,6 +28,7 @@ sealed interface ProfileCardScreenUiState {
         val sketchiness: Sketchiness,
         val avatarImage: AvatarImage?,
         val isShowingBack: Boolean = false,
+        val isSharing: Boolean = false,
     ) : ProfileCardScreenUiState
 }
 

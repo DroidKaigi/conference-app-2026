@@ -21,6 +21,7 @@ fun profileCardScreenPresenter(
     storedCard: ProfileCard?,
 ): ProfileCardScreenUiState {
     val mutation = rememberMutation(presenterContext.profileCardMutationKey)
+    val shareMutation = rememberMutation(presenterContext.shareProfileCardMutationKey)
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
@@ -63,6 +64,8 @@ fun profileCardScreenPresenter(
 
             ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
 
+            is ProfileCardScreenAction.Share -> shareMutation.mutateAsync(action.image)
+
             ProfileCardScreenAction.EditCard -> {
                 form = currentStoredCard.toForm()
                 isEditing = true
@@ -80,6 +83,15 @@ fun profileCardScreenPresenter(
         mutation.reset()
     }
 
+    MutationSuccessEffect(shareMutation) { image ->
+        screenChannel.emit(ProfileCardScreenActionResult.ShareImage(image))
+        shareMutation.reset()
+    }
+    MutationErrorEffect(shareMutation) { error ->
+        screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
+        shareMutation.reset()
+    }
+
     return if (storedCard == null || isEditing) {
         form.copy(isSubmitting = mutation.isPending)
     } else {
@@ -91,6 +103,7 @@ fun profileCardScreenPresenter(
             sketchiness = storedCard.sketchiness,
             avatarImage = storedCard.avatarImage,
             isShowingBack = isShowingBack,
+            isSharing = shareMutation.isPending,
         )
     }
 }

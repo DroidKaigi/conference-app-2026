@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
@@ -22,6 +23,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ProfileCardScreen(
     uiState: ProfileCardScreenUiState,
+    colorScheme: KaigiColorScheme,
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
@@ -31,6 +33,7 @@ fun ProfileCardScreen(
     onSubmitClick: () -> Unit,
     onFlipCard: () -> Unit,
     onEditCard: () -> Unit,
+    onShare: (ImageBitmap) -> Unit,
 ) {
     Scaffold(
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.profile_card)) },
@@ -51,8 +54,10 @@ fun ProfileCardScreen(
 
             is ProfileCardScreenUiState.Card -> ProfileCardView(
                 uiState = uiState,
+                colorScheme = colorScheme,
                 onFlipCard = onFlipCard,
                 onEditCard = onEditCard,
+                onShare = onShare,
                 modifier = Modifier.padding(innerPadding),
             )
         }
@@ -66,6 +71,8 @@ private fun ProfileCardScreenFormPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
+            colorScheme = colorScheme,
+            onShare = {},
             uiState = ProfileCardScreenUiState.Form(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
@@ -97,6 +104,7 @@ private fun ProfileCardScreenFormErrorPreview(
                 linkError = ProfileCardFormError.LinkRequired,
                 avatarImageError = ProfileCardFormError.AvatarImageRequired,
             ),
+            colorScheme = colorScheme,
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
@@ -106,6 +114,7 @@ private fun ProfileCardScreenFormErrorPreview(
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},
+            onShare = {},
         )
     }
 }
@@ -125,6 +134,7 @@ private fun ProfileCardScreenCardPreview(
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
             ),
+            colorScheme = colorScheme,
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
@@ -134,6 +144,7 @@ private fun ProfileCardScreenCardPreview(
             onSubmitClick = {},
             onFlipCard = {},
             onEditCard = {},
+            onShare = {},
         )
     }
 }
@@ -145,6 +156,8 @@ private fun ProfileCardScreenCardBackPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
+            colorScheme = colorScheme,
+            onShare = {},
             uiState = ProfileCardScreenUiState.Card(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",

@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
+import androidx.compose.ui.graphics.ImageBitmap
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -22,4 +23,6 @@ sealed interface ProfileCardScreenAction {
     data object FlipCard : ProfileCardScreenAction
 
     data object EditCard : ProfileCardScreenAction
+
+    data class Share(val image: ImageBitmap) : ProfileCardScreenAction
 }
