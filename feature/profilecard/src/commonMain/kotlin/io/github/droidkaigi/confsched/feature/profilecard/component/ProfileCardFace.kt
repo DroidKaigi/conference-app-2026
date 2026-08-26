@@ -14,13 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -46,6 +52,7 @@ fun ProfileCardFace(
             seed = seed,
             roughness = profileCardRoughness(shortSide, sketchiness),
             tremor = profileCardTremor(shortSide, sketchiness),
+            sweepWavelength = ProfileCardSweepWavelength,
             cornerRadius = ProfileCardFaceDefaults.cornerRadius,
             borderThickness = ProfileCardFaceDefaults.borderThickness,
             referenceSize = ProfileCardFaceDefaults.size,
@@ -58,17 +65,19 @@ fun ProfileCardFace(
                 .sketchBorder(shape, ProfileCardColors.ink),
             content = content,
         )
+        // Figma's Rotation field is the mirror of Modifier.rotate's sign (its positive turns the
+        // layer counterclockwise); these negate the source's -14°/9° to match the render.
         WashiTape(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .offset(x = (-14).dp, y = (-10).dp)
-                .rotate(-20f),
+                .offset(x = (-30).dp, y = (-17).dp)
+                .rotate(14f),
         )
         WashiTape(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset(x = 14.dp, y = 10.dp)
-                .rotate(16f),
+                .offset(x = 15.dp, y = (-8).dp)
+                .rotate(-9f),
         )
     }
 }
@@ -84,8 +93,12 @@ private fun WashiTape(modifier: Modifier = Modifier) {
 
 /** A small hand-drawn "+" mark, scattered around a face as a decorative flourish. */
 @Composable
-fun SketchSparkle(modifier: Modifier = Modifier, color: Color = ProfileCardColors.ink) {
-    Canvas(modifier = modifier.size(ProfileCardFaceDefaults.sparkleSize)) {
+fun SketchSparkle(
+    modifier: Modifier = Modifier,
+    color: Color = ProfileCardColors.ink,
+    markSize: Dp = ProfileCardFaceDefaults.sparkleSize,
+) {
+    Canvas(modifier = modifier.size(markSize)) {
         val half = size.minDimension / 2f
         val strokeWidth = size.minDimension * 0.12f
         drawLine(color, Offset(half, 0f), Offset(half, size.height), strokeWidth, StrokeCap.Round)
@@ -93,12 +106,56 @@ fun SketchSparkle(modifier: Modifier = Modifier, color: Color = ProfileCardColor
     }
 }
 
+/**
+ * One hand-drawn "+" mark's placement: [x]/[y] are the mark's *centre*, in dp from its face's
+ * top-start corner — callers must offset [SketchSparkle] by half of [size] in both axes, since
+ * `Modifier.offset` positions a composable's top-start corner, not its centre.
+ */
+internal data class SparklePlacement(val x: Dp, val y: Dp, val size: Dp, val rotationDegrees: Float)
+
+/**
+ * A region from the top of its bounds down to a hand-drawn horizontal edge — the paper-cut "torn
+ * edge" traced from the Figma source's own vector path (cubic-bezier segments between fixed
+ * points, not an algorithmic wave). [sourceWidth]/[sourceHeight] are that vector's own bounds;
+ * callers size the composable to the same aspect ratio so the trace isn't stretched.
+ */
+internal class TracedEdgeShape(
+    private val sourceWidth: Float,
+    private val sourceHeight: Float,
+    private val edgeStartY: Float,
+    private val edge: List<EdgeSegment>,
+) : Shape {
+    internal data class EdgeSegment(val c1x: Float, val c1y: Float, val c2x: Float, val c2y: Float, val x: Float, val y: Float)
+
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val scaleX = size.width / sourceWidth
+        val scaleY = size.height / sourceHeight
+        val path = Path().apply {
+            moveTo(0f, 0f)
+            lineTo(size.width, 0f)
+            lineTo(size.width, edgeStartY * scaleY)
+            for (segment in edge) {
+                cubicTo(
+                    segment.c1x * scaleX,
+                    segment.c1y * scaleY,
+                    segment.c2x * scaleX,
+                    segment.c2y * scaleY,
+                    segment.x * scaleX,
+                    segment.y * scaleY,
+                )
+            }
+            close()
+        }
+        return Outline.Generic(path)
+    }
+}
+
 object ProfileCardFaceDefaults {
     val size = DpSize(320.dp, 480.dp)
     val cornerRadius = 16.dp
     val borderThickness = 2.5.dp
-    val tapeWidth = 40.dp
-    val tapeHeight = 20.dp
+    val tapeWidth = 88.dp
+    val tapeHeight = 25.dp
     val sparkleSize = 12.dp
 }
 
@@ -119,6 +176,9 @@ internal fun profileCardRoughness(shortSide: Dp, sketchiness: Sketchiness, fille
 
 internal fun profileCardTremor(shortSide: Dp, sketchiness: Sketchiness, filled: Boolean = false): Dp =
     profileCardAmplitude(shortSide, sketchiness, filled) * 0.27f
+
+/** The wobble control-point spacing the design spec's hand-drawn border rule calls for. */
+internal val ProfileCardSweepWavelength = 90.dp
 
 @Preview
 @Composable
