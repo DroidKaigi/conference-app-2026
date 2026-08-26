@@ -20,9 +20,13 @@ fun profileCardScreenPresenter(
     ActionEffect(screenChannel) { action ->
         when (action) {
             is ProfileCardScreenAction.UpdateNickName -> form = form.copy(nickName = action.nickName)
+
             is ProfileCardScreenAction.UpdateOccupation -> form = form.copy(occupation = action.occupation)
+
             is ProfileCardScreenAction.UpdateLink -> form = form.copy(link = action.link)
+
             is ProfileCardScreenAction.UpdateMascot -> form = form.copy(mascot = action.mascot)
+
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file)
