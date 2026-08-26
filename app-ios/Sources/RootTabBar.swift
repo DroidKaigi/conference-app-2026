@@ -18,6 +18,7 @@ final class RootViewController: UIViewController {
 
     private var selection: RootTab?
     private var palette: RootTabBarPalette?
+    private var observations: [Task<Void, Never>] = []
 
     init(host: KaigiAppHost) {
         self.host = host
@@ -29,12 +30,18 @@ final class RootViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        observations.forEach { $0.cancel() }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         addComposeViewController()
         addTabBar()
-        Task { try? await collectCurrentTab() }
-        Task { try? await collectPalette() }
+        observations = [
+            Task { try? await self.collectCurrentTab() },
+            Task { try? await self.collectPalette() },
+        ]
     }
 
     override func viewDidLayoutSubviews() {
