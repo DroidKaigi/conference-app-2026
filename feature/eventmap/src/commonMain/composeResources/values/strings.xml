@@ -5,4 +5,15 @@
     <string name="event_map_stamp_title">Stamp collecting</string>
     <string name="event_map_stamp_description">Collect stamps and exchange them for prizes!</string>
     <string name="event_map_learn_more_button_label">Learn more</string>
+    <string name="stamp_collecting_title">Stamp collecting</string>
+    <string name="stamp_collecting_introducing">This year as well we have prepared a stamp rally for your enjoyment! Stamps can be collected at each booth in the Exhibition Area. You can receive up to four amazing DroidKaigi original prizes, depending on how many stamps you collect. We look forward to your participation!</string>
+    <string name="stamp_collecting_exchange_place_title">WHERE TO CLAIM YOUR PRIZE</string>
+    <string name="stamp_collecting_exhibition_area">Exhibition Area (B1F)</string>
+    <string name="stamp_collecting_map_content_description">Map of B1F with the Exhibition Area highlighted</string>
+    <string name="stamp_collecting_exchange_hours_title">PRIZE EXCHANGE HOURS</string>
+    <string name="stamp_collecting_exchange_hours_day1">9/2 11:00-17:00</string>
+    <string name="stamp_collecting_exchange_hours_day2">9/3 10:20-17:00</string>
+    <string name="stamp_collecting_group">Group %1$s</string>
+    <string name="stamp_collecting_prize_overlay_close">Close</string>
+    <string name="stamp_collecting_prize_overlay_counter">%1$d / %2$d</string>
 </resources>

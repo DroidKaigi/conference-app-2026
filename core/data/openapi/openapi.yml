@@ -141,9 +141,11 @@ components:
         videoUrl:
           type: string
           format: uri
+          x-omitempty: false
         slideUrl:
           type: string
           format: uri
+          x-omitempty: false
     CategoryListResponse:
       type: object
       required:
@@ -229,6 +231,7 @@ components:
         moreDetailsUrl:
           type: string
           format: uri
+          x-omitempty: false
         noShow:
           type: boolean
     EventProjectId:
@@ -317,6 +320,7 @@ components:
         en:
           type: string
           minLength: 1
+      x-omitempty: false
     JSTDateTime:
       type: string
     Language:
@@ -347,6 +351,7 @@ components:
       enum:
       - A
       - B
+      - C
     PrizeId:
       type: string
       format: uuid
@@ -430,6 +435,7 @@ components:
     SessionCategoryItemId:
       type: integer
       format: int64
+      x-omitempty: false
     SessionId:
       type: string
     SessionListResponseV4:
@@ -478,11 +484,13 @@ components:
           type: string
         bio:
           type: string
+          x-omitempty: false
         tagLine:
           type: string
         profilePicture:
           type: string
           format: uri
+          x-omitempty: false
         sessions:
           type: array
           items:

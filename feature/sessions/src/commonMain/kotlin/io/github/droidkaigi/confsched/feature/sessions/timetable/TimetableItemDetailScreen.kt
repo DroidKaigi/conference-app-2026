@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.icon.Close
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
@@ -32,7 +27,6 @@ import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
 import io.github.droidkaigi.confsched.core.ui.plus
-import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SameSlotSessionsSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionArchiveSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
@@ -42,7 +36,6 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Sessi
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionInfoCard
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionMemoField
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionTargetAudienceSection
-import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable

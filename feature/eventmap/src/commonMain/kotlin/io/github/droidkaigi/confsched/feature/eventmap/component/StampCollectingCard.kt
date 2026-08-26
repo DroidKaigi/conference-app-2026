@@ -29,7 +29,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun StampRallyCard(
+internal fun StampCollectingCard(
     onLearnMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -89,11 +89,11 @@ internal fun StampRallyCard(
 
 @LocalePreviews
 @Composable
-private fun StampRallyCardPreview(
+private fun StampCollectingCardPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        StampRallyCard(
+        StampCollectingCard(
             onLearnMoreClick = {},
         )
     }

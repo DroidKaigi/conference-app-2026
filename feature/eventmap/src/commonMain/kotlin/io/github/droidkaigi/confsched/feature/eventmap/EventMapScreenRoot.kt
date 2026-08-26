@@ -8,7 +8,9 @@ import soil.query.compose.rememberQuery
 
 @Composable
 context(screenContext: EventMapScreenContext)
-fun EventMapScreenRoot() {
+fun EventMapScreenRoot(
+    onNavigateToStampCollecting: () -> Unit,
+) {
     val screenChannel = retainScreenChannel<EventMapScreenAction, Nothing>()
     SoilDataBoundary(state = rememberQuery(screenContext.projectsQueryKey)) { projects ->
         val uiState = context(screenContext.presenterContext) {
@@ -18,6 +20,7 @@ fun EventMapScreenRoot() {
             uiState = uiState,
             onFloorClick = { screenChannel.send(EventMapScreenAction.SelectFloor(it)) },
             onFloorToggle = { screenChannel.send(EventMapScreenAction.ToggleFloor) },
+            onStampCollectingLearnMoreClick = onNavigateToStampCollecting,
         )
     }
 }

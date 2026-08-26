@@ -12,7 +12,6 @@ import io.github.droidkaigi.confsched.core.common.RootSceneStrategy
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
-import io.github.droidkaigi.confsched.core.model.TimetableItemId
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @ContributesIntoSet(UiScope::class)

@@ -8,7 +8,6 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
-import io.github.droidkaigi.confsched.core.model.ServerEnvironmentScreenScope
 
 @Inject
 @ContributesIntoSet(UiScope::class)
