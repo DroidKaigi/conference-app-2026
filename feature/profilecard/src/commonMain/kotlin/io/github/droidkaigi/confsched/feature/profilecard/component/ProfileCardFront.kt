@@ -68,7 +68,7 @@ fun ProfileCardFront(
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
-    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = true, modifier = modifier) {
+    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = true, mirrored = false, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

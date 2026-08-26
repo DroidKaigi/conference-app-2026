@@ -55,8 +55,10 @@ fun ProfileCardBack(
     sketchiness: Sketchiness,
     modifier: Modifier = Modifier,
 ) {
-    val seed = nickName.hashCode() + 100
-    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = false, modifier = modifier) {
+    // The face seed is the front's, since the back is that same card turned over.
+    val faceSeed = nickName.hashCode()
+    val seed = faceSeed + 100
+    ProfileCardFace(sketchiness = sketchiness, seed = faceSeed, topStartTape = false, mirrored = true, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()

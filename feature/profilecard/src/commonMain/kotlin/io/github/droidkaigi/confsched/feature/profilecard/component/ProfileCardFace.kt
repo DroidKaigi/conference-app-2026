@@ -44,6 +44,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.MirroredSketchShape
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
@@ -51,13 +52,15 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
  * The wobbly rounded-rect plate every face of the finished card is drawn on: a fixed-size,
  * fixed-palette card that a user's chosen [sketchiness] wobbles by, pinned in place by a
  * washi-tape corner. [topStartTape] adds the second, top-start piece the front face carries and
- * the back face does not.
+ * the back face does not. [mirrored] flips the outline left-to-right for the back face, which is
+ * the front turned over and so must show the same edge.
  */
 @Composable
 fun ProfileCardFace(
     sketchiness: Sketchiness,
     seed: Int,
     topStartTape: Boolean,
+    mirrored: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -74,7 +77,7 @@ fun ProfileCardFace(
                     transformOrigin = TransformOrigin(0f, 0f)
                 },
         ) {
-            ProfileCardFaceContent(sketchiness = sketchiness, seed = seed, topStartTape = topStartTape, content = content)
+            ProfileCardFaceContent(sketchiness = sketchiness, seed = seed, topStartTape = topStartTape, mirrored = mirrored, content = content)
         }
     }
 }
@@ -84,11 +87,12 @@ private fun ProfileCardFaceContent(
     sketchiness: Sketchiness,
     seed: Int,
     topStartTape: Boolean,
+    mirrored: Boolean,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(modifier = Modifier.requiredSize(ProfileCardFaceDefaults.size)) {
         val shortSide = minOf(ProfileCardFaceDefaults.size.width, ProfileCardFaceDefaults.size.height)
-        val shape = SketchRoundRectShape(
+        val outline = SketchRoundRectShape(
             seed = seed,
             roughness = profileCardRoughness(shortSide, sketchiness),
             tremor = profileCardTremor(shortSide, sketchiness),
@@ -97,6 +101,7 @@ private fun ProfileCardFaceContent(
             borderThickness = ProfileCardFaceDefaults.borderThickness,
             referenceSize = ProfileCardFaceDefaults.size,
         )
+        val shape = if (mirrored) MirroredSketchShape(outline) else outline
         Box(
             modifier = Modifier
                 .size(ProfileCardFaceDefaults.size)
@@ -329,7 +334,7 @@ private fun ProfileCardFacePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Box(modifier = Modifier.padding(32.dp)) {
-            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true) {
+            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true, mirrored = false) {
                 EventLabelHeader(text = "DROIDKAIGI 2026", color = ProfileCardColors.ink, centeredLabel = false)
                 Sparkles(
                     placements = listOf(SparklePlacement(x = 280.dp, y = 40.dp, size = 12.dp, rotationDegrees = 12f)),
