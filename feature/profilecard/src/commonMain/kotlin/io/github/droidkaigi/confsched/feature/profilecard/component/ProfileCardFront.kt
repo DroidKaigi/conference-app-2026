@@ -239,7 +239,9 @@ private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : 
         val inset = with(density) { borderThickness.toPx() / 2f }
         val scaleX = (size.width - inset * 2f) / SOURCE_WIDTH
         val scaleY = (size.height - inset * 2f) / SOURCE_HEIGHT
+
         fun point(x: Float, y: Float) = Offset(x * scaleX + inset, y * scaleY + inset)
+
         fun Path.curveTo(c1: Offset, c2: Offset, end: Offset) = cubicTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y)
 
         val path = Path()
