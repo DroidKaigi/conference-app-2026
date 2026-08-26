@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -41,14 +40,11 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.cr
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_malformed_error
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_placeholder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_label
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_placeholder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_label
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_placeholder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_label
@@ -82,7 +78,6 @@ fun ProfileCardFormView(
             KaigiTextField(
                 value = uiState.nickName,
                 onValueChange = onNickNameChange,
-                placeholder = stringResource(Res.string.nickname_placeholder),
                 seed = ProfileCardFormViewDefaults.nickNameFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
                 isError = uiState.nickNameError != null,
@@ -93,7 +88,6 @@ fun ProfileCardFormView(
             KaigiTextField(
                 value = uiState.occupation,
                 onValueChange = onOccupationChange,
-                placeholder = stringResource(Res.string.occupation_placeholder),
                 seed = ProfileCardFormViewDefaults.occupationFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
                 isError = uiState.occupationError != null,
@@ -104,7 +98,6 @@ fun ProfileCardFormView(
             KaigiTextField(
                 value = uiState.link,
                 onValueChange = onLinkChange,
-                placeholder = stringResource(Res.string.link_placeholder),
                 seed = ProfileCardFormViewDefaults.linkFieldSeed,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                 isError = uiState.linkError != null,
@@ -118,7 +111,7 @@ fun ProfileCardFormView(
                     contentDescription = null,
                     modifier = Modifier.size(KaigiButtonDefaults.iconSize),
                 )
-                Text(stringResource(Res.string.add_image_button), style = KaigiButtonDefaults.labelStyle)
+                Text(stringResource(Res.string.add_image_button), style = ProfileCardTextStyles.accent)
             }
             ProfileCardFormErrorText(uiState.avatarImageError)
         }
@@ -134,7 +127,7 @@ fun ProfileCardFormView(
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isSubmitting,
         ) {
-            Text(stringResource(Res.string.create_card_button), style = KaigiButtonDefaults.labelStyle)
+            Text(stringResource(Res.string.create_card_button), style = ProfileCardTextStyles.accent)
         }
     }
 }
@@ -145,7 +138,7 @@ private fun ProfileCardFormSection(
     content: @Composable () -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(ProfileCardFormViewDefaults.labelSpacing)) {
-        Text(text = label, style = ProfileCardFormViewDefaults.labelStyle)
+        Text(text = label, style = ProfileCardTextStyles.accent)
         content()
     }
 }
@@ -177,13 +170,6 @@ private object ProfileCardFormViewDefaults {
     val linkFieldSeed = 703
     val addImageButtonSeed = 710
     val submitButtonSeed = 720
-
-    // The design sets every field label in the display face, which the type scale reserves for
-    // headline and display roles.
-    val labelStyle: TextStyle
-        @Composable get() = MaterialTheme.typography.titleSmall.copy(
-            fontFamily = MaterialTheme.typography.displaySmall.fontFamily,
-        )
 }
 
 @LocalePreviews
@@ -193,7 +179,11 @@ private fun ProfileCardFormViewPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         ProfileCardFormView(
-            uiState = ProfileCardScreenUiState.Form(),
+            uiState = ProfileCardScreenUiState.Form(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+            ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},

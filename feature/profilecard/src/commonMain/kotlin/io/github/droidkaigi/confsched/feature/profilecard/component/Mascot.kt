@@ -70,7 +70,7 @@ fun MascotPicker(
     onMascotSelected: (Mascot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(MascotOptionDefaults.gap)) {
         Mascot.entries.forEach { mascot ->
             MascotOption(
                 mascot = mascot,
@@ -128,7 +128,10 @@ private fun MascotOption(
 
 object MascotOptionDefaults {
     val size = 48.dp
-    val iconSize = 28.dp
+
+    /** The design lays the row out as 56dp cells; the ring inside one is [size]. */
+    val gap = 16.dp
+    val iconSize = 30.dp
     val borderThickness = 1.5.dp
     val roughness = 0.4.dp
     val tremor = 0.15.dp

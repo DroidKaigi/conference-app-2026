@@ -1,12 +1,9 @@
 <resources>
     <string name="profile_card">プロフィールカード</string>
-    <string name="subtitle">会場やSNSで自分を紹介できるプロフィールカードを作ってみましょう!</string>
+    <string name="subtitle">会場やSNSで自分を紹介できるプロフィールカードを作ってみましょう！</string>
     <string name="nickname_label">ニックネーム</string>
-    <string name="nickname_placeholder">droidkaigi</string>
     <string name="occupation_label">職種</string>
-    <string name="occupation_placeholder">Software Engineer</string>
-    <string name="link_label">リンク (ex.X, Instagram...)</string>
-    <string name="link_placeholder">https://example.com/user</string>
+    <string name="link_label">リンク（ex.X、Instagram...）</string>
     <string name="profile_image_label">プロフィール画像</string>
     <string name="add_image_button">画像を追加</string>
     <string name="mascot_label">マスコット</string>

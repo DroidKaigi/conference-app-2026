@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
@@ -29,7 +30,6 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
  *
  * @param value the text the field shows.
  * @param onValueChange called with the text after every edit.
- * @param placeholder the text shown while [value] is empty.
  * @param seed the value the box is drawn from. The same seed always produces the same box,
  *   so give neighbouring fields different ones or a column of them reads as a repeat.
  * @param keyboardOptions the software keyboard the field asks for.
@@ -40,7 +40,6 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 fun KaigiTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String,
     seed: Int,
     keyboardOptions: KeyboardOptions,
     modifier: Modifier = Modifier,
@@ -58,30 +57,28 @@ fun KaigiTextField(
     } else {
         MaterialTheme.colorScheme.outline
     }
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            // The box owns the height the design gives it, rather than inheriting whatever
+            // single line the text field's own font metrics come to.
+            .height(KaigiTextFieldDefaults.height)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow),
+    ) {
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
+                .align(Alignment.Center)
                 .fillMaxWidth()
-                .clip(shape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .padding(KaigiTextFieldDefaults.contentPadding),
             textStyle = KaigiTextFieldDefaults.textStyle
-                .copy(color = MaterialTheme.colorScheme.onSurface),
+                .copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
             keyboardOptions = keyboardOptions,
             singleLine = true,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        ) { innerTextField ->
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    style = KaigiTextFieldDefaults.textStyle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            innerTextField()
-        }
+        )
         Box(Modifier.matchParentSize().sketchBorder(shape, borderColor))
     }
 }
@@ -89,7 +86,8 @@ fun KaigiTextField(
 object KaigiTextFieldDefaults {
     val cornerRadius: Dp = 12.dp
     val borderThickness: Dp = 1.5.dp
-    val contentPadding = PaddingValues(horizontal = 12.dp, vertical = 12.dp)
+    val height: Dp = 44.dp
+    val contentPadding = PaddingValues(horizontal = 12.dp)
 
     val textStyle
         @Composable get() = MaterialTheme.typography.bodyMedium
@@ -108,23 +106,20 @@ private fun KaigiTextFieldPreview(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             KaigiTextField(
-                value = "droidkaigi",
+                value = "Speaker A",
                 onValueChange = {},
-                placeholder = "",
                 seed = 881,
                 keyboardOptions = KeyboardOptions.Default,
             )
             KaigiTextField(
-                value = "",
+                value = "https://example.com/user",
                 onValueChange = {},
-                placeholder = "https://example.com/user",
                 seed = 882,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
             )
             KaigiTextField(
                 value = "",
                 onValueChange = {},
-                placeholder = "",
                 seed = 883,
                 keyboardOptions = KeyboardOptions.Default,
                 isError = true,

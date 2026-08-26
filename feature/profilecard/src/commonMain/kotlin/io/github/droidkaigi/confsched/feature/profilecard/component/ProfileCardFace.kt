@@ -4,9 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +25,9 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +61,32 @@ fun ProfileCardFace(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    Box(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier) {
+        val scale = (maxWidth / ProfileCardFaceDefaults.size.width).coerceAtMost(1f)
+        Box(
+            modifier = Modifier
+                .size(width = ProfileCardFaceDefaults.size.width * scale, height = ProfileCardFaceDefaults.size.height * scale)
+                // Every face is laid out against the fixed card, so a narrow window scales the
+                // whole drawing rather than reflowing what is on it.
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    transformOrigin = TransformOrigin(0f, 0f)
+                },
+        ) {
+            ProfileCardFaceContent(sketchiness = sketchiness, seed = seed, topStartTape = topStartTape, content = content)
+        }
+    }
+}
+
+@Composable
+private fun ProfileCardFaceContent(
+    sketchiness: Sketchiness,
+    seed: Int,
+    topStartTape: Boolean,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(modifier = Modifier.requiredSize(ProfileCardFaceDefaults.size)) {
         val shortSide = minOf(ProfileCardFaceDefaults.size.width, ProfileCardFaceDefaults.size.height)
         val shape = SketchRoundRectShape(
             seed = seed,

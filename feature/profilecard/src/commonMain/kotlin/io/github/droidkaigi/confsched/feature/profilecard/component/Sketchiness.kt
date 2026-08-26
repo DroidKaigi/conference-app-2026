@@ -64,7 +64,7 @@ fun SketchinessPicker(
 ) {
     Row(
         modifier = modifier.selectableGroup(),
-        horizontalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
+        horizontalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.optionGap),
     ) {
         Sketchiness.entries.forEach { sketchiness ->
             SketchinessOption(
@@ -119,10 +119,10 @@ private fun SketchinessOption(
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
+                verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.contentGap),
             ) {
                 SketchinessSwatch(sketchiness = sketchiness)
-                Text(sketchiness.label, style = MaterialTheme.typography.labelLarge)
+                Text(sketchiness.label, style = MaterialTheme.typography.labelMedium)
             }
         }
     }
@@ -149,7 +149,8 @@ private fun SketchinessSwatch(
 
 object SketchinessPickerDefaults {
     val outlineSeed = 700
-    val gap = 4.dp
+    val contentGap = 4.dp
+    val optionGap = 12.dp
 }
 
 private object SketchinessOptionDefaults {
@@ -162,8 +163,8 @@ private object SketchinessOptionDefaults {
 }
 
 private object SketchinessSwatchDefaults {
-    val width = 64.dp
-    val height = 28.dp
+    val width = 56.dp
+    val height = 26.dp
 }
 
 @LocalePreviews
