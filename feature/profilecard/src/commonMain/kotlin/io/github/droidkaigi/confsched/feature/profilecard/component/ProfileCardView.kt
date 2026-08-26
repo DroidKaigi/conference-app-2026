@@ -1,5 +1,8 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Share
+import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -66,26 +72,16 @@ fun ProfileCardView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.cardSpacing),
         ) {
-            if (uiState.isShowingBack) {
-                ProfileCardBack(
-                    nickName = uiState.nickName,
-                    link = uiState.link,
-                    mascot = uiState.mascot,
-                    sketchiness = uiState.sketchiness,
-                    taped = false,
-                    modifier = Modifier.clickable(onClick = onFlipCard),
-                )
-            } else {
-                ProfileCardFront(
-                    nickName = uiState.nickName,
-                    occupation = uiState.occupation,
-                    mascot = uiState.mascot,
-                    sketchiness = uiState.sketchiness,
-                    taped = false,
-                    avatarImage = uiState.avatarImage,
-                    modifier = Modifier.clickable(onClick = onFlipCard),
-                )
-            }
+            FlippableProfileCard(
+                nickName = uiState.nickName,
+                occupation = uiState.occupation,
+                link = uiState.link,
+                mascot = uiState.mascot,
+                sketchiness = uiState.sketchiness,
+                avatarImage = uiState.avatarImage,
+                isShowingBack = uiState.isShowingBack,
+                modifier = Modifier.clickable(onClick = onFlipCard),
+            )
             ProfileCardActions(
                 isSharing = uiState.isSharing,
                 onShareClick = { coroutineScope.launch { onShare(shareImageLayer.toImageBitmap()) } },
@@ -103,6 +99,55 @@ fun ProfileCardView(
                 avatarImage = uiState.avatarImage,
                 colorScheme = colorScheme,
                 modifier = recordingModifier,
+            )
+        }
+    }
+}
+
+/**
+ * The card turned over about its vertical axis. The back face is laid out already mirrored so
+ * that, once turned past the edge, it reads the right way round and its outline lands exactly on
+ * the front's.
+ */
+@Composable
+private fun FlippableProfileCard(
+    nickName: String,
+    occupation: String,
+    link: String,
+    mascot: Mascot,
+    sketchiness: Sketchiness,
+    avatarImage: AvatarImage?,
+    isShowingBack: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val rotation by animateFloatAsState(
+        targetValue = if (isShowingBack) 180f else 0f,
+        animationSpec = tween(durationMillis = ProfileCardViewDefaults.flipDurationMillis, easing = FastOutSlowInEasing),
+    )
+    val showsBack = rotation > 90f
+    Box(
+        modifier = modifier.graphicsLayer {
+            rotationY = rotation
+            cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
+        },
+    ) {
+        if (showsBack) {
+            ProfileCardBack(
+                nickName = nickName,
+                link = link,
+                mascot = mascot,
+                sketchiness = sketchiness,
+                taped = false,
+                modifier = Modifier.graphicsLayer { rotationY = 180f },
+            )
+        } else {
+            ProfileCardFront(
+                nickName = nickName,
+                occupation = occupation,
+                mascot = mascot,
+                sketchiness = sketchiness,
+                taped = false,
+                avatarImage = avatarImage,
             )
         }
     }
@@ -150,6 +195,8 @@ private fun ProfileCardActions(
 
 private object ProfileCardViewDefaults {
     val shareButtonSeed = 730
+    val flipDurationMillis = 500
+    val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
     val actionsInset = 24.dp
