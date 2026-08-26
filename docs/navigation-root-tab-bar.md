@@ -30,7 +30,9 @@ The two occupy space differently:
 - The **bar** floats over the content in a `Box` and takes no layout space.
 - The **rail** occupies a `KaigiNavigationRailDefaults.columnWidth` column in a `Row`, and the content — both panes of a list-detail scene included — begins after it. The rail is centred in its column on the window height, independent of whatever header the content draws.
 
-A scrollable root destination clears whichever is shown by adding `LocalNavigationBarOccupiedHeight.current` to its bottom content padding: it reads as `KaigiNavigationBarDefaults.occupiedHeight` where the bar floats over the content — including on iOS, where the native bar overlays and no provider is installed — and the decorator provides zero beside the rail, which floats over nothing.
+The bar keeps clear of the platform's own navigation area — Android's navigation bar, whether three buttons or the gesture pill — by `Modifier.windowInsetsPadding(WindowInsets.navigationBars)`, which moves it up by that inset and leaves `KaigiNavigationBarDefaults.bottomMargin` above whatever the system draws there. The inset is zero on desktop, on the web, and in screenshot tests, where the bar sits on the margin alone.
+
+A scrollable root destination clears whichever is shown by adding `LocalNavigationBarOccupiedHeight.current` to its bottom content padding: the decorator provides `KaigiNavigationBarDefaults.occupiedHeightWithInset` — the bar's own extent plus the inset it moved up by — under the bar, and zero beside the rail, which floats over nothing. Where no provider is installed the composition local reads as `KaigiNavigationBarDefaults.occupiedHeight`, which is what the native bar on iOS needs: UIKit grows that bar's own height by the inset.
 
 ## Tab switching
 
