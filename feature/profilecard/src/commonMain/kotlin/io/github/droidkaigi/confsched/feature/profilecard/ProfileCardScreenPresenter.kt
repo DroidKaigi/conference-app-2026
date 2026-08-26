@@ -1,14 +1,12 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
-import io.github.droidkaigi.confsched.feature.profilecard.component.AvatarImage
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.avatar_image_required_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.link_invalid_error
@@ -17,23 +15,14 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ni
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_required_error
 import org.jetbrains.compose.resources.stringResource
 
-// A single local profile card per device; there is no multi-account concept to key this by.
-internal const val LOCAL_PROFILE_ID = "local"
-
 @Composable
-context(presenterContext: ProfileCardPresenterContext)
+context(_: ProfileCardPresenterContext)
 fun profileCardScreenPresenter(
     screenChannel: ScreenChannel<ProfileCardScreenAction, Nothing>,
 ): ProfileCardScreenUiState {
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isSubmitted by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        presenterContext.profileImageStore.loadImage(LOCAL_PROFILE_ID)?.let { bytes ->
-            form = form.copy(avatarImage = AvatarImage(bytes))
-        }
-    }
 
     val nicknameRequiredMessage = stringResource(Res.string.nickname_required_error)
     val occupationRequiredMessage = stringResource(Res.string.occupation_required_error)
@@ -53,10 +42,7 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
-            is ProfileCardScreenAction.UpdateAvatarImage -> {
-                form = form.copy(avatarImage = action.image, avatarImageErrorMessage = null)
-                presenterContext.profileImageStore.saveImage(LOCAL_PROFILE_ID, action.image.bytes)
-            }
+            is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.file, avatarImageErrorMessage = null)
 
             ProfileCardScreenAction.Submit -> {
                 val validated = form.copy(

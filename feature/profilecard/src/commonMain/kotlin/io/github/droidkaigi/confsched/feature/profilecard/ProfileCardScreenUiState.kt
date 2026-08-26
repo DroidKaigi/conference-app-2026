@@ -1,8 +1,8 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
-import io.github.droidkaigi.confsched.feature.profilecard.component.AvatarImage
 import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
 import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
+import io.github.vinceglb.filekit.PlatformFile
 
 sealed interface ProfileCardScreenUiState {
     data class Form(
@@ -11,7 +11,7 @@ sealed interface ProfileCardScreenUiState {
         val link: String = "",
         val mascot: Mascot = Mascot.Koala,
         val sketchiness: Sketchiness = Sketchiness.Normal,
-        val avatarImage: AvatarImage? = null,
+        val avatarImage: PlatformFile? = null,
         val nickNameErrorMessage: String? = null,
         val occupationErrorMessage: String? = null,
         val linkErrorMessage: String? = null,
@@ -24,7 +24,7 @@ sealed interface ProfileCardScreenUiState {
         val link: String,
         val mascot: Mascot,
         val sketchiness: Sketchiness,
-        val avatarImage: AvatarImage?,
+        val avatarImage: PlatformFile?,
         val isShowingBack: Boolean = false,
     ) : ProfileCardScreenUiState
 }

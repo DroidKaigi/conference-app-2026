@@ -4,11 +4,10 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
-import io.github.droidkaigi.confsched.core.data.ProfileImageStore
 import io.github.droidkaigi.confsched.core.model.ProfileCardScreenScope
 
 @Inject
-class ProfileCardPresenterContext(val profileImageStore: ProfileImageStore) : PresenterContext
+class ProfileCardPresenterContext : PresenterContext
 
 @Inject
 @SingleIn(ProfileCardScreenScope::class)

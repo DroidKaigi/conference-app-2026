@@ -9,7 +9,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(project(":core:common"))
-            implementation(project(":core:data"))
             api(project(":core:model"))
             api(libs.molecule)
             api(libs.turbine)
