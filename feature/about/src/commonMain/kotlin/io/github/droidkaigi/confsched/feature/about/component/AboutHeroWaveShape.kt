@@ -17,8 +17,8 @@ import kotlin.math.max
  * [amplitude] is the nominal reach of a crest past the trough line and [wavelength] the pitch of
  * one full wave. Each crest's reach and each trough's depth are nudged by a deterministic hash of
  * their position — the same [seed] always draws the same edge — so the line reads as drawn by hand
- * rather than as a mechanical sine. The band reserves `2 * amplitude` of height below its content
- * for the wave to occupy.
+ * rather than as a mechanical sine. The trough line sits far enough above the band's bottom edge
+ * that the deepest jittered crest lands exactly on it, so no crest is clipped flat.
  */
 @Immutable
 internal data class AboutHeroWaveShape(
@@ -33,7 +33,7 @@ internal data class AboutHeroWaveShape(
     ): Outline {
         val amp = with(density) { amplitude.toPx() }
         val halfWave = with(density) { wavelength.toPx() } / 2f
-        val baseTroughY = size.height - amp * 2f
+        val baseTroughY = size.height - amp * DEEPEST_CREST
         val path = Path().apply {
             moveTo(0f, 0f)
             lineTo(size.width, 0f)
@@ -46,8 +46,8 @@ internal data class AboutHeroWaveShape(
             var index = 0
             while (x > 0f) {
                 val nextX = max(0f, x - halfWave)
-                val reach = amp * jitter(index, lowest = 0.78f, span = 0.38f)
-                val endTrough = baseTroughY + amp * jitter(index + 51, lowest = -0.14f, span = 0.28f)
+                val reach = amp * jitter(index, lowest = REACH_LOWEST, span = REACH_SPAN)
+                val endTrough = baseTroughY + amp * jitter(index + 51, lowest = TROUGH_LOWEST, span = TROUGH_SPAN)
                 val controlY = if (crestDown) endTrough + reach * 2f else endTrough - reach * 2f
                 quadraticBezierTo((x + nextX) / 2f, controlY, nextX, endTrough)
                 x = nextX
@@ -57,6 +57,16 @@ internal data class AboutHeroWaveShape(
             close()
         }
         return Outline.Generic(path)
+    }
+
+    private companion object {
+        const val REACH_LOWEST = 0.78f
+        const val REACH_SPAN = 0.38f
+        const val TROUGH_LOWEST = -0.14f
+        const val TROUGH_SPAN = 0.28f
+
+        /** How far past the trough line, in amplitudes, the deepest crest can reach. */
+        const val DEEPEST_CREST = REACH_LOWEST + REACH_SPAN + TROUGH_LOWEST + TROUGH_SPAN
     }
 
     /** A stable value in `[lowest, lowest + span)` for [index], mixed with [seed]. */
