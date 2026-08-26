@@ -65,10 +65,11 @@ fun ProfileCardFront(
     mascot: Mascot,
     sketchiness: Sketchiness,
     avatarImage: AvatarImage?,
+    taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
-    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = true, mirrored = false, modifier = modifier) {
+    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = taped, bottomEndTape = taped, mirrored = false, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -85,7 +86,7 @@ fun ProfileCardFront(
         )
         SpeechBubble(
             text = stringResource(Res.string.card_greeting),
-            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.bubbleOffset).rotate(ProfileCardFrontDefaults.bubbleRotationDegrees),
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.bubbleOffset),
         )
         Sparkles(ProfileCardFrontDefaults.duskBandSparkles, ProfileCardColors.onDuskBand)
         Sparkles(ProfileCardFrontDefaults.plateSparkles, ProfileCardColors.ink)
@@ -209,7 +210,9 @@ private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
             text = text,
             color = ProfileCardColors.onBanner,
             style = ProfileCardTextStyles.accent,
-            modifier = Modifier.offset(x = ProfileCardFrontDefaults.bubbleTextOffset.x, y = ProfileCardFrontDefaults.bubbleTextOffset.y),
+            modifier = Modifier
+                .offset(x = ProfileCardFrontDefaults.bubbleTextOffset.x, y = ProfileCardFrontDefaults.bubbleTextOffset.y)
+                .rotate(ProfileCardFrontDefaults.bubbleTextRotationDegrees),
         )
     }
 }
@@ -343,7 +346,9 @@ private object ProfileCardFrontDefaults {
     val bubbleOffset = DpOffset(210.dp, 97.5.dp)
     val bubbleTextOffset = DpOffset(2.dp, (-4).dp)
     val bubbleBorderThickness = 4.dp
-    val bubbleRotationDegrees = -8f
+
+    // The bubble outline is traced already tilted; only the greeting needs turning to sit along it.
+    val bubbleTextRotationDegrees = -8f
     val nickNameOffset = DpOffset(22.5.dp, 271.dp)
     val nickNameWidth = 275.dp
     val occupationOffset = DpOffset(22.5.dp, 324.5.dp)
@@ -389,6 +394,7 @@ private fun ProfileCardFrontPreview(
             occupation = "Software Engineer",
             mascot = Mascot.Koala,
             sketchiness = Sketchiness.Normal,
+            taped = true,
             avatarImage = null,
             modifier = Modifier.padding(24.dp),
         )

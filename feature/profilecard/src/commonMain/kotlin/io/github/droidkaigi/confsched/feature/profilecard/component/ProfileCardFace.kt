@@ -51,8 +51,9 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 /**
  * The wobbly rounded-rect plate every face of the finished card is drawn on: a fixed-size,
  * fixed-palette card that a user's chosen [sketchiness] wobbles by, pinned in place by a
- * washi-tape corner. [topStartTape] adds the second, top-start piece the front face carries and
- * the back face does not. [mirrored] flips the outline left-to-right for the back face, which is
+ * washi-tape corner when [bottomEndTape] is set; [topStartTape] adds the second, top-start piece
+ * the front face carries and the back face does not. The card a reader turns over in the app
+ * carries no tape at all, only the one pasted onto the share image does. [mirrored] flips the outline left-to-right for the back face, which is
  * the front turned over and so must show the same edge.
  */
 @Composable
@@ -60,6 +61,7 @@ fun ProfileCardFace(
     sketchiness: Sketchiness,
     seed: Int,
     topStartTape: Boolean,
+    bottomEndTape: Boolean,
     mirrored: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
@@ -77,7 +79,14 @@ fun ProfileCardFace(
                     transformOrigin = TransformOrigin(0f, 0f)
                 },
         ) {
-            ProfileCardFaceContent(sketchiness = sketchiness, seed = seed, topStartTape = topStartTape, mirrored = mirrored, content = content)
+            ProfileCardFaceContent(
+                sketchiness = sketchiness,
+                seed = seed,
+                topStartTape = topStartTape,
+                bottomEndTape = bottomEndTape,
+                mirrored = mirrored,
+                content = content,
+            )
         }
     }
 }
@@ -87,6 +96,7 @@ private fun ProfileCardFaceContent(
     sketchiness: Sketchiness,
     seed: Int,
     topStartTape: Boolean,
+    bottomEndTape: Boolean,
     mirrored: Boolean,
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -120,12 +130,14 @@ private fun ProfileCardFaceContent(
                     .rotate(14f),
             )
         }
-        WashiTape(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = 16.dp, y = (-1.5).dp)
-                .rotate(-9f),
-        )
+        if (bottomEndTape) {
+            WashiTape(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(x = 16.dp, y = (-1.5).dp)
+                    .rotate(-9f),
+            )
+        }
     }
 }
 
@@ -334,7 +346,7 @@ private fun ProfileCardFacePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Box(modifier = Modifier.padding(32.dp)) {
-            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true, mirrored = false) {
+            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true, bottomEndTape = true, mirrored = false) {
                 EventLabelHeader(text = "DROIDKAIGI 2026", color = ProfileCardColors.ink, centeredLabel = false)
                 Sparkles(
                     placements = listOf(SparklePlacement(x = 280.dp, y = 40.dp, size = 12.dp, rotationDegrees = 12f)),

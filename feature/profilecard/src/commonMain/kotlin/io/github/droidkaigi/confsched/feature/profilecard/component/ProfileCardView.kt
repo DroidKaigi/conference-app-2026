@@ -72,6 +72,7 @@ fun ProfileCardView(
                     link = uiState.link,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    taped = false,
                     modifier = Modifier.clickable(onClick = onFlipCard),
                 )
             } else {
@@ -80,6 +81,7 @@ fun ProfileCardView(
                     occupation = uiState.occupation,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    taped = false,
                     avatarImage = uiState.avatarImage,
                     modifier = Modifier.clickable(onClick = onFlipCard),
                 )

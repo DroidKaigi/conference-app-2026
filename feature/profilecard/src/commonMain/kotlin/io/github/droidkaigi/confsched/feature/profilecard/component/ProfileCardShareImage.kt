@@ -60,6 +60,7 @@ internal fun ProfileCardShareImage(
             occupation = occupation,
             mascot = mascot,
             sketchiness = sketchiness,
+            taped = true,
             avatarImage = avatarImage,
             modifier = Modifier.cardSlot(
                 origin = ProfileCardShareImageDefaults.frontOrigin,
@@ -71,6 +72,7 @@ internal fun ProfileCardShareImage(
             link = link,
             mascot = mascot,
             sketchiness = sketchiness,
+            taped = true,
             modifier = Modifier.cardSlot(
                 origin = ProfileCardShareImageDefaults.backOrigin,
                 rotationDegrees = ProfileCardShareImageDefaults.backRotationDegrees,
