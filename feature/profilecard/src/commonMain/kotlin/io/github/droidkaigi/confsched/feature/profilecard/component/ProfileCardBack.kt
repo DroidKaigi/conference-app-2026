@@ -3,13 +3,11 @@ package io.github.droidkaigi.confsched.feature.profilecard.component
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,8 +21,11 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
@@ -55,68 +56,47 @@ fun ProfileCardBack(
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode() + 100
-    ProfileCardFace(sketchiness = sketchiness, seed = seed, modifier = modifier) {
-        Column(
+    ProfileCardFace(sketchiness = sketchiness, seed = seed, topStartTape = false, modifier = modifier) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(ProfileCardBackDefaults.bannerHeight)
                 .clip(BackBannerShape)
-                .background(ProfileCardColors.banner)
-                .padding(ProfileCardBackDefaults.textPadding),
-        ) {
-            Text(
-                stringResource(Res.string.card_event_label),
-                color = ProfileCardColors.onBanner,
-                style = MaterialTheme.typography.labelSmall,
-            )
-            Text(
-                stringResource(Res.string.card_scan_me),
-                color = ProfileCardColors.onBanner,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-            )
-        }
-        CornerBracket(
-            mirrored = false,
-            color = ProfileCardColors.onBanner,
-            modifier = Modifier.align(Alignment.TopStart).padding(ProfileCardBackDefaults.cornerPadding),
+                .background(ProfileCardColors.banner),
         )
-        CornerBracket(
-            mirrored = true,
+        EventLabelHeader(text = stringResource(Res.string.card_event_label), color = ProfileCardColors.onBanner, centeredLabel = true)
+        Text(
+            text = stringResource(Res.string.card_scan_me),
             color = ProfileCardColors.onBanner,
-            modifier = Modifier.align(Alignment.TopEnd).padding(ProfileCardBackDefaults.cornerPadding),
+            style = ProfileCardTextStyles.display,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().cardOffset(ProfileCardBackDefaults.scanMeOffset),
         )
         QrPlate(
             link = link,
             seed = seed + 1,
             sketchiness = sketchiness,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = ProfileCardBackDefaults.qrPlateOffsetY),
+            modifier = Modifier.cardOffset(ProfileCardBackDefaults.qrFrameOffset),
         )
-        ProfileCardBackDefaults.bannerSparkles.forEach { sparkle ->
-            SketchSparkle(
-                color = ProfileCardColors.onBanner,
-                markSize = sparkle.size,
-                modifier = Modifier
-                    .offset(x = sparkle.x - sparkle.size / 2, y = sparkle.y - sparkle.size / 2)
-                    .rotate(sparkle.rotationDegrees),
-            )
-        }
-        ProfileCardBackDefaults.groundSparkles.forEach { sparkle ->
-            SketchSparkle(
-                color = ProfileCardColors.duskBand,
-                markSize = sparkle.size,
-                modifier = Modifier
-                    .offset(x = sparkle.x - sparkle.size / 2, y = sparkle.y - sparkle.size / 2)
-                    .rotate(sparkle.rotationDegrees),
-            )
-        }
-        GroundScene(
+        Sparkles(ProfileCardBackDefaults.bannerSparkles, ProfileCardColors.onBanner)
+        Sparkles(ProfileCardBackDefaults.groundSparkles, ProfileCardColors.duskBand)
+        MascotIcon(
             mascot = mascot,
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(y = ProfileCardBackDefaults.groundOffsetY),
+                .cardOffset(ProfileCardBackDefaults.mascotOffset)
+                .size(ProfileCardBackDefaults.mascotBox)
+                .rotate(ProfileCardBackDefaults.mascotRotationDegrees),
+        )
+        FlagMark(modifier = Modifier.cardOffset(ProfileCardBackDefaults.flagOffset))
+        GroundLine(
+            modifier = Modifier
+                .cardOffset(ProfileCardBackDefaults.groundLineOffset)
+                .width(ProfileCardBackDefaults.groundLineWidth),
+        )
+        GrassTicks(
+            modifier = Modifier
+                .cardOffset(ProfileCardBackDefaults.groundLineOffset)
+                .width(ProfileCardBackDefaults.groundLineWidth),
         )
     }
 }
@@ -124,6 +104,8 @@ fun ProfileCardBack(
 /**
  * A thin wobbly frame around a smaller, plate-filled square holding the QR pattern — traced from
  * the Figma "QR Frame"/"QR Plate" pair, which are two nested shapes, not one bordered square.
+ * Only the frame carries an outline; the plate is a flat fill in the design's brighter surface
+ * role so the modules read as dark-on-light whatever the theme.
  */
 @Composable
 private fun QrPlate(link: String, seed: Int, sketchiness: Sketchiness, modifier: Modifier = Modifier) {
@@ -147,14 +129,13 @@ private fun QrPlate(link: String, seed: Int, sketchiness: Sketchiness, modifier:
             tremor = profileCardTremor(plateSize, sketchiness),
             sweepWavelength = ProfileCardSweepWavelength,
             cornerRadius = 8.dp,
-            borderThickness = 2.dp,
+            borderThickness = 0.dp,
         )
         Box(
             modifier = Modifier
                 .size(plateSize)
                 .clip(plateShape)
-                .background(ProfileCardColors.plate)
-                .sketchBorder(plateShape, ProfileCardColors.ink)
+                .background(ProfileCardColors.brightPlate)
                 .padding(ProfileCardBackDefaults.qrPlateInset),
         ) {
             QrPattern(link = link, modifier = Modifier.fillMaxWidth())
@@ -162,10 +143,10 @@ private fun QrPlate(link: String, seed: Int, sketchiness: Sketchiness, modifier:
     }
 }
 
-/** The modules of a real QR code encoding [link], painted in ink; a blank link leaves the plate empty. */
+/** The modules of a real QR code encoding [link]; a blank link leaves the plate empty. */
 @Composable
 private fun QrPattern(link: String, modifier: Modifier = Modifier) {
-    val ink = ProfileCardColors.ink
+    val moduleColor = ProfileCardColors.qrModule
     val modules = remember(link) {
         if (link.isBlank()) {
             emptyList()
@@ -182,50 +163,13 @@ private fun QrPattern(link: String, modifier: Modifier = Modifier) {
             cells.forEachIndexed { column, dark ->
                 if (dark) {
                     drawRect(
-                        color = ink,
+                        color = moduleColor,
                         topLeft = Offset(column * cell, row * cell),
                         size = Size(cell, cell),
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun GroundScene(mascot: Mascot, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxWidth().height(ProfileCardBackDefaults.groundSceneHeight)) {
-        MascotIcon(
-            mascot = mascot,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = ProfileCardBackDefaults.mascotOffsetX)
-                .size(ProfileCardBackDefaults.mascotSize)
-                .offset(y = ProfileCardBackDefaults.groundLineInset)
-                .rotate(ProfileCardBackDefaults.mascotRotationDegrees),
-        )
-        FlagMark(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .offset(
-                    x = ProfileCardBackDefaults.flagOffsetX,
-                    y = ProfileCardBackDefaults.groundLineInset,
-                ),
-        )
-        GroundLine(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(horizontal = ProfileCardBackDefaults.groundLineHorizontalInset)
-                .fillMaxWidth()
-                .offset(y = ProfileCardBackDefaults.groundLineInset),
-        )
-        GrassTicks(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(horizontal = ProfileCardBackDefaults.groundLineHorizontalInset)
-                .fillMaxWidth()
-                .offset(y = ProfileCardBackDefaults.groundLineInset),
-        )
     }
 }
 
@@ -266,15 +210,17 @@ private const val GROUND_LINE_SOURCE_HEIGHT = 8f
 @Composable
 private fun GrassTicks(modifier: Modifier = Modifier) {
     val ink = ProfileCardColors.ink
-    Canvas(modifier = modifier.height(ProfileCardBackDefaults.grassTickHeight)) {
-        val strokeWidth = size.height * 0.3f
-        val halfWidth = size.height * 0.42f
-        ProfileCardBackDefaults.grassTickFractions.forEach { fraction ->
-            val x = size.width * fraction
+    Canvas(modifier = modifier.height(ProfileCardBackDefaults.groundLineHeight)) {
+        ProfileCardBackDefaults.grassTicks.forEach { tick ->
+            val x = size.width * tick.fraction
+            val bottom = tick.baseY.toPx()
+            val tickHeight = tick.height.toPx()
+            val halfWidth = tickHeight * 0.42f
+            val strokeWidth = tickHeight * 0.3f
             val path = Path().apply {
-                moveTo(x - halfWidth, size.height)
-                lineTo(x, 0f)
-                lineTo(x + halfWidth, size.height)
+                moveTo(x - halfWidth, bottom)
+                lineTo(x, bottom - tickHeight)
+                lineTo(x + halfWidth, bottom)
             }
             drawPath(
                 path,
@@ -304,7 +250,7 @@ private fun FlagMark(modifier: Modifier = Modifier) {
     val ink = ProfileCardColors.ink
     val pennantColor = ProfileCardColors.duskBand
     Canvas(
-        modifier = modifier.size(width = ProfileCardBackDefaults.flagWidth, height = ProfileCardBackDefaults.flagPoleHeight),
+        modifier = modifier.size(width = ProfileCardBackDefaults.flagWidth, height = ProfileCardBackDefaults.flagHeight),
     ) {
         fun px(xFraction: Float, yFraction: Float) = Offset(size.width * xFraction, size.height * yFraction)
 
@@ -342,47 +288,53 @@ private fun FlagMark(modifier: Modifier = Modifier) {
     }
 }
 
+/** One tuft of grass: where along the ground line it stands, and its base and height in that line's box. */
+private data class GrassTick(val fraction: Float, val baseY: Dp, val height: Dp)
+
 private object ProfileCardBackDefaults {
-    val bannerHeight = 146.dp
-    val cornerPadding = 16.dp
-    val textPadding = 20.dp
-    val qrFrameSize = 184.dp
+    val bannerHeight = 148.5.dp
+    val scanMeOffset = DpOffset(0.dp, 56.5.dp)
+    val qrFrameOffset = DpOffset(65.dp, 163.5.dp)
+    val qrFrameSize = 190.dp
     val qrPlateSize = 154.dp
     val qrPlateInset = 11.dp
-    val qrPlateOffsetY = 165.dp
     val qrErrorCorrectionLevel = ErrorCorrectionLevel.MEDIUM
-    val groundOffsetY = 362.dp
-    val groundSceneHeight = 112.dp
-    val groundLineInset = (-16).dp
+    val mascotOffset = DpOffset(94.dp, 403.dp)
+
+    // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
+    // ratio, so all five stand the same height on the ground line.
+    val mascotBox = DpSize(70.dp, 52.dp)
+    val mascotRotationDegrees = 5f
+    val flagOffset = DpOffset(191.5.dp, 392.5.dp)
+    val flagWidth = 35.5.dp
+    val flagHeight = 67.dp
+    val flagPoleWidth = 2.dp
+    val groundLineOffset = DpOffset(37.5.dp, 450.dp)
+    val groundLineWidth = 245.dp
     val groundLineHeight = 8.dp
     val groundLineStrokeWidth = 2.dp
-    val groundLineHorizontalInset = 38.dp
-    val mascotSize = 64.dp
-    val mascotOffsetX = 99.dp
-    val mascotRotationDegrees = 5f
-    val flagOffsetX = 191.dp
-    val flagPoleWidth = 2.dp
-    val flagWidth = 33.dp
-    val flagPoleHeight = 63.dp
-    val grassTickHeight = 6.dp
-    val grassTickFractions = listOf(0.14f, 0.77f)
+
+    val grassTicks = listOf(
+        GrassTick(fraction = 0.146f, baseY = 5.5.dp, height = 4.8.dp),
+        GrassTick(fraction = 0.779f, baseY = 6.5.dp, height = 5.8.dp),
+    )
 
     // Traced from the Figma back face: the two sparks sitting on the banner.
     val bannerSparkles = listOf(
-        SparklePlacement(x = 39.dp, y = 117.dp, size = 13.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 67.dp, y = 131.dp, size = 8.dp, rotationDegrees = 20f),
+        SparklePlacement(x = 39.dp, y = 117.5.dp, size = 13.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 67.dp, y = 131.dp, size = 7.5.dp, rotationDegrees = -20f),
     )
 
     // Traced from the Figma back face: the seven sparks scattered below the banner and around
     // the ground scene.
     val groundSparkles = listOf(
-        SparklePlacement(x = 37.dp, y = 196.dp, size = 13.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 51.dp, y = 248.dp, size = 9.dp, rotationDegrees = 20f),
-        SparklePlacement(x = 279.dp, y = 199.dp, size = 11.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 287.dp, y = 254.dp, size = 8.dp, rotationDegrees = 20f),
-        SparklePlacement(x = 41.dp, y = 322.dp, size = 10.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 94.dp, y = 376.dp, size = 10.dp, rotationDegrees = -10f),
-        SparklePlacement(x = 225.dp, y = 428.dp, size = 11.dp, rotationDegrees = 18f),
+        SparklePlacement(x = 37.dp, y = 196.dp, size = 13.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 50.5.dp, y = 248.5.dp, size = 8.5.dp, rotationDegrees = -20f),
+        SparklePlacement(x = 279.dp, y = 199.dp, size = 11.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 287.dp, y = 254.dp, size = 7.5.dp, rotationDegrees = -20f),
+        SparklePlacement(x = 41.5.dp, y = 322.5.dp, size = 9.5.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 94.dp, y = 376.dp, size = 9.5.dp, rotationDegrees = 10f),
+        SparklePlacement(x = 225.5.dp, y = 428.dp, size = 11.dp, rotationDegrees = -18f),
     )
 }
 

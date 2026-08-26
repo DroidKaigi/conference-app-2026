@@ -4,9 +4,11 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,13 +22,20 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -36,13 +45,15 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 /**
  * The wobbly rounded-rect plate every face of the finished card is drawn on: a fixed-size,
- * fixed-palette card that a user's chosen [sketchiness] wobbles by, with two washi-tape corners
- * pinning it in place the way both faces in the design share.
+ * fixed-palette card that a user's chosen [sketchiness] wobbles by, pinned in place by a
+ * washi-tape corner. [topStartTape] adds the second, top-start piece the front face carries and
+ * the back face does not.
  */
 @Composable
 fun ProfileCardFace(
     sketchiness: Sketchiness,
     seed: Int,
+    topStartTape: Boolean,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -67,16 +78,18 @@ fun ProfileCardFace(
         )
         // Figma's Rotation field is the mirror of Modifier.rotate's sign (its positive turns the
         // layer counterclockwise); these negate the source's -14°/9° to match the render.
-        WashiTape(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(x = (-30).dp, y = (-17).dp)
-                .rotate(14f),
-        )
+        if (topStartTape) {
+            WashiTape(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = (-30.5).dp, y = (-9).dp)
+                    .rotate(14f),
+            )
+        }
         WashiTape(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset(x = 15.dp, y = (-8).dp)
+                .offset(x = 16.dp, y = (-1.5).dp)
                 .rotate(-9f),
         )
     }
@@ -87,8 +100,76 @@ private fun WashiTape(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(width = ProfileCardFaceDefaults.tapeWidth, height = ProfileCardFaceDefaults.tapeHeight)
-            .background(ProfileCardColors.banner.copy(alpha = 0.8f)),
+            .background(ProfileCardColors.banner.copy(alpha = ProfileCardFaceDefaults.tapeAlpha)),
     )
+}
+
+/**
+ * The corner marks and event label heading both faces, in [color] against whichever band that
+ * face fills its top with. [centeredLabel] centres the label across the card instead of setting
+ * it against the start bracket.
+ */
+@Composable
+internal fun BoxScope.EventLabelHeader(text: String, color: Color, centeredLabel: Boolean) {
+    val offset = ProfileCardFaceDefaults.bracketOffset
+    CornerBracket(
+        mirrored = false,
+        color = color,
+        modifier = Modifier.align(Alignment.TopStart).offset(x = offset.x, y = offset.y),
+    )
+    CornerBracket(
+        mirrored = true,
+        color = color,
+        modifier = Modifier.align(Alignment.TopEnd).offset(x = -offset.x, y = offset.y),
+    )
+    val labelOffset = ProfileCardFaceDefaults.eventLabelOffset
+    Text(
+        text = text,
+        color = color,
+        style = ProfileCardTextStyles.eventLabel,
+        textAlign = if (centeredLabel) TextAlign.Center else TextAlign.Start,
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .then(if (centeredLabel) Modifier.fillMaxWidth() else Modifier)
+            .offset(x = if (centeredLabel) 0.dp else labelOffset.x, y = labelOffset.y),
+    )
+}
+
+/** A camera-viewfinder-style corner mark; [mirrored] opens it to the left instead of the right. */
+@Composable
+private fun CornerBracket(mirrored: Boolean, color: Color, modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier.size(ProfileCardFaceDefaults.bracketSize)) {
+        val strokeWidth = size.minDimension * 0.16f
+        val inset = strokeWidth / 2f
+        val radius = size.minDimension * 0.3f
+        val cornerX = if (mirrored) size.width - inset else inset
+        val armEndX = if (mirrored) inset else size.width - inset
+        val towardArm = if (mirrored) -radius else radius
+        val path = Path().apply {
+            moveTo(armEndX, inset)
+            lineTo(cornerX + towardArm, inset)
+            quadraticTo(cornerX, inset, cornerX, inset + radius)
+            lineTo(cornerX, size.height - inset)
+        }
+        drawPath(path, color, style = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round))
+    }
+}
+
+/** Positions a face's child at [offset] from the card's top-start corner, the way the design file lays every face out. */
+internal fun Modifier.cardOffset(offset: DpOffset): Modifier = offset(x = offset.x, y = offset.y)
+
+/** Draws each of [placements] centred on its own point, in [color]. */
+@Composable
+internal fun Sparkles(placements: List<SparklePlacement>, color: Color) {
+    placements.forEach { placement ->
+        SketchSparkle(
+            color = color,
+            markSize = placement.size,
+            modifier = Modifier
+                .cardOffset(DpOffset(placement.x - placement.size / 2, placement.y - placement.size / 2))
+                .rotate(placement.rotationDegrees),
+        )
+    }
 }
 
 /** A small hand-drawn "+" mark, scattered around a face as a decorative flourish. */
@@ -156,7 +237,39 @@ object ProfileCardFaceDefaults {
     val borderThickness = 2.5.dp
     val tapeWidth = 88.dp
     val tapeHeight = 25.dp
+    val tapeAlpha = 0.9f
     val sparkleSize = 12.dp
+
+    /** The corner marks framing each face's event label. */
+    val bracketSize = 10.dp
+    val bracketOffset = DpOffset(13.dp, 21.dp)
+
+    /** The event label's own top-start corner, inset from the bracket it sits beside. */
+    val eventLabelOffset = DpOffset(22.5.dp, 26.dp)
+}
+
+/**
+ * The type roles the card's faces set text in, named after the styles the design file binds:
+ * "display/small", "title/small - accent", and "body/small". The accent role is the monospace
+ * face at the body scale, which no Material role pairs on its own.
+ */
+object ProfileCardTextStyles {
+    val display: TextStyle
+        @Composable get() = MaterialTheme.typography.displaySmall
+
+    val accent: TextStyle
+        @Composable get() = MaterialTheme.typography.titleSmall.copy(
+            fontFamily = MaterialTheme.typography.displaySmall.fontFamily,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 0.sp,
+        )
+
+    /** [accent] on the tighter line the event label is set on. */
+    val eventLabel: TextStyle
+        @Composable get() = accent.copy(lineHeight = 16.sp)
+
+    val caption: TextStyle
+        @Composable get() = MaterialTheme.typography.bodySmall
 }
 
 /**
@@ -187,8 +300,12 @@ private fun ProfileCardFacePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Box(modifier = Modifier.padding(32.dp)) {
-            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900) {
-                SketchSparkle(modifier = Modifier.align(Alignment.TopEnd).padding(24.dp))
+            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true) {
+                EventLabelHeader(text = "DROIDKAIGI 2026", color = ProfileCardColors.ink, centeredLabel = false)
+                Sparkles(
+                    placements = listOf(SparklePlacement(x = 280.dp, y = 40.dp, size = 12.dp, rotationDegrees = 12f)),
+                    color = ProfileCardColors.ink,
+                )
                 Text("droidkaigi", modifier = Modifier.align(Alignment.Center))
             }
         }
