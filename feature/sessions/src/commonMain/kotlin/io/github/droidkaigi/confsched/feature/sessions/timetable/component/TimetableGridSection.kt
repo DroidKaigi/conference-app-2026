@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,40 +80,47 @@ internal fun TimetableGridSection(
     )
     val scrollState = rememberTimetableGridScrollState()
     val visibleNowMinute = uiState.nowMinute.visibleNowMinuteOrNull(endMinute)
-    val layout = remember(
-        uiState.sessions,
-        rooms,
-        endMinute,
-        hourHeight,
-        visibleNowMinute,
-        navigationBarHeight,
-    ) {
-        TimetableGridLayout(
-            sessions = uiState.sessions,
-            rooms = rooms,
-            endMinute = endMinute,
-            hourHeight = hourHeight,
-            nowMinute = visibleNowMinute,
-            bottomPadding = TimetableGridVerticalPadding + navigationBarHeight,
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val columnWidth = timetableGridColumnWidth(
+            availableWidth = maxWidth - TimetableGridHorizontalPadding * 2 - TimetableGridTimeGutterWidth,
+            roomCount = rooms.size,
         )
-    }
-    TimetableGridContent(
-        layout = layout,
-        scrollState = scrollState,
-        onItemClick = onItemClick,
-        onPinchStart = {
-            pinching = true
-            pinchStartHourHeightValue = hourHeightValue
-        },
-        onZoom = { zoomRatio ->
-            hourHeightValue = (pinchStartHourHeightValue * zoomRatio)
-                .coerceIn(TimetableGridDefaultHourHeight.value, TimetableGridMaxHourHeight.value)
-        },
-        onPinchEnd = {
-            pinching = false
-            hourHeightValue = timetableGridSnappedHourHeight(hourHeightValue)
-        },
-    )
+        val layout = remember(
+            uiState.sessions,
+            rooms,
+            endMinute,
+            hourHeight,
+            visibleNowMinute,
+            navigationBarHeight,
+            columnWidth,
+        ) {
+            TimetableGridLayout(
+                sessions = uiState.sessions,
+                rooms = rooms,
+                columnWidth = columnWidth,
+                endMinute = endMinute,
+                hourHeight = hourHeight,
+                nowMinute = visibleNowMinute,
+                bottomPadding = TimetableGridVerticalPadding + navigationBarHeight,
+            )
+        }
+        TimetableGridContent(
+            layout = layout,
+            scrollState = scrollState,
+            onItemClick = onItemClick,
+            onPinchStart = {
+                pinching = true
+                pinchStartHourHeightValue = hourHeightValue
+            },
+            onZoom = { zoomRatio ->
+                hourHeightValue = (pinchStartHourHeightValue * zoomRatio)
+                    .coerceIn(TimetableGridDefaultHourHeight.value, TimetableGridMaxHourHeight.value)
+            },
+            onPinchEnd = {
+                pinching = false
+                hourHeightValue = timetableGridSnappedHourHeight(hourHeightValue)
+            },
+        )
     }
 }
 
@@ -163,12 +171,13 @@ private fun TimetableGridContent(
 private class TimetableGridLayout(
     val sessions: PersistentList<TimetableItem>,
     val rooms: PersistentList<Room>,
+    val columnWidth: Dp,
     val endMinute: Int,
     val hourHeight: Dp,
     val nowMinute: Int?,
     val bottomPadding: Dp,
 ) {
-    val roomsWidth: Dp = timetableGridContentWidth(rooms.size)
+    val roomsWidth: Dp = timetableGridContentWidth(roomCount = rooms.size, columnWidth = columnWidth)
 
     // The trailing padding scrolls with the columns so the last one is clipped by the window
     // edge rather than by an inset viewport.
@@ -195,7 +204,7 @@ private class TimetableGridLayout(
                     bounds = DpRect(
                         left,
                         TimetableGridVerticalPadding,
-                        left + TimetableGridRoomColumnWidth,
+                        left + columnWidth,
                         TimetableGridVerticalPadding + TimetableGridHeaderHeight,
                     ),
                 ),
@@ -215,7 +224,7 @@ private class TimetableGridLayout(
             add(
                 TimetableGridLayoutItem.Session(
                     item = item,
-                    bounds = DpRect(left, top, left + TimetableGridRoomColumnWidth, top + height),
+                    bounds = DpRect(left, top, left + columnWidth, top + height),
                 ),
             )
         }
@@ -238,7 +247,7 @@ private class TimetableGridLayout(
         lineOffsetY(minute, TimetableGridNowLineHeight) - TimetableGridNowLabelHeight / 2
 
     private fun columnLeft(index: Int): Dp =
-        (TimetableGridRoomColumnWidth + TimetableGridRoomColumnGap) * index
+        (columnWidth + TimetableGridRoomColumnGap) * index
 
     private fun lineOffsetY(minute: Int, lineHeight: Dp): Dp =
         TimetableGridVerticalPadding + timetableGridLineOffsetY(
