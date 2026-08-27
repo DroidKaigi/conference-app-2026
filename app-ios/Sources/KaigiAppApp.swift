@@ -13,15 +13,8 @@ struct KaigiAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack(alignment: .bottom) {
-                KaigiAppView(host: host)
-                RootTabBarView(
-                    currentTab: host.currentTab.asAsyncSequence().map { $0?.tab },
-                    palette: host.tabBarPalette.asAsyncSequence(),
-                    select: host.selectTab(tab:)
-                )
-            }
-            .ignoresSafeArea()
+            RootView(host: host)
+                .ignoresSafeArea()
         }
     }
 }
@@ -38,11 +31,11 @@ private func swiftPackageLicensesJson() -> String {
     return json
 }
 
-private struct KaigiAppView: UIViewControllerRepresentable {
+private struct RootView: UIViewControllerRepresentable {
     let host: KaigiAppHost
 
     func makeUIViewController(context: Context) -> UIViewController {
-        host.viewController()
+        RootViewController(host: host)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
