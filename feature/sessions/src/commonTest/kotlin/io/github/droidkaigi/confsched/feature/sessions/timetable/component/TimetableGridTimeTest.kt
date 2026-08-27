@@ -9,8 +9,8 @@ class TimetableGridTimeTest {
     @Test
     fun session_position_uses_start_and_end_minutes_at_default_scale() {
         assertEquals(38f, timetableGridSessionOffsetY("10:00").value)
-        assertEquals(82f, timetableGridSessionOffsetY("10:20").value)
-        assertEquals(40f, timetableGridSessionHeight(startsAt = "10:00", endsAt = "10:20").value)
+        assertEquals(86f, timetableGridSessionOffsetY("10:20").value)
+        assertEquals(44f, timetableGridSessionHeight(startsAt = "10:00", endsAt = "10:20").value)
     }
 
     @Test
