@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.droidkaigiPrimitiveKmpCompose)
@@ -6,6 +8,8 @@ plugins {
     alias(libs.plugins.aboutlibrariesAndroid)
     alias(libs.plugins.droidkaigiPrimitiveSpotless)
 }
+
+val keystorePropertiesFile = file("keystore.properties")
 
 android {
     namespace = "io.github.droidkaigi.confsched"
@@ -19,6 +23,19 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            val keystoreProperties = Properties()
+            keystorePropertiesFile.inputStream().use(keystoreProperties::load)
+            create("prod") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     flavorDimensions += "environment"
     productFlavors {
         create("dev") {
@@ -27,6 +44,14 @@ android {
         }
         create("prod") {
             dimension = "environment"
+            signingConfig = signingConfigs.findByName("prod")
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 
