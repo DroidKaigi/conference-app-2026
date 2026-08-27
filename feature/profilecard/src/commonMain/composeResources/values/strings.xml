@@ -19,6 +19,7 @@
     <string name="card_dates">2026.09.01 - 09.03</string>
     <string name="card_scan_me">SCAN ME</string>
     <string name="share_button">Share</string>
+    <string name="share_message">Check out my DroidKaigi Profile Card! Let's connect at the event. #DroidKaigi</string>
     <string name="edit_button">Edit</string>
     <string name="nickname_error">Please enter a nickname</string>
     <string name="occupation_error">Please enter an occupation</string>

@@ -9,6 +9,9 @@ import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberImagePicker
 import io.github.droidkaigi.confsched.core.ui.rememberImageSharer
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_message
+import org.jetbrains.compose.resources.stringResource
 import soil.query.compose.rememberSubscription
 
 @Composable
@@ -24,11 +27,12 @@ fun ProfileCardScreenRoot() {
             screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes)))
         }
         val shareImage = rememberImageSharer()
+        val shareMessage = stringResource(Res.string.share_message)
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is ProfileCardScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
-                is ProfileCardScreenActionResult.ShareImage -> shareImage(result.image.pngBytes)
+                is ProfileCardScreenActionResult.ShareImage -> shareImage(shareMessage, result.image.pngBytes)
             }
         }
 

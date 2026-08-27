@@ -8,16 +8,16 @@ import org.khronos.webgl.Int8Array
 import org.khronos.webgl.toInt8Array
 
 @Composable
-actual fun rememberImageSharer(): (ByteArray) -> Unit = remember {
-    { bytes -> shareOrDownload(bytes.toInt8Array()) }
+actual fun rememberImageSharer(): (message: String, png: ByteArray) -> Unit = remember {
+    { message, png -> shareOrDownload(message, png.toInt8Array()) }
 }
 
-/** Only some browsers offer to share a file, so a download stands in on the rest. */
-private fun shareOrDownload(data: Int8Array): Unit = js(
+/** Only some browsers offer to share a file, so a download of the image alone stands in on the rest. */
+private fun shareOrDownload(message: String, data: Int8Array): Unit = js(
     """{
         const file = new File([data], 'profile-card.png', { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ files: [file] });
+            navigator.share({ text: message, files: [file] });
         } else {
             const url = URL.createObjectURL(file);
             const link = document.createElement('a');

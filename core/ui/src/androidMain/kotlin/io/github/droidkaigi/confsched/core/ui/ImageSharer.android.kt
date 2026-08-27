@@ -15,22 +15,23 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @Composable
-actual fun rememberImageSharer(): (ByteArray) -> Unit {
+actual fun rememberImageSharer(): (message: String, png: ByteArray) -> Unit {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    return remember(context, coroutineScope) { { bytes -> coroutineScope.shareImage(context, bytes) } }
+    return remember(context, coroutineScope) { { message, png -> coroutineScope.shareImage(context, message, png) } }
 }
 
-private fun CoroutineScope.shareImage(context: Context, bytes: ByteArray) {
+private fun CoroutineScope.shareImage(context: Context, message: String, png: ByteArray) {
     launch {
         val uri = withContext(Dispatchers.IO) {
             val directory = File(context.cacheDir, SHARED_IMAGE_DIRECTORY).apply { mkdirs() }
-            val file = File(directory, SHARED_IMAGE_FILE_NAME).apply { writeBytes(bytes) }
+            val file = File(directory, SHARED_IMAGE_FILE_NAME).apply { writeBytes(png) }
             FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         }
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "image/png"
             putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TEXT, message)
             // The share sheet renders its preview thumbnail from the clip data, not the extra.
             clipData = ClipData.newUri(context.contentResolver, null, uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

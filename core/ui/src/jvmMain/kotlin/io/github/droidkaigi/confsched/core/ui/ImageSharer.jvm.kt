@@ -11,17 +11,17 @@ import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 
-/** The desktop has no share sheet, so the image goes wherever the user chooses to save it. */
+/** The desktop has no share sheet, so the image goes wherever the user chooses to save it and the message has nowhere to go. */
 @Composable
-actual fun rememberImageSharer(): (ByteArray) -> Unit {
+actual fun rememberImageSharer(): (message: String, png: ByteArray) -> Unit {
     val coroutineScope = rememberCoroutineScope()
-    return remember(coroutineScope) { coroutineScope::saveImage }
+    return remember(coroutineScope) { { _, png -> coroutineScope.saveImage(png) } }
 }
 
-private fun CoroutineScope.saveImage(bytes: ByteArray) {
+private fun CoroutineScope.saveImage(png: ByteArray) {
     launch {
         // FileDialog blocks until the user is done, so it must not run on the UI thread.
-        withContext(Dispatchers.IO) { chooseDestination()?.writeBytes(bytes) }
+        withContext(Dispatchers.IO) { chooseDestination()?.writeBytes(png) }
     }
 }
 

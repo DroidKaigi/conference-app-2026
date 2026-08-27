@@ -11,11 +11,11 @@ import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIImage
 
 @Composable
-actual fun rememberImageSharer(): (ByteArray) -> Unit = remember {
-    { bytes ->
-        val image = UIImage(data = bytes.toNSData())
+actual fun rememberImageSharer(): (message: String, png: ByteArray) -> Unit = remember {
+    { message, png ->
+        val image = UIImage(data = png.toNSData())
         keyRootViewController()?.presentViewController(
-            UIActivityViewController(activityItems = listOf(image), applicationActivities = null),
+            UIActivityViewController(activityItems = listOf(message, image), applicationActivities = null),
             animated = true,
             completion = null,
         )
