@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,9 +22,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Density
@@ -200,19 +207,23 @@ internal fun DrawScope.drawPlaceholderFace(color: Color) {
 
 @Composable
 private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
-    val shape = SpeechBubbleShape(borderThickness = ProfileCardFrontDefaults.bubbleBorderThickness)
+    val fill = ProfileCardColors.brightPlate
+    val ink = ProfileCardColors.onBanner
+    val bubble = remember(fill, ink) { speechBubbleVector(fill = fill, ink = ink) }
     Box(
         modifier = modifier
             .size(ProfileCardFrontDefaults.bubbleWidth, ProfileCardFrontDefaults.bubbleHeight)
-            .rotate(ProfileCardFrontDefaults.bubbleRotationDegrees)
-            .clip(shape)
-            .background(ProfileCardColors.brightPlate)
-            .sketchBorder(shape, ProfileCardColors.onBanner),
+            .rotate(ProfileCardFrontDefaults.bubbleRotationDegrees),
         contentAlignment = Alignment.Center,
     ) {
+        Image(
+            painter = rememberVectorPainter(bubble),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+        )
         Text(
             text = text,
-            color = ProfileCardColors.onBanner,
+            color = ink,
             style = ProfileCardTextStyles.accent,
             modifier = Modifier
                 .offset(x = ProfileCardFrontDefaults.bubbleTextOffset.x, y = ProfileCardFrontDefaults.bubbleTextOffset.y)
@@ -221,47 +232,29 @@ private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
     }
 }
 
-/**
- * The greeting bubble's outline, traced from the Figma "Hi Bubble" vector: a rounded body with a
- * small tail pointing toward the avatar. The vector's own tilt is left to the composable's
- * rotation, so this path is the upright one.
- */
-private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : SketchOutlineShape {
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val inset = with(density) { borderThickness.toPx() / 2f }
-        val scaleX = (size.width - inset * 2f) / SOURCE_WIDTH
-        val scaleY = (size.height - inset * 2f) / SOURCE_HEIGHT
+/** The Figma "Hi Bubble" vector as exported, coloured from the theme instead of its baked hex values. */
+private fun speechBubbleVector(fill: Color, ink: Color): ImageVector = ImageVector.Builder(
+    name = "SpeechBubble",
+    defaultWidth = SPEECH_BUBBLE_VIEWPORT_WIDTH.dp,
+    defaultHeight = SPEECH_BUBBLE_VIEWPORT_HEIGHT.dp,
+    viewportWidth = SPEECH_BUBBLE_VIEWPORT_WIDTH,
+    viewportHeight = SPEECH_BUBBLE_VIEWPORT_HEIGHT,
+).apply {
+    addPath(
+        pathData = PathParser().parsePathString(SPEECH_BUBBLE_PATH).toNodes(),
+        fill = SolidColor(fill),
+        stroke = SolidColor(ink),
+        strokeLineWidth = SPEECH_BUBBLE_STROKE_WIDTH,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+}.build()
 
-        fun point(x: Float, y: Float) = Offset((x - SOURCE_LEFT) * scaleX + inset, (y - SOURCE_TOP) * scaleY + inset)
-
-        fun Path.curveTo(c1: Offset, c2: Offset, end: Offset) = cubicTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y)
-
-        val path = Path()
-        val start = point(10.8f, 0.8f)
-        path.moveTo(start.x, start.y)
-        point(51.2f, 0.8f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(57.8667f, 0.8f), point(61.2f, 4.13333f), point(61.2f, 10.8f))
-        point(61.2f, 21.2f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(61.2f, 27.8667f), point(57.8667f, 31.2f), point(51.2f, 31.2f))
-        point(21.34f, 31.26f).let { path.lineTo(it.x, it.y) }
-        point(9.26f, 43.2f).let { path.lineTo(it.x, it.y) }
-        // The Figma path folds the tail's far edge under the corner arc; at this stroke width that
-        // fold shows as a knot, so the tail rejoins where the arc starts.
-        point(10.8f, 31.2f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(4.13333f, 31.2f), point(0.8f, 27.8667f), point(0.8f, 21.2f))
-        point(0.8f, 10.8f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(0.8f, 4.13333f), point(4.13333f, 0.8f), start)
-        path.close()
-        return Outline.Generic(path)
-    }
-
-    private companion object {
-        const val SOURCE_LEFT = 0.8f
-        const val SOURCE_TOP = 0.8f
-        const val SOURCE_WIDTH = 60.4f
-        const val SOURCE_HEIGHT = 42.4f
-    }
-}
+private const val SPEECH_BUBBLE_VIEWPORT_WIDTH = 62f
+private const val SPEECH_BUBBLE_VIEWPORT_HEIGHT = 44.8129f
+private const val SPEECH_BUBBLE_STROKE_WIDTH = 1.6f
+private const val SPEECH_BUBBLE_PATH =
+    "M10.8 0.8H51.2C57.8667 0.8 61.2 4.13333 61.2 10.8V21.2C61.2 27.8667 57.8667 31.2 51.2 31.2L21.34 31.26L9.26 43.2L6.84 31.08L10.8 31.2C4.13333 31.2 0.8 27.8667 0.8 21.2V10.8C0.8 4.13333 4.13333 0.8 10.8 0.8Z"
 
 /** The chosen mascot, drawn in the app's active `primary` colour — matching the front face's dusk
  * band — inside a scalloped wax-seal badge, traced from the Figma source. */
@@ -355,7 +348,6 @@ private object ProfileCardFrontDefaults {
     val bubbleHeight = 48.dp
     val bubbleOffset = DpOffset(208.dp, 104.5.dp)
     val bubbleTextOffset = DpOffset(0.5.dp, (-8.5).dp)
-    val bubbleBorderThickness = 2.dp
     val bubbleRotationDegrees = 12f
 
     // The greeting turns inside the already-rotated bubble, so this adds to [bubbleRotationDegrees].
