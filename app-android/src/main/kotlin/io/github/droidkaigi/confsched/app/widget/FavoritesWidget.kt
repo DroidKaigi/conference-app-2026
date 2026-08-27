@@ -19,6 +19,7 @@ class FavoritesWidget : GlanceAppWidget() {
         // The composition has to start with a value, so the first render is awaited here; the
         // collection inside provideContent is what keeps a live session on the current state.
         val initial = renders.first()
+        scheduleFavoritesWidgetRefresh(context, context.widgetDependencies.kaigiClock.now())
         provideContent {
             val render by renders.collectAsState(initial)
             FavoritesWidgetContent(render.state, render.colors)

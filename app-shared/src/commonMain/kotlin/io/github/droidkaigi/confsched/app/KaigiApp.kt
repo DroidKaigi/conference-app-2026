@@ -50,6 +50,7 @@ fun KaigiApp() {
                     )
                     DeepLinkEffect(
                         deepLinkStore = uiGraph.deepLinkStore,
+                        timetableDayRequestStore = uiGraph.timetableDayRequestStore,
                         backStack = backStack,
                         logger = uiGraph.logger,
                         onNavigate = uiGraph.appNavigator::moveToTop,

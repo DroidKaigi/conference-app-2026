@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
@@ -52,7 +52,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun TimetableGridCell(
     title: MultiLangText,
-    room: Room,
+    room: SessionRoom,
     speakers: PersistentList<TimetableSpeaker>,
     startsAt: String,
     endsAt: String,
@@ -195,7 +195,7 @@ private fun CellDetail(text: String, color: Color, modifier: Modifier = Modifier
 private const val DETAIL_TEXT_ALPHA = 0.7f
 
 private const val SPEAKER_FACE_CORNER_PERCENT = 34
-private val SpeakerFaceSize = 16.dp
+private val SpeakerFaceSize = 24.dp
 private val SpeakerFaceOutline = 0.3.dp
 private val SpeakerFaceFeature = 0.9.dp
 
@@ -237,7 +237,7 @@ private fun TimetableGridTallCellPreview(
                 ja = "長めのセッションタイトルが三行まで入る場合の見え方",
                 en = "A long session title that runs to three lines in the block",
             ),
-            room = Room.QUAIL,
+            room = SessionRoom.QUAIL,
             speakers = persistentListOf(
                 fakePreviewSpeaker("Speaker C"),
                 fakePreviewSpeaker("Speaker D"),
@@ -262,7 +262,7 @@ private fun TimetableGridShortCellPreview(
                 ja = "短いセッション",
                 en = "Short session with a long enough title",
             ),
-            room = Room.NARWHAL,
+            room = SessionRoom.NARWHAL,
             speakers = persistentListOf(
                 fakePreviewSpeaker("Speaker A"),
                 fakePreviewSpeaker("Speaker B"),

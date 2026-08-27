@@ -17,6 +17,9 @@ sealed interface DeepLink {
     /** The about surface. */
     data object About : DeepLink
 
+    /** The timetable surface showing one conference day, named by its [DAY1_SEGMENT]-style path segment. */
+    data class Timetable(val daySegment: String) : DeepLink
+
     /** A session reached through the favorites surface, e.g. from the favorites widget. */
     data class FavoriteSessionDetail(val sessionId: String) : DeepLink
 
@@ -26,6 +29,9 @@ sealed interface DeepLink {
         const val SESSION_HOST: String = "session"
         const val FAVORITES_HOST: String = "favorites"
         const val ABOUT_HOST: String = "about"
+        const val TIMETABLE_HOST: String = "timetable"
+        const val DAY1_SEGMENT: String = "day1"
+        const val DAY2_SEGMENT: String = "day2"
 
         /** Parses a deep-link URL; platform entry points delegate here so the grammar has one home. */
         fun parse(url: String): DeepLink? {
@@ -38,6 +44,9 @@ sealed interface DeepLink {
             return when (segments.first()) {
                 SESSION_HOST ->
                     sessionId(segments.drop(1))?.let(DeepLink::SessionDetail)
+
+                TIMETABLE_HOST ->
+                    daySegment(segments.drop(1))?.let(DeepLink::Timetable)
 
                 ABOUT_HOST ->
                     About.takeIf { segments.drop(1).all(String::isEmpty) }
@@ -57,6 +66,11 @@ sealed interface DeepLink {
 
         private fun sessionId(segments: List<String>): String? =
             segments.dropLastWhile(String::isEmpty).singleOrNull()
+
+        private fun daySegment(segments: List<String>): String? = segments
+            .dropLastWhile(String::isEmpty)
+            .singleOrNull()
+            ?.takeIf { it == DAY1_SEGMENT || it == DAY2_SEGMENT }
     }
 }
 

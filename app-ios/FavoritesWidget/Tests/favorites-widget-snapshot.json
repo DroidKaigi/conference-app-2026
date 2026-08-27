@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "clockOffsetSeconds": 0,
+  "conference": {
+    "startEpochSeconds": 1788274800,
+    "endEpochSeconds": 1788447600,
+    "utcOffsetSeconds": 32400,
+    "day1Month": 9,
+    "day1Day": 2,
+    "day2Month": 9,
+    "day2Day": 3,
+    "day1LastSessionEndEpochSeconds": 1788339600,
+    "day2LastSessionEndEpochSeconds": 1788426000
+  },
+  "colors": {
+    "surface": "#FFF7F4EF",
+    "onSurface": "#FF1F1B16",
+    "onSurfaceVariant": "#FF4F463A",
+    "primary": "#FFB4531C",
+    "onPrimary": "#FFFFFFFF",
+    "isDark": false
+  },
+  "favorites": [
+    {
+      "id": "early",
+      "day": 1,
+      "titleEn": "Session early",
+      "titleJa": "セッション early",
+      "startsAt": "10:00",
+      "endsAt": "10:40",
+      "startEpochSeconds": 1788310800,
+      "endEpochSeconds": 1788313200,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "parallel",
+      "day": 1,
+      "titleEn": "Session parallel",
+      "titleJa": "セッション parallel",
+      "startsAt": "10:00",
+      "endsAt": "10:40",
+      "startEpochSeconds": 1788310800,
+      "endEpochSeconds": 1788313200,
+      "roomLabel": "□ Panda",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "mid",
+      "day": 1,
+      "titleEn": "Session mid",
+      "titleJa": "セッション mid",
+      "startsAt": "10:20",
+      "endsAt": "10:50",
+      "startEpochSeconds": 1788312000,
+      "endEpochSeconds": 1788313800,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "next",
+      "day": 1,
+      "titleEn": "Session next",
+      "titleJa": "セッション next",
+      "startsAt": "11:00",
+      "endsAt": "11:40",
+      "startEpochSeconds": 1788314400,
+      "endEpochSeconds": 1788316800,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "late",
+      "day": 1,
+      "titleEn": "Session late",
+      "titleJa": "セッション late",
+      "startsAt": "15:00",
+      "endsAt": "15:40",
+      "startEpochSeconds": 1788328800,
+      "endEpochSeconds": 1788331200,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "closing",
+      "day": 1,
+      "titleEn": "Session closing",
+      "titleJa": "セッション closing",
+      "startsAt": "17:00",
+      "endsAt": "18:00",
+      "startEpochSeconds": 1788336000,
+      "endEpochSeconds": 1788339600,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "d2",
+      "day": 2,
+      "titleEn": "Session d2",
+      "titleJa": "セッション d2",
+      "startsAt": "10:00",
+      "endsAt": "10:40",
+      "startEpochSeconds": 1788397200,
+      "endEpochSeconds": 1788399600,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    },
+    {
+      "id": "d2b",
+      "day": 2,
+      "titleEn": "Session d2b",
+      "titleJa": "セッション d2b",
+      "startsAt": "11:00",
+      "endsAt": "11:40",
+      "startEpochSeconds": 1788400800,
+      "endEpochSeconds": 1788403200,
+      "roomLabel": "○ Otter",
+      "roomContainer": "#FFE9DDCF",
+      "roomOnContainer": "#FF1F1B16"
+    }
+  ]
+}

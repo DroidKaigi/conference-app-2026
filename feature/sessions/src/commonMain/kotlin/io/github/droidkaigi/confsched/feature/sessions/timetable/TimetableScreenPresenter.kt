@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +34,10 @@ fun timetableScreenPresenter(
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
     var selectedViewMode by retain { mutableStateOf(TimetableViewMode.List) }
     val currentTime = presenterContext.clock.rememberCurrentTime()
+
+    LaunchedEffect(presenterContext.dayRequestStore) {
+        presenterContext.dayRequestStore.requests.collect { day -> selectedDay = day }
+    }
 
     ActionEffect(screenChannel) { action ->
         when (action) {

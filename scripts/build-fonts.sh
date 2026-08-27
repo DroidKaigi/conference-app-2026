@@ -8,7 +8,7 @@
 # merges the design's Latin face with Noto Sans JP, Latin glyphs winning where coverage
 # overlaps.
 #
-# All three inputs are licensed under the SIL Open Font License 1.1. The merged fonts
+# All four inputs are licensed under the SIL Open Font License 1.1. The merged fonts
 # are renamed because a Modified Version must not use a Reserved Font Name (Noto Sans JP
 # reserves "Source").
 #
@@ -43,6 +43,7 @@ GOOGLE_FONTS_COMMIT = "e1118da94a8cb00cf6d06cdac9ef13eb1e5c6ab7"
 SOURCE_BASE = f"https://raw.githubusercontent.com/google/fonts/{GOOGLE_FONTS_COMMIT}/ofl"
 SOURCES = {
     "courier_prime": f"{SOURCE_BASE}/courierprime/CourierPrime-Regular.ttf",
+    "courier_prime_bold": f"{SOURCE_BASE}/courierprime/CourierPrime-Bold.ttf",
     "noto_sans": f"{SOURCE_BASE}/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
     "noto_sans_jp": f"{SOURCE_BASE}/notosansjp/NotoSansJP%5Bwght%5D.ttf",
 }
@@ -146,6 +147,13 @@ build(
     family="Kaigi Mono",
     subfamily="Regular",
     out_name="kaigi_mono_regular.ttf",
+)
+build(
+    latin=download(SOURCES["courier_prime_bold"]),
+    jp=instance(download(noto_sans_jp_vf), {"wght": 700}),
+    family="Kaigi Mono",
+    subfamily="Bold",
+    out_name="kaigi_mono_bold.ttf",
 )
 build(
     latin=instance(download(noto_sans_vf), {"wght": 400, "wdth": 100}),

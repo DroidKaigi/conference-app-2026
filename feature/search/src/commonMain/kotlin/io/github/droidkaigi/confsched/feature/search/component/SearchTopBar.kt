@@ -40,10 +40,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowBack
+import io.github.droidkaigi.confsched.core.designsystem.icon.Close
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
-import io.github.droidkaigi.confsched.core.designsystem.icon.SearchArrowBack
-import io.github.droidkaigi.confsched.core.designsystem.icon.SearchClear
-import io.github.droidkaigi.confsched.core.designsystem.icon.SearchField
+import io.github.droidkaigi.confsched.core.designsystem.icon.Search
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -101,7 +101,7 @@ private fun SearchBackButton(
             .padding(9.dp),
     ) {
         Icon(
-            imageVector = KaigiIcons.Default.SearchArrowBack,
+            imageVector = KaigiIcons.Default.ArrowBack,
             contentDescription = stringResource(Res.string.search_back),
             tint = MaterialTheme.colorScheme.inverseOnSurface,
             modifier = Modifier.fillMaxSize(),
@@ -188,7 +188,7 @@ private fun SearchQueryField(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    imageVector = KaigiIcons.Default.SearchField,
+                    imageVector = KaigiIcons.Default.Search,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp),
@@ -217,7 +217,7 @@ private fun SearchQueryField(
                         },
                     ) {
                         Icon(
-                            imageVector = KaigiIcons.Default.SearchClear,
+                            imageVector = KaigiIcons.Default.Close,
                             contentDescription = stringResource(Res.string.search_clear),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(14.dp),

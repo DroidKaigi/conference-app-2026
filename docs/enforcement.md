@@ -356,12 +356,12 @@ A component that genuinely cannot be rendered on its own carries `@Suppress("UI_
 internal fun SessionHeaderView(item: TimetableItem) { // ERROR: day, startsAt, endsAt, asset unread
     Text(item.room.name)
     Text(item.title.current())
-    Text(item.speakerNames)
+    Text(item.speakers.joinToString { it.name })
 }
 
 // OK: the properties it reads
 @Composable
-internal fun SessionHeaderView(room: Room, title: String, speakerNames: String) { … }
+internal fun SessionHeaderView(room: SessionRoom, title: String, speakers: List<TimetableSpeaker>) { … }
 ```
 
 Why: a component that takes an aggregate for a few of its properties spreads that type further than its own reads justify — every caller must hold the whole state to render the component, the preview must build it, and Compose recomposes the component when a property it never reads changes. A feature UI `@Composable` must read **every** property of a parameter it selects from; otherwise declare a UiState type for the component holding only what it reads (`FavoritesListSectionUiState` is the shape to copy), or take those properties as separate parameters.

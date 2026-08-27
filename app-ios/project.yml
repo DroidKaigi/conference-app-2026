@@ -21,13 +21,22 @@ targets:
     deploymentTarget: "16.0"
     sources:
       - path: Sources
+      - path: Shared
     dependencies:
       - package: KotlinMultiplatformLinkedPackage
         product: KotlinMultiplatformLinkedPackage
+      - target: FavoritesWidget
     info:
       path: KaigiApp-Info.plist
       properties:
         CFBundleDisplayName: DroidKaigi 2026
+        CFBundleURLTypes:
+          - CFBundleURLName: io.github.droidkaigi.confsched.deeplink
+            CFBundleURLSchemes: [droidkaigi2026]
+        # The single source for both values: every bundle taking part in the snapshot exchange
+        # reads them back from its own Info.plist, and the entitlements below alias the same node.
+        FavoritesWidgetAppGroup: &favoritesWidgetAppGroup group.io.github.droidkaigi.confsched.kaigiapp
+        FavoritesWidgetSnapshotSchemaVersion: &favoritesWidgetSnapshotSchemaVersion 2
         # Required by Compose Multiplatform's PlistSanityCheck (it throws on launch otherwise).
         CADisableMinimumFrameDurationOnPhone: true
         UILaunchScreen: {}
@@ -63,3 +72,61 @@ targets:
           - -lAppShared
         # The Gradle embed task writes into the build products; sandboxing breaks it.
         ENABLE_USER_SCRIPT_SANDBOXING: NO
+    entitlements:
+      path: KaigiApp.entitlements
+      properties:
+        com.apple.security.application-groups: [*favoritesWidgetAppGroup]
+  # The home-screen widget. It links none of the exported Kotlin: the app writes it a snapshot into
+  # the App Group both targets are entitled to, and the extension renders from that alone.
+  FavoritesWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FavoritesWidget/Sources
+      - path: Shared
+    info:
+      path: FavoritesWidget/FavoritesWidget-Info.plist
+      properties:
+        CFBundleDisplayName: DroidKaigi 2026
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        FavoritesWidgetAppGroup: *favoritesWidgetAppGroup
+        FavoritesWidgetSnapshotSchemaVersion: *favoritesWidgetSnapshotSchemaVersion
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.droidkaigi.confsched.kaigiapp.FavoritesWidget
+        GENERATE_INFOPLIST_FILE: NO
+        SKIP_INSTALL: YES
+    entitlements:
+      path: FavoritesWidget/FavoritesWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [*favoritesWidgetAppGroup]
+  # The extension's own sources, minus its entry point, compiled into a host-free test bundle.
+  FavoritesWidgetTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: FavoritesWidget/Sources
+        excludes:
+          - FavoritesWidgetBundle.swift
+      - path: FavoritesWidget/Tests
+      - path: Shared
+    info:
+      path: FavoritesWidget/Tests/FavoritesWidgetTests-Info.plist
+      properties:
+        FavoritesWidgetAppGroup: *favoritesWidgetAppGroup
+        FavoritesWidgetSnapshotSchemaVersion: *favoritesWidgetSnapshotSchemaVersion
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.droidkaigi.confsched.kaigiapp.FavoritesWidgetTests
+        GENERATE_INFOPLIST_FILE: NO
+schemes:
+  FavoritesWidgetTests:
+    build:
+      targets:
+        FavoritesWidgetTests: [test]
+    test:
+      targets:
+        - FavoritesWidgetTests

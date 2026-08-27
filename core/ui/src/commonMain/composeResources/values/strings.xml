@@ -8,4 +8,10 @@
     <string name="cancelled_session">This session has been cancelled / Cancelled</string>
     <string name="show_in_japanese">Show in Japanese</string>
     <string name="show_in_english">Show in English</string>
+    <string name="error_network">A network error occurred</string>
+    <string name="error_server">The server returned an error</string>
+    <string name="error_timeout">The request timed out</string>
+    <string name="error_internet_connection">No internet connection</string>
+    <string name="error_unknown">An unexpected error occurred</string>
+    <string name="retry">Retry</string>
 </resources>

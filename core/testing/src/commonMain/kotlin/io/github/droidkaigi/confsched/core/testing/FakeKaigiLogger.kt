@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.Channel
 @ContributesBinding(TestingScope::class)
 class FakeKaigiLogger : KaigiLogger {
     val debugMessages = Channel<String>(Channel.UNLIMITED)
+    val errors = Channel<Throwable?>(Channel.UNLIMITED)
 
     override fun debug(message: () -> String) {
         debugMessages.trySend(message())
@@ -20,5 +21,7 @@ class FakeKaigiLogger : KaigiLogger {
 
     override fun warn(message: () -> String) = Unit
 
-    override fun error(throwable: Throwable?, message: () -> String) = Unit
+    override fun error(throwable: Throwable?, message: () -> String) {
+        errors.trySend(throwable)
+    }
 }

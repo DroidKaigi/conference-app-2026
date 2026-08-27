@@ -6,6 +6,7 @@ import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberSubscription
 
 @Composable
@@ -21,7 +22,7 @@ fun SettingsScreenRoot(
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
-                is SettingsScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is SettingsScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
             }
         }
 

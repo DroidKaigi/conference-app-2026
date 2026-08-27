@@ -55,6 +55,20 @@ class DeepLinkParseTest {
     }
 
     @Test
+    fun a_timetable_url_parses_to_its_day() {
+        assertEquals(DeepLink.Timetable("day1"), DeepLink.parse("droidkaigi2026://timetable/day1"))
+        assertEquals(DeepLink.Timetable("day2"), DeepLink.parse("droidkaigi2026://timetable/day2/"))
+    }
+
+    @Test
+    fun a_timetable_url_without_a_known_day_does_not_parse() {
+        assertNull(DeepLink.parse("droidkaigi2026://timetable"))
+        assertNull(DeepLink.parse("droidkaigi2026://timetable/"))
+        assertNull(DeepLink.parse("droidkaigi2026://timetable/day3"))
+        assertNull(DeepLink.parse("droidkaigi2026://timetable/day1/day2"))
+    }
+
+    @Test
     fun foreign_schemes_and_hosts_do_not_parse() {
         assertNull(DeepLink.parse("https://session/abc"))
         assertNull(DeepLink.parse("droidkaigi://session/abc"))

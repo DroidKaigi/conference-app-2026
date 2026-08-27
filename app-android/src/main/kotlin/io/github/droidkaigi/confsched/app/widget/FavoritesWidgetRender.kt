@@ -5,9 +5,14 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.computeFavoritesWidgetState
+import io.github.droidkaigi.confsched.core.model.nextFavoritesWidgetBoundary
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.transformLatest
+import kotlin.time.Duration
 import kotlin.time.Instant
 
 /** Everything one widget render needs. */
@@ -16,26 +21,34 @@ internal data class FavoritesWidgetRender(
     val colors: FavoritesWidgetColors,
 )
 
+/**
+ * Re-renders on every input change and, while collected, again at each instant the state changes
+ * on its own; [clockOffsets] is an input so the debug clock drives the widget too.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
 internal fun favoritesWidgetRenders(
     favoriteIds: Flow<Set<TimetableItemId>>,
     colorSchemes: Flow<KaigiColorScheme>,
-    readTimetable: suspend () -> Timetable?,
+    clockOffsets: Flow<Duration>,
+    timetables: Flow<Timetable?>,
     now: () -> Instant,
-): Flow<FavoritesWidgetRender> = combine(favoriteIds, colorSchemes) { ids, scheme ->
-    FavoritesWidgetRender(
-        state = computeFavoritesWidgetState(
-            now = now(),
-            timetable = readTimetable() ?: Timetable(items = persistentListOf()),
-            favoriteIds = ids,
-        ),
-        colors = scheme.toFavoritesWidgetColors(),
-    )
+): Flow<FavoritesWidgetRender> = combine(favoriteIds, colorSchemes, clockOffsets, timetables) { ids, scheme, _, timetable ->
+    Triple(ids, scheme, timetable ?: Timetable(items = persistentListOf()))
+}.transformLatest { (ids, scheme, timetable) ->
+    val colors = scheme.toFavoritesWidgetColors()
+    while (true) {
+        val current = now()
+        emit(FavoritesWidgetRender(computeFavoritesWidgetState(current, timetable, ids), colors))
+        val boundary = nextFavoritesWidgetBoundary(current, timetable, ids) ?: break
+        delay(boundary - current)
+    }
 }
 
 internal fun WidgetDependencies.favoritesWidgetRenders(): Flow<FavoritesWidgetRender> =
     favoritesWidgetRenders(
         favoriteIds = favoritesStore.favoriteIds(),
         colorSchemes = appearanceSettingsStore.colorScheme(),
-        readTimetable = persistedTimetableReader::read,
+        clockOffsets = kaigiClock.offset,
+        timetables = persistedTimetableReader.timetables(),
         now = kaigiClock::now,
     )

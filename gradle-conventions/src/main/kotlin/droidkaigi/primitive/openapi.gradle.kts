@@ -88,6 +88,12 @@ pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
     }
 }
 
+// AGP reads a baselineProfiles directory next to every Kotlin source directory, which for the
+// generated one lies inside the openApiGenerate output.
+tasks.matching { it.name.endsWith("ArtProfile") }.configureEach {
+    dependsOn("openApiGenerate")
+}
+
 tasks.register("trimOpenApiSpec") {
     description = """
         Trims openapi/openapi.yml in place to one event's paths and the schemas they reach.

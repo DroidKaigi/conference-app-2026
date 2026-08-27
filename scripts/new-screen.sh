@@ -85,16 +85,18 @@ package $feature_pkg
 
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import $base_pkg.core.common.KaigiLogger
 import $base_pkg.core.common.PresenterContext
 import $base_pkg.core.common.ScreenContext
 import $base_pkg.core.model.${screen}ScreenScope
 
 @Inject
-class ${screen}PresenterContext : PresenterContext
+class ${screen}PresenterContext(override val logger: KaigiLogger) : PresenterContext
 
 @Inject
 @SingleIn(${screen}ScreenScope::class)
 class ${screen}ScreenContext(
+    override val logger: KaigiLogger,
     val presenterContext: ${screen}PresenterContext,
 ) : ScreenContext
 EOF

@@ -22,8 +22,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +52,8 @@ fun SketchMarkedText(
     modifier: Modifier = Modifier,
     style: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
-    markColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    markColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    markTextColor: Color = MaterialTheme.colorScheme.primary,
     textDecoration: TextDecoration? = null,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Clip,
@@ -70,6 +73,14 @@ fun SketchMarkedText(
         return
     }
 
+    val markedText = remember(text, matches, markTextColor) {
+        buildAnnotatedString {
+            append(text)
+            for (range in matches) {
+                addStyle(SpanStyle(color = markTextColor), range.first, range.last + 1)
+            }
+        }
+    }
     val combinedSeed = combineSketchSeed(seed)
     val markerRoughness = scaleSketchAmplitude(MarkerRoughness)
     val markerTremor = scaleSketchAmplitude(MarkerTremor)
@@ -150,7 +161,7 @@ fun SketchMarkedText(
     }
 
     Text(
-        text = text,
+        text = markedText,
         modifier = modifier.drawBehind {
             val result = layout ?: return@drawBehind
             val revealed = crossfade.value

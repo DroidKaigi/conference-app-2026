@@ -9,6 +9,7 @@ plugins {
     // entry point of the module declaring the Swift Export binary — this one.
     alias(libs.plugins.droidkaigiPrimitiveKmpCompose)
     alias(libs.plugins.metro)
+    alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.droidkaigiPrimitiveLicensesExport)
     alias(libs.plugins.droidkaigiPrimitiveSpotless)
 }
@@ -39,6 +40,7 @@ kotlin {
         iosMain.dependencies {
             implementation(project(":app-shared"))
             implementation(libs.okio)
+            implementation(libs.kotlinxSerializationJson)
             if (includeDebugFeature) implementation(project(":feature:debug"))
         }
     }

@@ -24,14 +24,14 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 @Composable
 internal fun TimetableGridRoomHeader(
-    room: Room,
+    room: SessionRoom,
     modifier: Modifier = Modifier,
 ) {
     val theme = roomTheme(room)
@@ -45,7 +45,7 @@ internal fun TimetableGridRoomHeader(
                 .fillMaxSize()
                 .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
         ) {
             theme.shape?.let { TimetableGridRoomMark(shape = it, color = theme.accent) }
             Text(
@@ -121,6 +121,6 @@ private fun TimetableGridRoomHeaderPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        TimetableGridRoomHeader(room = Room.NARWHAL)
+        TimetableGridRoomHeader(room = SessionRoom.NARWHAL)
     }
 }
