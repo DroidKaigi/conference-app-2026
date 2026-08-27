@@ -245,7 +245,8 @@ private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : 
         path.curveTo(point(61.2f, 27.8667f), point(57.8667f, 31.2f), point(51.2f, 31.2f))
         point(21.34f, 31.26f).let { path.lineTo(it.x, it.y) }
         point(9.26f, 43.2f).let { path.lineTo(it.x, it.y) }
-        point(6.84f, 31.08f).let { path.lineTo(it.x, it.y) }
+        // The Figma path folds the tail's far edge under the corner arc; at this stroke width that
+        // fold shows as a knot, so the tail rejoins where the arc starts.
         point(10.8f, 31.2f).let { path.lineTo(it.x, it.y) }
         path.curveTo(point(4.13333f, 31.2f), point(0.8f, 27.8667f), point(0.8f, 21.2f))
         point(0.8f, 10.8f).let { path.lineTo(it.x, it.y) }
@@ -354,7 +355,7 @@ private object ProfileCardFrontDefaults {
     val bubbleHeight = 48.dp
     val bubbleOffset = DpOffset(208.dp, 104.5.dp)
     val bubbleTextOffset = DpOffset(0.5.dp, (-8.5).dp)
-    val bubbleBorderThickness = 4.dp
+    val bubbleBorderThickness = 2.dp
     val bubbleRotationDegrees = 12f
 
     // The greeting turns inside the already-rotated bubble, so this adds to [bubbleRotationDegrees].
