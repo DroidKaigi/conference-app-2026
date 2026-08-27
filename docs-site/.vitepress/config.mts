@@ -108,6 +108,7 @@ export default withMermaid(defineConfig({
           { text: 'iOS top bar', link: '/ios-top-bar' },
           { text: 'Swift ↔ Kotlin interop', link: '/ios-interop' },
           { text: 'CMP on iOS (embedding)', link: '/ios-cmp-embedding' },
+          { text: 'iOS favorites widget', link: '/ios-favorites-widget' },
         ],
       },
       {

@@ -78,4 +78,6 @@ The favorites widget routes taps by its state:
 
 A shared slot leaves the session choice open, so its live band launches like the background.
 
+On iOS the same table is expressed as the `widgetURL` each state sets, with a live session row carrying its own `Link`; `onOpenURL` hands the URL to `KaigiAppHost.submitDeepLink(url:)`, which reaches the same `DeepLinkStore`. For the widget itself, see [iOS favorites widget](./ios-favorites-widget.md).
+
 Related: [Navigation overview](./navigation.md) · [Navigator](./navigation-navigator.md)

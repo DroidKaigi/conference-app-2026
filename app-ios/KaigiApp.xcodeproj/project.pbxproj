@@ -7,17 +7,82 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02426842AA07699FBF6895B3 /* FavoritesWidgetStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 164B40CEFC0D86747989D3F9 /* FavoritesWidgetStateTests.swift */; };
+		0BF314E7385E9A79912C1146 /* FavoritesWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0334CD02B8258562521236D /* FavoritesWidgetSnapshot.swift */; };
+		1D9711AF9CAB5792C8B874DA /* SketchFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432423D85648DDBE463B6724 /* SketchFrame.swift */; };
+		21DFAFE5AD84D7129BCC5483 /* FavoritesWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C54ABC681D66A1B98B49B9 /* FavoritesWidgetBundle.swift */; };
 		29B7AC689D7ECABE862F8993 /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 86FC7F99DFAC930297E290C9 /* KotlinMultiplatformLinkedPackage */; };
+		352D3AC6723F70658D87D4B7 /* WidgetArtworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB41B0D2CBAEF8964F3FCD0 /* WidgetArtworks.swift */; };
+		3B2644B299ABE70F5D894FFB /* SketchFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 432423D85648DDBE463B6724 /* SketchFrame.swift */; };
+		52B58F370C7842B22105D9DA /* FavoritesWidgetStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B28C4CA10136B70C05EFD30 /* FavoritesWidgetStrings.swift */; };
+		53086C85889CF23A25134DF9 /* FavoritesWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0334CD02B8258562521236D /* FavoritesWidgetSnapshot.swift */; };
+		59C674452139400A8E9B1188 /* FavoritesWidgetTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF15B8A0B5A19E882AD71B3 /* FavoritesWidgetTimeline.swift */; };
+		5A84B55D6AC2A1DA8030274B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 51EF3D0E6B4C009DA7A71EE2 /* Localizable.xcstrings */; };
+		5DA14918E739A68106A6C1FC /* FavoritesWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0D5A47257E260AA85411C0 /* FavoritesWidgetView.swift */; };
+		6842773B70B5E4653A44903A /* FavoritesWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA0D5A47257E260AA85411C0 /* FavoritesWidgetView.swift */; };
+		72F52614691D8297BA55178F /* FavoritesWidgetStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B28C4CA10136B70C05EFD30 /* FavoritesWidgetStrings.swift */; };
+		7406986EA84585488E394C8F /* WidgetArtworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB41B0D2CBAEF8964F3FCD0 /* WidgetArtworks.swift */; };
 		83641F60A8AD9D1EF32AD59D /* RootTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE6C3B10B0A858E2CE5167D /* RootTabBar.swift */; };
+		8E29688AD9C79688C48975CC /* WidgetArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBD22673B0191EDAF6FAF80 /* WidgetArtwork.swift */; };
+		9A6704F89E17322DD1F5450E /* FavoritesWidgetContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EAC50F96BC7619DB2690D2 /* FavoritesWidgetContract.swift */; };
+		9E13AC11958BF1E38D34843A /* FavoritesWidgetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C0593730279A9C26D8D4DA /* FavoritesWidgetState.swift */; };
 		A4676EF62EEC5C2C04DFD96B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D405205C53031FB81660F831 /* Assets.xcassets */; };
+		A536902E3C954A666F77E582 /* FavoritesWidgetTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF15B8A0B5A19E882AD71B3 /* FavoritesWidgetTimeline.swift */; };
+		AE53F4C085D39855B0851F3B /* FavoritesWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E9BFF6E04CF0C1C96E34EAE8 /* FavoritesWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C81FB5DA45F181D72394777E /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 51EF3D0E6B4C009DA7A71EE2 /* Localizable.xcstrings */; };
+		CD46203D987C395B2AA55153 /* FavoritesWidgetContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EAC50F96BC7619DB2690D2 /* FavoritesWidgetContract.swift */; };
+		D5B621AB2053B33EBDFB3440 /* favorites-widget-snapshot.json in Resources */ = {isa = PBXBuildFile; fileRef = 16653CB8E1C9C712F1CF82AA /* favorites-widget-snapshot.json */; };
 		D704DE42B3A2D6012FBD2465 /* KaigiAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8485AEBFE26147661BEDAD60 /* KaigiAppApp.swift */; };
+		EBE7D0E1972EB0AF5036A75D /* FavoritesWidgetContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81EAC50F96BC7619DB2690D2 /* FavoritesWidgetContract.swift */; };
+		EFE9505B98CD15EDA94E4923 /* FavoritesWidgetState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9C0593730279A9C26D8D4DA /* FavoritesWidgetState.swift */; };
+		F9818C6AF20D825E12435409 /* WidgetArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBD22673B0191EDAF6FAF80 /* WidgetArtwork.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		54FC896FA3256EAB828946EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFB551398D30F0DBD363B8C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3460F786DE17B742028C11B9;
+			remoteInfo = FavoritesWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F85D56079CDC33B54277921B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AE53F4C085D39855B0851F3B /* FavoritesWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		164B40CEFC0D86747989D3F9 /* FavoritesWidgetStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetStateTests.swift; sourceTree = "<group>"; };
+		16653CB8E1C9C712F1CF82AA /* favorites-widget-snapshot.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "favorites-widget-snapshot.json"; sourceTree = "<group>"; };
 		176C221CF46F0DEA006730BF /* KotlinMultiplatformLinkedPackage */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KotlinMultiplatformLinkedPackage; path = KotlinMultiplatformLinkedPackage; sourceTree = SOURCE_ROOT; };
+		432423D85648DDBE463B6724 /* SketchFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SketchFrame.swift; sourceTree = "<group>"; };
+		4DF15B8A0B5A19E882AD71B3 /* FavoritesWidgetTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetTimeline.swift; sourceTree = "<group>"; };
+		51EF3D0E6B4C009DA7A71EE2 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		7E532852B454CE5AA4197950 /* KaigiApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KaigiApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		81EAC50F96BC7619DB2690D2 /* FavoritesWidgetContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetContract.swift; sourceTree = "<group>"; };
 		8485AEBFE26147661BEDAD60 /* KaigiAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaigiAppApp.swift; sourceTree = "<group>"; };
+		8EBD22673B0191EDAF6FAF80 /* WidgetArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetArtwork.swift; sourceTree = "<group>"; };
+		9B28C4CA10136B70C05EFD30 /* FavoritesWidgetStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetStrings.swift; sourceTree = "<group>"; };
+		9EB41B0D2CBAEF8964F3FCD0 /* WidgetArtworks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetArtworks.swift; sourceTree = "<group>"; };
+		A0334CD02B8258562521236D /* FavoritesWidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetSnapshot.swift; sourceTree = "<group>"; };
+		B2C54ABC681D66A1B98B49B9 /* FavoritesWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetBundle.swift; sourceTree = "<group>"; };
+		B9C0593730279A9C26D8D4DA /* FavoritesWidgetState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetState.swift; sourceTree = "<group>"; };
+		BA0D5A47257E260AA85411C0 /* FavoritesWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesWidgetView.swift; sourceTree = "<group>"; };
+		C923310EE80EEA9EE15590BF /* FavoritesWidgetTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "FavoritesWidgetTests-Info.plist"; sourceTree = "<group>"; };
+		D3A9253E0A7039327D3846C4 /* FavoritesWidgetTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FavoritesWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D405205C53031FB81660F831 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E9BFF6E04CF0C1C96E34EAE8 /* FavoritesWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FavoritesWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE6C3B10B0A858E2CE5167D /* RootTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -33,6 +98,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A7C3EA140807C1A06BB4F3C /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B2C54ABC681D66A1B98B49B9 /* FavoritesWidgetBundle.swift */,
+				A0334CD02B8258562521236D /* FavoritesWidgetSnapshot.swift */,
+				B9C0593730279A9C26D8D4DA /* FavoritesWidgetState.swift */,
+				9B28C4CA10136B70C05EFD30 /* FavoritesWidgetStrings.swift */,
+				4DF15B8A0B5A19E882AD71B3 /* FavoritesWidgetTimeline.swift */,
+				BA0D5A47257E260AA85411C0 /* FavoritesWidgetView.swift */,
+				51EF3D0E6B4C009DA7A71EE2 /* Localizable.xcstrings */,
+				432423D85648DDBE463B6724 /* SketchFrame.swift */,
+				8EBD22673B0191EDAF6FAF80 /* WidgetArtwork.swift */,
+				9EB41B0D2CBAEF8964F3FCD0 /* WidgetArtworks.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
 		222E49AA41115FA6A90758FF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -46,7 +128,9 @@
 		3A9175E391B57E199467DC61 = {
 			isa = PBXGroup;
 			children = (
+				623E7E7C83BD86AC9E7E8AD0 /* FavoritesWidget */,
 				E31C00E7172728CFEAA83251 /* Packages */,
+				D3BDBD8D26B821B620EC998B /* Shared */,
 				222E49AA41115FA6A90758FF /* Sources */,
 				5120FFD4AC77D2D7FC198913 /* Products */,
 			);
@@ -55,9 +139,38 @@
 		5120FFD4AC77D2D7FC198913 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				E9BFF6E04CF0C1C96E34EAE8 /* FavoritesWidget.appex */,
+				D3A9253E0A7039327D3846C4 /* FavoritesWidgetTests.xctest */,
 				7E532852B454CE5AA4197950 /* KaigiApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		623E7E7C83BD86AC9E7E8AD0 /* FavoritesWidget */ = {
+			isa = PBXGroup;
+			children = (
+				1A7C3EA140807C1A06BB4F3C /* Sources */,
+				DA5DD27168104F56671C8B35 /* Tests */,
+			);
+			path = FavoritesWidget;
+			sourceTree = "<group>";
+		};
+		D3BDBD8D26B821B620EC998B /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				81EAC50F96BC7619DB2690D2 /* FavoritesWidgetContract.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		DA5DD27168104F56671C8B35 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				16653CB8E1C9C712F1CF82AA /* favorites-widget-snapshot.json */,
+				164B40CEFC0D86747989D3F9 /* FavoritesWidgetStateTests.swift */,
+				C923310EE80EEA9EE15590BF /* FavoritesWidgetTests-Info.plist */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		E31C00E7172728CFEAA83251 /* Packages */ = {
@@ -71,6 +184,42 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0CD201628521E9E9C0BFBECB /* FavoritesWidgetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C53A29345E09A614A526AA5 /* Build configuration list for PBXNativeTarget "FavoritesWidgetTests" */;
+			buildPhases = (
+				18869E71E960E2194CB1395E /* Sources */,
+				82DA5EEC64DB6D166E9E3534 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FavoritesWidgetTests;
+			packageProductDependencies = (
+			);
+			productName = FavoritesWidgetTests;
+			productReference = D3A9253E0A7039327D3846C4 /* FavoritesWidgetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3460F786DE17B742028C11B9 /* FavoritesWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B87000CD984DC2EA24663F69 /* Build configuration list for PBXNativeTarget "FavoritesWidget" */;
+			buildPhases = (
+				FE182F6A632F4B4693A9170E /* Sources */,
+				5D662B7021F5F9BB7F0D6913 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FavoritesWidget;
+			packageProductDependencies = (
+			);
+			productName = FavoritesWidget;
+			productReference = E9BFF6E04CF0C1C96E34EAE8 /* FavoritesWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		FD564C3238906D613578B698 /* KaigiApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D1D8B753AAA17DCA2FD54E14 /* Build configuration list for PBXNativeTarget "KaigiApp" */;
@@ -80,10 +229,12 @@
 				A76C21A78BACE5B40893A930 /* Sources */,
 				A4A0E4BEAA419429A1E3D4BB /* Resources */,
 				1D6DB8C56FA9ADC3C7F33FAC /* Frameworks */,
+				F85D56079CDC33B54277921B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D2A3488202EDC645B1FE050F /* PBXTargetDependency */,
 			);
 			name = KaigiApp;
 			packageProductDependencies = (
@@ -110,6 +261,7 @@
 			knownRegions = (
 				Base,
 				en,
+				ja,
 			);
 			mainGroup = 3A9175E391B57E199467DC61;
 			minimizedProjectReferenceProxies = 1;
@@ -121,12 +273,31 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				3460F786DE17B742028C11B9 /* FavoritesWidget */,
+				0CD201628521E9E9C0BFBECB /* FavoritesWidgetTests */,
 				FD564C3238906D613578B698 /* KaigiApp */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5D662B7021F5F9BB7F0D6913 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C81FB5DA45F181D72394777E /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82DA5EEC64DB6D166E9E3534 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A84B55D6AC2A1DA8030274B /* Localizable.xcstrings in Resources */,
+				D5B621AB2053B33EBDFB3440 /* favorites-widget-snapshot.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A4A0E4BEAA419429A1E3D4BB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -179,16 +350,59 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		18869E71E960E2194CB1395E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EBE7D0E1972EB0AF5036A75D /* FavoritesWidgetContract.swift in Sources */,
+				0BF314E7385E9A79912C1146 /* FavoritesWidgetSnapshot.swift in Sources */,
+				EFE9505B98CD15EDA94E4923 /* FavoritesWidgetState.swift in Sources */,
+				02426842AA07699FBF6895B3 /* FavoritesWidgetStateTests.swift in Sources */,
+				52B58F370C7842B22105D9DA /* FavoritesWidgetStrings.swift in Sources */,
+				A536902E3C954A666F77E582 /* FavoritesWidgetTimeline.swift in Sources */,
+				6842773B70B5E4653A44903A /* FavoritesWidgetView.swift in Sources */,
+				1D9711AF9CAB5792C8B874DA /* SketchFrame.swift in Sources */,
+				F9818C6AF20D825E12435409 /* WidgetArtwork.swift in Sources */,
+				352D3AC6723F70658D87D4B7 /* WidgetArtworks.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A76C21A78BACE5B40893A930 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD46203D987C395B2AA55153 /* FavoritesWidgetContract.swift in Sources */,
 				D704DE42B3A2D6012FBD2465 /* KaigiAppApp.swift in Sources */,
 				83641F60A8AD9D1EF32AD59D /* RootTabBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FE182F6A632F4B4693A9170E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21DFAFE5AD84D7129BCC5483 /* FavoritesWidgetBundle.swift in Sources */,
+				9A6704F89E17322DD1F5450E /* FavoritesWidgetContract.swift in Sources */,
+				53086C85889CF23A25134DF9 /* FavoritesWidgetSnapshot.swift in Sources */,
+				9E13AC11958BF1E38D34843A /* FavoritesWidgetState.swift in Sources */,
+				72F52614691D8297BA55178F /* FavoritesWidgetStrings.swift in Sources */,
+				59C674452139400A8E9B1188 /* FavoritesWidgetTimeline.swift in Sources */,
+				5DA14918E739A68106A6C1FC /* FavoritesWidgetView.swift in Sources */,
+				3B2644B299ABE70F5D894FFB /* SketchFrame.swift in Sources */,
+				8E29688AD9C79688C48975CC /* WidgetArtwork.swift in Sources */,
+				7406986EA84585488E394C8F /* WidgetArtworks.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D2A3488202EDC645B1FE050F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3460F786DE17B742028C11B9 /* FavoritesWidget */;
+			targetProxy = 54FC896FA3256EAB828946EE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1921EBC7ACB7E697A787088A /* Release */ = {
@@ -312,10 +526,30 @@
 			};
 			name = Debug;
 		};
+		6707752271EA5786D2AF358D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FavoritesWidget/FavoritesWidget.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "FavoritesWidget/FavoritesWidget-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.droidkaigi.confsched.kaigiapp.FavoritesWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		704C8DDF5FDDE6E9462180E3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = KaigiApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -343,10 +577,66 @@
 			};
 			name = Release;
 		};
+		8D19D76BFAFE58AFBA7B0E2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = FavoritesWidget/FavoritesWidget.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "FavoritesWidget/FavoritesWidget-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.droidkaigi.confsched.kaigiapp.FavoritesWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C48771F13842EFEF909D18DD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "FavoritesWidget/Tests/FavoritesWidgetTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.droidkaigi.confsched.kaigiapp.FavoritesWidgetTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C7584074208BE9F98A95ACE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "FavoritesWidget/Tests/FavoritesWidgetTests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.droidkaigi.confsched.kaigiapp.FavoritesWidgetTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		CBDE5D5DC65F3F28A8A88354 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = KaigiApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -377,6 +667,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4C53A29345E09A614A526AA5 /* Build configuration list for PBXNativeTarget "FavoritesWidgetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C48771F13842EFEF909D18DD /* Debug */,
+				C7584074208BE9F98A95ACE5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B87000CD984DC2EA24663F69 /* Build configuration list for PBXNativeTarget "FavoritesWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D19D76BFAFE58AFBA7B0E2D /* Debug */,
+				6707752271EA5786D2AF358D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		D1D8B753AAA17DCA2FD54E14 /* Build configuration list for PBXNativeTarget "KaigiApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
