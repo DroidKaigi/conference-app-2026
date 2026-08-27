@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- minWidth/minHeight target 2x2 cells; the widget stretches to 4x2 (MEDIUM) horizontally. -->
-<!-- 30 minutes is the platform minimum period; it carries the LIVE state across slot
-     boundaries while the app process is away, and favorites/theme changes push immediately. -->
+<!-- 30 minutes is the platform minimum period; it is the fallback for a missed
+     FavoritesWidgetRefreshWorker run, and favorites/theme changes push immediately. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="110dp"
     android:minHeight="110dp"

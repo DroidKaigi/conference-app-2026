@@ -11,7 +11,7 @@ Errors split by severity, and each layer has one sink:
 
 Separately from both layers, `SoilErrorMonitor` (`:core:common`) renders an app-global overlay listing the errors Soil reports. Its production binding is a no-op; `:feature:debug` replaces it, so the overlay is a development aid rather than a user-facing sink — see [Debugging](./debugging.md).
 
-The `UserMessage` type and the exception-to-message mapping carry the text into the snackbar.
+`Throwable.toUserMessage()` (`:core:common`) classifies the exception into an `AppError` and wraps it in a `UserMessage`; `SnackbarHostState.showSnackbar(UserMessage)` (`:core:ui`) resolves the localized text for that category. Exception messages never reach the user.
 
 ## One-off events
 
@@ -28,6 +28,12 @@ A screen's actions (input) and results (output) are aggregated into one `ScreenC
 
 The Root creates the channel with `retainScreenChannel()`. It is retained rather than remembered so that buffered, not-yet-consumed events survive transient destruction of the entry.
 
+`ActionEffect` and `ActionResultEffect` both hold to three rules, so a screen never has to restate them:
+
+- **One handler per event.** Each event is handled in a child coroutine of the effect, so an event whose handler is still running — a mutation in flight, a snackbar still on screen — does not hold up the events behind it. Handlers therefore overlap: a screen that requires one write to land before the next orders them itself.
+- **The handler runs against the latest composition.** The effect is keyed by the channel alone, so it outlives the composition that launched it; it reads the handler through `rememberUpdatedState`. Without that, a handler would close over the values of the composition it was launched in and write back state the screen has already moved past.
+- **A handler that throws is reported, not fatal.** The failure goes to `KaigiLogger.error`, which forwards it to `CrashReporter` as a non-fatal report, and the screen keeps consuming. A failure here is a defect in the screen rather than a condition the user can act on; what the user should see goes through the snackbar sink above.
+
 Each end is gated by a context parameter, so using the wrong end from the wrong layer is an ordinary compile error:
 
 | Operation | Direction | Context | Form |
@@ -43,13 +49,13 @@ Each end is gated by a context parameter, so using the wrong end from the wrong 
 // Presenter (context: PresenterContext)
 ActionEffect(screenChannel) { action -> if (action is Save) mutation.mutateAsync(action.value) }
 MutationSuccessEffect(mutation) { screenChannel.emit(NavigateToCard) }
-MutationErrorEffect(mutation) { screenChannel.emit(ShowMessage(it)) }
+MutationErrorEffect(mutation) { screenChannel.emit(ShowMessage(it.toUserMessage())) }
 
 // Root (context: ScreenContext)
 ActionResultEffect(screenChannel) { result ->
     when (result) {
         NavigateToCard -> onSaved()
-        is ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+        is ShowMessage -> snackbarHostState.showSnackbar(result.message)
     }
 }
 // UI input: onSaveClick = { screenChannel.send(Save(value)) }

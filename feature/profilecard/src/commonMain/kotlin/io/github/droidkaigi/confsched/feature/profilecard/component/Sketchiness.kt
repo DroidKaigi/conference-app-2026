@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -36,16 +37,6 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sk
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
-/**
- * How far the card's hand-sketched outlines wobble from a straight line, expressed as the
- * multiplier applied to the amplitude the card's own size derives.
- */
-enum class Sketchiness(val amplitudeMultiplier: Float) {
-    Subtle(0.5f),
-    Normal(1.6f),
-    Playful(3.4f),
-}
 
 private val Sketchiness.label: String
     @Composable get() = when (this) {
@@ -67,19 +58,19 @@ private val Sketchiness.drawableResource: DrawableResource
  */
 @Composable
 fun SketchinessPicker(
-    selected: Sketchiness,
-    onSketchinessSelected: (Sketchiness) -> Unit,
+    selectedSketchiness: Sketchiness,
+    onSketchinessClick: (Sketchiness) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.selectableGroup(),
-        horizontalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
+        horizontalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.optionGap),
     ) {
         Sketchiness.entries.forEach { sketchiness ->
             SketchinessOption(
                 sketchiness = sketchiness,
-                selected = sketchiness == selected,
-                onClick = { onSketchinessSelected(sketchiness) },
+                selected = sketchiness == selectedSketchiness,
+                onClick = { onSketchinessClick(sketchiness) },
                 modifier = Modifier.weight(1f),
             )
         }
@@ -128,10 +119,10 @@ private fun SketchinessOption(
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.gap),
+                verticalArrangement = Arrangement.spacedBy(SketchinessPickerDefaults.contentGap),
             ) {
                 SketchinessSwatch(sketchiness = sketchiness)
-                Text(sketchiness.label, style = MaterialTheme.typography.labelLarge)
+                Text(sketchiness.label, style = MaterialTheme.typography.labelMedium)
             }
         }
     }
@@ -158,7 +149,8 @@ private fun SketchinessSwatch(
 
 object SketchinessPickerDefaults {
     val outlineSeed = 700
-    val gap = 4.dp
+    val contentGap = 4.dp
+    val optionGap = 12.dp
 }
 
 private object SketchinessOptionDefaults {
@@ -171,8 +163,8 @@ private object SketchinessOptionDefaults {
 }
 
 private object SketchinessSwatchDefaults {
-    val width = 64.dp
-    val height = 28.dp
+    val width = 56.dp
+    val height = 26.dp
 }
 
 @LocalePreviews
@@ -181,6 +173,6 @@ private fun SketchinessPickerPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        SketchinessPicker(selected = Sketchiness.Normal, onSketchinessSelected = {})
+        SketchinessPicker(selectedSketchiness = Sketchiness.Normal, onSketchinessClick = {})
     }
 }

@@ -20,5 +20,6 @@ A set of documents covering the architecture and implementation policy of the Dr
 - [iOS overview](./ios.md) … almost full CMP with only the tab bar in Liquid Glass
 - [iOS top bar](./ios-top-bar.md) … why the top bar stays Compose while the tab bar is native, and the one condition that would reopen it
 - [Logging (Kermit)](./logging.md) … a single AppScope Kermit `Logger` with KMP-native writers per platform (incl. wasmJs=console), no expect/actual
+- [Session reminders](./session-reminders.md) … the shared "starts soon" computation and the Android / iOS schedulers that carry it out
 - [Clock (KaigiClock)](./clock.md) … one injected time seam: the system clock in production, a shiftable clock in dev builds, `FakeClock` in tests
 

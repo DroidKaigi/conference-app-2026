@@ -6,15 +6,20 @@ import androidx.compose.ui.unit.dp
 internal val TimetableGridHeaderHeight = 34.dp
 internal val TimetableGridSessionGap = 4.dp
 internal val TimetableGridSessionMinHeight = 40.dp
-internal val TimetableGridDefaultHourHeight = 132.dp
+internal val TimetableGridDefaultHourHeight = 144.dp
 internal val TimetableGridMaxHourHeight = 220.dp
 internal val TimetableGridVerticalPadding = 12.dp
 internal val TimetableGridTimeGutterWidth = 52.dp
 internal val TimetableGridRoomColumnWidth = 156.dp
 internal val TimetableGridRoomColumnGap = 8.dp
 
-internal fun timetableGridContentWidth(roomCount: Int): Dp =
-    TimetableGridRoomColumnWidth * roomCount + TimetableGridRoomColumnGap * (roomCount - 1)
+internal fun timetableGridContentWidth(roomCount: Int, columnWidth: Dp): Dp =
+    columnWidth * roomCount + TimetableGridRoomColumnGap * (roomCount - 1)
+
+internal fun timetableGridColumnWidth(availableWidth: Dp, roomCount: Int): Dp {
+    val stretched = (availableWidth - TimetableGridRoomColumnGap * (roomCount - 1)) / roomCount
+    return stretched.coerceAtLeast(TimetableGridRoomColumnWidth)
+}
 
 internal val TimetableGridDayStartMinutes = 10 * 60
 internal val TimetableGridDefaultDayEndMinutes = 18 * 60

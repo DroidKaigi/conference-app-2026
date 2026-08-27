@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.search
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.common.KaigiClock
+import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableIdsSubscriptionKey
@@ -14,6 +15,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 class SearchPresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
     val clock: KaigiClock,
+    override val logger: KaigiLogger,
 ) : PresenterContext
 
 @Inject
@@ -21,5 +23,6 @@ class SearchPresenterContext(
 class SearchScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    override val logger: KaigiLogger,
     val presenterContext: SearchPresenterContext,
 ) : ScreenContext

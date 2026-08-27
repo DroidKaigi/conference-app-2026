@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -56,49 +58,55 @@ internal fun SearchResultSection(
     modifier: Modifier = Modifier,
 ) {
     val timeSlotsByDay = remember(uiState.timeSlots) { uiState.timeSlots.groupBy { it.day } }
-    LazyColumn(
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(
-            top = 12.dp,
-            bottom = 24.dp + WindowInsets.safeDrawing
-                .exclude(WindowInsets.ime)
-                .asPaddingValues()
-                .calculateBottomPadding(),
-        ),
-    ) {
-        item(key = "count") {
-            Text(
-                text = pluralStringResource(
-                    Res.plurals.search_result_count,
-                    uiState.matchCount,
-                    uiState.matchCount,
-                ),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-            )
-        }
-        timeSlotsByDay.forEach { (day, slots) ->
-            if (uiState.dayHeadersVisible) {
-                item(key = "header-$day") {
-                    TimetableDayHeader(day = day)
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = pluralStringResource(
+                Res.plurals.search_result_count,
+                uiState.matchCount,
+                uiState.matchCount,
+            ),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 32.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .semantics { liveRegion = LiveRegionMode.Polite },
+        )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(
+                top = 24.dp,
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 40.dp + WindowInsets.safeDrawing
+                    .exclude(WindowInsets.ime)
+                    .asPaddingValues()
+                    .calculateBottomPadding(),
+            ),
+        ) {
+            timeSlotsByDay.forEach { (day, slots) ->
+                if (uiState.dayHeadersVisible) {
+                    item(key = "header-$day") {
+                        TimetableDayHeader(day = day)
+                    }
                 }
-            }
-            items(
-                items = slots,
-                key = { slot -> "$day-${slot.startsAt}-${slot.endsAt}" },
-            ) { slot ->
-                SearchResultRow(
-                    startsAt = slot.startsAt,
-                    endsAt = slot.endsAt,
-                    timeRangeState = slot.timeRangeState,
-                    items = slot.items,
-                    bookmarks = uiState.bookmarks,
-                    titleMark = uiState.titleMark,
-                    onBookmarkClick = onBookmarkClick,
-                    onItemClick = onItemClick,
-                )
+                items(
+                    items = slots,
+                    key = { slot -> "$day-${slot.startsAt}-${slot.endsAt}" },
+                ) { slot ->
+                    SearchResultRow(
+                        startsAt = slot.startsAt,
+                        endsAt = slot.endsAt,
+                        timeRangeState = slot.timeRangeState,
+                        items = slot.items,
+                        bookmarks = uiState.bookmarks,
+                        titleMark = uiState.titleMark,
+                        onBookmarkClick = onBookmarkClick,
+                        onItemClick = onItemClick,
+                    )
+                }
             }
         }
     }
@@ -115,7 +123,7 @@ private fun SearchResultRow(
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         TimetableTimeRange(
             startsAt = startsAt,
             endsAt = endsAt,
@@ -124,14 +132,14 @@ private fun SearchResultRow(
         )
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             for (item in items) {
                 key(item.id) {
                     TimetableItemCard(
                         title = item.title.current(),
                         room = item.room,
-                        speaker = item.speakerNames,
+                        speakers = item.speakers,
                         language = item.language,
                         isFavorite = item.id in bookmarks,
                         isCancelled = item.isCancelled,

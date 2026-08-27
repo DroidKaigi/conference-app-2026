@@ -21,12 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Language
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.TimetableDayHeader
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
@@ -48,7 +51,7 @@ internal fun FavoritesListSection(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(
             top = 12.dp,
-            bottom = 24.dp + KaigiNavigationBarDefaults.occupiedHeight,
+            bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
         ),
     ) {
         uiState.timeSlots.groupBy { slot -> slot.day }.forEach { (day, slots) ->
@@ -97,7 +100,12 @@ private fun FavoriteSessionRow(
         ) {
             for (item in items) {
                 FavoriteTimetableItemCard(
-                    item = item,
+                    id = item.id,
+                    title = item.title.current(),
+                    room = item.room,
+                    speakers = item.speakers,
+                    language = item.language,
+                    isCancelled = item.isCancelled,
                     onBookmarkClick = { onBookmarkClick(item.id) },
                     onItemClick = { onItemClick(item.id) },
                 )
@@ -109,24 +117,29 @@ private fun FavoriteSessionRow(
 /** Fades the card out locally, then reports the unfavorite once the fade finishes. */
 @Composable
 private fun FavoriteTimetableItemCard(
-    item: TimetableItem,
+    id: TimetableItemId,
+    title: String,
+    room: SessionRoom,
+    speakers: List<TimetableSpeaker>,
+    language: Language,
+    isCancelled: Boolean,
     onBookmarkClick: () -> Unit,
     onItemClick: () -> Unit,
 ) {
-    var visible by remember(item.id) { mutableStateOf(true) }
+    var visible by remember(id) { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     AnimatedVisibility(
         visible = visible,
         exit = fadeOut(animationSpec = tween(FavoriteTimetableItemCardDefaults.FADE_OUT_DURATION)),
     ) {
         TimetableItemCard(
-            title = item.title.current(),
-            room = item.room,
-            speaker = item.speakerNames,
-            isCancelled = item.isCancelled,
-            language = item.language,
+            title = title,
+            room = room,
+            speakers = speakers,
+            isCancelled = isCancelled,
+            language = language,
             isFavorite = true,
-            seed = item.id.value.hashCode(),
+            seed = id.value.hashCode(),
             onBookmarkClick = {
                 visible = false
                 coroutineScope.launch {

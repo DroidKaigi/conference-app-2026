@@ -112,8 +112,7 @@ private fun ToolbarAction(
     seed: Int,
     modifier: Modifier = Modifier,
 ) {
-    // Give each action its own sketched outline so the press ripple reads per button and follows
-    // the hand-drawn shape rather than filling a square inside the rounded surface.
+    // clip precedes clickable so each action's ripple follows its own sketched ellipse
     val shape = SketchEllipseShape(
         seed = combineSketchSeed(seed),
         roughness = SketchDefaults.roughness,

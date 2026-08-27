@@ -26,6 +26,7 @@ import androidx.glance.text.Text
 import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.app.favoriteSessionDeepLinkIntent
+import io.github.droidkaigi.confsched.app.localized
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetRow
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetSlot

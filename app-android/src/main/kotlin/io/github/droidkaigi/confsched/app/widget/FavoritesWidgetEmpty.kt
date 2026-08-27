@@ -18,38 +18,77 @@ import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.text.Text
 import io.github.droidkaigi.confsched.R
+import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 
 @Composable
-internal fun EmptyContent(colors: FavoritesWidgetColors) {
+internal fun EmptyContent(state: FavoritesWidgetState.Empty, colors: FavoritesWidgetColors) {
+    val context = LocalContext.current
+    DayPromptContent(
+        message = context.getString(R.string.widget_empty_message),
+        hint = context.getString(R.string.widget_empty_hint, state.day.label),
+        otherDayFavorites = state.otherDayFavorites,
+        colors = colors,
+    )
+}
+
+@Composable
+internal fun TodayDoneContent(state: FavoritesWidgetState.TodayDone, colors: FavoritesWidgetColors) {
+    val context = LocalContext.current
+    DayPromptContent(
+        message = context.getString(R.string.widget_done_message),
+        hint = context.getString(R.string.widget_done_hint),
+        otherDayFavorites = state.otherDayFavorites,
+        colors = colors,
+    )
+}
+
+@Composable
+private fun DayPromptContent(
+    message: String,
+    hint: String,
+    otherDayFavorites: Int,
+    colors: FavoritesWidgetColors,
+) {
     val medium = isMedium(LocalSize.current)
     val context = LocalContext.current
     val label = if (medium) R.string.widget_schedule_label else R.string.widget_favorites_label
     Column(modifier = GlanceModifier.fillMaxSize()) {
         HeaderRow(context.getString(label), live = false, colors = colors)
         Spacer(modifier = GlanceModifier.height(GapBase))
-        EmptyBody(colors, medium)
+        DayPromptBody(message, hint, otherDayFavorites, colors, medium)
     }
 }
 
 @Composable
-private fun EmptyBody(colors: FavoritesWidgetColors, medium: Boolean) {
-    val context = LocalContext.current
-    val message = if (medium) R.string.widget_empty_medium else R.string.widget_empty_small
+private fun DayPromptBody(
+    message: String,
+    hint: String,
+    otherDayFavorites: Int,
+    colors: FavoritesWidgetColors,
+    medium: Boolean,
+) {
     Box(modifier = GlanceModifier.fillMaxSize()) {
         Column(modifier = GlanceModifier.fillMaxWidth().padding(end = mascotClearance(medium))) {
             Text(
-                text = context.getString(message),
+                text = message,
                 style = sansStyle(colors.onSurface, 12.sp),
                 maxLines = 4,
             )
             if (medium) {
                 Spacer(modifier = GlanceModifier.height(GapBase))
                 Text(
-                    text = context.getString(R.string.widget_empty_hint),
+                    text = hint,
                     style = sansStyle(colors.onSurfaceVariant, 12.sp),
                 )
+                if (otherDayFavorites > 0) {
+                    Spacer(modifier = GlanceModifier.height(GapTight))
+                    Text(
+                        text = tomorrowFavoritesText(otherDayFavorites),
+                        style = sansStyle(colors.onSurfaceVariant, 12.sp),
+                    )
+                }
             }
         }
         Box(
@@ -61,10 +100,28 @@ private fun EmptyBody(colors: FavoritesWidgetColors, medium: Boolean) {
     }
 }
 
+@Composable
+internal fun tomorrowFavoritesText(count: Int): String = LocalContext.current.resources
+    .getQuantityString(R.plurals.widget_tomorrow_favorites, count, count)
+
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Composable
 private fun EmptyPreview() {
-    FavoritesWidgetContent(FavoritesWidgetState.Empty, KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
+    FavoritesWidgetContent(
+        FavoritesWidgetState.Empty(day = DroidKaigi2026Day.Day1, otherDayFavorites = 2),
+        KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+    )
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun TodayDonePreview() {
+    FavoritesWidgetContent(
+        FavoritesWidgetState.TodayDone(day = DroidKaigi2026Day.Day1, otherDayFavorites = 1),
+        KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+    )
 }

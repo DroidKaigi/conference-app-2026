@@ -12,7 +12,7 @@ value class TimetableItemId(val value: String)
 data class TimetableItem(
     val id: TimetableItemId,
     val title: MultiLangText,
-    val room: Room,
+    val room: SessionRoom,
     val speakers: PersistentList<TimetableSpeaker>,
     val language: Language,
     val day: DroidKaigi2026Day,
@@ -29,8 +29,6 @@ data class TimetableItem(
     val isCancelled: Boolean,
     val message: MultiLangText?,
 ) {
-    val speakerNames: String get() = speakers.joinToString(", ") { it.name }
-
     companion object
 }
 

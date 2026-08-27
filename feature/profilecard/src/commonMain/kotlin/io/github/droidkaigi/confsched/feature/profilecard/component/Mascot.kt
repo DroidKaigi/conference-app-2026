@@ -17,11 +17,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
@@ -30,17 +34,16 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ha
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.jellyfish
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.koala
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ladybug
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_hall
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_jellyfish
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_koala
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_ladybug
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_meerkat
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.meerkat
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
-
-enum class Mascot {
-    Hall,
-    Jellyfish,
-    Koala,
-    Ladybug,
-    Meerkat,
-}
+import org.jetbrains.compose.resources.stringResource
 
 private val Mascot.drawableResource: DrawableResource
     get() = when (this) {
@@ -73,16 +76,16 @@ fun MascotIcon(
 /** A row letting the user pick one of the five [Mascot]s. */
 @Composable
 fun MascotPicker(
-    selected: Mascot,
-    onMascotSelected: (Mascot) -> Unit,
+    selectedMascot: Mascot,
+    onMascotClick: (Mascot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(MascotOptionDefaults.gap)) {
         Mascot.entries.forEach { mascot ->
             MascotOption(
                 mascot = mascot,
-                selected = mascot == selected,
-                onClick = { onMascotSelected(mascot) },
+                selected = mascot == selectedMascot,
+                onClick = { onMascotClick(mascot) },
                 seed = mascot.ordinal,
             )
         }
@@ -115,10 +118,12 @@ private fun MascotOption(
         sweepWavelength = ProfileCardSweepWavelength,
         borderThickness = MascotOptionDefaults.borderThickness,
     )
+    val name = stringResource(mascot.nameResource)
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
             .size(MascotOptionDefaults.size)
+            .semantics { contentDescription = name }
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .clip(shape)
             .background(if (selected) selectedContainerColor else Color.Transparent)
@@ -135,7 +140,10 @@ private fun MascotOption(
 
 object MascotOptionDefaults {
     val size = 48.dp
-    val iconSize = 28.dp
+
+    /** The design lays the row out as 56dp cells; the ring inside one is [size]. */
+    val gap = 16.dp
+    val iconSize = 30.dp
     val borderThickness = 1.5.dp
     val roughness = 0.4.dp
     val tremor = 0.15.dp
@@ -155,12 +163,21 @@ private fun MascotIconPreview(
     }
 }
 
-@Preview
+@LocalePreviews
 @Composable
 private fun MascotPickerPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        MascotPicker(selected = Mascot.Koala, onMascotSelected = {}, modifier = Modifier.padding(16.dp))
+        MascotPicker(selectedMascot = Mascot.Koala, onMascotClick = {}, modifier = Modifier.padding(16.dp))
     }
 }
+
+private val Mascot.nameResource: StringResource
+    get() = when (this) {
+        Mascot.Hall -> Res.string.mascot_hall
+        Mascot.Jellyfish -> Res.string.mascot_jellyfish
+        Mascot.Koala -> Res.string.mascot_koala
+        Mascot.Ladybug -> Res.string.mascot_ladybug
+        Mascot.Meerkat -> Res.string.mascot_meerkat
+    }

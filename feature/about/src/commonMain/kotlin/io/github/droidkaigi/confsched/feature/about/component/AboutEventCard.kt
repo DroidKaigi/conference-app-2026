@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.about.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,9 +50,10 @@ internal fun AboutEventCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .clickable(onClick = onViewMap)
-            .sketchBorder(shape, MaterialTheme.colorScheme.outline)
-            .padding(20.dp),
+            .sketchBorder(shape, MaterialTheme.colorScheme.outlineVariant)
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Row(
@@ -61,7 +63,7 @@ internal fun AboutEventCard(
             Icon(
                 imageVector = KaigiIcons.Default.Schedule,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp),
             )
             Text(
@@ -70,11 +72,14 @@ internal fun AboutEventCard(
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(
                 imageVector = KaigiIcons.Default.LocationOn,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(20.dp),
             )
             Column {

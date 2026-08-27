@@ -19,6 +19,19 @@ kotlin {
             api(libs.kotlinxSerializationJson)
             api(libs.soilQueryCompose)
             api(libs.kermit)
+            api(libs.ktorClientCore)
+        }
+        jvmMain.dependencies {
+            implementation(libs.ktorClientCio)
+        }
+        androidMain.dependencies {
+            implementation(libs.ktorClientOkhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktorClientDarwin)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.ktorClientJs)
         }
     }
 }

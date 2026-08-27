@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -25,9 +24,6 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.SketchDefaults
-import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
-import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 
 @Composable
 internal fun AboutNavigationRow(
@@ -36,29 +32,19 @@ internal fun AboutNavigationRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Inset the click node to the divider's 24dp and clip it to a sketched round rect, so the press
-    // ripple stays within the hand-drawn rules instead of crossing them edge to edge.
-    val rippleShape = SketchRoundRectShape(
-        seed = combineSketchSeed(ROW_RIPPLE_SEED),
-        roughness = SketchDefaults.roughness,
-        tremor = SketchDefaults.tremor,
-        cornerRadius = 12.dp,
-    )
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
-            .padding(horizontal = 24.dp)
-            .clip(rippleShape)
             .clickable(onClick = onClick)
-            .padding(start = 16.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Icon(
             imageVector = leadingIcon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),
         )
         Text(
@@ -91,5 +77,3 @@ private fun AboutNavigationRowPreview(
         )
     }
 }
-
-private const val ROW_RIPPLE_SEED = 8301
