@@ -24,7 +24,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
-/** The room a session is in, named and marked in the room's own color. */
+/** The room an event is in, named in the room's own color and marked where the room has a mark. */
 @Composable
 fun RoomChip(room: Room, seed: Int) {
     val theme = roomTheme(room)

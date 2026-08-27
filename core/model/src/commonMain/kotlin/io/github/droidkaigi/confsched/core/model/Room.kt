@@ -27,8 +27,7 @@ enum class SessionRoom : Room {
     UNKNOWN,
     ;
 
-    override val label: MultiLangText
-        get() = MultiLangText(ja = name, en = name)
+    override val label: MultiLangText = MultiLangText(ja = name, en = name)
 
     /** Where the venue puts the room, which the conference publishes as a map and not as data. */
     override val floor: Floor?
