@@ -21,6 +21,7 @@ kotlin {
             api(libs.soilReacty)
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
+            implementation(libs.kotlinxDatetime)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
