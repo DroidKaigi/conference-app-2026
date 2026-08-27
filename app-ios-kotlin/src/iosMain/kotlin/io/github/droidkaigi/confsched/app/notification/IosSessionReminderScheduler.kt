@@ -79,7 +79,7 @@ internal class IosSessionReminderScheduler(private val kaigiClock: KaigiClock) :
             ),
         )
         suspendCancellableCoroutine { continuation ->
-            center.addNotificationRequest(request) { continuation.resume(Unit) }
+            center.addNotificationRequest(request) { if (continuation.isActive) continuation.resume(Unit) }
         }
     }
 
@@ -87,7 +87,7 @@ internal class IosSessionReminderScheduler(private val kaigiClock: KaigiClock) :
         suspendCancellableCoroutine { continuation ->
             center.requestAuthorizationWithOptions(
                 UNAuthorizationOptionAlert or UNAuthorizationOptionSound or UNAuthorizationOptionBadge,
-            ) { _, _ -> continuation.resume(Unit) }
+            ) { _, _ -> if (continuation.isActive) continuation.resume(Unit) }
         }
     }
 
@@ -96,13 +96,13 @@ internal class IosSessionReminderScheduler(private val kaigiClock: KaigiClock) :
 
     private suspend fun pendingIdentifiers(): List<String> = suspendCancellableCoroutine { continuation ->
         center.getPendingNotificationRequestsWithCompletionHandler { requests ->
-            continuation.resume(requests.orEmpty().map { (it as UNNotificationRequest).identifier })
+            if (continuation.isActive) continuation.resume(requests.orEmpty().map { (it as UNNotificationRequest).identifier })
         }
     }
 
     private suspend fun deliveredIdentifiers(): List<String> = suspendCancellableCoroutine { continuation ->
         center.getDeliveredNotificationsWithCompletionHandler { notifications ->
-            continuation.resume(notifications.orEmpty().map { (it as UNNotification).request.identifier })
+            if (continuation.isActive) continuation.resume(notifications.orEmpty().map { (it as UNNotification).request.identifier })
         }
     }
 }

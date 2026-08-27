@@ -4,6 +4,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.model.Timetable
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.decodeFromString
@@ -19,7 +20,7 @@ internal const val TIMETABLE_PERSIST_KEY = "timetable"
 class PersistedTimetableReader(private val fileStorage: ServerEnvironmentScopedFileStorage) {
     /** Emits whenever a fetch replaced the persisted payload. */
     val updates: Flow<Unit>
-        field = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        field = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     /** The persisted timetable, or null when nothing decodable is stored yet. */
     suspend fun read(): Timetable? = runCatching {
