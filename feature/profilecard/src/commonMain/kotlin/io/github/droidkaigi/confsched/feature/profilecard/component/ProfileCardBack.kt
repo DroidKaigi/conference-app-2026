@@ -320,7 +320,7 @@ private object ProfileCardBackDefaults {
     val qrPaperCornerRadius = 4.dp
     val qrQuietZone = 14.dp
     val qrErrorCorrectionLevel = ErrorCorrectionLevel.HIGH
-    val qrMinimumVersion = 5
+    val qrMinimumVersion = 4
     val mascotOffset = DpOffset(94.dp, 403.dp)
 
     // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
