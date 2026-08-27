@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -27,24 +28,33 @@ class FavoritesWidgetRefreshWorker(
     override suspend fun doWork(): Result {
         FavoritesWidget().updateAll(applicationContext)
         // updateAll leaves a running session's composition in place, so the next run is scheduled
-        // here rather than only from provideGlance.
-        scheduleFavoritesWidgetRefresh(applicationContext, applicationContext.widgetDependencies.kaigiClock.now())
+        // here rather than only from provideGlance. This worker holds the unique name while it
+        // runs, so the next run is appended rather than replaced, which would cancel this one.
+        val now = applicationContext.widgetDependencies.kaigiClock.now()
+        nextFavoritesWidgetRefreshRequest(applicationContext, now)?.let { request ->
+            WorkManager.getInstance(applicationContext)
+                .enqueueUniqueWork(REFRESH_WORK_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, request)
+        }
         return Result.success()
     }
 }
 
 internal suspend fun scheduleFavoritesWidgetRefresh(context: Context, now: Instant) {
+    val workManager = WorkManager.getInstance(context)
+    val request = nextFavoritesWidgetRefreshRequest(context, now)
+    if (request == null) {
+        workManager.cancelUniqueWork(REFRESH_WORK_NAME)
+    } else {
+        workManager.enqueueUniqueWork(REFRESH_WORK_NAME, ExistingWorkPolicy.REPLACE, request)
+    }
+}
+
+private suspend fun nextFavoritesWidgetRefreshRequest(context: Context, now: Instant): OneTimeWorkRequest? {
     val dependencies = context.widgetDependencies
     val timetable = dependencies.persistedTimetableReader.read() ?: Timetable(items = persistentListOf())
     val favoriteIds = dependencies.favoritesStore.favoriteIds().first()
-    val boundary = nextFavoritesWidgetBoundary(now, timetable, favoriteIds)
-    val workManager = WorkManager.getInstance(context)
-    if (boundary == null) {
-        workManager.cancelUniqueWork(REFRESH_WORK_NAME)
-        return
-    }
-    val request = OneTimeWorkRequestBuilder<FavoritesWidgetRefreshWorker>()
+    val boundary = nextFavoritesWidgetBoundary(now, timetable, favoriteIds) ?: return null
+    return OneTimeWorkRequestBuilder<FavoritesWidgetRefreshWorker>()
         .setInitialDelay((boundary - now).toJavaDuration())
         .build()
-    workManager.enqueueUniqueWork(REFRESH_WORK_NAME, ExistingWorkPolicy.REPLACE, request)
 }
