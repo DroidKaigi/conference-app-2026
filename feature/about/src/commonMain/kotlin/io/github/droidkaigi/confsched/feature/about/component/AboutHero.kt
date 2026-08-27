@@ -13,15 +13,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.SketchBottomEdgeShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
+import io.github.droidkaigi.confsched.core.ui.sketchBottomEdge
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_logo_description
 import org.jetbrains.compose.resources.stringResource
@@ -29,18 +30,23 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun AboutHero(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxWidth().height(HeroHeight)) {
+        val wallShape = SketchBottomEdgeShape(
+            seed = combineSketchSeed(WALL_EDGE_SEED),
+            roughness = scaleSketchAmplitude(1.6.dp),
+            tremor = scaleSketchAmplitude(0.4.dp),
+            sweepWavelength = 200.dp,
+            tremorWavelength = 42.dp,
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(WallHeight)
-                .clip(
-                    AboutHeroWaveShape(
-                        amplitude = scaleSketchAmplitude(8.dp),
-                        wavelength = 200.dp,
-                        seed = combineSketchSeed(HERO_WAVE_SEED),
-                    ),
-                )
-                .background(MaterialTheme.colorScheme.primary),
+                .background(color = MaterialTheme.colorScheme.primary, shape = wallShape)
+                .sketchBottomEdge(
+                    shape = wallShape,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    thickness = 1.5.dp,
+                ),
         ) {
             Column(
                 modifier = Modifier
@@ -76,7 +82,7 @@ private fun BattenEdge() {
     )
 }
 
-private const val HERO_WAVE_SEED = 8202
+private const val WALL_EDGE_SEED = 2280
 private val WallHeight = 241.dp
 private val StageWidth = 331.dp
 
