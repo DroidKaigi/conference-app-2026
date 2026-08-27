@@ -377,7 +377,7 @@ private object ProfileCardFrontDefaults {
     // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
     // ratio, so all five reach the same ink height.
     val sealMascotBox = DpSize(70.dp, 50.dp)
-    val sealMascotOffset = DpOffset((-3.5).dp, (-3).dp)
+    val sealMascotOffset = DpOffset(0.dp, 0.dp)
 
     // Traced from the Figma front face: six sparks, alternating 12°/-20° rotation, split by
     // which background they sit on so each reads against it.
