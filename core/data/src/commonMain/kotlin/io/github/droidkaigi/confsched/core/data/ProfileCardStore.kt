@@ -11,7 +11,6 @@ import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 /** The stored form of a [ProfileCard]: the avatar itself lives in [AvatarImageStore], only its path here. */
@@ -28,7 +27,7 @@ internal data class StoredProfileCard(
 @SingleIn(AppScope::class)
 class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: DataStore<Preferences>) {
 
-    internal fun card(): Flow<StoredProfileCard?> = dataStore.data.map { it.readCard() }.distinctUntilChanged()
+    internal fun card(): Flow<StoredProfileCard?> = dataStore.data.map { it.readCard() }
 
     suspend fun save(card: ProfileCard, avatarImagePath: String?) {
         dataStore.edit { preferences ->

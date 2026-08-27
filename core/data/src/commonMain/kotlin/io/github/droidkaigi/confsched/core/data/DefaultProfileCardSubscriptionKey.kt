@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.ProfileCardSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.SoilIds
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import soil.query.buildSubscriptionKey
 
@@ -29,6 +30,6 @@ class DefaultProfileCardSubscriptionKey(
                     avatarImage = it.avatarImagePath?.let { path -> avatarImageStore.load(path) }?.let(::AvatarImage),
                 )
             }
-        }
+        }.distinctUntilChanged()
     },
 )
