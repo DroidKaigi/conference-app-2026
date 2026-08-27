@@ -3,7 +3,6 @@ package io.github.droidkaigi.confsched.feature.profilecard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
@@ -25,10 +24,6 @@ fun profileCardScreenPresenter(
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
-
-    // EditCard reads the card of the composition it fires in rather than the one the effect was
-    // launched with.
-    val currentStoredCard by rememberUpdatedState(storedCard)
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -68,7 +63,7 @@ fun profileCardScreenPresenter(
             is ProfileCardScreenAction.Share -> shareMutation.mutateAsync(action.image)
 
             ProfileCardScreenAction.EditCard -> {
-                form = currentStoredCard.toForm()
+                form = storedCard.toForm()
                 isEditing = true
                 isShowingBack = false
             }
