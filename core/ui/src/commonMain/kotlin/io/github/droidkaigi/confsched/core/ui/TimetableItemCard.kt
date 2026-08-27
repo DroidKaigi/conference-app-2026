@@ -137,7 +137,7 @@ private fun CardBody(
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (isCancelled) {
             CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
@@ -173,7 +173,7 @@ private fun CancelledBanner(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ChipRow(room: Room, language: Language, seed: Int) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         RoomChip(room = room, seed = seed + 1)
         LanguageChip(language = language, seed = seed + 2)
     }
