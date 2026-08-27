@@ -1,0 +1,61 @@
+{
+  "env": {
+    "APP_ID": "REPLACE_WITH_APP_STORE_CONNECT_APP_ID",
+    "PROJECT_PATH": "app-ios/KaigiApp.xcodeproj",
+    "SCHEME": "KaigiApp",
+    "CONFIGURATION": "Release",
+    "TESTFLIGHT_GROUP": "REPLACE_WITH_TESTFLIGHT_GROUP",
+    "VERSION": ""
+  },
+  "workflows": {
+    "testflight": {
+      "description": "Archive, export, upload, and distribute KaigiApp to a TestFlight group.",
+      "steps": [
+        {
+          "name": "validate_version",
+          "run": "if [ -z \"$VERSION\" ]; then echo \"VERSION is required\" >&2; exit 1; fi"
+        },
+        {
+          "name": "resolve_next_build",
+          "run": "asc builds next-build-number --app \"$APP_ID\" --version \"$VERSION\" --platform IOS --initial-build-number 1 --output json",
+          "outputs": {
+            "BUILD_NUMBER": "$.nextBuildNumber"
+          }
+        },
+        {
+          "name": "inject_metadata",
+          "run": "asc xcode inject --manifest .asc/deployment.json --set version=\"$VERSION\" --set build_number=${steps.resolve_next_build.BUILD_NUMBER} --overwrite --output json",
+          "outputs": {
+            "GENERATED_FILES": "$.outputs"
+          }
+        },
+        {
+          "name": "archive",
+          "run": "asc xcode archive --project \"$PROJECT_PATH\" --scheme \"$SCHEME\" --configuration \"$CONFIGURATION\" --archive-path \".asc/artifacts/KaigiApp-$VERSION-${steps.resolve_next_build.BUILD_NUMBER}.xcarchive\" --clean --overwrite --xcodebuild-flag=-destination --xcodebuild-flag=generic/platform=iOS --xcodebuild-flag=-allowProvisioningUpdates --output json",
+          "outputs": {
+            "ARCHIVE_PATH": "$.archive_path",
+            "VERSION": "$.version",
+            "BUILD_NUMBER": "$.build_number"
+          }
+        },
+        {
+          "name": "export",
+          "run": "asc xcode export --archive-path ${steps.archive.ARCHIVE_PATH} --ipa-path \".asc/artifacts/KaigiApp-$VERSION-${steps.archive.BUILD_NUMBER}.ipa\" --signing-style automatic --overwrite --timeout 10m --xcodebuild-flag=-allowProvisioningUpdates --output json",
+          "outputs": {
+            "IPA_PATH": "$.ipa_path",
+            "VERSION": "$.version",
+            "BUILD_NUMBER": "$.build_number"
+          }
+        },
+        {
+          "name": "publish",
+          "run": "asc publish testflight --app \"$APP_ID\" --ipa ${steps.export.IPA_PATH} --group \"$TESTFLIGHT_GROUP\" --wait --poll-interval 10s --output json",
+          "outputs": {
+            "BUILD_ID": "$.buildId",
+            "BUILD_NUMBER": "$.buildNumber"
+          }
+        }
+      ]
+    }
+  }
+}

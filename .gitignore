@@ -45,3 +45,7 @@ docs-site/.vitepress/dist/
 app-android/keystore.properties
 app-android/droidkaigi2026.keystore
 app-android/src/prod/google-services.json
+
+# --- App Store Connect CLI (asc) local release workflow ---
+.asc/runs/
+.asc/artifacts/
