@@ -9,9 +9,11 @@ import io.github.droidkaigi.confsched.core.common.DeepLink
 import io.github.droidkaigi.confsched.core.common.DeepLinkStore
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.StartupNavKey
+import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.feature.about.AboutNavKey
 import io.github.droidkaigi.confsched.feature.favorites.FavoritesNavKey
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableDayRequestStore
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 import kotlinx.coroutines.flow.first
@@ -36,11 +38,20 @@ fun buildSyntheticBackStack(link: DeepLink): List<NavKey> = when (link) {
         AboutNavKey,
     )
 
+    is DeepLink.Timetable -> listOf(TimetableNavKey)
+
     is DeepLink.FavoriteSessionDetail -> listOf(
         TimetableNavKey,
         FavoritesNavKey,
         TimetableItemDetailNavKey(TimetableItemId(link.sessionId)),
     )
+}
+
+/** The conference day a [DeepLink.Timetable] names, or null when its segment names no day. */
+fun timetableDeepLinkDay(link: DeepLink.Timetable): DroidKaigi2026Day? = when (link.daySegment) {
+    DeepLink.DAY1_SEGMENT -> DroidKaigi2026Day.Day1
+    DeepLink.DAY2_SEGMENT -> DroidKaigi2026Day.Day2
+    else -> null
 }
 
 private fun NavBackStack<NavKey>.applySyntheticBackStack(stack: List<NavKey>) {
@@ -51,16 +62,20 @@ private fun NavBackStack<NavKey>.applySyntheticBackStack(stack: List<NavKey>) {
 @Composable
 internal fun DeepLinkEffect(
     deepLinkStore: DeepLinkStore,
+    timetableDayRequestStore: TimetableDayRequestStore,
     backStack: NavBackStack<NavKey>,
     logger: KaigiLogger,
     onNavigate: (NavKey) -> Unit,
 ) {
-    LaunchedEffect(deepLinkStore, backStack, onNavigate) {
+    LaunchedEffect(deepLinkStore, timetableDayRequestStore, backStack, onNavigate) {
         deepLinkStore.deepLinks.collect { link ->
             // Startup flow (e.g. the dev server picker) restores the persisted server
             // environment; resolving while one is still on the stack would query the default
             // environment's timetable and miss the linked session.
             snapshotFlow { backStack.none { key -> key is StartupNavKey } }.first { it }
+            if (link is DeepLink.Timetable) {
+                timetableDeepLinkDay(link)?.let(timetableDayRequestStore::request)
+            }
             val syntheticBackStack = buildSyntheticBackStack(link)
             if (backStack.size <= 1) {
                 // A single-entry stack is a launch that has not navigated yet.
@@ -68,8 +83,9 @@ internal fun DeepLinkEffect(
                 backStack.applySyntheticBackStack(syntheticBackStack)
             } else {
                 // A live stack keeps its history: the synthetic root is already beneath every
-                // stack, and the rest lands via move-to-top so the same order forms on top.
-                syntheticBackStack.drop(1).forEach(onNavigate)
+                // stack, and the rest lands via move-to-top so the same order forms on top. A
+                // root-only stack names the root itself, which move-to-top raises to the front.
+                syntheticBackStack.drop(1).ifEmpty { syntheticBackStack }.forEach(onNavigate)
             }
         }
     }

@@ -21,6 +21,8 @@ import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.app.MainActivity
 import io.github.droidkaigi.confsched.app.aboutDeepLinkIntent
 import io.github.droidkaigi.confsched.app.favoritesDeepLinkIntent
+import io.github.droidkaigi.confsched.app.timetableDayDeepLinkIntent
+import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityIntent
 
@@ -28,11 +30,19 @@ import androidx.glance.appwidget.action.actionStartActivity as actionStartActivi
 internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
     val context = LocalContext.current
     // Session rows carry their own favorites/session/{id} action.
-    // TODO: Route the empty state to search once the search screen exists.
     val backgroundAction = when (state) {
         is FavoritesWidgetState.Schedule -> actionStartActivityIntent(favoritesDeepLinkIntent(context))
+
+        is FavoritesWidgetState.Empty -> actionStartActivityIntent(timetableDayDeepLinkIntent(context, state.day))
+
+        is FavoritesWidgetState.TodayDone -> actionStartActivityIntent(timetableDayDeepLinkIntent(context, state.day))
+
+        is FavoritesWidgetState.DayWrapUp ->
+            actionStartActivityIntent(timetableDayDeepLinkIntent(context, DroidKaigi2026Day.Day2))
+
         FavoritesWidgetState.PostConference -> actionStartActivityIntent(aboutDeepLinkIntent(context))
-        else -> actionStartActivity<MainActivity>()
+
+        is FavoritesWidgetState.Countdown, FavoritesWidgetState.EventDay -> actionStartActivity<MainActivity>()
     }
     Box(
         modifier = GlanceModifier.fillMaxSize()
@@ -51,8 +61,11 @@ internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: Favorit
 private fun StateContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
     when (state) {
         is FavoritesWidgetState.Countdown -> CountdownContent(state, colors)
-        FavoritesWidgetState.Empty -> EmptyContent(colors)
+        FavoritesWidgetState.EventDay -> EventDayContent(colors)
+        is FavoritesWidgetState.Empty -> EmptyContent(state, colors)
         is FavoritesWidgetState.Schedule -> ScheduleContent(state, colors)
+        is FavoritesWidgetState.TodayDone -> TodayDoneContent(state, colors)
+        is FavoritesWidgetState.DayWrapUp -> DayWrapUpContent(state, colors)
         FavoritesWidgetState.PostConference -> PostConferenceContent(colors)
     }
 }
