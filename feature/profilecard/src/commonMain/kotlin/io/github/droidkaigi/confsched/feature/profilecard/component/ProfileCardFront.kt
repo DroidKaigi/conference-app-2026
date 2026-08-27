@@ -353,11 +353,11 @@ private object ProfileCardFrontDefaults {
     val bubbleWidth = 58.4.dp
     val bubbleHeight = 43.dp
     val bubbleOffset = DpOffset(211.1.dp, 106.4.dp)
-    val bubbleTextOffset = DpOffset(2.2.dp, (-7.6).dp)
+    val bubbleTextOffset = DpOffset(1.2.dp, (-5.6).dp)
     val bubbleRotationDegrees = 12f
 
     // The greeting turns inside the already-rotated bubble, so this adds to [bubbleRotationDegrees].
-    val bubbleTextRotationDegrees = 0f
+    val bubbleTextRotationDegrees = -1.5f
     val nickNameOffset = DpOffset(22.5.dp, 271.dp)
     val nickNameWidth = 275.dp
     val occupationOffset = DpOffset(22.5.dp, 324.5.dp)
