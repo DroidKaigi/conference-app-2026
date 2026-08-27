@@ -18,7 +18,7 @@ private const val REFRESH_WORK_NAME = "favorites-widget-refresh"
 
 /**
  * Re-renders the widget at the next instant its state changes on its own (a countdown day
- * rolling over, a favorite starting or ending); each render schedules the one after it.
+ * rolling over, a favorite starting or ending) and schedules the run after it.
  */
 class FavoritesWidgetRefreshWorker(
     context: Context,
@@ -26,6 +26,9 @@ class FavoritesWidgetRefreshWorker(
 ) : CoroutineWorker(context, parameters) {
     override suspend fun doWork(): Result {
         FavoritesWidget().updateAll(applicationContext)
+        // updateAll leaves a running session's composition in place, so the next run is scheduled
+        // here rather than only from provideGlance.
+        scheduleFavoritesWidgetRefresh(applicationContext, applicationContext.widgetDependencies.kaigiClock.now())
         return Result.success()
     }
 }
