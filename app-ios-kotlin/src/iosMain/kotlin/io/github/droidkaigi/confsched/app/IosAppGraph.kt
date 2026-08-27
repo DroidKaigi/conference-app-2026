@@ -4,6 +4,10 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
 import io.github.droidkaigi.confsched.app.notification.SessionReminderNotificationDelegate
+import io.github.droidkaigi.confsched.core.common.KaigiClock
+import io.github.droidkaigi.confsched.core.data.AppearanceSettingsStore
+import io.github.droidkaigi.confsched.core.data.FavoritesStore
+import io.github.droidkaigi.confsched.core.data.PersistedTimetableReader
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.HiddenFromObjC
 
@@ -14,6 +18,10 @@ import kotlin.native.HiddenFromObjC
 @HiddenFromObjC
 @DependencyGraph(scope = AppScope::class)
 internal interface IosAppGraph : AppGraph {
+    val favoritesStore: FavoritesStore
+    val appearanceSettingsStore: AppearanceSettingsStore
+    val persistedTimetableReader: PersistedTimetableReader
+    val kaigiClock: KaigiClock
     val sessionReminderSync: SessionReminderSync
     val sessionReminderNotificationDelegate: SessionReminderNotificationDelegate
 
