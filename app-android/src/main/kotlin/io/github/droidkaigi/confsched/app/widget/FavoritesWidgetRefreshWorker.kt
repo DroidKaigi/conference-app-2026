@@ -51,7 +51,7 @@ internal suspend fun scheduleFavoritesWidgetRefresh(context: Context, now: Insta
 
 private suspend fun nextFavoritesWidgetRefreshRequest(context: Context, now: Instant): OneTimeWorkRequest? {
     val dependencies = context.widgetDependencies
-    val timetable = dependencies.persistedTimetableReader.read() ?: Timetable(items = persistentListOf())
+    val timetable = dependencies.persistedTimetableReader.timetables().first() ?: Timetable(items = persistentListOf())
     val favoriteIds = dependencies.favoritesStore.favoriteIds().first()
     val boundary = nextFavoritesWidgetBoundary(now, timetable, favoriteIds) ?: return null
     return OneTimeWorkRequestBuilder<FavoritesWidgetRefreshWorker>()
