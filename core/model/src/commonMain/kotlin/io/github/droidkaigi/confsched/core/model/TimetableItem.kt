@@ -29,8 +29,6 @@ data class TimetableItem(
     val isCancelled: Boolean,
     val message: MultiLangText?,
 ) {
-    val speakerNames: String get() = speakers.joinToString(", ") { it.name }
-
     companion object
 }
 

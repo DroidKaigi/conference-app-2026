@@ -99,7 +99,7 @@ private fun SessionRow(
                 TimetableItemCard(
                     title = item.title.current(),
                     room = item.room,
-                    speaker = item.speakerNames,
+                    speakers = item.speakers,
                     isCancelled = item.isCancelled,
                     language = item.language,
                     isFavorite = item.id in bookmarks,

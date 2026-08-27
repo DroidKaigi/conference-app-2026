@@ -42,7 +42,7 @@ internal fun SameSlotSessionsSection(
             TimetableItemCard(
                 title = item.title.of(displayLanguage),
                 room = item.room,
-                speaker = item.speakerNames,
+                speakers = item.speakers,
                 language = item.language,
                 isFavorite = sameSlotItem.isFavorite,
                 isCancelled = item.isCancelled,

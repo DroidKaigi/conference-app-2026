@@ -131,7 +131,7 @@ private fun SearchResultRow(
                     TimetableItemCard(
                         title = item.title.current(),
                         room = item.room,
-                        speaker = item.speakerNames,
+                        speakers = item.speakers,
                         language = item.language,
                         isFavorite = item.id in bookmarks,
                         isCancelled = item.isCancelled,

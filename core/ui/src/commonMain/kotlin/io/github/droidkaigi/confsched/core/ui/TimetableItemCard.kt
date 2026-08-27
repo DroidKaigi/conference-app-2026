@@ -29,6 +29,8 @@ import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
+import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -55,7 +57,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TimetableItemCard(
     title: String,
     room: Room,
-    speaker: String,
+    speakers: List<TimetableSpeaker>,
     language: Language,
     isFavorite: Boolean,
     isCancelled: Boolean,
@@ -86,7 +88,7 @@ fun TimetableItemCard(
             title = title,
             titleMark = titleMark,
             room = room,
-            speaker = speaker,
+            speakers = speakers,
             language = language,
             isCancelled = isCancelled,
             seed = seed,
@@ -126,7 +128,7 @@ private fun CardBody(
     title: String,
     titleMark: String,
     room: Room,
-    speaker: String,
+    speakers: List<TimetableSpeaker>,
     language: Language,
     isCancelled: Boolean,
     seed: Int,
@@ -149,8 +151,8 @@ private fun CardBody(
             color = if (isCancelled) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
         )
-        if (speaker.isNotEmpty()) {
-            SpeakerRow(speaker = speaker, seed = seed)
+        if (speakers.isNotEmpty()) {
+            SpeakerColumn(speakers = speakers, seed = seed)
         }
     }
 }
@@ -178,19 +180,37 @@ private fun ChipRow(room: Room, language: Language, seed: Int) {
 }
 
 @Composable
-private fun SpeakerRow(speaker: String, seed: Int) {
+private fun SpeakerColumn(speakers: List<TimetableSpeaker>, seed: Int) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        speakers.forEachIndexed { index, speaker ->
+            SpeakerRow(speaker = speaker, seed = seed + 3 + index)
+        }
+    }
+}
+
+@Composable
+private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        KaigiPlaceholderAvatar(
-            seed = seed + 3,
-            size = TimetableItemCardDefaults.avatarSize,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            borderColor = MaterialTheme.colorScheme.primaryContainer,
-        ) {}
+        val iconUrl = speaker.iconUrl
+        if (iconUrl != null) {
+            KaigiAvatar(
+                imageUrl = iconUrl,
+                contentDescription = null,
+                size = TimetableItemCardDefaults.avatarSize,
+            )
+        } else {
+            KaigiPlaceholderAvatar(
+                seed = seed,
+                size = TimetableItemCardDefaults.avatarSize,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                borderColor = MaterialTheme.colorScheme.primaryContainer,
+            ) {}
+        }
         Text(
-            text = speaker,
+            text = speaker.name,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -262,7 +282,7 @@ private fun TimetableItemCardSamples() {
         TimetableItemCard(
             title = "Sample Session A",
             room = Room.NARWHAL,
-            speaker = "",
+            speakers = emptyList(),
             language = Language.MIXED,
             isFavorite = true,
             isCancelled = false,
@@ -273,7 +293,7 @@ private fun TimetableItemCardSamples() {
         TimetableItemCard(
             title = "サンプルセッションE、折り返しを確かめるための長いプレースホルダーのタイトル",
             room = Room.OTTER,
-            speaker = "Speaker B",
+            speakers = listOf(sampleSpeaker("Speaker B")),
             language = Language.ENGLISH,
             isFavorite = false,
             isCancelled = true,
@@ -284,7 +304,7 @@ private fun TimetableItemCardSamples() {
         TimetableItemCard(
             title = "Sample Session C",
             room = Room.QUAIL,
-            speaker = "Speaker C",
+            speakers = listOf(sampleSpeaker("Speaker C"), sampleSpeaker("Speaker D")),
             language = Language.ENGLISH,
             isFavorite = true,
             isCancelled = false,
@@ -294,3 +314,10 @@ private fun TimetableItemCardSamples() {
         )
     }
 }
+
+private fun sampleSpeaker(name: String) = TimetableSpeaker(
+    id = TimetableSpeakerId(name),
+    name = name,
+    tagLine = "",
+    iconUrl = null,
+)
