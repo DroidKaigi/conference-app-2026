@@ -4,14 +4,13 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.isSelectable
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
-import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.testing.Robot
 import kotlin.test.assertEquals
@@ -40,10 +39,8 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun inputLink(text: String) = inputField(LINK_FIELD_INDEX, text)
 
-    // The mascot row is the first selectable group on the form, so an option is reached by the
-    // ordinal of the mascot it stands for.
-    fun clickMascot(mascot: Mascot) {
-        composeUiTest.onAllNodes(isSelectable())[mascot.ordinal].performClick()
+    fun clickMascot(mascotName: String) {
+        composeUiTest.onNodeWithContentDescription(mascotName).performClick()
         composeUiTest.waitForIdle()
     }
 

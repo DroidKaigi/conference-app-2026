@@ -134,4 +134,5 @@ private val ProfileCardScreenUiState.Form.hasNoError: Boolean
         linkError == null &&
         avatarImageError == null
 
-private val LINK_PATTERN = Regex("""^https?://[^\s/?#.]+(?:\.[^\s/?#.]+)+(?:[/?#]\S*)?$""")
+// Matches exactly what the malformed-link message promises: a scheme followed by a non-blank rest.
+private val LINK_PATTERN = Regex("""^https?://\S+$""")

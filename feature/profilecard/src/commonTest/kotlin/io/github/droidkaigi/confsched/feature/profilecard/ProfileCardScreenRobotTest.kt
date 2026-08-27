@@ -40,7 +40,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                     inputNickName("Speaker B")
                     inputOccupation("Designer")
                     inputLink("https://example.com/b")
-                    clickMascot(Mascot.Meerkat)
+                    clickMascot("Meerkat")
                     clickSketchiness("Playful")
                     clickCreate()
                 }
@@ -71,7 +71,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                         inputNickName("Speaker B")
                         inputOccupation("Designer")
                         inputLink("https://example.com/b")
-                        clickMascot(Mascot.Meerkat)
+                        clickMascot("Meerkat")
                         clickSketchiness("Playful")
                         clickCreate()
                     }

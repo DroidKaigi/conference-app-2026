@@ -24,7 +24,8 @@ private fun shareOrDownload(message: String, data: Int8Array): Unit = js(
             link.href = url;
             link.download = 'profile-card.png';
             link.click();
-            URL.revokeObjectURL(url);
+            // The browser reads the URL after click() returns, so revoking it synchronously can void the download.
+            setTimeout(() => URL.revokeObjectURL(url), 0);
         }
     }""",
 )
