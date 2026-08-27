@@ -10,6 +10,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
+import io.github.droidkaigi.confsched.core.common.httpClientEngineFactory
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 import io.ktor.client.HttpClient
 import org.jetbrains.compose.resources.decodeToImageBitmap
@@ -67,7 +68,7 @@ fun ByteArrayImage(
 fun SetupRemoteImageLoader() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
-            .components { add(KtorNetworkFetcherFactory(HttpClient(imageHttpClientEngineFactory()))) }
+            .components { add(KtorNetworkFetcherFactory(HttpClient(httpClientEngineFactory()))) }
             .memoryCache {
                 MemoryCache.Builder()
                     .maxSizePercent(context, percent = 0.25)
