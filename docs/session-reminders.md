@@ -27,7 +27,7 @@ The result holds the favorites whose session has not started yet, earliest first
 
 ## Keeping the platform in step
 
-`SessionReminderSync` (`:app-shared`, `AppScope`) reschedules whenever the favorites change, the `KaigiClock` offset shifts, or a timetable fetch replaces the persisted payload (`PersistedTimetableReader.updates`). Each round reads the persisted timetable, computes the reminders and passes them to the `SessionReminderScheduler` binding. The first emission reschedules too, so an app start reconciles whatever the previous process left behind; a null timetable — nothing fetched or a switched server environment — reschedules an empty list, and the fetch that follows fills it in again. A failing round is logged and never breaks the collector.
+`SessionReminderSync` (`:app-shared`, `AppScope`) reschedules whenever the favorites change, the `KaigiClock` offset shifts, the server environment changes, or a timetable fetch replaces the persisted payload (`PersistedTimetableReader.updates`). Each round reads the persisted timetable, computes the reminders and passes them to the `SessionReminderScheduler` binding. The first emission reschedules too, so an app start reconciles whatever the previous process left behind. A round without a readable timetable leaves the existing schedule in place, and a failing round is logged and never breaks the collector.
 
 ```kotlin
 interface SessionReminderScheduler {
