@@ -7,7 +7,9 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.nextFavoritesWidgetBoundary
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.first
 import kotlin.time.Instant
 import kotlin.time.toJavaDuration
@@ -30,9 +32,9 @@ class FavoritesWidgetRefreshWorker(
 
 internal suspend fun scheduleFavoritesWidgetRefresh(context: Context, now: Instant) {
     val dependencies = context.widgetDependencies
-    val timetable = dependencies.persistedTimetableReader.read()
+    val timetable = dependencies.persistedTimetableReader.read() ?: Timetable(items = persistentListOf())
     val favoriteIds = dependencies.favoritesStore.favoriteIds().first()
-    val boundary = timetable?.let { nextFavoritesWidgetBoundary(now, it, favoriteIds) }
+    val boundary = nextFavoritesWidgetBoundary(now, timetable, favoriteIds)
     val workManager = WorkManager.getInstance(context)
     if (boundary == null) {
         workManager.cancelUniqueWork(REFRESH_WORK_NAME)

@@ -44,19 +44,21 @@ sealed interface FavoritesWidgetRow {
     data class More(val count: Int) : FavoritesWidgetRow
 }
 
+private val ConferenceStart = DroidKaigi2026Day.Day1.at(0, 0)
+
+// ConferenceTimeZone is a fixed offset, so adding wall-clock hours is exact.
+private val ConferenceEnd = DroidKaigi2026Day.Day2.at(0, 0) + 24.hours
+
 fun computeFavoritesWidgetState(
     now: Instant,
     timetable: Timetable,
     favoriteIds: Set<TimetableItemId>,
 ): FavoritesWidgetState {
-    val conferenceStart = DroidKaigi2026Day.Day1.at(0, 0)
-    // ConferenceTimeZone is a fixed offset, so adding wall-clock hours is exact.
-    val conferenceEnd = DroidKaigi2026Day.Day2.at(0, 0) + 24.hours
-    if (now < conferenceStart) {
+    if (now < ConferenceStart) {
         val today = now.toLocalDateTime(ConferenceTimeZone).date
         return FavoritesWidgetState.Countdown(today.daysUntil(DroidKaigi2026Day.Day1.date))
     }
-    if (now >= conferenceEnd) return FavoritesWidgetState.PostConference
+    if (now >= ConferenceEnd) return FavoritesWidgetState.PostConference
     val favorites = timetable.items.filter { it.id in favoriteIds }
     if (favorites.isEmpty()) return FavoritesWidgetState.Empty
     val remaining = favorites.filter { it.endInstant > now }
@@ -84,15 +86,15 @@ fun nextFavoritesWidgetBoundary(
     timetable: Timetable,
     favoriteIds: Set<TimetableItemId>,
 ): Instant? {
-    if (now < DroidKaigi2026Day.Day1.at(0, 0)) {
+    if (now < ConferenceStart) {
         val today = now.toLocalDateTime(ConferenceTimeZone).date
         return today.plus(1, DateTimeUnit.DAY).atStartOfDayIn(ConferenceTimeZone)
     }
-    return timetable.items
+    if (now >= ConferenceEnd) return null
+    val favoriteBoundaries = timetable.items
         .filter { it.id in favoriteIds }
         .flatMap { listOf(it.startInstant, it.endInstant) }
-        .filter { it > now }
-        .minOrNull()
+    return (favoriteBoundaries + ConferenceEnd).filter { it > now }.min()
 }
 
 /**

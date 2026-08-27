@@ -219,10 +219,17 @@ class FavoritesWidgetStateTest {
     }
 
     @Test
-    fun the_boundary_is_absent_once_every_favorite_has_ended_or_nothing_is_favorited() {
+    fun during_the_conference_the_boundary_falls_back_to_the_conference_end() {
+        val conferenceEnd = DroidKaigi2026Day.Day2.at(0, 0) + 24.hours
         val timetable = timetable(item("a", startsAt = "10:00", endsAt = "10:40"))
-        assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 40), timetable, ids("a")))
-        assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(9, 0), timetable, ids()))
+        assertEquals(conferenceEnd, nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 40), timetable, ids("a")))
+        assertEquals(conferenceEnd, nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(9, 0), timetable, ids()))
+        assertEquals(conferenceEnd, nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(9, 0), Timetable(items = persistentListOf()), ids("a")))
+    }
+
+    @Test
+    fun after_the_conference_there_is_no_boundary() {
+        val timetable = timetable(item("a", startsAt = "10:00", endsAt = "10:40"))
         assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day2.at(0, 0) + 24.hours, timetable, ids("a")))
     }
 }
