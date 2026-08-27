@@ -49,9 +49,9 @@ private fun CoroutineScope.readImage(resolver: ContentResolver, uri: Uri, onImag
 
 private fun Bitmap.squareThumbnail(maxSide: Int): Bitmap {
     val side = minOf(width, height)
-    val square = Bitmap.createBitmap(this, (width - side) / 2, (height - side) / 2, side, side)
-    if (side <= maxSide) return square
-    return Bitmap.createScaledBitmap(square, maxSide, maxSide, true)
+    val scale = minOf(1f, maxSide.toFloat() / side)
+    val matrix = Matrix().apply { setScale(scale, scale) }
+    return Bitmap.createBitmap(this, (width - side) / 2, (height - side) / 2, side, side, matrix, true)
 }
 
 private fun decodeUpright(resolver: ContentResolver, uri: Uri): Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

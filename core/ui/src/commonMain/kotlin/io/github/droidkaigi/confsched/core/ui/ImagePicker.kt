@@ -10,8 +10,7 @@ import androidx.compose.runtime.Composable
 @Composable
 expect fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit
 
-// The picked image is decoded synchronously on every composition that shows it, so it is stored
-// no larger than its largest on-screen plate needs.
+// Decoded synchronously on every composition that shows it, so stored no larger than its largest plate needs.
 const val PICKED_IMAGE_SIDE = 512
 
 const val PICKED_IMAGE_JPEG_QUALITY = 90
