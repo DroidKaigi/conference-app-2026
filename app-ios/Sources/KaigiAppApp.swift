@@ -1,10 +1,13 @@
 import AppShared
 import SwiftUI
+import WidgetKit
 
 @main
 struct KaigiAppApp: App {
     private let host = KaigiAppHost(
-        swiftPackageLicensesJson: swiftPackageLicensesJson()
+        swiftPackageLicensesJson: swiftPackageLicensesJson(),
+        favoritesWidgetAppGroup: FavoritesWidgetContract.appGroup,
+        favoritesWidgetSnapshotSchemaVersion: Int32(FavoritesWidgetContract.snapshotSchemaVersion)
     )
 
     init() {
@@ -15,6 +18,16 @@ struct KaigiAppApp: App {
         WindowGroup {
             RootView(host: host)
                 .ignoresSafeArea()
+                .onOpenURL { host.submitDeepLink(url: $0.absoluteString) }
+                .task { try? await reloadWidgetOnSnapshotChange() }
+        }
+    }
+
+    /// Collecting the flow is what writes the snapshot the widget extension reads, so the reload
+    /// always follows a file the extension can already see.
+    private func reloadWidgetOnSnapshotChange() async throws {
+        for try await _ in host.favoritesWidgetSnapshots.asAsyncSequence() {
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 }

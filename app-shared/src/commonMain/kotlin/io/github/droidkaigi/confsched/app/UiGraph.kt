@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.common.SoilErrorMonitor
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.model.AppearanceSubscriptionKey
 import io.github.droidkaigi.confsched.core.preview.PreviewImageResolver
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableDayRequestStore
 import soil.query.SwrClientPlus
 
 @GraphExtension(UiScope::class)
@@ -21,6 +22,7 @@ interface UiGraph {
     val appNavigator: AppNavigator
     val appEntryProvider: AppEntryProvider
     val deepLinkStore: DeepLinkStore
+    val timetableDayRequestStore: TimetableDayRequestStore
 
     val historySyncEffect: HistorySyncEffect
     val initialNavKeyOverrideProvider: InitialNavKeyOverrideProvider

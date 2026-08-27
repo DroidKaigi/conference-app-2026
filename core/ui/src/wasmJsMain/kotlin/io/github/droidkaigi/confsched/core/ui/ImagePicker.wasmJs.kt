@@ -23,7 +23,7 @@ private fun pickImage(onImagePicked: (ByteArray) -> Unit) {
         val file = input.files?.get(0)
         if (file != null) {
             val reader = FileReader()
-            reader.onload = { onImagePicked(readerResultBytes(reader).toByteArray()) }
+            reader.onload = { readerResultBytes(reader).toByteArray().toPickedImageJpeg()?.let(onImagePicked) }
             reader.readAsArrayBuffer(file)
         }
     }

@@ -4,17 +4,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.useContents
 import kotlinx.cinterop.usePinned
+import platform.CoreGraphics.CGRectMake
+import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.PhotosUI.PHPickerConfiguration
 import platform.PhotosUI.PHPickerFilter
 import platform.PhotosUI.PHPickerResult
 import platform.PhotosUI.PHPickerViewController
 import platform.PhotosUI.PHPickerViewControllerDelegateProtocol
+import platform.UIKit.UIGraphicsImageRenderer
+import platform.UIKit.UIGraphicsImageRendererFormat
+import platform.UIKit.UIImage
+import platform.UIKit.UIImageJPEGRepresentation
 import platform.darwin.NSObject
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
 import platform.posix.memcpy
+import kotlin.math.min
 
 @Composable
 actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
@@ -43,10 +51,27 @@ private class ImagePickerDelegate(
         picker.dismissViewControllerAnimated(true, null)
         val itemProvider = (didFinishPicking.firstOrNull() as? PHPickerResult)?.itemProvider ?: return
         itemProvider.loadDataRepresentationForTypeIdentifier(IMAGE_TYPE_IDENTIFIER) { data, _ ->
-            val bytes = data?.toByteArray() ?: return@loadDataRepresentationForTypeIdentifier
+            val bytes = data?.let(::uprightJpeg)?.toByteArray() ?: return@loadDataRepresentationForTypeIdentifier
             dispatch_async(dispatch_get_main_queue()) { onImagePicked(bytes) }
         }
     }
+}
+
+// The picked bytes are decoded later by Skia, which neither reads EXIF orientation nor
+// understands HEIC, so the image is normalized to an upright JPEG here.
+@OptIn(ExperimentalForeignApi::class)
+private fun uprightJpeg(data: NSData): NSData? {
+    val image = UIImage.imageWithData(data) ?: return null
+    // With scale 1 the renderer's points are pixels, so the output side is exact.
+    val format = UIGraphicsImageRendererFormat.defaultFormat().apply { scale = 1.0 }
+    val (width, height) = image.size.useContents { width to height }
+    val side = min(width, height)
+    val target = min(side, PICKED_IMAGE_SIDE.toDouble())
+    val scale = target / side
+    val upright = UIGraphicsImageRenderer(CGSizeMake(target, target), format).imageWithActions {
+        image.drawInRect(CGRectMake(-(width - side) / 2 * scale, -(height - side) / 2 * scale, width * scale, height * scale))
+    }
+    return UIImageJPEGRepresentation(upright, PICKED_IMAGE_JPEG_QUALITY / 100.0)
 }
 
 @OptIn(ExperimentalForeignApi::class)

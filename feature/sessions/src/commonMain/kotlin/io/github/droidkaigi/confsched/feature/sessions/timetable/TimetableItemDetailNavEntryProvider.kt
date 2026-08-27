@@ -11,6 +11,7 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.ui.rememberCalendarEventAdder
 import io.github.droidkaigi.confsched.core.ui.rememberTextSharer
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -23,12 +24,14 @@ class TimetableItemDetailNavEntryProvider(
         entry<TimetableItemDetailNavKey>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
             val graph = retain(key) { screenGraphFactory.createTimetableItemDetailScreenGraph(key.id) }
             val uriHandler = LocalUriHandler.current
+            val addCalendarEvent = rememberCalendarEventAdder()
             val shareText = rememberTextSharer()
             context(graph.screenContext) {
                 TimetableItemDetailScreenRoot(
                     onNavigateBack = { graph.screenNavigator.back(origin = key) },
                     onNavigateToSession = graph.screenNavigator::openSessionDetail,
                     onOpenUrl = uriHandler::openUri,
+                    onAddCalendarEvent = addCalendarEvent,
                     onShareText = shareText,
                 )
             }

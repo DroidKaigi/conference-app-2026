@@ -3,8 +3,8 @@ package io.github.droidkaigi.confsched.core.preview
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.SessionCategory
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
@@ -27,7 +27,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
         fakeItem(
             id = "d1a",
             title = MultiLangText(ja = "サンプルセッションA", en = "Sample Session A"),
-            room = Room.NARWHAL,
+            room = SessionRoom.NARWHAL,
             speakers = persistentListOf(),
             language = Language.MIXED,
             day = DroidKaigi2026Day.Day1,
@@ -41,7 +41,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
         fakeItem(
             id = "d1c",
             title = MultiLangText(ja = "サンプルセッションC", en = "Sample Session C"),
-            room = Room.MEERKAT,
+            room = SessionRoom.MEERKAT,
             speakers = persistentListOf(fakeSpeaker("sp3", "Speaker C")),
             language = Language.ENGLISH,
             day = DroidKaigi2026Day.Day1,
@@ -58,7 +58,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
                 ja = "サンプルセッションD、折り返しを確かめるための長いプレースホルダーのタイトル",
                 en = "Sample Session D, with a placeholder title long enough to wrap onto several lines",
             ),
-            room = Room.PANDA,
+            room = SessionRoom.PANDA,
             speakers = persistentListOf(fakeSpeaker("sp4", "Speaker D")),
             language = Language.ENGLISH,
             day = DroidKaigi2026Day.Day1,
@@ -74,7 +74,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
                 ja = "サンプルセッションE、折り返しを確かめるための長いプレースホルダーのタイトル",
                 en = "Sample Session E, with a placeholder title long enough to wrap onto several lines",
             ),
-            room = Room.QUAIL,
+            room = SessionRoom.QUAIL,
             speakers = persistentListOf(fakeSpeaker("sp5", "Speaker E")),
             language = Language.ENGLISH,
             day = DroidKaigi2026Day.Day1,
@@ -87,7 +87,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
         fakeItem(
             id = "d2a",
             title = MultiLangText(ja = "サンプルセッションF", en = "Sample Session F"),
-            room = Room.OTTER,
+            room = SessionRoom.OTTER,
             speakers = persistentListOf(fakeSpeaker("sp6", "Speaker F")),
             language = Language.MIXED,
             day = DroidKaigi2026Day.Day2,
@@ -103,7 +103,7 @@ fun Timetable.Companion.fake(): Timetable = Timetable(
                 ja = "サンプルセッションG、そこそこ長いプレースホルダーのタイトル",
                 en = "Sample Session G, with a moderately long placeholder title",
             ),
-            room = Room.NARWHAL,
+            room = SessionRoom.NARWHAL,
             speakers = persistentListOf(fakeSpeaker("sp1", "Speaker A")),
             language = Language.MIXED,
             day = DroidKaigi2026Day.Day2,
@@ -126,7 +126,7 @@ fun TimetableItem.Companion.fake(): TimetableItem = fakeItem(
         ja = "サンプルセッションB、折り返しを確かめるための長いプレースホルダーのタイトル",
         en = "Sample Session B, with a placeholder title long enough to wrap onto several lines",
     ),
-    room = Room.OTTER,
+    room = SessionRoom.OTTER,
     speakers = persistentListOf(
         fakeSpeaker("sp1", "Speaker A"),
         fakeSpeaker("sp2", "Speaker B"),
@@ -158,7 +158,7 @@ private fun fakeSpeaker(id: String, name: String) = TimetableSpeaker(
 private fun fakeItem(
     id: String,
     title: MultiLangText,
-    room: Room,
+    room: SessionRoom,
     speakers: PersistentList<TimetableSpeaker>,
     language: Language,
     day: DroidKaigi2026Day,

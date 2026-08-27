@@ -26,7 +26,7 @@ import androidx.glance.unit.ColorProvider
 import io.github.droidkaigi.confsched.R
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 
 @Composable
 internal fun HeaderRow(label: String, live: Boolean, colors: FavoritesWidgetColors) {
@@ -99,7 +99,7 @@ internal fun Mascot(
 }
 
 @Composable
-internal fun RoomChip(room: Room, colors: FavoritesWidgetColors) {
+internal fun RoomChip(room: SessionRoom, colors: FavoritesWidgetColors) {
     val theme = roomTheme(room, colors.isDark)
     Box(
         modifier = GlanceModifier.background(ColorProvider(theme.container))
@@ -114,7 +114,7 @@ internal fun RoomChip(room: Room, colors: FavoritesWidgetColors) {
     }
 }
 
-private fun chipLabel(room: Room, shape: RoomShape?): String {
+private fun chipLabel(room: SessionRoom, shape: RoomShape?): String {
     val mark = when (shape) {
         RoomShape.Circle -> "○"
         RoomShape.Star -> "✦"

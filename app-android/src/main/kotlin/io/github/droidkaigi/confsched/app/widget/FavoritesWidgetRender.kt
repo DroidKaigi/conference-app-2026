@@ -30,12 +30,11 @@ internal fun favoritesWidgetRenders(
     favoriteIds: Flow<Set<TimetableItemId>>,
     colorSchemes: Flow<KaigiColorScheme>,
     clockOffsets: Flow<Duration>,
-    readTimetable: suspend () -> Timetable?,
+    timetables: Flow<Timetable?>,
     now: () -> Instant,
-): Flow<FavoritesWidgetRender> = combine(favoriteIds, colorSchemes, clockOffsets) { ids, scheme, _ ->
-    ids to scheme
-}.transformLatest { (ids, scheme) ->
-    val timetable = readTimetable() ?: Timetable(items = persistentListOf())
+): Flow<FavoritesWidgetRender> = combine(favoriteIds, colorSchemes, clockOffsets, timetables) { ids, scheme, _, timetable ->
+    Triple(ids, scheme, timetable ?: Timetable(items = persistentListOf()))
+}.transformLatest { (ids, scheme, timetable) ->
     val colors = scheme.toFavoritesWidgetColors()
     while (true) {
         val current = now()
@@ -50,6 +49,6 @@ internal fun WidgetDependencies.favoritesWidgetRenders(): Flow<FavoritesWidgetRe
         favoriteIds = favoritesStore.favoriteIds(),
         colorSchemes = appearanceSettingsStore.colorScheme(),
         clockOffsets = kaigiClock.offset,
-        readTimetable = persistedTimetableReader::read,
+        timetables = persistedTimetableReader.timetables(),
         now = kaigiClock::now,
     )

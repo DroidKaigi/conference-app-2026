@@ -1,10 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name=".app.KaigiApplication"
-        android:label="DroidKaigi 2026"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.KaigiApp">
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.KaigiApp"
+        android:supportsRtl="true">
         <!-- singleTask: a deep link from the widget brings the existing task forward through
              onNewIntent instead of stacking a second copy of the single-activity app. -->
         <activity
@@ -43,6 +48,16 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/favorites_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".app.notification.SessionReminderReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".app.notification.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>

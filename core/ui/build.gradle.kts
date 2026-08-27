@@ -21,25 +21,17 @@ kotlin {
             api(libs.soilReacty)
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
-            implementation(libs.ktorClientCore)
+            implementation(libs.kotlinxDatetime)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
-        jvmMain.dependencies {
-            implementation(libs.ktorClientCio)
-        }
         androidMain.dependencies {
             implementation(libs.androidxActivityCompose)
             implementation(libs.androidxCore)
-            implementation(libs.ktorClientOkhttp)
         }
         wasmJsMain.dependencies {
             implementation(libs.kotlinxBrowser)
-            implementation(libs.ktorClientJs)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktorClientDarwin)
         }
     }
 }

@@ -20,7 +20,12 @@ class DefaultProfileCardMutationKey(
     mutate = { card ->
         val previousPath = profileCardStore.card().first()?.avatarImagePath
         val path = card.avatarImage?.let { avatarImageStore.save(it.bytes) }
-        profileCardStore.save(card, path)
-        if (previousPath != null && path == null) avatarImageStore.delete(previousPath)
+        try {
+            profileCardStore.save(card, path)
+        } catch (e: Exception) {
+            if (path != null) avatarImageStore.delete(path)
+            throw e
+        }
+        if (previousPath != null && previousPath != path) avatarImageStore.delete(previousPath)
     },
 )
