@@ -1,17 +1,18 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,20 +22,30 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.LocalFileImage
+import io.github.droidkaigi.confsched.core.ui.ByteArrayImage
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.SketchOutlineShape
@@ -44,7 +55,6 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ca
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_greeting
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_venue
-import io.github.vinceglb.filekit.PlatformFile
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
 import kotlin.math.cos
@@ -62,11 +72,12 @@ fun ProfileCardFront(
     occupation: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
-    avatarImage: PlatformFile?,
+    avatarImage: AvatarImage?,
+    taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
-    ProfileCardFace(sketchiness = sketchiness, seed = seed, modifier = modifier) {
+    ProfileCardFace(sketchiness = sketchiness, outlineSeed = seed, topStartTape = taped, bottomEndTape = taped, mirrored = false, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,94 +85,60 @@ fun ProfileCardFront(
                 .clip(DuskBandShape)
                 .background(ProfileCardColors.duskBand),
         )
-        CornerBracket(
-            mirrored = false,
-            modifier = Modifier.align(Alignment.TopStart).padding(ProfileCardFrontDefaults.cornerPadding),
+        EventLabelHeader(text = stringResource(Res.string.card_event_label), color = ProfileCardColors.onDuskBand, centeredLabel = false)
+        ProfilePhotoPlate(
+            seed = seed + 2,
+            sketchiness = sketchiness,
+            avatarImage = avatarImage,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.photoPlateOffset),
         )
-        CornerBracket(
-            mirrored = true,
-            modifier = Modifier.align(Alignment.TopEnd).padding(ProfileCardFrontDefaults.cornerPadding),
+        SpeechBubble(
+            text = stringResource(Res.string.card_greeting),
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.bubbleOffset),
+        )
+        Sparkles(ProfileCardFrontDefaults.duskBandSparkles, ProfileCardColors.onDuskBand)
+        Sparkles(ProfileCardFrontDefaults.plateSparkles, ProfileCardColors.ink)
+        Text(
+            text = nickName,
+            color = ProfileCardColors.ink,
+            style = ProfileCardTextStyles.display,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.nickNameOffset).width(ProfileCardFrontDefaults.nickNameWidth),
         )
         Text(
-            text = stringResource(Res.string.card_event_label),
-            color = ProfileCardColors.onDuskBand,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.align(Alignment.TopStart).padding(ProfileCardFrontDefaults.textPadding),
+            text = occupation,
+            color = ProfileCardColors.mutedInk,
+            style = ProfileCardTextStyles.caption,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.occupationOffset).width(ProfileCardFrontDefaults.occupationWidth),
         )
-        Box(
-            modifier = Modifier.align(Alignment.TopCenter).offset(y = ProfileCardFrontDefaults.plateOffsetY),
-        ) {
-            ProfilePhotoPlate(seed = seed + 2, sketchiness = sketchiness, avatarImage = avatarImage)
-            SpeechBubble(
-                text = stringResource(Res.string.card_greeting),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = ProfileCardFrontDefaults.bubbleOffsetX, y = ProfileCardFrontDefaults.bubbleOffsetY),
-            )
-        }
-        ProfileCardFrontDefaults.duskBandSparkles.forEach { sparkle ->
-            SketchSparkle(
-                color = ProfileCardColors.onDuskBand,
-                markSize = sparkle.size,
-                modifier = Modifier
-                    .offset(x = sparkle.x - sparkle.size / 2, y = sparkle.y - sparkle.size / 2)
-                    .rotate(sparkle.rotationDegrees),
-            )
-        }
-        ProfileCardFrontDefaults.plateSparkles.forEach { sparkle ->
-            SketchSparkle(
-                color = ProfileCardColors.ink,
-                markSize = sparkle.size,
-                modifier = Modifier
-                    .offset(x = sparkle.x - sparkle.size / 2, y = sparkle.y - sparkle.size / 2)
-                    .rotate(sparkle.rotationDegrees),
-            )
-        }
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .offset(y = ProfileCardFrontDefaults.textBlockOffsetY)
-                .padding(horizontal = ProfileCardFrontDefaults.textPadding),
-        ) {
-            Text(nickName, color = ProfileCardColors.ink, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-            Text(occupation, color = ProfileCardColors.ink, style = MaterialTheme.typography.bodyMedium)
-            SketchHorizontalDivider(
-                seed = seed + 3,
-                color = ProfileCardColors.ink,
-                thickness = 1.dp,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            )
-            Text(
-                stringResource(Res.string.card_venue),
-                color = ProfileCardColors.ink,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(stringResource(Res.string.card_dates), color = ProfileCardColors.ink, style = MaterialTheme.typography.labelSmall)
-        }
+        SketchHorizontalDivider(
+            seed = seed + 3,
+            color = ProfileCardColors.hairline,
+            thickness = ProfileCardFrontDefaults.dividerThickness,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.dividerOffset).width(ProfileCardFrontDefaults.dividerWidth),
+        )
+        Text(
+            text = stringResource(Res.string.card_venue),
+            color = ProfileCardColors.ink,
+            style = ProfileCardTextStyles.accent,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.venueOffset),
+        )
+        Text(
+            text = stringResource(Res.string.card_dates),
+            color = ProfileCardColors.mutedInk,
+            style = ProfileCardTextStyles.accent,
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.datesOffset),
+        )
         MascotSealBadge(
             mascot = mascot,
             sketchiness = sketchiness,
             seed = seed + 4,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(ProfileCardFrontDefaults.cornerPadding),
+            modifier = Modifier.cardOffset(ProfileCardFrontDefaults.sealOffset).rotate(ProfileCardFrontDefaults.sealRotationDegrees),
         )
     }
 }
 
-/** A camera-viewfinder-style corner mark; [mirrored] opens it to the left instead of the right. */
 @Composable
-internal fun CornerBracket(mirrored: Boolean, modifier: Modifier = Modifier, color: Color = ProfileCardColors.onDuskBand) {
-    Canvas(modifier = modifier.size(ProfileCardFrontDefaults.bracketSize)) {
-        val strokeWidth = size.minDimension * 0.14f
-        val cornerX = if (mirrored) size.width else 0f
-        val armEndX = if (mirrored) 0f else size.width
-        drawLine(color, Offset(cornerX, 0f), Offset(armEndX, 0f), strokeWidth, StrokeCap.Round)
-        drawLine(color, Offset(cornerX, 0f), Offset(cornerX, size.height), strokeWidth, StrokeCap.Round)
-    }
-}
-
-@Composable
-private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: PlatformFile?, modifier: Modifier = Modifier) {
+private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: AvatarImage?, modifier: Modifier = Modifier) {
     val plateSize = ProfileCardFrontDefaults.photoPlateSize
     val shape = SketchEllipseShape(
         seed = seed,
@@ -174,103 +151,113 @@ private fun ProfilePhotoPlate(seed: Int, sketchiness: Sketchiness, avatarImage: 
         modifier = modifier
             .size(plateSize)
             .clip(shape)
-            .background(ProfileCardColors.plate)
+            .background(if (avatarImage == null) ProfileCardColors.banner else ProfileCardColors.plate)
             .sketchBorder(shape, ProfileCardColors.ink),
         contentAlignment = Alignment.Center,
     ) {
         if (avatarImage != null) {
-            LocalFileImage(
-                file = avatarImage,
+            ByteArrayImage(
+                bytes = avatarImage.bytes,
                 contentDescription = null,
                 modifier = Modifier.size(plateSize).clip(shape),
                 contentScale = ContentScale.Crop,
             )
         } else {
-            PlaceholderFace(modifier = Modifier.size(plateSize * 0.55f))
+            PlaceholderFace(modifier = Modifier.size(plateSize))
         }
     }
 }
 
 /**
  * A minimal drawn face standing in for the user's photo, shown until one is picked. Matches the
- * design's own sample face, which is a placeholder rather than an asset to export.
+ * design's own sample face, which is a placeholder rather than an asset to export: two crescent
+ * eyes over a shallow smile, all fractions of the plate it fills.
  */
 @Composable
-private fun PlaceholderFace(modifier: Modifier = Modifier, color: Color = ProfileCardColors.ink) {
-    Canvas(modifier = modifier) {
-        val eyeRadius = size.minDimension * 0.06f
-        val eyeY = size.height * 0.42f
-        drawCircle(color, eyeRadius, Offset(size.width * 0.35f, eyeY))
-        drawCircle(color, eyeRadius, Offset(size.width * 0.65f, eyeY))
-        val smileWidth = size.width * 0.36f
-        val smileHeight = smileWidth * 0.6f
+private fun PlaceholderFace(modifier: Modifier = Modifier, color: Color = ProfileCardColors.onBanner) {
+    Canvas(modifier = modifier) { drawPlaceholderFace(color) }
+}
+
+internal fun DrawScope.drawPlaceholderFace(color: Color) {
+    val plate = size.minDimension
+    val eyeStroke = Stroke(width = plate * 0.013f, cap = StrokeCap.Round)
+    val eyeSize = Size(plate * 0.045f, plate * 0.053f)
+    listOf(0.5f - 0.145f, 0.5f + 0.145f).forEach { eyeX ->
         drawArc(
             color = color,
-            startAngle = 20f,
+            startAngle = -70f,
             sweepAngle = 140f,
             useCenter = false,
-            topLeft = Offset(size.width / 2f - smileWidth / 2f, size.height * 0.55f),
-            size = Size(smileWidth, smileHeight),
-            style = Stroke(width = size.minDimension * 0.05f, cap = StrokeCap.Round),
+            topLeft = Offset(size.width * eyeX - eyeSize.width / 2f, size.height * 0.427f - eyeSize.height / 2f),
+            size = eyeSize,
+            style = eyeStroke,
         )
     }
+    val smileSize = Size(plate * 0.20f, plate * 0.117f)
+    drawArc(
+        color = color,
+        startAngle = 20f,
+        sweepAngle = 140f,
+        useCenter = false,
+        topLeft = Offset(size.width / 2f - smileSize.width / 2f, size.height * 0.505f),
+        size = smileSize,
+        style = Stroke(width = plate * 0.017f, cap = StrokeCap.Round),
+    )
 }
 
 @Composable
 private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
-    val shape = SpeechBubbleShape(borderThickness = 1.6.dp)
+    val fill = ProfileCardColors.brightPlate
+    val ink = ProfileCardColors.onBanner
+    val bubble = remember(fill, ink) { speechBubbleVector(fill = fill, ink = ink) }
     Box(
         modifier = modifier
             .size(ProfileCardFrontDefaults.bubbleWidth, ProfileCardFrontDefaults.bubbleHeight)
-            .clip(shape)
-            .background(ProfileCardColors.plate)
-            .sketchBorder(shape, ProfileCardColors.ink),
+            .rotate(ProfileCardFrontDefaults.bubbleRotationDegrees),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, color = ProfileCardColors.ink, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+        Image(
+            painter = rememberVectorPainter(bubble),
+            contentDescription = null,
+            modifier = Modifier.matchParentSize(),
+        )
+        Text(
+            text = text,
+            color = ink,
+            style = ProfileCardTextStyles.accent,
+            modifier = Modifier
+                .offset(x = ProfileCardFrontDefaults.bubbleTextOffset.x, y = ProfileCardFrontDefaults.bubbleTextOffset.y)
+                .rotate(ProfileCardFrontDefaults.bubbleTextRotationDegrees),
+        )
     }
 }
 
-/**
- * The greeting bubble's outline, traced from the Figma badge: a tilted rounded body with a
- * small tail pointing toward the avatar, rather than a plain rounded rectangle.
- */
-private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : SketchOutlineShape {
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val inset = with(density) { borderThickness.toPx() / 2f }
-        val scaleX = (size.width - inset * 2f) / SOURCE_WIDTH
-        val scaleY = (size.height - inset * 2f) / SOURCE_HEIGHT
+/** The Figma "Hi Bubble" vector as exported, coloured from the theme instead of its baked hex values. */
+private fun speechBubbleVector(fill: Color, ink: Color): ImageVector = ImageVector.Builder(
+    name = "SpeechBubble",
+    defaultWidth = SPEECH_BUBBLE_VIEWPORT_WIDTH.dp,
+    defaultHeight = SPEECH_BUBBLE_VIEWPORT_HEIGHT.dp,
+    viewportWidth = SPEECH_BUBBLE_VIEWPORT_WIDTH,
+    viewportHeight = SPEECH_BUBBLE_VIEWPORT_HEIGHT,
+).apply {
+    addPath(
+        pathData = PathParser().parsePathString(SPEECH_BUBBLE_PATH).toNodes(),
+        fill = SolidColor(fill),
+        stroke = SolidColor(ink),
+        strokeLineWidth = SPEECH_BUBBLE_STROKE_WIDTH,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+}.build()
 
-        fun point(x: Float, y: Float) = Offset(x * scaleX + inset, y * scaleY + inset)
-
-        fun Path.curveTo(c1: Offset, c2: Offset, end: Offset) = cubicTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y)
-
-        val path = Path()
-        val start = point(15.1872f, 1.16408f)
-        path.moveTo(start.x, start.y)
-        point(54.7044f, 9.56371f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(61.2254f, 10.9498f), point(63.7928f, 14.9033f), point(62.4068f, 21.4243f))
-        point(60.2445f, 31.597f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(58.8584f, 38.118f), point(54.9049f, 40.6855f), point(48.3839f, 39.2994f))
-        point(19.1639f, 33.1498f).let { path.lineTo(it.x, it.y) }
-        point(4.86543f, 42.3174f).let { path.lineTo(it.x, it.y) }
-        point(5.01821f, 29.9591f).let { path.lineTo(it.x, it.y) }
-        point(8.86672f, 30.8998f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(2.34574f, 29.5137f), point(-0.221714f, 25.5602f), point(1.16436f, 19.0392f))
-        point(3.32664f, 8.86644f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(4.71272f, 2.34545f), point(8.66625f, -0.222f), start)
-        path.close()
-        return Outline.Generic(path)
-    }
-
-    private companion object {
-        const val SOURCE_WIDTH = 64f
-        const val SOURCE_HEIGHT = 44f
-    }
-}
+private const val SPEECH_BUBBLE_VIEWPORT_WIDTH = 62f
+private const val SPEECH_BUBBLE_VIEWPORT_HEIGHT = 44.8129f
+private const val SPEECH_BUBBLE_STROKE_WIDTH = 1.6f
+private const val SPEECH_BUBBLE_PATH =
+    "M10.8 0.8H51.2C57.8667 0.8 61.2 4.13333 61.2 10.8V21.2C61.2 27.8667 57.8667 31.2 51.2 31.2L21.34 31.26L9.26 43.2L6.84 31.08L10.8 31.2C4.13333 31.2 0.8 27.8667 0.8 21.2V10.8C0.8 4.13333 4.13333 0.8 10.8 0.8Z"
 
 /** The chosen mascot, drawn in the app's active `primary` colour — matching the front face's dusk
- * band — inside a scalloped wax-seal badge, traced from the Figma source. */
+ * band — inside a jagged wax-seal badge, traced from the Figma source. */
 @Composable
 private fun MascotSealBadge(mascot: Mascot, sketchiness: Sketchiness, seed: Int, modifier: Modifier = Modifier) {
     val badgeSize = ProfileCardFrontDefaults.badgeSize
@@ -287,17 +274,25 @@ private fun MascotSealBadge(mascot: Mascot, sketchiness: Sketchiness, seed: Int,
             .sketchBorder(shape, ProfileCardColors.ink),
         contentAlignment = Alignment.Center,
     ) {
-        MascotIcon(mascot = mascot, modifier = Modifier.size(badgeSize * 0.55f))
+        MascotIcon(
+            mascot = mascot,
+            modifier = Modifier
+                .offset(x = ProfileCardFrontDefaults.sealMascotOffset.x, y = ProfileCardFrontDefaults.sealMascotOffset.y)
+                .size(ProfileCardFrontDefaults.sealMascotBox)
+                // The seal turns as a whole; the mascot stays in the pose its artwork has.
+                .rotate(-ProfileCardFrontDefaults.sealRotationDegrees),
+        )
     }
 }
 
 /**
- * A wax-seal outline: [petalCount] smooth rounded scallops around a circle, traced from the
- * Figma badge that frames the mascot on the front face.
+ * A wax-seal outline: [pointCount] sharp points around a circle, each running straight down to the
+ * valley between it and the next, traced from the Figma badge that frames the mascot on the front
+ * face.
  */
 private data class MascotSealShape(
     val seed: Int,
-    val petalCount: Int = 13,
+    val pointCount: Int = 14,
     val jitter: Float = 0f,
     override val borderThickness: Dp = 0.dp,
 ) : SketchOutlineShape {
@@ -305,25 +300,30 @@ private data class MascotSealShape(
         val random = Random(seed)
         val inset = with(density) { borderThickness.toPx() / 2f }
         val center = Offset(size.width / 2f, size.height / 2f)
-        val outerRadius = size.minDimension / 2f - inset
-        val valleyRadius = outerRadius * 0.84f
-        val bumpRadius = outerRadius * 1.05f
+        val pointRadius = size.minDimension / 2f - inset
+        val valleyRadius = pointRadius * SEAL_VALLEY_RADIUS_RATIO
+        val step = (2.0 * PI / pointCount).toFloat()
         val path = Path()
-        repeat(petalCount) { index ->
-            val wobble = 1f + (random.nextFloat() - 0.5f) * jitter
-            val startAngle = (2.0 * PI * index / petalCount - PI / 2).toFloat()
-            val midAngle = (2.0 * PI * (index + 0.5) / petalCount - PI / 2).toFloat()
-            val endAngle = (2.0 * PI * (index + 1) / petalCount - PI / 2).toFloat()
-            val start = center + Offset(cos(startAngle), sin(startAngle)) * valleyRadius
-            val control = center + Offset(cos(midAngle), sin(midAngle)) * (bumpRadius * wobble)
-            val end = center + Offset(cos(endAngle), sin(endAngle)) * valleyRadius
-            if (index == 0) path.moveTo(start.x, start.y) else path.lineTo(start.x, start.y)
-            path.quadraticTo(control.x, control.y, end.x, end.y)
+        repeat(pointCount) { index ->
+            val pointAngle = step * index - (PI / 2).toFloat()
+            val point = center + polarOffset(pointAngle + random.angleWobble(step), pointRadius * random.radiusWobble())
+            val valley = center + polarOffset(pointAngle + step / 2f + random.angleWobble(step), valleyRadius * random.radiusWobble())
+            if (index == 0) path.moveTo(point.x, point.y) else path.lineTo(point.x, point.y)
+            path.lineTo(valley.x, valley.y)
         }
         path.close()
         return Outline.Generic(path)
     }
+
+    private fun Random.radiusWobble(): Float = 1f + (nextFloat() - 0.5f) * jitter
+
+    private fun Random.angleWobble(step: Float): Float = (nextFloat() - 0.5f) * jitter * step / 2f
 }
+
+/** The valley radius as a fraction of the point radius, measured on the Figma "Seal Edge" vector. */
+private const val SEAL_VALLEY_RADIUS_RATIO = 0.85f
+
+private fun polarOffset(angle: Float, radius: Float): Offset = Offset(cos(angle), sin(angle)) * radius
 
 /**
  * The dusk band filling the top of the front face, traced from the Figma "Color Band" vector —
@@ -346,33 +346,49 @@ private val DuskBandShape = TracedEdgeShape(
 )
 
 private object ProfileCardFrontDefaults {
-    val duskBandHeight = 192.dp
-    val cornerPadding = 16.dp
-    val textPadding = 20.dp
-    val bracketSize = 16.dp
-    val photoPlateSize = 140.dp
+    val duskBandHeight = 194.dp
+    val photoPlateSize = 141.dp
+    val photoPlateOffset = DpOffset(89.dp, 113.dp)
     val plateBorderThickness = 2.dp
-    val plateOffsetY = 96.dp
-    val bubbleWidth = 57.dp
-    val bubbleHeight = 41.dp
-    val bubbleOffsetX = 36.dp
-    val bubbleOffsetY = 6.dp
-    val textBlockOffsetY = 250.dp
-    val badgeSize = 80.dp
-    val sealBorderThickness = 2.dp
-    val sealJitter = 0.05f
+    val bubbleWidth = 58.4.dp
+    val bubbleHeight = 43.dp
+    val bubbleOffset = DpOffset(211.1.dp, 106.4.dp)
+    val bubbleTextOffset = DpOffset(1.2.dp, (-5.6).dp)
+    val bubbleRotationDegrees = 12f
 
-    // Traced from the Figma front face: six sparks, alternating -12°/20° rotation, split by
+    // The greeting turns inside the already-rotated bubble, so this adds to [bubbleRotationDegrees].
+    val bubbleTextRotationDegrees = -1.5f
+    val nickNameOffset = DpOffset(22.5.dp, 271.dp)
+    val nickNameWidth = 275.dp
+    val occupationOffset = DpOffset(22.5.dp, 324.5.dp)
+    val occupationWidth = 267.dp
+    val dividerOffset = DpOffset(22.5.dp, 354.5.dp)
+    val dividerWidth = 184.dp
+    val dividerThickness = 1.5.dp
+    val venueOffset = DpOffset(22.5.dp, 368.5.dp)
+    val datesOffset = DpOffset(22.5.dp, 390.dp)
+    val sealOffset = DpOffset(228.5.dp, 383.dp)
+    val badgeSize = 76.dp
+    val sealBorderThickness = 1.4.dp
+    val sealJitter = 0.018f
+    val sealRotationDegrees = 8f
+
+    // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
+    // ratio, so all five reach the same ink height.
+    val sealMascotBox = DpSize(64.dp, 46.dp)
+    val sealMascotOffset = DpOffset(0.dp, 0.dp)
+
+    // Traced from the Figma front face: six sparks, alternating 12°/-20° rotation, split by
     // which background they sit on so each reads against it.
     val duskBandSparkles = listOf(
-        SparklePlacement(x = 282.dp, y = 141.dp, size = 8.dp, rotationDegrees = 20f),
-        SparklePlacement(x = 60.dp, y = 89.dp, size = 9.dp, rotationDegrees = 20f),
-        SparklePlacement(x = 31.dp, y = 115.dp, size = 13.dp, rotationDegrees = -12f),
+        SparklePlacement(x = 39.dp, y = 123.dp, size = 13.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 65.5.dp, y = 95.dp, size = 8.5.dp, rotationDegrees = -20f),
+        SparklePlacement(x = 287.dp, y = 146.5.dp, size = 7.5.dp, rotationDegrees = -20f),
     )
     val plateSparkles = listOf(
-        SparklePlacement(x = 277.dp, y = 288.dp, size = 9.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 273.dp, y = 202.dp, size = 11.dp, rotationDegrees = -12f),
-        SparklePlacement(x = 58.dp, y = 249.dp, size = 8.dp, rotationDegrees = 20f),
+        SparklePlacement(x = 279.dp, y = 208.5.dp, size = 11.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 282.dp, y = 293.5.dp, size = 9.5.dp, rotationDegrees = 12f),
+        SparklePlacement(x = 63.dp, y = 254.dp, size = 7.5.dp, rotationDegrees = -20f),
     )
 }
 
@@ -387,6 +403,7 @@ private fun ProfileCardFrontPreview(
             occupation = "Software Engineer",
             mascot = Mascot.Koala,
             sketchiness = Sketchiness.Normal,
+            taped = true,
             avatarImage = null,
             modifier = Modifier.padding(24.dp),
         )

@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil3.ImageLoader
@@ -10,8 +11,7 @@ import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
-import io.github.vinceglb.filekit.PlatformFile
-import io.github.vinceglb.filekit.coil.addPlatformFileSupport
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -41,15 +41,21 @@ fun RemoteImage(
     }
 }
 
+/**
+ * An image already held in memory. It is decoded on the spot rather than through a loader: the
+ * bytes need no fetching, and a screenshot test would otherwise capture the frame before an
+ * asynchronous decode lands.
+ */
 @Composable
-fun LocalFileImage(
-    file: PlatformFile,
+fun ByteArrayImage(
+    bytes: ByteArray,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
-    AsyncImage(
-        model = file,
+    val bitmap = remember(bytes, bytes::decodeToImageBitmap)
+    Image(
+        bitmap = bitmap,
         contentDescription = contentDescription,
         modifier = modifier,
         contentScale = contentScale,
@@ -60,10 +66,7 @@ fun LocalFileImage(
 fun SetupRemoteImageLoader() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
-            .components {
-                add(KtorNetworkFetcherFactory())
-                addPlatformFileSupport()
-            }
+            .components { add(KtorNetworkFetcherFactory()) }
             .memoryCache {
                 MemoryCache.Builder()
                     .maxSizePercent(context, percent = 0.25)

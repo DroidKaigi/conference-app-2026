@@ -1,8 +1,9 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
-import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
-import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
-import io.github.vinceglb.filekit.PlatformFile
+import androidx.compose.ui.graphics.ImageBitmap
+import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 
 sealed interface ProfileCardScreenAction {
     data class UpdateNickName(val nickName: String) : ProfileCardScreenAction
@@ -15,11 +16,15 @@ sealed interface ProfileCardScreenAction {
 
     data class UpdateSketchiness(val sketchiness: Sketchiness) : ProfileCardScreenAction
 
-    data class UpdateAvatarImage(val file: PlatformFile) : ProfileCardScreenAction
+    data class UpdateAvatarImage(val avatarImage: AvatarImage) : ProfileCardScreenAction
+
+    data object RemoveAvatarImage : ProfileCardScreenAction
 
     data object Submit : ProfileCardScreenAction
 
     data object FlipCard : ProfileCardScreenAction
 
     data object EditCard : ProfileCardScreenAction
+
+    data class Share(val image: ImageBitmap) : ProfileCardScreenAction
 }

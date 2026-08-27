@@ -24,6 +24,16 @@
                 <data android:scheme="droidkaigi2026" android:host="about" />
             </intent-filter>
         </activity>
+        <!-- Grants the share sheet read access to the images the app writes to its cache. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <receiver
             android:name=".app.widget.FavoritesWidgetReceiver"
             android:exported="true">

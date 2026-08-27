@@ -22,6 +22,7 @@ androidxNavigation3 = "1.1.1"
 composeMaterial3AdaptiveNavigation3 = "1.3.0-beta02"
 agp = "9.2.1"
 androidxActivityCompose = "1.10.1"
+androidxCore = "1.16.0"
 # Jetpack Glance home-screen widget framework (app-android only).
 androidxGlance = "1.2.0-rc01"
 androidxWork = "2.10.5"
@@ -33,8 +34,6 @@ buildkonfig = "0.22.0"
 # Coil 3's network fetcher artifact (coil-network-ktor3) is only published at 3.2.0 in this stack, so
 # pin every Coil module to 3.2.0 to keep coil-core consistent across compose + network artifacts.
 coil = "3.2.0"
-# KMP file/media picker (Android/iOS/Desktop/Wasm); filekit-coil is a Coil3 Fetcher for PlatformFile.
-filekit = "0.15.0"
 # The JetWhale agent runtime requires 3.5.2, which conflict resolution would raise this to anyway;
 # declaring it keeps the catalog reading as what actually resolves.
 ktor = "3.5.2"
@@ -46,6 +45,9 @@ jetwhaleHostCompose = "1.11.1"
 droidkaigiApp = "0.1.0"
 # KMP logger with platform-native writers (Logcat / os_log / SLF4J / console), wasmJs-capable.
 kermit = "2.1.0"
+# QR encoder used for the profile card's back face; only its module matrix is consumed, the drawing
+# stays in the app's own Canvas code.
+qrcodeKotlin = "4.5.0"
 # Retrofit-style declarative HTTP clients over Ktor (KSP-generated implementations).
 ktorfit = "2.7.5"
 # Collects the open source dependencies of each platform entry module and their licenses; the Gradle
@@ -102,6 +104,7 @@ androidxDatastorePreferencesCore = { module = "androidx.datastore:datastore-pref
 androidxDatastoreCoreOkio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidxDatastore" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidxCore = { module = "androidx.core:core", version.ref = "androidxCore" }
 androidxGlanceAppwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidxGlance" }
 androidxGlancePreview = { module = "androidx.glance:glance-preview", version.ref = "androidxGlance" }
 androidxGlanceAppwidgetPreview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidxGlance" }
@@ -124,9 +127,6 @@ kspSymbolProcessingApi = { module = "com.google.devtools.ksp:symbol-processing-a
 kotlinPoetKsp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinPoet" }
 coilCompose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coilNetworkKtor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
-filekitCore = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
-filekitDialogsCompose = { module = "io.github.vinceglb:filekit-dialogs-compose", version.ref = "filekit" }
-filekitCoil = { module = "io.github.vinceglb:filekit-coil", version.ref = "filekit" }
 ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktorClientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
@@ -137,6 +137,7 @@ ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-js
 ktorfitLib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 ktorfitKsp = { module = "de.jensklingenberg.ktorfit:ktorfit-ksp", version.ref = "ktorfit" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+qrcodeKotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
 aboutlibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
 # Ready-made Material 3 list, detail expansion and license dialog over the collected libraries.
 aboutlibrariesComposeM3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }

@@ -26,4 +26,10 @@ interface DataStoreBindings {
     @FavoritesDataStoreQualifier
     fun provideFavoritesDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
         createDataStore(pathProducer, FAVORITES_DATA_STORE_FILE_NAME)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @ProfileCardDataStoreQualifier
+    fun provideProfileCardDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
+        createDataStore(pathProducer, PROFILE_CARD_DATA_STORE_FILE_NAME)
 }

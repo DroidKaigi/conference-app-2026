@@ -34,6 +34,7 @@ class DefaultTimetableQueryKey(
 ```
 
 - Features depend only on the `typealias` (model), never on the `Default*Key` impls.
+- A key whose variable or result type is a Compose UI type (such as `ImageBitmap`) declares its `typealias` and its implementation in the feature module that uses it, because `:core:model` and `:core:data` do not depend on Compose UI.
 - File placement: **one file per key**, on both sides — the contract file (named after the typealias) carries the `typealias` plus any dedicated input/result data classes, and implementations are one file per `Default*Key`. A shared index file would be a merge point every pull request touches.
 - Heavy shaping of the raw API response into the model happens inside `fetch` (the data layer), not the presenter.
 - A **derived read** reuses a shared key rather than adding a new one: the detail screen selects its single item from the shared timetable cache with `rememberQuery(key, select = { it.items.first { … } })`, so it never refetches the whole timetable. An independent per-id key is warranted only when a dedicated detail API exists.
