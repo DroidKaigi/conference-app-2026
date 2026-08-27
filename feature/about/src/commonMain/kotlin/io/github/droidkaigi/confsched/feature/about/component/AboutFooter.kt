@@ -51,8 +51,7 @@ internal fun AboutFooter(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // The marks belong to their platforms, so they keep the ground baked into the asset
-                // rather than taking a scheme colour that inverts under the darker themes.
+                // Third-party brand marks: never tint them, the ground is baked into the asset.
                 Image(
                     painter = painterResource(Res.drawable.ic_social_youtube),
                     contentDescription = stringResource(Res.string.about_social_youtube),
