@@ -162,8 +162,16 @@ private fun QrPattern(link: String, modifier: Modifier = Modifier) {
         if (link.isBlank()) {
             emptyList()
         } else {
-            QRCodeProcessor(link, ProfileCardBackDefaults.qrErrorCorrectionLevel)
-                .encode()
+            val processor = QRCodeProcessor(link, ProfileCardBackDefaults.qrErrorCorrectionLevel)
+            // A short link would encode into a few coarse modules; the minimum version keeps the
+            // pattern as fine as the design's.
+            processor
+                .encode(
+                    type = maxOf(
+                        ProfileCardBackDefaults.qrMinimumVersion,
+                        QRCodeProcessor.infoDensityForDataAndECL(link, ProfileCardBackDefaults.qrErrorCorrectionLevel),
+                    ),
+                )
                 .map { row -> row.map(QRCodeSquare::dark) }
         }
     }
@@ -311,7 +319,8 @@ private object ProfileCardBackDefaults {
     val qrPlateInset = 11.dp
     val qrPaperCornerRadius = 4.dp
     val qrQuietZone = 14.dp
-    val qrErrorCorrectionLevel = ErrorCorrectionLevel.MEDIUM
+    val qrErrorCorrectionLevel = ErrorCorrectionLevel.HIGH
+    val qrMinimumVersion = 5
     val mascotOffset = DpOffset(94.dp, 403.dp)
 
     // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
