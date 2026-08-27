@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import io.github.droidkaigi.confsched.core.common.ActionEffect
+import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
@@ -99,6 +100,57 @@ class ScreenChannelEffectTest {
         context(screenContext) {
             channel.send("throws")
             channel.send("the next one")
+        }
+        runCurrent()
+
+        assertIs<IllegalStateException>(logger.errors.receive())
+        assertEquals("the next one", handled.receive())
+    }
+
+    @Test
+    fun a_result_still_being_handled_does_not_hold_up_the_next_one() = runTest {
+        val channel = ScreenChannel<Nothing, String>()
+        val handled = Channel<String>(Channel.UNLIMITED)
+
+        backgroundScope.launch {
+            moleculeFlow(RecompositionMode.Immediate) {
+                context(screenContext) {
+                    ActionResultEffect(channel) { result ->
+                        if (result == "never returns") awaitCancellation() else handled.send(result)
+                    }
+                }
+            }.collect {}
+        }
+        runCurrent()
+
+        context(presenterContext) {
+            channel.emit("never returns")
+            channel.emit("the next one")
+        }
+        runCurrent()
+
+        assertEquals("the next one", handled.receive())
+    }
+
+    @Test
+    fun a_result_that_throws_is_reported_and_leaves_the_screen_running() = runTest {
+        val channel = ScreenChannel<Nothing, String>()
+        val handled = Channel<String>(Channel.UNLIMITED)
+
+        backgroundScope.launch {
+            moleculeFlow(RecompositionMode.Immediate) {
+                context(screenContext) {
+                    ActionResultEffect(channel) { result ->
+                        if (result == "throws") error("handler defect") else handled.send(result)
+                    }
+                }
+            }.collect {}
+        }
+        runCurrent()
+
+        context(presenterContext) {
+            channel.emit("throws")
+            channel.emit("the next one")
         }
         runCurrent()
 
