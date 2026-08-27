@@ -42,4 +42,6 @@ private fun String.escapeICalendarText(): String = this
     .replace("\\", "\\\\")
     .replace(";", "\\;")
     .replace(",", "\\,")
+    .replace("\r\n", "\n")
+    .replace("\r", "\n")
     .replace("\n", "\\n")

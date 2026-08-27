@@ -59,7 +59,7 @@ fun TimetableItemDetailScreenRoot(
             onMemoChange = { screenChannel.send(TimetableItemDetailScreenAction.SaveMemo(it)) },
             onArchiveVideoClick = onOpenUrl,
             onArchiveSlideClick = onOpenUrl,
-            onCalendarClick = { onAddCalendarEvent(uiState.item.toCalendarEvent()) },
+            onCalendarClick = { onAddCalendarEvent(uiState.item.toCalendarEvent(uiState.displayLanguage)) },
             onShareClick = { onShareText(shareText) },
             onSessionClick = onNavigateToSession,
             onBackClick = onNavigateBack,

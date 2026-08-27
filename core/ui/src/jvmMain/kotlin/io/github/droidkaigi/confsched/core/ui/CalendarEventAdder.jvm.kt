@@ -17,6 +17,7 @@ actual fun rememberCalendarEventAdder(): (CalendarEvent) -> Unit {
 }
 
 private fun CoroutineScope.openCalendarFile(event: CalendarEvent) {
+    if (!Desktop.isDesktopSupported() || !Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) return
     launch(Dispatchers.IO) {
         val file = File(System.getProperty("java.io.tmpdir"), CALENDAR_EVENT_FILE_NAME)
         file.writeText(event.toICalendar())
