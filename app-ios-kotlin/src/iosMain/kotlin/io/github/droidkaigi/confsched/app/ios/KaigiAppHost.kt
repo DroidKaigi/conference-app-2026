@@ -31,6 +31,7 @@ class KaigiAppHost(swiftPackageLicensesJson: String) {
 
     fun initialize() {
         graph.appInitializer.initialize()
+        graph.sessionReminderNotificationDelegate.install()
         graph.sessionReminderSync.start(applicationScope)
     }
 

@@ -52,6 +52,6 @@ The alarms are inexact on purpose. An exact alarm needs `SCHEDULE_EXACT_ALARM`, 
 
 `IosSessionReminderScheduler` keeps one `UNTimeIntervalNotificationTrigger` request per reminder, identified by the session id. A round removes the pending requests and the delivered notifications whose id is no longer wanted, and adds a request for each reminder still ahead. A reminder whose `notifyAt` has passed is added with a one-second interval, unless its identifier is already pending or delivered. iOS keeps at most 64 pending requests per app and drops the rest silently, so the scheduler keeps the 64 earliest.
 
-Authorization (`alert`, `sound`, `badge`) is requested whenever there is something to schedule; the OS shows the prompt once. A tap opens the app; no notification-center delegate is installed.
+Authorization (`alert`, `sound`, `badge`) is requested whenever there is something to schedule; the OS shows the prompt once. `SessionReminderNotificationDelegate`, installed from `KaigiAppHost.initialize()`, turns a tap into the session's favorites deep link through `DeepLinkStore` and lets a reminder show as a banner while the app is in the foreground.
 
 Related: [Clock (KaigiClock)](./clock.md) · [AppGraph and UiGraph](./di-app-graph.md) · [Deep links (DeepLinkEffect)](./navigation-deep-links.md)

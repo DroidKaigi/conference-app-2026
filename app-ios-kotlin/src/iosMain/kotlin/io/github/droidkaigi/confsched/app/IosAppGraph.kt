@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.app
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
+import io.github.droidkaigi.confsched.app.notification.SessionReminderNotificationDelegate
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.HiddenFromObjC
 
@@ -14,6 +15,7 @@ import kotlin.native.HiddenFromObjC
 @DependencyGraph(scope = AppScope::class)
 internal interface IosAppGraph : AppGraph {
     val sessionReminderSync: SessionReminderSync
+    val sessionReminderNotificationDelegate: SessionReminderNotificationDelegate
 
     @DependencyGraph.Factory
     fun interface Factory {

@@ -26,7 +26,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
-private const val IDENTIFIER_PREFIX = "session-reminder:"
+internal const val IDENTIFIER_PREFIX = "session-reminder:"
 
 /** iOS keeps at most 64 pending requests per app, so the reminders furthest out are left unscheduled. */
 private const val MAX_PENDING_REQUESTS = 64
@@ -111,3 +111,5 @@ private val SessionReminder.identifier: String get() = IDENTIFIER_PREFIX + itemI
 
 private fun displayLanguage(): DisplayLanguage =
     if (NSLocale.currentLocale.languageCode == "ja") DisplayLanguage.Japanese else DisplayLanguage.English
+
+internal fun String.reminderSessionId(): String? = removePrefix(IDENTIFIER_PREFIX).takeIf { it != this }
