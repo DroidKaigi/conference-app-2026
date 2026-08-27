@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.core.data
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlin.uuid.Uuid
 
 /**
  * Holds the profile card's avatar bytes and hands back the path they were written to. On wasmJs
@@ -11,9 +12,11 @@ import dev.zacsweers.metro.SingleIn
 @Inject
 @SingleIn(AppScope::class)
 class AvatarImageStore(private val fileStorage: FileStorage) {
+    // The path must differ per save: the stored card re-emits only when the path it records changes.
     suspend fun save(bytes: ByteArray): String {
-        fileStorage.put(AVATAR_IMAGE_PATH, bytes)
-        return AVATAR_IMAGE_PATH
+        val path = "$AVATAR_IMAGE_DIRECTORY/${Uuid.random()}"
+        fileStorage.put(path, bytes)
+        return path
     }
 
     suspend fun load(path: String): ByteArray? = fileStorage.get(path)
@@ -21,4 +24,4 @@ class AvatarImageStore(private val fileStorage: FileStorage) {
     suspend fun delete(path: String) = fileStorage.delete(path)
 }
 
-private const val AVATAR_IMAGE_PATH = "profile/avatar"
+private const val AVATAR_IMAGE_DIRECTORY = "profile"
