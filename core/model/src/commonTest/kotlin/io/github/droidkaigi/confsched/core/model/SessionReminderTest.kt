@@ -22,7 +22,7 @@ class SessionReminderTest {
         return TimetableItem(
             id = TimetableItemId(id),
             title = MultiLangText(ja = "セッション $id", en = "Session $id"),
-            room = Room.OTTER,
+            room = SessionRoom.OTTER,
             speakers = persistentListOf(),
             language = Language.JAPANESE,
             day = day,

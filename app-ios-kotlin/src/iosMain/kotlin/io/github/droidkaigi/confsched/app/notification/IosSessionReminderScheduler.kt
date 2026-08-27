@@ -4,10 +4,12 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.github.droidkaigi.confsched.app.ScheduledSessionReminderIds
 import io.github.droidkaigi.confsched.app.SessionReminderScheduler
 import io.github.droidkaigi.confsched.core.common.KaigiClock
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.SessionReminder
+import io.github.droidkaigi.confsched.core.model.locationText
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSLocale
 import platform.Foundation.currentLocale
@@ -34,40 +36,45 @@ private const val MAX_PENDING_REQUESTS = 64
 @Inject
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-internal class IosSessionReminderScheduler(private val kaigiClock: KaigiClock) : SessionReminderScheduler {
+internal class IosSessionReminderScheduler(
+    private val kaigiClock: KaigiClock,
+    private val scheduledIds: ScheduledSessionReminderIds,
+) : SessionReminderScheduler {
     private val center = UNUserNotificationCenter.currentNotificationCenter()
 
     override suspend fun reschedule(reminders: List<SessionReminder>) {
-        val now = kaigiClock.now()
+        val old = scheduledIds.read()
         val wanted = reminders.take(MAX_PENDING_REQUESTS)
-        val wantedIdentifiers = wanted.mapTo(mutableSetOf()) { it.identifier }
-        val pending = ownIdentifiers(::pendingIdentifiers)
-        val delivered = ownIdentifiers(::deliveredIdentifiers)
+        val new = wanted.mapTo(mutableSetOf()) { it.itemId }
+        scheduledIds.write(old + new)
 
+        val now = kaigiClock.now()
         val due = wanted.mapNotNull { reminder ->
             val delay = reminder.notifyAt - now
             when {
                 delay >= 1.seconds -> reminder to delay
 
-                // The notification is overdue but the session has not started: post it now unless it already went out.
-                reminder.identifier !in pending && reminder.identifier !in delivered -> reminder to 1.seconds
+                // Overdue but not started: post now, unless an earlier round already armed it.
+                reminder.itemId !in old -> reminder to 1.seconds
 
                 else -> null
             }
         }
         if (due.isNotEmpty()) requestAuthorization()
 
-        (pending - wantedIdentifiers).takeIf { it.isNotEmpty() }
+        val wantedIdentifiers = wanted.mapTo(mutableSetOf()) { it.identifier }
+        (ownIdentifiers(::pendingIdentifiers) - wantedIdentifiers).takeIf { it.isNotEmpty() }
             ?.let { center.removePendingNotificationRequestsWithIdentifiers(it.toList()) }
-        (delivered - wantedIdentifiers).takeIf { it.isNotEmpty() }
+        (ownIdentifiers(::deliveredIdentifiers) - wantedIdentifiers).takeIf { it.isNotEmpty() }
             ?.let { center.removeDeliveredNotificationsWithIdentifiers(it.toList()) }
         due.forEach { (reminder, delay) -> add(reminder, delay) }
+        scheduledIds.write(new)
     }
 
     private suspend fun add(reminder: SessionReminder, delay: Duration) {
         val content = UNMutableNotificationContent().apply {
             setTitle(reminder.title.of(displayLanguage()))
-            setBody("${reminder.startsAtText} · ${reminder.room.name}")
+            setBody("${reminder.startsAtText} · ${reminder.room.locationText}")
             setSound(UNNotificationSound.defaultSound)
         }
         val request = UNNotificationRequest.requestWithIdentifier(

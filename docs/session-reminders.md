@@ -44,13 +44,13 @@ interface SessionReminderScheduler {
 
 The alarms are inexact on purpose. An exact alarm needs `SCHEDULE_EXACT_ALARM`, which the user must grant in system settings on Android 14 and later and can revoke at any time, or `USE_EXACT_ALARM`, which Google Play accepts only from apps whose core function is timekeeping. A reminder that lands a few minutes off is still a reminder, so the app stays out of that permission entirely.
 
-`SessionReminderReceiver` posts the notification: the session title, "Starts at HH:mm · room" underneath, and the session deep link as its content intent. It skips posting where `POST_NOTIFICATIONS` is not granted. `BootCompletedReceiver` reschedules after a reboot, which clears every alarm the app set.
+`SessionReminderReceiver` posts the notification: the session title, "Starts at HH:mm · room (floor)" underneath, and the session deep link as its content intent. It skips posting where `POST_NOTIFICATIONS` is not granted. `BootCompletedReceiver` reschedules after a reboot, which clears every alarm the app set.
 
 `MainActivity` asks for `POST_NOTIFICATIONS` when the favorites first become non-empty — the permission has nothing to carry until there is something to be reminded of — and only where the prompt has never been declined.
 
 ## iOS
 
-`IosSessionReminderScheduler` keeps one `UNTimeIntervalNotificationTrigger` request per reminder, identified by the session id. A round removes the pending requests and the delivered notifications whose id is no longer wanted, and adds a request for each reminder still ahead. A reminder whose `notifyAt` has passed is added with a one-second interval, unless its identifier is already pending or delivered. iOS keeps at most 64 pending requests per app and drops the rest silently, so the scheduler keeps the 64 earliest.
+`IosSessionReminderScheduler` keeps one `UNTimeIntervalNotificationTrigger` request per reminder, identified by the session id. A round removes the pending requests and the delivered notifications whose id is no longer wanted, and adds a request for each reminder still ahead. A reminder whose `notifyAt` has passed is added with a one-second interval, unless an earlier round already armed it — both platforms keep the ids of their last round in a shared `DataStore` (`ScheduledSessionReminderIds`) for that comparison. iOS keeps at most 64 pending requests per app and drops the rest silently, so the scheduler keeps the 64 earliest.
 
 Authorization (`alert`, `sound`, `badge`) is requested whenever there is something to schedule; the OS shows the prompt once. `SessionReminderNotificationDelegate`, installed from `KaigiAppHost.initialize()`, turns a tap into the session's favorites deep link through `DeepLinkStore` and lets a reminder show as a banner while the app is in the foreground.
 

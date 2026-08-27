@@ -7,7 +7,7 @@ import kotlin.time.Instant
 data class SessionReminder(
     val itemId: TimetableItemId,
     val title: MultiLangText,
-    val room: Room,
+    val room: SessionRoom,
     val startsAt: Instant,
     val startsAtText: String,
     val notifyAt: Instant,

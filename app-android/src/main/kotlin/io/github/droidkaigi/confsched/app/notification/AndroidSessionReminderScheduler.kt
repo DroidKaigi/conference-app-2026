@@ -5,21 +5,17 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringSetPreferencesKey
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import io.github.droidkaigi.confsched.app.ScheduledSessionReminderIds
 import io.github.droidkaigi.confsched.app.SessionReminderScheduler
 import io.github.droidkaigi.confsched.app.localized
 import io.github.droidkaigi.confsched.core.common.KaigiClock
-import io.github.droidkaigi.confsched.core.data.SessionRemindersDataStoreQualifier
 import io.github.droidkaigi.confsched.core.model.SessionReminder
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
-import kotlinx.coroutines.flow.first
+import io.github.droidkaigi.confsched.core.model.locationText
 import kotlin.time.Instant
 
 @Inject
@@ -28,26 +24,22 @@ import kotlin.time.Instant
 class AndroidSessionReminderScheduler(
     private val context: Context,
     private val kaigiClock: KaigiClock,
-    @SessionRemindersDataStoreQualifier private val dataStore: DataStore<Preferences>,
+    private val scheduledIds: ScheduledSessionReminderIds,
 ) : SessionReminderScheduler {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override suspend fun reschedule(reminders: List<SessionReminder>) {
-        val old = dataStore.data.first()[SCHEDULED_IDS_KEY].orEmpty()
-        val new = reminders.mapTo(mutableSetOf()) { it.itemId.value }
+        val old = scheduledIds.read()
+        val new = reminders.mapTo(mutableSetOf()) { it.itemId }
 
         // Persisting the union first: a crash before the alarms are in step leaves them cancellable.
-        persist(old + new)
-        (old - new).forEach { cancel(TimetableItemId(it)) }
+        scheduledIds.write(old + new)
+        (old - new).forEach(::cancel)
         val now = kaigiClock.now()
         reminders
-            .filterNot { it.notifyAt <= now && it.itemId.value in old }
+            .filterNot { it.notifyAt <= now && it.itemId in old }
             .forEach { schedule(it, now) }
-        persist(new)
-    }
-
-    private suspend fun persist(ids: Set<String>) {
-        dataStore.edit { it[SCHEDULED_IDS_KEY] = ids }
+        scheduledIds.write(new)
     }
 
     private fun schedule(reminder: SessionReminder, now: Instant) {
@@ -55,7 +47,7 @@ class AndroidSessionReminderScheduler(
             .setData(reminder.itemId.reminderUri())
             .putExtra(EXTRA_ITEM_ID, reminder.itemId.value)
             .putExtra(EXTRA_TITLE, context.localized(reminder.title))
-            .putExtra(EXTRA_ROOM, reminder.room.name)
+            .putExtra(EXTRA_ROOM, reminder.room.locationText)
             .putExtra(EXTRA_STARTS_AT, reminder.startsAtText)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -83,9 +75,5 @@ class AndroidSessionReminderScheduler(
         ) ?: return
         alarmManager.cancel(pendingIntent)
         pendingIntent.cancel()
-    }
-
-    private companion object {
-        val SCHEDULED_IDS_KEY = stringSetPreferencesKey("scheduledSessionIds")
     }
 }
