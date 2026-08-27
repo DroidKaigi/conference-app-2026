@@ -17,4 +17,5 @@ class DefaultContributorsQueryKey(
     fileStorage = fileStorage,
     fetchResponse = { api.getContributors() },
     transformToDomainModel = ContributorListResponse::toContributors,
+    onPersisted = {},
 )

@@ -17,4 +17,5 @@ class DefaultSponsorsQueryKey(
     fileStorage = fileStorage,
     fetchResponse = { api.getSponsors() },
     transformToDomainModel = SponsorListResponse::toSponsors,
+    onPersisted = {},
 )

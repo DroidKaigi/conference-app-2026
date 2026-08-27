@@ -17,4 +17,5 @@ class DefaultStaffQueryKey(
     fileStorage = fileStorage,
     fetchResponse = { api.getStaff() },
     transformToDomainModel = StaffListResponse::toStaff,
+    onPersisted = {},
 )

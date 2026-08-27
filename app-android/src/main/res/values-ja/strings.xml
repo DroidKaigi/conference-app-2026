@@ -23,4 +23,6 @@
     <plurals name="widget_tomorrow_favorites">
         <item quantity="other">明日のお気に入り %1$d 件</item>
     </plurals>
+    <string name="session_reminder_channel_name">セッション開始のお知らせ</string>
+    <string name="session_reminder_text">%1$s 開始 · %2$s</string>
 </resources>

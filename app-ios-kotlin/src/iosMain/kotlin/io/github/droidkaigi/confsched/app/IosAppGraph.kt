@@ -13,6 +13,8 @@ import kotlin.native.HiddenFromObjC
 @HiddenFromObjC
 @DependencyGraph(scope = AppScope::class)
 internal interface IosAppGraph : AppGraph {
+    val sessionReminderSync: SessionReminderSync
+
     @DependencyGraph.Factory
     fun interface Factory {
         // The Swift packages Xcode links are described by the iOS build, not by Gradle, so their

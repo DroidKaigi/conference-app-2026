@@ -1,0 +1,113 @@
+package io.github.droidkaigi.confsched.app.notification
+
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
+import io.github.droidkaigi.confsched.app.SessionReminderScheduler
+import io.github.droidkaigi.confsched.core.common.KaigiClock
+import io.github.droidkaigi.confsched.core.model.DisplayLanguage
+import io.github.droidkaigi.confsched.core.model.SessionReminder
+import kotlinx.coroutines.suspendCancellableCoroutine
+import platform.Foundation.NSLocale
+import platform.Foundation.currentLocale
+import platform.Foundation.languageCode
+import platform.UserNotifications.UNAuthorizationOptionAlert
+import platform.UserNotifications.UNAuthorizationOptionBadge
+import platform.UserNotifications.UNAuthorizationOptionSound
+import platform.UserNotifications.UNMutableNotificationContent
+import platform.UserNotifications.UNNotification
+import platform.UserNotifications.UNNotificationRequest
+import platform.UserNotifications.UNNotificationSound
+import platform.UserNotifications.UNTimeIntervalNotificationTrigger
+import platform.UserNotifications.UNUserNotificationCenter
+import kotlin.coroutines.resume
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
+
+private const val IDENTIFIER_PREFIX = "session-reminder:"
+
+/** iOS keeps at most 64 pending requests per app, so the reminders furthest out are left unscheduled. */
+private const val MAX_PENDING_REQUESTS = 64
+
+@Inject
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
+internal class IosSessionReminderScheduler(private val kaigiClock: KaigiClock) : SessionReminderScheduler {
+    private val center = UNUserNotificationCenter.currentNotificationCenter()
+
+    override suspend fun reschedule(reminders: List<SessionReminder>) {
+        val now = kaigiClock.now()
+        val wanted = reminders.take(MAX_PENDING_REQUESTS)
+        val wantedIdentifiers = wanted.mapTo(mutableSetOf()) { it.identifier }
+        val pending = ownIdentifiers(::pendingIdentifiers)
+        val delivered = ownIdentifiers(::deliveredIdentifiers)
+
+        val due = wanted.mapNotNull { reminder ->
+            val delay = reminder.notifyAt - now
+            when {
+                delay >= 1.seconds -> reminder to delay
+
+                // The notification is overdue but the session has not started: post it now unless it already went out.
+                reminder.identifier !in pending && reminder.identifier !in delivered -> reminder to 1.seconds
+
+                else -> null
+            }
+        }
+        if (due.isNotEmpty()) requestAuthorization()
+
+        (pending - wantedIdentifiers).takeIf { it.isNotEmpty() }
+            ?.let { center.removePendingNotificationRequestsWithIdentifiers(it.toList()) }
+        (delivered - wantedIdentifiers).takeIf { it.isNotEmpty() }
+            ?.let { center.removeDeliveredNotificationsWithIdentifiers(it.toList()) }
+        due.forEach { (reminder, delay) -> add(reminder, delay) }
+    }
+
+    private suspend fun add(reminder: SessionReminder, delay: Duration) {
+        val content = UNMutableNotificationContent().apply {
+            setTitle(reminder.title.of(displayLanguage()))
+            setBody("${reminder.startsAtText} · ${reminder.room.name}")
+            setSound(UNNotificationSound.defaultSound)
+        }
+        val request = UNNotificationRequest.requestWithIdentifier(
+            identifier = reminder.identifier,
+            content = content,
+            trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(
+                timeInterval = delay.toDouble(DurationUnit.SECONDS),
+                repeats = false,
+            ),
+        )
+        suspendCancellableCoroutine { continuation ->
+            center.addNotificationRequest(request) { continuation.resume(Unit) }
+        }
+    }
+
+    private suspend fun requestAuthorization() {
+        suspendCancellableCoroutine { continuation ->
+            center.requestAuthorizationWithOptions(
+                UNAuthorizationOptionAlert or UNAuthorizationOptionSound or UNAuthorizationOptionBadge,
+            ) { _, _ -> continuation.resume(Unit) }
+        }
+    }
+
+    private suspend fun ownIdentifiers(source: suspend () -> List<String>): Set<String> =
+        source().filterTo(mutableSetOf()) { it.startsWith(IDENTIFIER_PREFIX) }
+
+    private suspend fun pendingIdentifiers(): List<String> = suspendCancellableCoroutine { continuation ->
+        center.getPendingNotificationRequestsWithCompletionHandler { requests ->
+            continuation.resume(requests.orEmpty().map { (it as UNNotificationRequest).identifier })
+        }
+    }
+
+    private suspend fun deliveredIdentifiers(): List<String> = suspendCancellableCoroutine { continuation ->
+        center.getDeliveredNotificationsWithCompletionHandler { notifications ->
+            continuation.resume(notifications.orEmpty().map { (it as UNNotification).request.identifier })
+        }
+    }
+}
+
+private val SessionReminder.identifier: String get() = IDENTIFIER_PREFIX + itemId.value
+
+private fun displayLanguage(): DisplayLanguage =
+    if (NSLocale.currentLocale.languageCode == "ja") DisplayLanguage.Japanese else DisplayLanguage.English

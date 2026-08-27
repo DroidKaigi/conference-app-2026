@@ -17,4 +17,5 @@ class DefaultProjectsQueryKey(
     fileStorage = fileStorage,
     fetchResponse = { api.getProjects() },
     transformToDomainModel = ProjectListResponse::toProjects,
+    onPersisted = {},
 )

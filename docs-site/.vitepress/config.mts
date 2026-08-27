@@ -44,6 +44,7 @@ export default withMermaid(defineConfig({
           { text: 'Enforcement', link: '/enforcement' },
           { text: 'Naming review', link: '/naming-review' },
           { text: 'CompositionLocal review', link: '/compositionlocal-review' },
+          { text: 'Session reminders', link: '/session-reminders' },
         ],
       },
       {
