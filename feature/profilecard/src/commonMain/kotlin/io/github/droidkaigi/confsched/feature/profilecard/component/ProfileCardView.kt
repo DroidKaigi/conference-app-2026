@@ -12,8 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -67,12 +66,11 @@ fun ProfileCardView(
     ) {
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
                 .padding(ProfileCardViewDefaults.cardSpacePadding)
                 .padding(bottom = LocalNavigationBarOccupiedHeight.current),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.cardSpacing),
+            verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.cardSpacing, Alignment.CenterVertically),
         ) {
             FlippableProfileCard(
                 nickName = uiState.nickName,
@@ -82,7 +80,9 @@ fun ProfileCardView(
                 sketchiness = uiState.sketchiness,
                 avatarImage = uiState.avatarImage,
                 isShowingBack = uiState.isShowingBack,
-                modifier = Modifier.clickable(onClick = onCardClick),
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .clickable(onClick = onCardClick),
             )
             ProfileCardActionsSection(
                 isSharing = uiState.isSharing,
@@ -163,6 +163,7 @@ private fun ProfileCardActionsSection(
 ) {
     Column(
         modifier = Modifier
+            .widthIn(max = ProfileCardFaceDefaults.size.width)
             .fillMaxWidth()
             .padding(horizontal = ProfileCardViewDefaults.actionsInset),
         horizontalAlignment = Alignment.CenterHorizontally,

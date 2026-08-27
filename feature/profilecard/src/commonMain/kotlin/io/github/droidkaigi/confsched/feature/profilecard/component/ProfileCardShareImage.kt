@@ -91,7 +91,9 @@ private fun Modifier.cardSlot(origin: DpOffset, rotationDegrees: Float): Modifie
     val face = ProfileCardFaceDefaults.size
     val faceScale = min(slot.width / face.width, slot.height / face.height)
     val centringInset = (slot.width - face.width * faceScale) / 2
+    // The slot pins the face to its natural size; the face itself only scales to fit constraints.
     return offset(x = origin.x + centringInset, y = origin.y)
+        .size(face)
         .graphicsLayer {
             transformOrigin = TransformOrigin(0f, 0f)
             rotationZ = rotationDegrees

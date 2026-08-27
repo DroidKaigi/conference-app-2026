@@ -67,12 +67,19 @@ fun ProfileCardFace(
     content: @Composable BoxScope.() -> Unit,
 ) {
     BoxWithConstraints(modifier = modifier) {
-        val scale = (maxWidth / ProfileCardFaceDefaults.size.width).coerceAtMost(1f)
+        val scale = if (constraints.hasBoundedWidth && constraints.hasBoundedHeight) {
+            minOf(
+                maxWidth / ProfileCardFaceDefaults.size.width,
+                maxHeight / ProfileCardFaceDefaults.size.height,
+            ).coerceAtMost(ProfileCardFaceDefaults.maxScale)
+        } else {
+            1f
+        }
         Box(
             modifier = Modifier
                 .size(width = ProfileCardFaceDefaults.size.width * scale, height = ProfileCardFaceDefaults.size.height * scale)
-                // Every face is laid out against the fixed card, so a narrow window scales the
-                // whole drawing rather than reflowing what is on it.
+                // Every face is laid out against the fixed card, so the window scales the whole
+                // drawing rather than reflowing what is on it.
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
@@ -283,6 +290,7 @@ internal class TracedEdgeShape(
 
 object ProfileCardFaceDefaults {
     val size = DpSize(320.dp, 480.dp)
+    val maxScale = 1.5f
     val cornerRadius = 16.dp
     val borderThickness = 2.5.dp
     val tapeWidth = 88.dp
