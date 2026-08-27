@@ -7,4 +7,10 @@
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
     <string name="show_in_japanese">日本語で表示</string>
     <string name="show_in_english">英語で表示</string>
+    <string name="error_network">ネットワークエラーが発生しました</string>
+    <string name="error_server">サーバーエラーが発生しました</string>
+    <string name="error_timeout">通信がタイムアウトしました</string>
+    <string name="error_internet_connection">インターネットに接続されていません</string>
+    <string name="error_unknown">予期しないエラーが発生しました</string>
+    <string name="retry">再試行</string>
 </resources>
