@@ -30,17 +30,16 @@ internal fun AboutSectionHeader(
     icon: DrawableResource? = null,
 ) {
     Row(
-        modifier = modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+        modifier = modifier.padding(bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (icon != null) {
             Icon(
-                // The mark is hand-drawn line art, so it is tinted to track the header text colour.
                 painter = painterResource(icon),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(width = 39.dp, height = 36.dp),
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(width = 37.dp, height = 34.dp),
             )
         }
         Text(

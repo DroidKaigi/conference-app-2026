@@ -37,14 +37,14 @@ internal fun AboutNavigationRow(
             .fillMaxWidth()
             .height(52.dp)
             .clickable(onClick = onClick)
-            .padding(start = 40.dp, end = 24.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Icon(
             imageVector = leadingIcon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),
         )
         Text(
