@@ -1,4 +1,5 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+import com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy
 import java.util.Properties
 
 plugins {
@@ -70,7 +71,7 @@ android {
 
 googleServices {
     // Only the prod source set carries the Firebase project file; dev builds run without it.
-    missingGoogleServicesStrategy = com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy.WARN
+    missingGoogleServicesStrategy = MissingGoogleServicesStrategy.WARN
 }
 
 aboutLibraries {
