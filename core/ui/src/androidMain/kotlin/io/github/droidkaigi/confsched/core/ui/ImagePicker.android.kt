@@ -33,20 +33,25 @@ actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
     }
 }
 
-private const val JPEG_QUALITY = 90
-
 // The picked bytes are decoded later with a decoder that neither reads EXIF orientation nor
 // understands HEIF, so the image is normalized to an upright JPEG here.
 private fun CoroutineScope.readImage(resolver: ContentResolver, uri: Uri, onImagePicked: (ByteArray) -> Unit) {
     launch {
         val bytes = withContext(Dispatchers.IO) {
-            decodeUpright(resolver, uri)?.let { bitmap ->
+            decodeUpright(resolver, uri)?.squareThumbnail(PICKED_IMAGE_SIDE)?.let { bitmap ->
                 val out = ByteArrayOutputStream()
-                if (bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)) out.toByteArray() else null
+                if (bitmap.compress(Bitmap.CompressFormat.JPEG, PICKED_IMAGE_JPEG_QUALITY, out)) out.toByteArray() else null
             }
         }
         if (bytes != null) onImagePicked(bytes)
     }
+}
+
+private fun Bitmap.squareThumbnail(maxSide: Int): Bitmap {
+    val side = minOf(width, height)
+    val square = Bitmap.createBitmap(this, (width - side) / 2, (height - side) / 2, side, side)
+    if (side <= maxSide) return square
+    return Bitmap.createScaledBitmap(square, maxSide, maxSide, true)
 }
 
 private fun decodeUpright(resolver: ContentResolver, uri: Uri): Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

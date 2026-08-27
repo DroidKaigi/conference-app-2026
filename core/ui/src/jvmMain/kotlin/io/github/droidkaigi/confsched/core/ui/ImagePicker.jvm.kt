@@ -20,7 +20,7 @@ actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
 private fun CoroutineScope.pickImage(onImagePicked: (ByteArray) -> Unit) {
     launch {
         // FileDialog blocks until the user is done, so it must not run on the UI thread.
-        val bytes = withContext(Dispatchers.IO) { chooseImage()?.readBytes() }
+        val bytes = withContext(Dispatchers.IO) { chooseImage()?.readBytes()?.toPickedImageJpeg() }
         if (bytes != null) onImagePicked(bytes)
     }
 }
