@@ -284,7 +284,9 @@ private fun MascotSealBadge(mascot: Mascot, sketchiness: Sketchiness, seed: Int,
             mascot = mascot,
             modifier = Modifier
                 .offset(x = ProfileCardFrontDefaults.sealMascotOffset.x, y = ProfileCardFrontDefaults.sealMascotOffset.y)
-                .size(ProfileCardFrontDefaults.sealMascotBox),
+                .size(ProfileCardFrontDefaults.sealMascotBox)
+                // The seal turns as a whole; the mascot stays in the pose its artwork has.
+                .rotate(-ProfileCardFrontDefaults.sealRotationDegrees),
         )
     }
 }
