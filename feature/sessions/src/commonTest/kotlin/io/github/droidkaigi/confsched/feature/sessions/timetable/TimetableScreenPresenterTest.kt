@@ -108,6 +108,23 @@ class TimetableScreenPresenterTest {
     }
 
     @Test
+    fun a_second_day_request_while_composed_is_applied_too() {
+        graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitDay(DroidKaigi2026Day.Day2)
+
+            graph.dayRequestStore.request(DroidKaigi2026Day.Day1)
+            assertEquals(DroidKaigi2026Day.Day1, uiStates.awaitItem().day)
+
+            graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
+            assertEquals(DroidKaigi2026Day.Day2, uiStates.awaitItem().day)
+        }
+    }
+
+    @Test
     fun a_day_request_is_consumed_once_so_a_later_choice_stands() {
         graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
         runPresenterTest(

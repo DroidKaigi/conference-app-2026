@@ -16,7 +16,7 @@ sealed interface FavoritesWidgetState {
     /** The event day before Day 1, which holds no timetable sessions. */
     data object EventDay : FavoritesWidgetState
 
-    /** A conference day with no favorite on it; [otherDayFavorites] counts the ones on Day 2. */
+    /** A conference day with no favorite on it; [otherDayFavorites] counts Day 2's favorites on Day 1 and is 0 on Day 2. */
     data class Empty(
         val day: DroidKaigi2026Day,
         val otherDayFavorites: Int,
@@ -28,7 +28,7 @@ sealed interface FavoritesWidgetState {
         val slots: List<FavoritesWidgetSlot>,
     ) : FavoritesWidgetState
 
-    /** Every favorite of [day] has ended while the day's programme runs on. */
+    /** Every favorite of [day] has ended while the day's programme runs on; [otherDayFavorites] as in [Empty]. */
     data class TodayDone(
         val day: DroidKaigi2026Day,
         val otherDayFavorites: Int,
