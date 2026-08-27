@@ -1,15 +1,19 @@
 package io.github.droidkaigi.confsched.feature.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalFocusManager
@@ -25,6 +30,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowDropDown
@@ -70,8 +76,8 @@ internal fun SearchFilterRow(
         modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         SearchFilterChip(
             label = uiState.selectedDay?.label ?: stringResource(Res.string.search_filter_date),
@@ -173,29 +179,68 @@ private fun SearchFilterChip(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.sketchBorder(menuShape, MaterialTheme.colorScheme.outline),
+            modifier = Modifier.sketchBorder(menuShape, MaterialTheme.colorScheme.outlineVariant),
             shape = menuShape,
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp,
         ) {
-            menuContent { expanded = false }
+            Column(
+                modifier = Modifier
+                    .width(FilterMenuDefaults.width)
+                    .padding(
+                        horizontal = FilterMenuDefaults.horizontalPadding,
+                        vertical = FilterMenuDefaults.verticalPadding - DropdownMenuVerticalPadding,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(FilterMenuDefaults.itemGap),
+            ) {
+                menuContent { expanded = false }
+            }
         }
     }
 }
 
 @Composable
 private fun FilterMenuItem(label: String, selected: Boolean, onClick: () -> Unit) {
-    DropdownMenuItem(
-        text = { Text(label) },
-        onClick = onClick,
-        modifier = Modifier.semantics { this.selected = selected },
-        leadingIcon = {
-            if (selected) {
-                Icon(imageVector = KaigiIcons.Default.Check, contentDescription = null)
-            }
-        },
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(FilterMenuDefaults.itemHeight)
+            .clickable(onClick = onClick)
+            .padding(FilterMenuDefaults.itemPadding)
+            .semantics { this.selected = selected },
+        horizontalArrangement = Arrangement.spacedBy(FilterMenuDefaults.tickGap),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (selected) {
+            Icon(
+                imageVector = KaigiIcons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(FilterMenuDefaults.tickSize),
+            )
+        } else {
+            Spacer(modifier = Modifier.size(FilterMenuDefaults.tickSize))
+        }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (selected) FontWeight.SemiBold else null,
+        )
+    }
+}
+
+/** Vertical inset [DropdownMenu] adds around its content, which it offers no parameter to change. */
+private val DropdownMenuVerticalPadding = 8.dp
+
+private object FilterMenuDefaults {
+    val width = 228.dp
+    val horizontalPadding = 12.dp
+    val verticalPadding = 10.dp
+    val itemGap = 4.dp
+    val itemHeight = 32.dp
+    val itemPadding = 6.dp
+    val tickGap = 8.dp
+    val tickSize = 20.dp
 }
 
 @Composable
