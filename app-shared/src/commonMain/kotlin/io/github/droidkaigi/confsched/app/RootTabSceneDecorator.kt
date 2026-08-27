@@ -60,6 +60,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Map
 import io.github.droidkaigi.confsched.core.designsystem.icon.ProfileCard
 import io.github.droidkaigi.confsched.core.designsystem.icon.Timetable
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBar
+import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarItem
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRail
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRailDefaults
@@ -150,7 +151,10 @@ private class RootTabScene(
             }
         } else {
             Box(Modifier.fillMaxSize()) {
-                movableContent()
+                CompositionLocalProvider(
+                    LocalNavigationBarOccupiedHeight provides KaigiNavigationBarDefaults.occupiedHeightWithInset,
+                    content = movableContent,
+                )
                 RootTabBar(
                     currentTab = currentTab,
                     onSelectTab = onSelectTab,

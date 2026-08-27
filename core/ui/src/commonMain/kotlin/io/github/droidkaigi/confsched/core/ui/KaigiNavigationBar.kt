@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
@@ -63,6 +67,7 @@ fun KaigiNavigationBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(
                 start = 32.dp,
                 end = 32.dp,
@@ -280,7 +285,8 @@ object KaigiNavigationBarDefaults {
 
     /**
      * What the design leaves between the bar and the platform's own navigation area, which
-     * sits below it and is not the bar's to draw.
+     * sits below it and is not the bar's to draw. The bar is padded by that area's inset on
+     * top of this margin, so the two never overlap.
      */
     val bottomMargin = 49.dp
 
@@ -291,6 +297,14 @@ object KaigiNavigationBarDefaults {
      * item stays under the bar.
      */
     val occupiedHeight = height + topMargin + bottomMargin
+
+    /**
+     * [occupiedHeight] plus the inset the bar is padded by, which a scrollable underneath has
+     * to clear as well.
+     */
+    val occupiedHeightWithInset: Dp
+        @Composable get() = occupiedHeight +
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val cornerRadius = 28.dp
     val indicatorSize = 40.dp
@@ -314,9 +328,10 @@ object KaigiNavigationRailDefaults {
  * The room the app's navigation takes over the bottom of the content; a scrollable root
  * destination adds it to its bottom content padding.
  *
- * Defaults to [KaigiNavigationBarDefaults.occupiedHeight] — correct wherever a bar overlays
- * the content, including the native one on iOS — and the shell provides zero beside a
- * [KaigiNavigationRail], which overlays nothing.
+ * The shell provides [KaigiNavigationBarDefaults.occupiedHeightWithInset] under the bar it
+ * draws itself, and zero beside a [KaigiNavigationRail], which overlays nothing. The default
+ * stands where no provider is installed: the native bar on iOS, whose own height UIKit grows
+ * by the inset.
  */
 val LocalNavigationBarOccupiedHeight: ProvidableCompositionLocal<Dp> =
     compositionLocalOf { KaigiNavigationBarDefaults.occupiedHeight }

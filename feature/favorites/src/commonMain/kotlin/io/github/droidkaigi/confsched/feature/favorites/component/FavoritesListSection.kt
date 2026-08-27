@@ -29,7 +29,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.TimetableDayHeader
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
@@ -51,7 +51,7 @@ internal fun FavoritesListSection(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(
             top = 12.dp,
-            bottom = 24.dp + KaigiNavigationBarDefaults.occupiedHeight,
+            bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
         ),
     ) {
         uiState.timeSlots.groupBy { slot -> slot.day }.forEach { (day, slots) ->
