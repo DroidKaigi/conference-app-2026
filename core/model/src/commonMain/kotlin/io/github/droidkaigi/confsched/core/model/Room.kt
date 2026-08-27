@@ -49,3 +49,6 @@ data class NamedRoom(override val label: MultiLangText) : Room {
     override val floor: Floor?
         get() = null
 }
+
+/** The room's English name with its floor where the venue map places it, e.g. `OTTER (B1F)`. */
+val Room.locationText: String get() = floor?.let { "${label.en} (${it.label})" } ?: label.en

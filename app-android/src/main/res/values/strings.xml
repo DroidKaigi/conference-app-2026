@@ -27,4 +27,6 @@
         <item quantity="one">%1$d favorite tomorrow</item>
         <item quantity="other">%1$d favorites tomorrow</item>
     </plurals>
+    <string name="session_reminder_channel_name">Session reminders</string>
+    <string name="session_reminder_text">Starts at %1$s · %2$s</string>
 </resources>

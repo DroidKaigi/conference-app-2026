@@ -7,6 +7,9 @@ import io.github.droidkaigi.confsched.app.KaigiApp
 import io.github.droidkaigi.confsched.app.RootTab
 import io.github.droidkaigi.confsched.app.RootTabBarPalette
 import io.github.droidkaigi.confsched.core.common.context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import platform.UIKit.UIViewController
@@ -24,8 +27,12 @@ class KaigiAppHost(swiftPackageLicensesJson: String) {
 
     val tabBarPalette: Flow<RootTabBarPalette?> = graph.rootTabBarAppearance.palette
 
+    private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     fun initialize() {
         graph.appInitializer.initialize()
+        graph.sessionReminderNotificationDelegate.install()
+        graph.sessionReminderSync.start(applicationScope)
     }
 
     fun selectTab(tab: RootTab) {

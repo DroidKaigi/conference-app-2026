@@ -26,6 +26,7 @@ inline fun <T : Any, @MustBeSerializable reified RESPONSE : Any> buildPersistedQ
     fileStorage: FileStorage,
     noinline fetchResponse: suspend QueryReceiver.() -> RESPONSE,
     noinline transformToDomainModel: (RESPONSE) -> T,
+    noinline onPersisted: (() -> Unit)? = null,
 ): QueryKey<T> {
     val serializer: KSerializer<RESPONSE> = serializer()
     val delegate = buildQueryKey(
@@ -34,6 +35,7 @@ inline fun <T : Any, @MustBeSerializable reified RESPONSE : Any> buildPersistedQ
             val response = fetchResponse()
             runCatching {
                 fileStorage.put(persistKey, persistedQueryJson.encodeToString(serializer, response).encodeToByteArray())
+                onPersisted?.invoke()
             }
             transformToDomainModel(response)
         },
