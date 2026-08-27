@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,9 +26,8 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -75,25 +75,21 @@ fun ProfileCardFace(
         } else {
             1f
         }
-        Box(
-            modifier = Modifier
-                .size(width = ProfileCardFaceDefaults.size.width * scale, height = ProfileCardFaceDefaults.size.height * scale)
-                // Every face is laid out against the fixed card, so the window scales the whole
-                // drawing rather than reflowing what is on it.
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                    transformOrigin = TransformOrigin(0f, 0f)
-                },
-        ) {
-            ProfileCardFaceContent(
-                sketchiness = sketchiness,
-                outlineSeed = outlineSeed,
-                topStartTape = topStartTape,
-                bottomEndTape = bottomEndTape,
-                mirrored = mirrored,
-                content = content,
-            )
+        val density = LocalDensity.current
+        // Every face is laid out against the fixed card, so the window scales the density the
+        // card is laid out in rather than reflowing what is on it; unlike a graphics-layer scale,
+        // that keeps text and vector art rasterized at their final pixel size.
+        CompositionLocalProvider(LocalDensity provides Density(density.density * scale, density.fontScale)) {
+            Box(modifier = Modifier.size(ProfileCardFaceDefaults.size)) {
+                ProfileCardFaceContent(
+                    sketchiness = sketchiness,
+                    outlineSeed = outlineSeed,
+                    topStartTape = topStartTape,
+                    bottomEndTape = bottomEndTape,
+                    mirrored = mirrored,
+                    content = content,
+                )
+            }
         }
     }
 }
