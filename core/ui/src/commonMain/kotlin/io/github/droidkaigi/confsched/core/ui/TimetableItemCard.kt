@@ -250,7 +250,7 @@ private object TimetableItemCardDefaults {
     val borderThickness = 2.dp
     val favoriteSize = 24.dp
     val favoritePadding = 12.dp
-    val avatarSize = 24.dp
+    val avatarSize = 32.dp
     val cancelledBannerCornerRadius = 6.dp
 
     /** Keeps the banner clear of the bookmark, which the card draws over the same corner. */

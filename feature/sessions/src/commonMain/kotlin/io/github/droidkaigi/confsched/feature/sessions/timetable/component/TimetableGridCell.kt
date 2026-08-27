@@ -195,7 +195,7 @@ private fun CellDetail(text: String, color: Color, modifier: Modifier = Modifier
 private const val DETAIL_TEXT_ALPHA = 0.7f
 
 private const val SPEAKER_FACE_CORNER_PERCENT = 34
-private val SpeakerFaceSize = 16.dp
+private val SpeakerFaceSize = 24.dp
 private val SpeakerFaceOutline = 0.3.dp
 private val SpeakerFaceFeature = 0.9.dp
 
