@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.verticalScrollAxisRange
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -91,15 +92,16 @@ internal class TimetableGridScrollState(
     ) = coroutineScope {
         val preConsumed = dispatcher.dispatchPreFling(velocity)
         val remaining = velocity - preConsumed
-        launch { flingAxis(remaining.x, decay) { delta -> dragBy(Offset(delta, 0f)).x } }
+        val consumedX = async { flingAxis(remaining.x, decay) { delta -> dragBy(Offset(delta, 0f)).x } }
         // Only the vertical fling reaches the parent: the collapsing header above the grid
         // reacts to vertical motion alone.
         val consumedY = flingAxis(remaining.y, decay) { delta ->
             dragBy(Offset(0f, delta), dispatcher, NestedScrollSource.SideEffect).y
         }
+        val consumed = Velocity(consumedX.await(), consumedY)
         dispatcher.dispatchPostFling(
-            consumed = preConsumed + Velocity(remaining.x, consumedY),
-            available = Velocity(0f, remaining.y - consumedY),
+            consumed = preConsumed + consumed,
+            available = remaining - consumed,
         )
     }
 
