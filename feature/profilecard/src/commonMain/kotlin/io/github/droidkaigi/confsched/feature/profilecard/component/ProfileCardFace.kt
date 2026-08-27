@@ -119,10 +119,12 @@ private fun ProfileCardFaceContent(
             modifier = Modifier
                 .size(ProfileCardFaceDefaults.size)
                 .clip(shape)
-                .background(ProfileCardColors.plate)
-                .sketchBorder(shape, ProfileCardColors.ink),
-            content = content,
-        )
+                .background(ProfileCardColors.plate),
+        ) {
+            content()
+            // The outline goes on last so a band filling an edge cannot paint over it.
+            Box(modifier = Modifier.matchParentSize().sketchBorder(shape, ProfileCardColors.ink))
+        }
         if (topStartTape) {
             WashiTape(
                 modifier = Modifier
