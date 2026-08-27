@@ -257,7 +257,7 @@ private const val SPEECH_BUBBLE_PATH =
     "M10.8 0.8H51.2C57.8667 0.8 61.2 4.13333 61.2 10.8V21.2C61.2 27.8667 57.8667 31.2 51.2 31.2L21.34 31.26L9.26 43.2L6.84 31.08L10.8 31.2C4.13333 31.2 0.8 27.8667 0.8 21.2V10.8C0.8 4.13333 4.13333 0.8 10.8 0.8Z"
 
 /** The chosen mascot, drawn in the app's active `primary` colour — matching the front face's dusk
- * band — inside a scalloped wax-seal badge, traced from the Figma source. */
+ * band — inside a jagged wax-seal badge, traced from the Figma source. */
 @Composable
 private fun MascotSealBadge(mascot: Mascot, sketchiness: Sketchiness, seed: Int, modifier: Modifier = Modifier) {
     val badgeSize = ProfileCardFrontDefaults.badgeSize
@@ -286,12 +286,13 @@ private fun MascotSealBadge(mascot: Mascot, sketchiness: Sketchiness, seed: Int,
 }
 
 /**
- * A wax-seal outline: [petalCount] smooth rounded scallops around a circle, traced from the
- * Figma badge that frames the mascot on the front face.
+ * A wax-seal outline: [pointCount] sharp points around a circle, each running straight down to the
+ * valley between it and the next, traced from the Figma badge that frames the mascot on the front
+ * face.
  */
 private data class MascotSealShape(
     val seed: Int,
-    val petalCount: Int = 13,
+    val pointCount: Int = 14,
     val jitter: Float = 0f,
     override val borderThickness: Dp = 0.dp,
 ) : SketchOutlineShape {
@@ -299,25 +300,30 @@ private data class MascotSealShape(
         val random = Random(seed)
         val inset = with(density) { borderThickness.toPx() / 2f }
         val center = Offset(size.width / 2f, size.height / 2f)
-        val outerRadius = size.minDimension / 2f - inset
-        val valleyRadius = outerRadius * 0.84f
-        val bumpRadius = outerRadius * 1.05f
+        val pointRadius = size.minDimension / 2f - inset
+        val valleyRadius = pointRadius * SEAL_VALLEY_RADIUS_RATIO
+        val step = (2.0 * PI / pointCount).toFloat()
         val path = Path()
-        repeat(petalCount) { index ->
-            val wobble = 1f + (random.nextFloat() - 0.5f) * jitter
-            val startAngle = (2.0 * PI * index / petalCount - PI / 2).toFloat()
-            val midAngle = (2.0 * PI * (index + 0.5) / petalCount - PI / 2).toFloat()
-            val endAngle = (2.0 * PI * (index + 1) / petalCount - PI / 2).toFloat()
-            val start = center + Offset(cos(startAngle), sin(startAngle)) * valleyRadius
-            val control = center + Offset(cos(midAngle), sin(midAngle)) * (bumpRadius * wobble)
-            val end = center + Offset(cos(endAngle), sin(endAngle)) * valleyRadius
-            if (index == 0) path.moveTo(start.x, start.y) else path.lineTo(start.x, start.y)
-            path.quadraticTo(control.x, control.y, end.x, end.y)
+        repeat(pointCount) { index ->
+            val pointAngle = step * index - (PI / 2).toFloat()
+            val point = center + polarOffset(pointAngle + random.angleWobble(step), pointRadius * random.radiusWobble())
+            val valley = center + polarOffset(pointAngle + step / 2f + random.angleWobble(step), valleyRadius * random.radiusWobble())
+            if (index == 0) path.moveTo(point.x, point.y) else path.lineTo(point.x, point.y)
+            path.lineTo(valley.x, valley.y)
         }
         path.close()
         return Outline.Generic(path)
     }
+
+    private fun Random.radiusWobble(): Float = 1f + (nextFloat() - 0.5f) * jitter
+
+    private fun Random.angleWobble(step: Float): Float = (nextFloat() - 0.5f) * jitter * step / 2f
 }
+
+/** The valley radius as a fraction of the point radius, measured on the Figma "Seal Edge" vector. */
+private const val SEAL_VALLEY_RADIUS_RATIO = 0.85f
+
+private fun polarOffset(angle: Float, radius: Float): Offset = Offset(cos(angle), sin(angle)) * radius
 
 /**
  * The dusk band filling the top of the front face, traced from the Figma "Color Band" vector —
@@ -361,15 +367,15 @@ private object ProfileCardFrontDefaults {
     val dividerThickness = 1.5.dp
     val venueOffset = DpOffset(22.5.dp, 368.5.dp)
     val datesOffset = DpOffset(22.5.dp, 390.dp)
-    val sealOffset = DpOffset(219.dp, 384.5.dp)
-    val badgeSize = 80.dp
-    val sealBorderThickness = 2.dp
-    val sealJitter = 0.05f
+    val sealOffset = DpOffset(228.5.dp, 383.dp)
+    val badgeSize = 76.dp
+    val sealBorderThickness = 1.4.dp
+    val sealJitter = 0.018f
     val sealRotationDegrees = 8f
 
     // Wide enough that every mascot's drawable is scaled to the box's height, whatever its aspect
     // ratio, so all five reach the same ink height.
-    val sealMascotBox = DpSize(70.dp, 50.dp)
+    val sealMascotBox = DpSize(67.dp, 48.dp)
     val sealMascotOffset = DpOffset(0.dp, 0.dp)
 
     // Traced from the Figma front face: six sparks, alternating 12°/-20° rotation, split by
