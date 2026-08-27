@@ -1,6 +1,9 @@
 package io.github.droidkaigi.confsched.core.model
 
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
@@ -41,19 +44,21 @@ sealed interface FavoritesWidgetRow {
     data class More(val count: Int) : FavoritesWidgetRow
 }
 
+private val ConferenceStart = DroidKaigi2026Day.Day1.at(0, 0)
+
+// ConferenceTimeZone is a fixed offset, so adding wall-clock hours is exact.
+private val ConferenceEnd = DroidKaigi2026Day.Day2.at(0, 0) + 24.hours
+
 fun computeFavoritesWidgetState(
     now: Instant,
     timetable: Timetable,
     favoriteIds: Set<TimetableItemId>,
 ): FavoritesWidgetState {
-    val conferenceStart = DroidKaigi2026Day.Day1.at(0, 0)
-    // ConferenceTimeZone is a fixed offset, so adding wall-clock hours is exact.
-    val conferenceEnd = DroidKaigi2026Day.Day2.at(0, 0) + 24.hours
-    if (now < conferenceStart) {
+    if (now < ConferenceStart) {
         val today = now.toLocalDateTime(ConferenceTimeZone).date
         return FavoritesWidgetState.Countdown(today.daysUntil(DroidKaigi2026Day.Day1.date))
     }
-    if (now >= conferenceEnd) return FavoritesWidgetState.PostConference
+    if (now >= ConferenceEnd) return FavoritesWidgetState.PostConference
     val favorites = timetable.items.filter { it.id in favoriteIds }
     if (favorites.isEmpty()) return FavoritesWidgetState.Empty
     val remaining = favorites.filter { it.endInstant > now }
@@ -70,6 +75,26 @@ fun computeFavoritesWidgetState(
         }
         .sortedBy { it.sessions.first().startInstant }
     return FavoritesWidgetState.Schedule(slots)
+}
+
+/**
+ * The earliest instant after [now] at which the widget state computed from the same inputs can
+ * change on its own, or null when only new inputs can change it.
+ */
+fun nextFavoritesWidgetBoundary(
+    now: Instant,
+    timetable: Timetable,
+    favoriteIds: Set<TimetableItemId>,
+): Instant? {
+    if (now < ConferenceStart) {
+        val today = now.toLocalDateTime(ConferenceTimeZone).date
+        return today.plus(1, DateTimeUnit.DAY).atStartOfDayIn(ConferenceTimeZone)
+    }
+    if (now >= ConferenceEnd) return null
+    val favoriteBoundaries = timetable.items
+        .filter { it.id in favoriteIds }
+        .flatMap { listOf(it.startInstant, it.endInstant) }
+    return (favoriteBoundaries + ConferenceEnd).filter { it > now }.min()
 }
 
 /**

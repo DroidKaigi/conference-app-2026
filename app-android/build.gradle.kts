@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidxActivityCompose)
     implementation(libs.androidxGlanceAppwidget)
     implementation(libs.androidxGlancePreview)
+    implementation(libs.androidxWorkRuntime)
     debugImplementation(libs.androidxGlanceAppwidgetPreview)
     implementation(libs.androidxDatastorePreferencesCore)
     implementation(libs.okio)
