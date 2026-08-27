@@ -13,7 +13,7 @@
     <string name="widget_favorites_label">Favorites</string>
     <string name="widget_live_badge">LIVE</string>
     <string name="widget_empty_message">No favorites for today yet</string>
-    <string name="widget_empty_hint">Tap to browse %1$s sessions</string>
+    <string name="widget_empty_hint">Tap to browse sessions on %1$s</string>
     <string name="widget_done_message">All of today\'s favorites have ended</string>
     <string name="widget_done_hint">Tap to browse other sessions</string>
     <string name="widget_event_day_message">Today is Event Day</string>
