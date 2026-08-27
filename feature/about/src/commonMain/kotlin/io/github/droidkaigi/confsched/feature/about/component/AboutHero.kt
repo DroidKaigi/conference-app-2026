@@ -32,8 +32,8 @@ internal fun AboutHero(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxWidth().height(HeroHeight)) {
         val wallShape = SketchBottomEdgeShape(
             seed = combineSketchSeed(WALL_EDGE_SEED),
-            roughness = scaleSketchAmplitude(1.6.dp),
-            tremor = scaleSketchAmplitude(0.4.dp),
+            roughness = scaleSketchAmplitude(8.5.dp),
+            tremor = scaleSketchAmplitude(1.dp),
             sweepWavelength = 200.dp,
             tremorWavelength = 42.dp,
         )
@@ -82,7 +82,7 @@ private fun BattenEdge() {
     )
 }
 
-private const val WALL_EDGE_SEED = 2280
+private const val WALL_EDGE_SEED = 5573
 private val WallHeight = 241.dp
 private val StageWidth = 331.dp
 
