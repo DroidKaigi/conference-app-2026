@@ -14,7 +14,7 @@ class FakeProjectsApi : ProjectsApi {
                     titleEn = "Meetup (Lunchtime)",
                     descJa = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                     descEn = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
-                    roomId = 101,
+                    roomId = 100,
                     messageJa = "※こちらのイベントは時間が変更されました",
                     messageEn = "* The time of this event has changed",
                 ),
@@ -36,9 +36,9 @@ class FakeProjectsApi : ProjectsApi {
                 ),
             ),
             rooms = listOf(
-                fakeRoom(101, "NARWHAL"),
+                RoomResponse(id = 100, name = LocaledResponse(ja = "ホワイエ", en = "Foyer"), sort = 0),
                 fakeRoom(102, "OTTER"),
-                RoomResponse(id = 103, name = LocaledResponse(ja = "ホワイエ", en = "Foyer"), sort = 2),
+                fakeRoom(103, "QUAIL"),
             ),
         )
     }

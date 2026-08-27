@@ -20,7 +20,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                 en = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
             ),
-            room = SessionRoom.NARWHAL,
+            room = NamedRoom(MultiLangText(ja = "ホワイエ", en = "Foyer")),
             message = MultiLangText(
                 ja = "※こちらのイベントは時間が変更されました",
                 en = "* The time of this event has changed",
@@ -50,7 +50,7 @@ fun Projects.Companion.fake(): Projects = Projects(
                 ja = "様々なテーマごとに集まって、一緒にランチを食べながらお話ししましょう。席に限りがありますので、お弁当受け取り後お早めにお越しください。",
                 en = "Gather around a topic and chat over lunch. Seats are limited, so please come soon after picking up your bento.",
             ),
-            room = NamedRoom(MultiLangText(ja = "ホワイエ", en = "Foyer")),
+            room = SessionRoom.QUAIL,
         ),
     ),
 )
