@@ -204,6 +204,7 @@ private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(ProfileCardFrontDefaults.bubbleWidth, ProfileCardFrontDefaults.bubbleHeight)
+            .rotate(ProfileCardFrontDefaults.bubbleRotationDegrees)
             .clip(shape)
             .background(ProfileCardColors.brightPlate)
             .sketchBorder(shape, ProfileCardColors.onBanner),
@@ -221,8 +222,9 @@ private fun SpeechBubble(text: String, modifier: Modifier = Modifier) {
 }
 
 /**
- * The greeting bubble's outline, traced from the Figma badge: a tilted rounded body with a
- * small tail pointing toward the avatar, rather than a plain rounded rectangle.
+ * The greeting bubble's outline, traced from the Figma "Hi Bubble" vector: a rounded body with a
+ * small tail pointing toward the avatar. The vector's own tilt is left to the composable's
+ * rotation, so this path is the upright one.
  */
 private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : SketchOutlineShape {
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
@@ -230,31 +232,33 @@ private data class SpeechBubbleShape(override val borderThickness: Dp = 0.dp) : 
         val scaleX = (size.width - inset * 2f) / SOURCE_WIDTH
         val scaleY = (size.height - inset * 2f) / SOURCE_HEIGHT
 
-        fun point(x: Float, y: Float) = Offset(x * scaleX + inset, y * scaleY + inset)
+        fun point(x: Float, y: Float) = Offset((x - SOURCE_LEFT) * scaleX + inset, (y - SOURCE_TOP) * scaleY + inset)
 
         fun Path.curveTo(c1: Offset, c2: Offset, end: Offset) = cubicTo(c1.x, c1.y, c2.x, c2.y, end.x, end.y)
 
         val path = Path()
-        val start = point(15.1872f, 1.16408f)
+        val start = point(10.8f, 0.8f)
         path.moveTo(start.x, start.y)
-        point(54.7044f, 9.56371f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(61.2254f, 10.9498f), point(63.7928f, 14.9033f), point(62.4068f, 21.4243f))
-        point(60.2445f, 31.597f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(58.8584f, 38.118f), point(54.9049f, 40.6855f), point(48.3839f, 39.2994f))
-        point(19.1639f, 33.1498f).let { path.lineTo(it.x, it.y) }
-        point(4.86543f, 42.3174f).let { path.lineTo(it.x, it.y) }
-        point(5.01821f, 29.9591f).let { path.lineTo(it.x, it.y) }
-        point(8.86672f, 30.8998f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(2.34574f, 29.5137f), point(-0.221714f, 25.5602f), point(1.16436f, 19.0392f))
-        point(3.32664f, 8.86644f).let { path.lineTo(it.x, it.y) }
-        path.curveTo(point(4.71272f, 2.34545f), point(8.66625f, -0.222f), start)
+        point(51.2f, 0.8f).let { path.lineTo(it.x, it.y) }
+        path.curveTo(point(57.8667f, 0.8f), point(61.2f, 4.13333f), point(61.2f, 10.8f))
+        point(61.2f, 21.2f).let { path.lineTo(it.x, it.y) }
+        path.curveTo(point(61.2f, 27.8667f), point(57.8667f, 31.2f), point(51.2f, 31.2f))
+        point(21.34f, 31.26f).let { path.lineTo(it.x, it.y) }
+        point(9.26f, 43.2f).let { path.lineTo(it.x, it.y) }
+        point(6.84f, 31.08f).let { path.lineTo(it.x, it.y) }
+        point(10.8f, 31.2f).let { path.lineTo(it.x, it.y) }
+        path.curveTo(point(4.13333f, 31.2f), point(0.8f, 27.8667f), point(0.8f, 21.2f))
+        point(0.8f, 10.8f).let { path.lineTo(it.x, it.y) }
+        path.curveTo(point(0.8f, 4.13333f), point(4.13333f, 0.8f), start)
         path.close()
         return Outline.Generic(path)
     }
 
     private companion object {
-        const val SOURCE_WIDTH = 64f
-        const val SOURCE_HEIGHT = 44f
+        const val SOURCE_LEFT = 0.8f
+        const val SOURCE_TOP = 0.8f
+        const val SOURCE_WIDTH = 60.4f
+        const val SOURCE_HEIGHT = 42.4f
     }
 }
 
@@ -344,14 +348,15 @@ private object ProfileCardFrontDefaults {
     val photoPlateSize = 141.dp
     val photoPlateOffset = DpOffset(89.dp, 113.dp)
     val plateBorderThickness = 2.dp
-    val bubbleWidth = 67.dp
-    val bubbleHeight = 47.dp
-    val bubbleOffset = DpOffset(210.dp, 97.5.dp)
-    val bubbleTextOffset = DpOffset(2.dp, (-4).dp)
+    val bubbleWidth = 66.dp
+    val bubbleHeight = 48.dp
+    val bubbleOffset = DpOffset(208.dp, 104.5.dp)
+    val bubbleTextOffset = DpOffset(0.5.dp, (-8.5).dp)
     val bubbleBorderThickness = 4.dp
+    val bubbleRotationDegrees = 12f
 
-    // The bubble outline is traced already tilted; only the greeting needs turning to sit along it.
-    val bubbleTextRotationDegrees = -8f
+    // The greeting turns inside the already-rotated bubble, so this adds to [bubbleRotationDegrees].
+    val bubbleTextRotationDegrees = 1f
     val nickNameOffset = DpOffset(22.5.dp, 271.dp)
     val nickNameWidth = 275.dp
     val occupationOffset = DpOffset(22.5.dp, 324.5.dp)
