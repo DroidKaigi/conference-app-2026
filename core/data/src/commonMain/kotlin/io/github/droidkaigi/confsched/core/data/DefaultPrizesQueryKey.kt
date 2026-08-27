@@ -17,5 +17,4 @@ class DefaultPrizesQueryKey(
     fileStorage = fileStorage,
     fetchResponse = { api.getPrizes() },
     transformToDomainModel = PrizeListResponse::toPrizes,
-    onPersisted = {},
 )
