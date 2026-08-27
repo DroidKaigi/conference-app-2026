@@ -5,7 +5,9 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 class FavoritesWidgetStateTest {
     private fun item(
@@ -194,5 +196,33 @@ class FavoritesWidgetStateTest {
         val now = DroidKaigi2026Day.Day1.at(9, 0)
         val state = computeFavoritesWidgetState(now, Timetable(items = persistentListOf()), ids("a"))
         assertEquals(FavoritesWidgetState.Empty, state)
+    }
+
+    @Test
+    fun before_the_conference_the_boundary_is_the_next_conference_midnight() {
+        val now = DroidKaigi2026Day.Day1.at(9, 0) - 14.days
+        val boundary = nextFavoritesWidgetBoundary(now, timetable(item("a", startsAt = "10:00", endsAt = "10:40")), ids("a"))
+        assertEquals(DroidKaigi2026Day.Day1.at(0, 0) - 13.days, boundary)
+    }
+
+    @Test
+    fun during_the_conference_the_boundary_is_the_next_favorite_start_or_end() {
+        val timetable = timetable(
+            item("a", startsAt = "10:00", endsAt = "10:40"),
+            item("b", startsAt = "11:00", endsAt = "11:40"),
+            item("c", startsAt = "10:20", endsAt = "10:50"),
+        )
+        assertEquals(DroidKaigi2026Day.Day1.at(10, 0), nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(9, 0), timetable, ids("a", "b")))
+        assertEquals(DroidKaigi2026Day.Day1.at(10, 20), nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 5), timetable, ids("a", "b", "c")))
+        assertEquals(DroidKaigi2026Day.Day1.at(10, 40), nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 20), timetable, ids("a", "b", "c")))
+        assertEquals(DroidKaigi2026Day.Day1.at(11, 0), nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 40), timetable, ids("a", "b")))
+    }
+
+    @Test
+    fun the_boundary_is_absent_once_every_favorite_has_ended_or_nothing_is_favorited() {
+        val timetable = timetable(item("a", startsAt = "10:00", endsAt = "10:40"))
+        assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(10, 40), timetable, ids("a")))
+        assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day1.at(9, 0), timetable, ids()))
+        assertNull(nextFavoritesWidgetBoundary(DroidKaigi2026Day.Day2.at(0, 0) + 24.hours, timetable, ids("a")))
     }
 }

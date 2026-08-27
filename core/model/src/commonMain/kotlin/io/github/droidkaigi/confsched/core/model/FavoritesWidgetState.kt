@@ -1,6 +1,9 @@
 package io.github.droidkaigi.confsched.core.model
 
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
@@ -70,6 +73,26 @@ fun computeFavoritesWidgetState(
         }
         .sortedBy { it.sessions.first().startInstant }
     return FavoritesWidgetState.Schedule(slots)
+}
+
+/**
+ * The earliest instant after [now] at which the widget state computed from the same inputs can
+ * change on its own, or null when only new inputs can change it.
+ */
+fun nextFavoritesWidgetBoundary(
+    now: Instant,
+    timetable: Timetable,
+    favoriteIds: Set<TimetableItemId>,
+): Instant? {
+    if (now < DroidKaigi2026Day.Day1.at(0, 0)) {
+        val today = now.toLocalDateTime(ConferenceTimeZone).date
+        return today.plus(1, DateTimeUnit.DAY).atStartOfDayIn(ConferenceTimeZone)
+    }
+    return timetable.items
+        .filter { it.id in favoriteIds }
+        .flatMap { listOf(it.startInstant, it.endInstant) }
+        .filter { it > now }
+        .minOrNull()
 }
 
 /**

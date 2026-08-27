@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Pushes a widget update whenever favorites or the color scheme change while the app process is
- * alive; the provider's updatePeriodMillis carries the widget between app launches.
+ * alive; time-driven state changes are covered by FavoritesWidgetRefreshWorker.
  */
 fun startFavoritesWidgetRefresh(context: Context, scope: CoroutineScope) {
     val dependencies = context.widgetDependencies
