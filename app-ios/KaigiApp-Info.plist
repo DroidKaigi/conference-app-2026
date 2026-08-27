@@ -37,6 +37,8 @@
 	<string>group.io.github.droidkaigi.confsched.kaigiapp</string>
 	<key>FavoritesWidgetSnapshotSchemaVersion</key>
 	<integer>2</integer>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sessions you choose are added to your calendar.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

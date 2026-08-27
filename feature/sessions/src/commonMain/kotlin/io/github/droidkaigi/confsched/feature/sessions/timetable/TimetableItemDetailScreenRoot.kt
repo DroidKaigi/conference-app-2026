@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.sessionUrl
+import io.github.droidkaigi.confsched.core.ui.CalendarEvent
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
 import io.github.droidkaigi.confsched.core.ui.showSnackbar
@@ -19,6 +20,7 @@ fun TimetableItemDetailScreenRoot(
     onNavigateBack: () -> Unit,
     onNavigateToSession: (TimetableItemId) -> Unit,
     onOpenUrl: (String) -> Unit,
+    onAddCalendarEvent: (CalendarEvent) -> Unit,
     onShareText: (String) -> Unit,
 ) {
     SoilDataBoundary(
@@ -57,7 +59,7 @@ fun TimetableItemDetailScreenRoot(
             onMemoChange = { screenChannel.send(TimetableItemDetailScreenAction.SaveMemo(it)) },
             onArchiveVideoClick = onOpenUrl,
             onArchiveSlideClick = onOpenUrl,
-            onCalendarClick = { onOpenUrl(calendarUrl(uiState.item)) },
+            onCalendarClick = { onAddCalendarEvent(uiState.item.toCalendarEvent(uiState.displayLanguage)) },
             onShareClick = { onShareText(shareText) },
             onSessionClick = onNavigateToSession,
             onBackClick = onNavigateBack,
