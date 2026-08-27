@@ -1,3 +1,4 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
@@ -7,6 +8,8 @@ plugins {
     alias(libs.plugins.metro)
     alias(libs.plugins.aboutlibrariesAndroid)
     alias(libs.plugins.droidkaigiPrimitiveSpotless)
+    alias(libs.plugins.googleServices)
+    alias(libs.plugins.firebaseCrashlytics)
 }
 
 val keystorePropertiesFile = file("keystore.properties")
@@ -45,6 +48,10 @@ android {
         create("prod") {
             dimension = "environment"
             signingConfig = signingConfigs.findByName("prod")
+            configure<CrashlyticsExtension> {
+                // The upload task needs the app id from the Firebase project file.
+                mappingFileUploadEnabled = file("src/prod/google-services.json").exists()
+            }
         }
     }
 
@@ -61,6 +68,11 @@ android {
     }
 }
 
+googleServices {
+    // Only the prod source set carries the Firebase project file; dev builds run without it.
+    missingGoogleServicesStrategy = com.google.gms.googleservices.GoogleServicesPlugin.MissingGoogleServicesStrategy.WARN
+}
+
 aboutLibraries {
     // Assets outside the dependency graph — the bundled fonts — enter the export as the
     // custom libraries defined here.
@@ -74,6 +86,9 @@ dependencies {
     // Supplies the preview drawables the fake server environment points at; excluded from prod.
     "devImplementation"(project(":core:preview:impl"))
     "prodImplementation"(libs.firebaseCrashlytics)
+    // Crashlytics transitively pins androidx.fragment 1.1.0, which release lint rejects for
+    // the ActivityResult API.
+    "prodImplementation"(libs.androidxFragment)
     implementation(libs.androidxActivityCompose)
     implementation(libs.androidxGlanceAppwidget)
     implementation(libs.androidxGlancePreview)
