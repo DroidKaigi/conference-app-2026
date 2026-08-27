@@ -4,7 +4,7 @@ A screen's dependencies are injected through two **role contexts** carried by co
 
 ## Overview
 
-- **Two role contexts**, both concrete `@Inject` classes: `ScreenContext` (the Root's dependencies — [QueryKey / SubscriptionKey](./soil-keys.md), etc.) and `PresenterContext` (the presenter's — [MutationKey](./soil-mutation.md), etc.).
+- **Two role contexts**, both concrete `@Inject` classes: `ScreenContext` (the Root's dependencies — [QueryKey / SubscriptionKey](./soil-keys.md), etc.) and `PresenterContext` (the presenter's — [MutationKey](./soil-mutation.md), etc.). Both declare `val logger: KaigiLogger`, so every screen has one seam for diagnostics and the channel effects can report a failing handler.
 - **Every screen uses the same three parts**: a scope marker, a per-screen `@GraphExtension`, and a `@SingleIn` ScreenContext class.
 - **ScreenContext holds the PresenterContext as a property** and must never implement it — the roles stay separate types.
 - **Input/output is gated by the context types**: actions can only be consumed under `PresenterContext`, results under `ScreenContext`.
@@ -38,6 +38,7 @@ interface TimetableScreenGraph {
 @Inject
 class TimetablePresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
+    override val logger: KaigiLogger,
 ) : PresenterContext
 
 @Inject
@@ -45,6 +46,7 @@ class TimetablePresenterContext(
 class TimetableScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    override val logger: KaigiLogger,
     val presenterContext: TimetablePresenterContext, // the instance, held as a property
 ) : ScreenContext
 ```

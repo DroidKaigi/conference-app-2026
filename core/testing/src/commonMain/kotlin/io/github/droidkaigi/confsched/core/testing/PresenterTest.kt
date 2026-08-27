@@ -10,6 +10,7 @@ import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.testIn
 import app.cash.turbine.turbineScope
 import io.github.droidkaigi.confsched.core.common.ActionResultEffect
+import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.ScreenContext
@@ -39,7 +40,9 @@ fun <C : PresenterContext, A, R, S> runPresenterTest(
     presenter: @Composable context(C) (ScreenChannel<A, R>) -> S,
     validate: suspend PresenterTestScope<A, R, S>.() -> Unit,
 ): TestResult = runTest {
-    val screenContext = object : ScreenContext {}
+    val screenContext = object : ScreenContext {
+        override val logger: KaigiLogger = presenterContext.logger
+    }
     val screenChannel = ScreenChannel<A, R>()
     val results = Channel<R>(Channel.BUFFERED)
     val uiStateFlow = moleculeFlow(RecompositionMode.Immediate) {

@@ -90,6 +90,7 @@ Do here:
 @Inject
 class TimetablePresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
+    override val logger: KaigiLogger,
 ) : PresenterContext
 
 @Inject
@@ -97,6 +98,7 @@ class TimetablePresenterContext(
 class TimetableScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    override val logger: KaigiLogger,
     val presenterContext: TimetablePresenterContext,  // holds the instance; not `: TimetablePresenterContext`
 ) : ScreenContext
 ```

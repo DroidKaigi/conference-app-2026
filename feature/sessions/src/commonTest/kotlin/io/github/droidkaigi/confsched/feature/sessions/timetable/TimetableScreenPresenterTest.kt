@@ -9,6 +9,7 @@ import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import dev.zacsweers.metro.createGraph
+import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
@@ -16,6 +17,7 @@ import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
+import io.github.droidkaigi.confsched.core.testing.FakeKaigiLogger
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import io.github.droidkaigi.confsched.core.testing.testTimetableItem
 import kotlinx.collections.immutable.persistentListOf
@@ -136,7 +138,9 @@ class TimetableScreenPresenterTest {
 
         moleculeFlow(RecompositionMode.Immediate) {
             var reply by remember { mutableStateOf<Reply<Timetable>?>(null) }
-            val screenContext = object : ScreenContext {}
+            val screenContext = object : ScreenContext {
+                override val logger: KaigiLogger = FakeKaigiLogger()
+            }
             SwrClientProvider(client = client) {
                 context(screenContext) { reply = rememberProbeQueryReply(queryKey) }
             }
