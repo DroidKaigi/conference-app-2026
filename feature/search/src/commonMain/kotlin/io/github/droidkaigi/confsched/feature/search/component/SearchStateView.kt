@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -58,8 +59,8 @@ internal fun SearchStateView(
             .fillMaxSize()
             .semantics { liveRegion = LiveRegionMode.Polite },
         contentPadding = PaddingValues(
-            start = 32.dp,
-            end = 32.dp,
+            start = 40.dp,
+            end = 40.dp,
             bottom = WindowInsets.safeDrawing
                 .exclude(WindowInsets.ime)
                 .asPaddingValues()
@@ -95,6 +96,7 @@ internal fun SearchStateView(
                     Text(
                         text = stringResource(Res.string.search_clear_filters),
                         style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary,
                         textDecoration = TextDecoration.Underline,
                         textAlign = TextAlign.Center,
