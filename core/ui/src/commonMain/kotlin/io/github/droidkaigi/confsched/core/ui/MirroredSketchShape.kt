@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -19,7 +20,8 @@ data class MirroredSketchShape(val shape: SketchOutlineShape) : SketchOutlineSha
     override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline =
         when (val outline = shape.createOutline(size, layoutDirection, density)) {
             is Outline.Generic -> Outline.Generic(
-                outline.path.apply {
+                Path().apply {
+                    addPath(outline.path)
                     transform(
                         Matrix().apply {
                             translate(x = size.width)

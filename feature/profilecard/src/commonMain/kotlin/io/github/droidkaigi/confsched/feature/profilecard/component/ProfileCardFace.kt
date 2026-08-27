@@ -59,7 +59,7 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 @Composable
 fun ProfileCardFace(
     sketchiness: Sketchiness,
-    seed: Int,
+    outlineSeed: Int,
     topStartTape: Boolean,
     bottomEndTape: Boolean,
     mirrored: Boolean,
@@ -81,7 +81,7 @@ fun ProfileCardFace(
         ) {
             ProfileCardFaceContent(
                 sketchiness = sketchiness,
-                seed = seed,
+                outlineSeed = outlineSeed,
                 topStartTape = topStartTape,
                 bottomEndTape = bottomEndTape,
                 mirrored = mirrored,
@@ -94,7 +94,7 @@ fun ProfileCardFace(
 @Composable
 private fun ProfileCardFaceContent(
     sketchiness: Sketchiness,
-    seed: Int,
+    outlineSeed: Int,
     topStartTape: Boolean,
     bottomEndTape: Boolean,
     mirrored: Boolean,
@@ -103,7 +103,7 @@ private fun ProfileCardFaceContent(
     Box(modifier = Modifier.requiredSize(ProfileCardFaceDefaults.size)) {
         val shortSide = minOf(ProfileCardFaceDefaults.size.width, ProfileCardFaceDefaults.size.height)
         val outline = SketchRoundRectShape(
-            seed = seed,
+            seed = outlineSeed,
             roughness = profileCardRoughness(shortSide, sketchiness),
             tremor = profileCardTremor(shortSide, sketchiness),
             sweepWavelength = ProfileCardSweepWavelength,
@@ -120,22 +120,26 @@ private fun ProfileCardFaceContent(
                 .sketchBorder(shape, ProfileCardColors.ink),
             content = content,
         )
-        // Figma's Rotation field is the mirror of Modifier.rotate's sign (its positive turns the
-        // layer counterclockwise); these negate the source's -14°/9° to match the render.
         if (topStartTape) {
             WashiTape(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .offset(x = (-30.5).dp, y = (-9).dp)
-                    .rotate(14f),
+                    .offset(
+                        x = ProfileCardFaceDefaults.topStartTapeOffset.x,
+                        y = ProfileCardFaceDefaults.topStartTapeOffset.y,
+                    )
+                    .rotate(ProfileCardFaceDefaults.topStartTapeRotationDegrees),
             )
         }
         if (bottomEndTape) {
             WashiTape(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(x = 16.dp, y = (-1.5).dp)
-                    .rotate(-9f),
+                    .offset(
+                        x = ProfileCardFaceDefaults.bottomEndTapeOffset.x,
+                        y = ProfileCardFaceDefaults.bottomEndTapeOffset.y,
+                    )
+                    .rotate(ProfileCardFaceDefaults.bottomEndTapeRotationDegrees),
             )
         }
     }
@@ -284,6 +288,13 @@ object ProfileCardFaceDefaults {
     val tapeWidth = 88.dp
     val tapeHeight = 25.dp
     val tapeAlpha = 0.9f
+    val topStartTapeOffset = DpOffset((-30.5).dp, (-9).dp)
+    val bottomEndTapeOffset = DpOffset(16.dp, (-1.5).dp)
+
+    // Figma's Rotation field is the mirror of Modifier.rotate's sign (its positive turns the
+    // layer counterclockwise); these negate the source's -14°/9° to match the render.
+    val topStartTapeRotationDegrees = 14f
+    val bottomEndTapeRotationDegrees = -9f
     val sparkleSize = 12.dp
 
     /** The corner marks framing each face's event label. */
@@ -346,7 +357,7 @@ private fun ProfileCardFacePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Box(modifier = Modifier.padding(32.dp)) {
-            ProfileCardFace(sketchiness = Sketchiness.Normal, seed = 900, topStartTape = true, bottomEndTape = true, mirrored = false) {
+            ProfileCardFace(sketchiness = Sketchiness.Normal, outlineSeed = 900, topStartTape = true, bottomEndTape = true, mirrored = false) {
                 EventLabelHeader(text = "DROIDKAIGI 2026", color = ProfileCardColors.ink, centeredLabel = false)
                 Sparkles(
                     placements = listOf(SparklePlacement(x = 280.dp, y = 40.dp, size = 12.dp, rotationDegrees = 12f)),

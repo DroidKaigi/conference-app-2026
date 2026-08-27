@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-/** The stored form of a [ProfileCard]: the avatar itself lives in [ProfileImageStore], only its path here. */
+/** The stored form of a [ProfileCard]: the avatar itself lives in [AvatarImageStore], only its path here. */
 internal data class StoredProfileCard(
     val nickName: String,
     val occupation: String,
@@ -26,7 +26,7 @@ internal data class StoredProfileCard(
 
 @Inject
 @SingleIn(AppScope::class)
-class ProfileCardDataStore(@ProfileCardDataStoreQualifier private val dataStore: DataStore<Preferences>) {
+class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: DataStore<Preferences>) {
 
     internal fun card(): Flow<StoredProfileCard?> = dataStore.data.map { it.readCard() }.distinctUntilChanged()
 

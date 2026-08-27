@@ -14,8 +14,8 @@ import java.io.File
 /** The desktop has no share sheet, so the image goes wherever the user chooses to save it. */
 @Composable
 actual fun rememberImageSharer(): (ByteArray) -> Unit {
-    val scope = rememberCoroutineScope()
-    return remember(scope) { scope::saveImage }
+    val coroutineScope = rememberCoroutineScope()
+    return remember(coroutineScope) { coroutineScope::saveImage }
 }
 
 private fun CoroutineScope.saveImage(bytes: ByteArray) {

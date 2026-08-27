@@ -17,8 +17,8 @@ import java.io.File
 @Composable
 actual fun rememberImageSharer(): (ByteArray) -> Unit {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    return remember(context, scope) { { bytes -> scope.shareImage(context, bytes) } }
+    val coroutineScope = rememberCoroutineScope()
+    return remember(context, coroutineScope) { { bytes -> coroutineScope.shareImage(context, bytes) } }
 }
 
 private fun CoroutineScope.shareImage(context: Context, bytes: ByteArray) {

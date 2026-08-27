@@ -79,10 +79,10 @@ fun ProfileCardFormView(
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
-    onMascotSelected: (Mascot) -> Unit,
-    onSketchinessSelected: (Sketchiness) -> Unit,
+    onMascotClick: (Mascot) -> Unit,
+    onSketchinessClick: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
-    onRemoveImageClick: () -> Unit,
+    onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -91,8 +91,11 @@ fun ProfileCardFormView(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-            .padding(top = 16.dp, bottom = 16.dp + LocalNavigationBarOccupiedHeight.current),
+            .padding(horizontal = ProfileCardFormViewDefaults.contentInset)
+            .padding(
+                top = ProfileCardFormViewDefaults.contentInset,
+                bottom = ProfileCardFormViewDefaults.contentInset + LocalNavigationBarOccupiedHeight.current,
+            ),
         verticalArrangement = Arrangement.spacedBy(ProfileCardFormViewDefaults.sectionSpacing),
     ) {
         Text(stringResource(Res.string.subtitle), style = MaterialTheme.typography.bodyMedium)
@@ -138,20 +141,20 @@ fun ProfileCardFormView(
                     Text(stringResource(Res.string.add_image_button), style = ProfileCardTextStyles.accent)
                 }
             } else {
-                ProfileImagePreview(
+                PickedAvatarImageItem(
                     avatarImage = avatarImage,
                     sketchiness = uiState.sketchiness,
-                    onClick = onAddImageClick,
-                    onRemoveClick = onRemoveImageClick,
+                    onImageClick = onAddImageClick,
+                    onRemoveClick = onRemoveAvatarImageClick,
                 )
             }
             ProfileCardFormErrorText(uiState.avatarImageError)
         }
         ProfileCardFormSection(label = stringResource(Res.string.mascot_label)) {
-            MascotPicker(selected = uiState.mascot, onMascotSelected = onMascotSelected)
+            MascotPicker(selectedMascot = uiState.mascot, onMascotClick = onMascotClick)
         }
         ProfileCardFormSection(label = stringResource(Res.string.sketchiness_label)) {
-            SketchinessPicker(selected = uiState.sketchiness, onSketchinessSelected = onSketchinessSelected)
+            SketchinessPicker(selectedSketchiness = uiState.sketchiness, onSketchinessClick = onSketchinessClick)
         }
         KaigiButton(
             onClick = onSubmitClick,
@@ -169,10 +172,10 @@ fun ProfileCardFormView(
  * the contour over it and a close button to discard it. Tapping the photograph re-opens the picker.
  */
 @Composable
-private fun ProfileImagePreview(
+private fun PickedAvatarImageItem(
     avatarImage: AvatarImage,
     sketchiness: Sketchiness,
-    onClick: () -> Unit,
+    onImageClick: () -> Unit,
     onRemoveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -192,7 +195,7 @@ private fun ProfileImagePreview(
                 .fillMaxSize()
                 .clip(shape)
                 .background(MaterialTheme.colorScheme.surfaceBright)
-                .clickable(onClick = onClick),
+                .clickable(onClick = onImageClick),
             contentScale = ContentScale.Crop,
         )
         // Drawn over the photograph rather than under it, so the whole stroke reads at its width.
@@ -210,8 +213,8 @@ private fun ProfileImagePreview(
 private fun RemoveImageButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val ringShape = SketchEllipseShape(
         seed = ProfileCardFormViewDefaults.removeButtonSeed,
-        roughness = MascotOptionDefaults.roughness,
-        tremor = MascotOptionDefaults.tremor,
+        roughness = ProfileCardFormViewDefaults.removeButtonRoughness,
+        tremor = ProfileCardFormViewDefaults.removeButtonTremor,
         sweepWavelength = ProfileCardSweepWavelength,
         borderThickness = ProfileCardFormViewDefaults.ringBorderThickness,
     )
@@ -270,6 +273,7 @@ private val ProfileCardFormError.message: StringResource
     }
 
 private object ProfileCardFormViewDefaults {
+    val contentInset = 16.dp
     val sectionSpacing = 12.dp
     val labelSpacing = 6.dp
     val nickNameFieldSeed = 701
@@ -285,6 +289,8 @@ private object ProfileCardFormViewDefaults {
     val removeButtonHitTarget = 40.dp
     val removeButtonRingSize = 30.dp
     val removeButtonGlyphSize = 20.dp
+    val removeButtonRoughness = 0.4.dp
+    val removeButtonTremor = 0.15.dp
 
     // The ring is centred on the mat's contour at 45 degrees, which leaves its hit target half a
     // dp outside the top-end corner of the box the mat fills.
@@ -324,10 +330,10 @@ private fun ProfileCardFormViewPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
         )
     }
@@ -349,10 +355,10 @@ private fun ProfileCardFormViewErrorPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
         )
     }
@@ -374,10 +380,10 @@ private fun ProfileCardFormViewWithImagePreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
         )
     }

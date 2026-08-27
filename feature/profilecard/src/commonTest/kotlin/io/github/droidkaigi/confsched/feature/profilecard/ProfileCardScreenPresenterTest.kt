@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -175,6 +176,37 @@ class ProfileCardScreenPresenterTest {
             val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
             assertEquals(ProfileCardFormError.AvatarImageRequired, form.avatarImageError)
             assertTrue(graph.profileCardMutationKey.invocations.isEmpty)
+        }
+    }
+
+    @Test
+    fun turning_the_card_over_swaps_the_face_it_shows() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = storedCard) },
+        ) {
+            assertFalse(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isShowingBack)
+            send(ProfileCardScreenAction.FlipCard)
+            assertTrue(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isShowingBack)
+            send(ProfileCardScreenAction.FlipCard)
+            assertFalse(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isShowingBack)
+        }
+    }
+
+    @Test
+    fun a_write_that_fails_reports_the_error() {
+        graph.profileCardMutationKey.failWith(RuntimeException("the card could not be written"))
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateNickName("Speaker B"))
+            send(ProfileCardScreenAction.UpdateOccupation("Designer"))
+            send(ProfileCardScreenAction.UpdateLink("https://example.com/b"))
+            send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
+            send(ProfileCardScreenAction.Submit)
+            assertIs<ProfileCardScreenActionResult.ShowMessage>(results.awaitItem())
         }
     }
 

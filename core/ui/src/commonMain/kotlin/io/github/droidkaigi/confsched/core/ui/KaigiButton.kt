@@ -64,7 +64,7 @@ fun KaigiButton(
         containerColor = containerColor,
         contentColor = contentColor,
         borderColor = containerColor,
-        contentPadding = KaigiButtonDefaults.contentPadding,
+        contentPadding = KaigiButtonDefaults.filledContentPadding,
         content = content,
     )
 }
@@ -97,7 +97,7 @@ fun KaigiOutlinedButton(
         containerColor = Color.Transparent,
         contentColor = contentColor,
         borderColor = contentColor,
-        contentPadding = KaigiButtonDefaults.contentPadding,
+        contentPadding = KaigiButtonDefaults.outlinedContentPadding,
         content = content,
     )
 }
@@ -162,7 +162,8 @@ object KaigiButtonDefaults {
     val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
     val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
-    val contentPadding = PaddingValues(horizontal = 24.dp)
+    val filledContentPadding = PaddingValues(horizontal = 24.dp)
+    val outlinedContentPadding = PaddingValues(horizontal = 16.dp)
 
     val labelStyle
         @Composable get() = MaterialTheme.typography.labelLarge

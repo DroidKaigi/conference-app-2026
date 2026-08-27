@@ -28,14 +28,14 @@ fun ProfileCardScreen(
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
-    onMascotSelected: (Mascot) -> Unit,
-    onSketchinessSelected: (Sketchiness) -> Unit,
+    onMascotClick: (Mascot) -> Unit,
+    onSketchinessClick: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
-    onRemoveImageClick: () -> Unit,
+    onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
-    onFlipCard: () -> Unit,
-    onEditCard: () -> Unit,
-    onShare: (ImageBitmap) -> Unit,
+    onCardClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onShareClick: (ImageBitmap) -> Unit,
 ) {
     Scaffold(
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.profile_card)) },
@@ -48,19 +48,19 @@ fun ProfileCardScreen(
                 onNickNameChange = onNickNameChange,
                 onOccupationChange = onOccupationChange,
                 onLinkChange = onLinkChange,
-                onMascotSelected = onMascotSelected,
-                onSketchinessSelected = onSketchinessSelected,
+                onMascotClick = onMascotClick,
+                onSketchinessClick = onSketchinessClick,
                 onAddImageClick = onAddImageClick,
-                onRemoveImageClick = onRemoveImageClick,
+                onRemoveAvatarImageClick = onRemoveAvatarImageClick,
                 onSubmitClick = onSubmitClick,
             )
 
             is ProfileCardScreenUiState.Card -> ProfileCardView(
                 uiState = uiState,
                 colorScheme = colorScheme,
-                onFlipCard = onFlipCard,
-                onEditCard = onEditCard,
-                onShare = onShare,
+                onCardClick = onCardClick,
+                onEditClick = onEditClick,
+                onShareClick = onShareClick,
                 modifier = Modifier.padding(innerPadding),
             )
         }
@@ -75,7 +75,7 @@ private fun ProfileCardScreenFormPreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
             colorScheme = colorScheme,
-            onShare = {},
+            onShareClick = {},
             uiState = ProfileCardScreenUiState.Form(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
@@ -84,13 +84,13 @@ private fun ProfileCardScreenFormPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
+            onCardClick = {},
+            onEditClick = {},
         )
     }
 }
@@ -112,14 +112,14 @@ private fun ProfileCardScreenFormErrorPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
-            onShare = {},
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
         )
     }
 }
@@ -143,14 +143,14 @@ private fun ProfileCardScreenCardPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
-            onShare = {},
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
         )
     }
 }
@@ -163,7 +163,7 @@ private fun ProfileCardScreenCardBackPreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
             colorScheme = colorScheme,
-            onShare = {},
+            onShareClick = {},
             uiState = ProfileCardScreenUiState.Card(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
@@ -176,13 +176,13 @@ private fun ProfileCardScreenCardBackPreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
+            onCardClick = {},
+            onEditClick = {},
         )
     }
 }
@@ -195,7 +195,7 @@ private fun ProfileCardScreenFormWithImagePreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
             colorScheme = colorScheme,
-            onShare = {},
+            onShareClick = {},
             uiState = ProfileCardScreenUiState.Form(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
@@ -205,13 +205,13 @@ private fun ProfileCardScreenFormWithImagePreview(
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
-            onRemoveImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
+            onCardClick = {},
+            onEditClick = {},
         )
     }
 }

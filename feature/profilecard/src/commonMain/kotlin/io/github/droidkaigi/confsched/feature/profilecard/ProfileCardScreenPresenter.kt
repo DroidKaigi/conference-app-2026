@@ -20,15 +20,14 @@ fun profileCardScreenPresenter(
     screenChannel: ScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>,
     storedCard: ProfileCard?,
 ): ProfileCardScreenUiState {
-    val mutation = rememberMutation(presenterContext.profileCardMutationKey)
+    val profileCardMutation = rememberMutation(presenterContext.profileCardMutationKey)
     val shareMutation = rememberMutation(presenterContext.shareProfileCardMutationKey)
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
 
-    // Submit and EditCard read the form and the card of the composition they fire in rather than
-    // the ones the effect was launched with.
-    val currentForm by rememberUpdatedState(form)
+    // EditCard reads the card of the composition it fires in rather than the one the effect was
+    // launched with.
     val currentStoredCard by rememberUpdatedState(storedCard)
 
     ActionEffect(screenChannel) { action ->
@@ -48,10 +47,10 @@ fun profileCardScreenPresenter(
             ProfileCardScreenAction.RemoveAvatarImage -> form = form.copy(avatarImage = null)
 
             ProfileCardScreenAction.Submit -> {
-                val validated = currentForm.validated()
+                val validated = form.validated()
                 form = validated
                 if (validated.hasNoError) {
-                    mutation.mutateAsync(
+                    profileCardMutation.mutateAsync(
                         ProfileCard(
                             nickName = validated.nickName,
                             occupation = validated.occupation,
@@ -76,13 +75,13 @@ fun profileCardScreenPresenter(
         }
     }
 
-    MutationSuccessEffect(mutation) {
+    MutationSuccessEffect(profileCardMutation) {
         isEditing = false
-        mutation.reset()
+        profileCardMutation.reset()
     }
-    MutationErrorEffect(mutation) { error ->
+    MutationErrorEffect(profileCardMutation) { error ->
         screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
-        mutation.reset()
+        profileCardMutation.reset()
     }
 
     MutationSuccessEffect(shareMutation) { image ->
@@ -95,7 +94,7 @@ fun profileCardScreenPresenter(
     }
 
     return if (storedCard == null || isEditing) {
-        form.copy(isSubmitting = mutation.isPending)
+        form.copy(isSubmitting = profileCardMutation.isPending)
     } else {
         ProfileCardScreenUiState.Card(
             nickName = storedCard.nickName,

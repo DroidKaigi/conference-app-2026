@@ -41,14 +41,14 @@ fun ProfileCardScreenRoot() {
             onNickNameChange = { screenChannel.send(ProfileCardScreenAction.UpdateNickName(it)) },
             onOccupationChange = { screenChannel.send(ProfileCardScreenAction.UpdateOccupation(it)) },
             onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
-            onMascotSelected = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
-            onSketchinessSelected = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
+            onMascotClick = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
+            onSketchinessClick = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
             onAddImageClick = launchImagePicker,
-            onRemoveImageClick = { screenChannel.send(ProfileCardScreenAction.RemoveAvatarImage) },
+            onRemoveAvatarImageClick = { screenChannel.send(ProfileCardScreenAction.RemoveAvatarImage) },
             onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
-            onFlipCard = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
-            onEditCard = { screenChannel.send(ProfileCardScreenAction.EditCard) },
-            onShare = { screenChannel.send(ProfileCardScreenAction.Share(it)) },
+            onCardClick = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
+            onEditClick = { screenChannel.send(ProfileCardScreenAction.EditCard) },
+            onShareClick = { screenChannel.send(ProfileCardScreenAction.Share(it)) },
         )
     }
 }

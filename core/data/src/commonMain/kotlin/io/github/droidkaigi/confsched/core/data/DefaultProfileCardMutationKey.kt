@@ -13,14 +13,14 @@ import soil.query.buildMutationKey
 @ContributesBinding(ProfileCardScreenScope::class)
 class DefaultProfileCardMutationKey(
     extraTag: MutationTag,
-    store: ProfileCardDataStore,
-    imageStore: ProfileImageStore,
+    profileCardStore: ProfileCardStore,
+    avatarImageStore: AvatarImageStore,
 ) : ProfileCardMutationKey by buildMutationKey(
     id = SoilIds.profileCardMutation(extraTag),
     mutate = { card ->
-        val previousPath = store.card().first()?.avatarImagePath
-        val path = card.avatarImage?.let { imageStore.save(it.bytes) }
-        store.save(card, path)
-        if (previousPath != null && previousPath != path) imageStore.delete(previousPath)
+        val previousPath = profileCardStore.card().first()?.avatarImagePath
+        val path = card.avatarImage?.let { avatarImageStore.save(it.bytes) }
+        profileCardStore.save(card, path)
+        if (previousPath != null && previousPath != path) avatarImageStore.delete(previousPath)
     },
 )

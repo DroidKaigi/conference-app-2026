@@ -13,12 +13,12 @@ import soil.query.buildSubscriptionKey
 @Inject
 @ContributesBinding(AppScope::class)
 class DefaultProfileCardSubscriptionKey(
-    store: ProfileCardDataStore,
-    imageStore: ProfileImageStore,
+    profileCardStore: ProfileCardStore,
+    avatarImageStore: AvatarImageStore,
 ) : ProfileCardSubscriptionKey by buildSubscriptionKey(
     id = SoilIds.profileCardSubscription,
     subscribe = {
-        store.card().map { stored ->
+        profileCardStore.card().map { stored ->
             stored?.let {
                 ProfileCard(
                     nickName = it.nickName,
@@ -26,7 +26,7 @@ class DefaultProfileCardSubscriptionKey(
                     link = it.link,
                     mascot = it.mascot,
                     sketchiness = it.sketchiness,
-                    avatarImage = it.avatarImagePath?.let { path -> imageStore.load(path) }?.let(::AvatarImage),
+                    avatarImage = it.avatarImagePath?.let { path -> avatarImageStore.load(path) }?.let(::AvatarImage),
                 )
             }
         }

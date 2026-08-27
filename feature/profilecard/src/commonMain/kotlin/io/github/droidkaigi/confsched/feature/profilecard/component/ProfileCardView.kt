@@ -40,6 +40,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
@@ -52,9 +53,9 @@ import org.jetbrains.compose.resources.stringResource
 fun ProfileCardView(
     uiState: ProfileCardScreenUiState.Card,
     colorScheme: KaigiColorScheme,
-    onFlipCard: () -> Unit,
-    onEditCard: () -> Unit,
-    onShare: (ImageBitmap) -> Unit,
+    onCardClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onShareClick: (ImageBitmap) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shareImageLayer = rememberGraphicsLayer()
@@ -68,7 +69,8 @@ fun ProfileCardView(
             modifier = Modifier
                 .align(Alignment.Center)
                 .verticalScroll(rememberScrollState())
-                .padding(ProfileCardViewDefaults.cardSpacePadding),
+                .padding(ProfileCardViewDefaults.cardSpacePadding)
+                .padding(bottom = LocalNavigationBarOccupiedHeight.current),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.cardSpacing),
         ) {
@@ -80,12 +82,12 @@ fun ProfileCardView(
                 sketchiness = uiState.sketchiness,
                 avatarImage = uiState.avatarImage,
                 isShowingBack = uiState.isShowingBack,
-                modifier = Modifier.clickable(onClick = onFlipCard),
+                modifier = Modifier.clickable(onClick = onCardClick),
             )
-            ProfileCardActions(
+            ProfileCardActionsSection(
                 isSharing = uiState.isSharing,
-                onShareClick = { coroutineScope.launch { onShare(shareImageLayer.toImageBitmap()) } },
-                onEditCard = onEditCard,
+                onShareClick = { coroutineScope.launch { onShareClick(shareImageLayer.toImageBitmap()) } },
+                onEditClick = onEditClick,
             )
         }
         // Recorded regardless of which face is turned up, so the share image always carries both.
@@ -154,10 +156,10 @@ private fun FlippableProfileCard(
 }
 
 @Composable
-private fun ProfileCardActions(
+private fun ProfileCardActionsSection(
     isSharing: Boolean,
     onShareClick: () -> Unit,
-    onEditCard: () -> Unit,
+    onEditClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -185,7 +187,7 @@ private fun ProfileCardActions(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(role = Role.Button, onClick = onEditCard)
+                .clickable(role = Role.Button, onClick = onEditClick)
                 // The design sets the label straight under the button with no chrome of its own;
                 // the padding is what the row is spaced by.
                 .padding(vertical = ProfileCardViewDefaults.actionSpacing),
@@ -219,19 +221,19 @@ private fun ProfileCardViewPreview(
                 avatarImage = null,
             ),
             colorScheme = colorScheme,
-            onFlipCard = {},
-            onEditCard = {},
-            onShare = {},
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
         )
     }
 }
 
 @LocalePreviews
 @Composable
-private fun ProfileCardActionsPreview(
+private fun ProfileCardActionsSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardActions(isSharing = false, onShareClick = {}, onEditCard = {})
+        ProfileCardActionsSection(isSharing = false, onShareClick = {}, onEditClick = {})
     }
 }

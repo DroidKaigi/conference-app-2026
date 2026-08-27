@@ -13,8 +13,8 @@ import java.io.File
 
 @Composable
 actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
-    val scope = rememberCoroutineScope()
-    return remember(scope, onImagePicked) { { scope.pickImage(onImagePicked) } }
+    val coroutineScope = rememberCoroutineScope()
+    return remember(coroutineScope, onImagePicked) { { coroutineScope.pickImage(onImagePicked) } }
 }
 
 private fun CoroutineScope.pickImage(onImagePicked: (ByteArray) -> Unit) {

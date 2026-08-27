@@ -17,9 +17,9 @@ import kotlinx.coroutines.withContext
 @Composable
 actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) scope.readImage(context, uri, onImagePicked)
+        if (uri != null) coroutineScope.readImage(context, uri, onImagePicked)
     }
     return remember(launcher) {
         { launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }

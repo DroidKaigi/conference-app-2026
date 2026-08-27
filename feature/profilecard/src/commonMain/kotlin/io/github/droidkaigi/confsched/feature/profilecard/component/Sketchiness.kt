@@ -58,8 +58,8 @@ private val Sketchiness.drawableResource: DrawableResource
  */
 @Composable
 fun SketchinessPicker(
-    selected: Sketchiness,
-    onSketchinessSelected: (Sketchiness) -> Unit,
+    selectedSketchiness: Sketchiness,
+    onSketchinessClick: (Sketchiness) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -69,8 +69,8 @@ fun SketchinessPicker(
         Sketchiness.entries.forEach { sketchiness ->
             SketchinessOption(
                 sketchiness = sketchiness,
-                selected = sketchiness == selected,
-                onClick = { onSketchinessSelected(sketchiness) },
+                selected = sketchiness == selectedSketchiness,
+                onClick = { onSketchinessClick(sketchiness) },
                 modifier = Modifier.weight(1f),
             )
         }
@@ -173,6 +173,6 @@ private fun SketchinessPickerPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        SketchinessPicker(selected = Sketchiness.Normal, onSketchinessSelected = {})
+        SketchinessPicker(selectedSketchiness = Sketchiness.Normal, onSketchinessClick = {})
     }
 }

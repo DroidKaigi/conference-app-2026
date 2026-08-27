@@ -129,7 +129,7 @@ private fun ProfileCardShareImagePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         ProfileCardShareImage(
-            nickName = "droidkaigi",
+            nickName = "Speaker A",
             occupation = "Software Engineer",
             link = "https://example.com",
             mascot = Mascot.Koala,

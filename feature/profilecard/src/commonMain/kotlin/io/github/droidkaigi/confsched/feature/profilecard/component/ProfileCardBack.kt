@@ -59,8 +59,8 @@ fun ProfileCardBack(
 ) {
     // The face seed is the front's, since the back is that same card turned over.
     val faceSeed = nickName.hashCode()
-    val seed = faceSeed + 100
-    ProfileCardFace(sketchiness = sketchiness, seed = faceSeed, topStartTape = false, bottomEndTape = taped, mirrored = true, modifier = modifier) {
+    val qrPlateSeed = faceSeed + 100
+    ProfileCardFace(sketchiness = sketchiness, outlineSeed = faceSeed, topStartTape = false, bottomEndTape = taped, mirrored = true, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -78,7 +78,7 @@ fun ProfileCardBack(
         )
         QrPlate(
             link = link,
-            seed = seed + 1,
+            seed = qrPlateSeed + 1,
             sketchiness = sketchiness,
             modifier = Modifier.cardOffset(ProfileCardBackDefaults.qrFrameOffset),
         )

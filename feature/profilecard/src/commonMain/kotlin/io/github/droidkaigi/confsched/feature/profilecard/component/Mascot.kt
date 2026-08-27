@@ -66,16 +66,16 @@ fun MascotIcon(
 /** A row letting the user pick one of the five [Mascot]s. */
 @Composable
 fun MascotPicker(
-    selected: Mascot,
-    onMascotSelected: (Mascot) -> Unit,
+    selectedMascot: Mascot,
+    onMascotClick: (Mascot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(MascotOptionDefaults.gap)) {
         Mascot.entries.forEach { mascot ->
             MascotOption(
                 mascot = mascot,
-                selected = mascot == selected,
-                onClick = { onMascotSelected(mascot) },
+                selected = mascot == selectedMascot,
+                onClick = { onMascotClick(mascot) },
                 seed = mascot.ordinal,
             )
         }
@@ -157,6 +157,6 @@ private fun MascotPickerPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        MascotPicker(selected = Mascot.Koala, onMascotSelected = {}, modifier = Modifier.padding(16.dp))
+        MascotPicker(selectedMascot = Mascot.Koala, onMascotClick = {}, modifier = Modifier.padding(16.dp))
     }
 }

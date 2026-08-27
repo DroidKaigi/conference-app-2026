@@ -44,9 +44,9 @@ class ProfileCardShareImageCaptureTest {
                         avatarImage = null,
                     ),
                     colorScheme = KaigiColorScheme.MorningMist,
-                    onFlipCard = {},
-                    onEditCard = {},
-                    onShare = { captured = it },
+                    onCardClick = {},
+                    onEditClick = {},
+                    onShareClick = { captured = it },
                 )
             }
         }

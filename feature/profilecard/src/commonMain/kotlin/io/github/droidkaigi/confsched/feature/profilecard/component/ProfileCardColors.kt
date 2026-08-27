@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * The finished card's palette, drawn from the app's active [io.github.droidkaigi.confsched.core.model.KaigiColorScheme]
- * so the card follows whichever theme the reader has chosen, the way issue #81 requires. Mirrors
+ * so the card follows whichever theme the reader has chosen. Mirrors
  * the Figma source's own variable bindings (`md3/primary`, `md3/secondaryContainer`, `md3/surface`)
  * rather than a hand-picked pair, so [onDuskBand]/[onBanner] stay legible on [duskBand]/[banner].
  */
