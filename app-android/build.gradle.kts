@@ -40,14 +40,18 @@ android {
         }
     }
 
+    buildFeatures.resValues = true
+
     flavorDimensions += "environment"
     productFlavors {
         create("dev") {
             dimension = "environment"
             applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "DroidKaigi 2026 dev")
         }
         create("prod") {
             dimension = "environment"
+            resValue("string", "app_name", "DroidKaigi 2026")
             signingConfig = signingConfigs.findByName("prod")
             configure<CrashlyticsExtension> {
                 // The upload task needs the app id from the Firebase project file.
