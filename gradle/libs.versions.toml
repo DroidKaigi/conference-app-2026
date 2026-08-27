@@ -25,6 +25,7 @@ androidxActivityCompose = "1.10.1"
 androidxCore = "1.16.0"
 # Jetpack Glance home-screen widget framework (app-android only).
 androidxGlance = "1.2.0-rc01"
+androidxWork = "2.10.5"
 # KSP 2.3.x is decoupled from the Kotlin compiler version (KSP2 standalone Analysis-API backend), so a
 # single 2.3.x release runs against Kotlin 2.4.0.
 ksp = "2.3.9"
@@ -107,6 +108,7 @@ androidxCore = { module = "androidx.core:core", version.ref = "androidxCore" }
 androidxGlanceAppwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidxGlance" }
 androidxGlancePreview = { module = "androidx.glance:glance-preview", version.ref = "androidxGlance" }
 androidxGlanceAppwidgetPreview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidxGlance" }
+androidxWorkRuntime = { module = "androidx.work:work-runtime", version.ref = "androidxWork" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinCompiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
 kotlinCompilerInternalTestFramework = { module = "org.jetbrains.kotlin:kotlin-compiler-internal-test-framework", version.ref = "kotlin" }

@@ -45,7 +45,7 @@ internal fun TimetableGridRoomHeader(
                 .fillMaxSize()
                 .padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
         ) {
             theme.shape?.let { TimetableGridRoomMark(shape = it, color = theme.accent) }
             Text(

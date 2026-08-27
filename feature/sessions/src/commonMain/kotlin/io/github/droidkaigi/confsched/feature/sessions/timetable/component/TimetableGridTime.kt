@@ -13,8 +13,13 @@ internal val TimetableGridTimeGutterWidth = 52.dp
 internal val TimetableGridRoomColumnWidth = 156.dp
 internal val TimetableGridRoomColumnGap = 8.dp
 
-internal fun timetableGridContentWidth(roomCount: Int): Dp =
-    TimetableGridRoomColumnWidth * roomCount + TimetableGridRoomColumnGap * (roomCount - 1)
+internal fun timetableGridContentWidth(roomCount: Int, columnWidth: Dp): Dp =
+    columnWidth * roomCount + TimetableGridRoomColumnGap * (roomCount - 1)
+
+internal fun timetableGridColumnWidth(availableWidth: Dp, roomCount: Int): Dp {
+    val stretched = (availableWidth - TimetableGridRoomColumnGap * (roomCount - 1)) / roomCount
+    return stretched.coerceAtLeast(TimetableGridRoomColumnWidth)
+}
 
 internal val TimetableGridDayStartMinutes = 10 * 60
 internal val TimetableGridDefaultDayEndMinutes = 18 * 60

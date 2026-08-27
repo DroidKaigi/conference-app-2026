@@ -19,11 +19,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesWidgetRenderTest {
@@ -64,13 +69,45 @@ class FavoritesWidgetRenderTest {
     private fun renders(
         favoriteIds: MutableStateFlow<Set<TimetableItemId>> = MutableStateFlow(emptySet()),
         colorSchemes: MutableStateFlow<KaigiColorScheme> = MutableStateFlow(KaigiColorScheme.entries.first()),
+        clockOffsets: MutableStateFlow<Duration> = MutableStateFlow(Duration.ZERO),
         readTimetable: suspend () -> Timetable? = { timetable },
+        now: () -> Instant = { duringDay1 },
     ) = favoritesWidgetRenders(
         favoriteIds = favoriteIds,
         colorSchemes = colorSchemes,
+        clockOffsets = clockOffsets,
         readTimetable = readTimetable,
-        now = { duringDay1 },
+        now = now,
     )
+
+    @Test
+    fun a_favorite_starting_while_collected_produces_a_live_render() = runTest {
+        var now = duringDay1
+        val collected = mutableListOf<FavoritesWidgetRender>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            renders(favoriteIds = MutableStateFlow(setOf(sessionId)), now = { now }).toList(collected)
+        }
+        assertEquals(1, collected.size)
+
+        now = DroidKaigi2026Day.Day1.at(10, 0)
+        advanceTimeBy(1.hours + 1.milliseconds)
+
+        assertEquals(2, collected.size)
+        assertTrue((collected.last().state as FavoritesWidgetState.Schedule).slots.single().isLive)
+    }
+
+    @Test
+    fun a_clock_offset_change_after_the_first_render_produces_a_new_render() = runTest {
+        val clockOffsets = MutableStateFlow(Duration.ZERO)
+        val collected = mutableListOf<FavoritesWidgetRender>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            renders(clockOffsets = clockOffsets).toList(collected)
+        }
+
+        clockOffsets.value = 1.hours
+
+        assertEquals(2, collected.size)
+    }
 
     @Test
     fun a_favorite_added_after_the_first_render_produces_a_new_render() = runTest {
