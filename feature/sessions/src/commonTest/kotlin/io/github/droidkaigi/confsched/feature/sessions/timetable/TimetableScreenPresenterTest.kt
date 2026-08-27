@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
+import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
@@ -92,6 +93,32 @@ class TimetableScreenPresenterTest {
             assertEquals(listOf("10:00" to "10:40", "11:00" to "11:40"), slots.map { it.startsAt to it.endsAt })
             assertEquals(listOf("d1a", "d1b"), slots[0].items.map { it.id.value })
             assertEquals(listOf("d1c"), slots[1].items.map { it.id.value })
+        }
+    }
+
+    @Test
+    fun a_requested_day_becomes_the_selected_one() {
+        graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            assertEquals(listOf("d2a"), uiStates.awaitDay(DroidKaigi2026Day.Day2).timetableGridSection.sessions.map { it.id.value })
+        }
+    }
+
+    @Test
+    fun a_day_request_is_consumed_once_so_a_later_choice_stands() {
+        graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitDay(DroidKaigi2026Day.Day2)
+
+            send(TimetableScreenAction.SelectDay(DroidKaigi2026Day.Day1))
+            assertEquals(DroidKaigi2026Day.Day1, uiStates.awaitItem().day)
+            uiStates.expectNoEvents()
         }
     }
 
@@ -240,4 +267,11 @@ class TimetableScreenPresenterTest {
     context(_: ScreenContext)
     private fun rememberProbeQueryReply(key: TimetableQueryKey): Reply<Timetable> =
         rememberQuery(key).reply
+
+    private suspend fun ReceiveTurbine<TimetableScreenUiState>.awaitDay(day: DroidKaigi2026Day): TimetableScreenUiState {
+        while (true) {
+            val state = awaitItem()
+            if (state.day == day) return state
+        }
+    }
 }

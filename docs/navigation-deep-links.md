@@ -12,6 +12,7 @@ The path names the surfaces a reader would have walked through, so the synthesiz
 | `droidkaigi2026://favorites` | The favorites tab |
 | `droidkaigi2026://favorites/session/{id}` | Session detail reached through the favorites surface |
 | `droidkaigi2026://about` | The about tab |
+| `droidkaigi2026://timetable/day1` \| `.../day2` | The timetable tab showing that conference day |
 
 `DeepLink.parse` (`core:common`) is the grammar's one home; platform entry points hand it the raw URL string. `MainActivity` declares the matching `VIEW`/`BROWSABLE` intent-filter. It runs as `singleTask`, so a link tapped while the app is alive brings the existing task forward through `onNewIntent` instead of stacking a second activity.
 
@@ -44,6 +45,7 @@ The launch intent is consumed only on fresh creation (`savedInstanceState == nul
 ```kotlin
 DeepLinkEffect(
     deepLinkStore = uiGraph.deepLinkStore,
+    timetableDayRequestStore = uiGraph.timetableDayRequestStore,
     backStack = backStack,
     logger = uiGraph.logger,
     onNavigate = uiGraph.appNavigator::moveToTop,
@@ -52,10 +54,12 @@ DeepLinkEffect(
 
 ## Back-stack synthesis
 
-`DeepLinkEffect` holds each link until no `StartupNavKey` remains on the stack, then lands it; `buildSyntheticBackStack(link)` is pure and unit-tested — `[TimetableNavKey, TimetableItemDetailNavKey(id)]` for a plain session link, `[TimetableNavKey, FavoritesNavKey]` for the favorites tab, `[TimetableNavKey, AboutNavKey]` for the about tab, `[TimetableNavKey, FavoritesNavKey, TimetableItemDetailNavKey(id)]` for a favorites session link:
+`DeepLinkEffect` holds each link until no `StartupNavKey` remains on the stack, then lands it; `buildSyntheticBackStack(link)` is pure and unit-tested — `[TimetableNavKey, TimetableItemDetailNavKey(id)]` for a plain session link, `[TimetableNavKey, FavoritesNavKey]` for the favorites tab, `[TimetableNavKey, AboutNavKey]` for the about tab, `[TimetableNavKey, FavoritesNavKey, TimetableItemDetailNavKey(id)]` for a favorites session link, `[TimetableNavKey]` for a timetable day link:
 
 - **Cold start** — the stack still holds a single entry (the launch has not navigated yet): the stack is **replaced** with the synthetic stack, so back walks the named surfaces down to the timetable. On a two-pane scene the favorites list stays on screen beside the detail.
-- **Warm** — any deeper stack keeps its history: the synthetic root is already beneath every stack, and the remaining entries land through **move-to-top**, so the same order forms on top — a favorites session link raises (or pushes) the favorites tab, then the detail above it.
+- **Warm** — any deeper stack keeps its history: the synthetic root is already beneath every stack, and the remaining entries land through **move-to-top**, so the same order forms on top — a favorites session link raises (or pushes) the favorites tab, then the detail above it. A synthetic stack that holds the root alone names the root itself, which move-to-top raises the same way the tab bar does.
+
+A link that names a state of its destination rather than a destination of its own carries that state beside the stack: `DeepLink.Timetable` holds the day segment its URI names, and `DeepLinkEffect` writes the day into `TimetableDayRequestStore` (`:feature:sessions`, an `AppScope` singleton) before it navigates. The store buffers one request and hands it over once, so the timetable presenter applies it to `selectedDay` whenever the screen composes and a day the reader picks afterwards stands.
 
 A single-entry stack is the cold-start signal rather than an intent flag, so the rule stays platform-neutral. `StartupNavKey` marks destinations that host startup flow and leave the stack when done — the dev server picker implements it, restores the persisted server environment (auto-skipping when the preference says so), and replaces itself with the timetable; the deep link resolves only after that.
 
@@ -68,8 +72,10 @@ The favorites widget routes taps by its state:
 | Schedule / live — a session row, or the small widget's live band holding exactly one session | That session through the favorites surface | `droidkaigi2026://favorites/session/{id}` |
 | Schedule — the widget background | The favorites tab | `droidkaigi2026://favorites` |
 | Post-conference — any tap | The about tab | `droidkaigi2026://about` |
-| Countdown, empty — any tap | Plain launch at the start destination | — |
+| Empty, today done — any tap | The timetable tab on the widget's day | `droidkaigi2026://timetable/day1` \| `.../day2` |
+| Day wrap-up — any tap | The timetable tab on Day 2 | `droidkaigi2026://timetable/day2` |
+| Countdown, event day — any tap | Plain launch at the start destination | — |
 
-A shared slot leaves the session choice open, so its live band launches like the background. The empty state routes to search once the search screen exists.
+A shared slot leaves the session choice open, so its live band launches like the background.
 
 Related: [Navigation overview](./navigation.md) · [Navigator](./navigation-navigator.md)

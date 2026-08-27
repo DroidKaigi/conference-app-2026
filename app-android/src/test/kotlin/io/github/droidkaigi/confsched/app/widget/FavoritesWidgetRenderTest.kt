@@ -117,7 +117,10 @@ class FavoritesWidgetRenderTest {
             renders(favoriteIds = favoriteIds).toList(collected)
         }
 
-        assertEquals(FavoritesWidgetState.Empty, collected.single().state)
+        assertEquals(
+            FavoritesWidgetState.Empty(day = DroidKaigi2026Day.Day1, otherDayFavorites = 0),
+            collected.single().state,
+        )
 
         favoriteIds.value = setOf(sessionId)
 

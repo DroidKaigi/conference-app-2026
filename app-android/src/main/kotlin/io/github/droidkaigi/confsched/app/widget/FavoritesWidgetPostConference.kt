@@ -25,16 +25,38 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 
 @Composable
 internal fun PostConferenceContent(colors: FavoritesWidgetColors) {
+    FarewellContent(
+        message = LocalContext.current.getString(R.string.widget_post_message),
+        secondary = null,
+        colors = colors,
+    )
+}
+
+@Composable
+internal fun DayWrapUpContent(state: FavoritesWidgetState.DayWrapUp, colors: FavoritesWidgetColors) {
+    val context = LocalContext.current
+    FarewellContent(
+        message = context.getString(R.string.widget_wrap_up_message),
+        secondary = if (state.tomorrowFavorites > 0) {
+            tomorrowFavoritesText(state.tomorrowFavorites)
+        } else {
+            context.getString(R.string.widget_wrap_up_add)
+        },
+        colors = colors,
+    )
+}
+
+@Composable
+private fun FarewellContent(message: String, secondary: String?, colors: FavoritesWidgetColors) {
     if (isMedium(LocalSize.current)) {
-        PostConferenceMediumContent(colors)
+        FarewellMediumContent(message, secondary, colors)
     } else {
-        PostConferenceSmallContent(colors)
+        FarewellSmallContent(message, colors)
     }
 }
 
 @Composable
-private fun PostConferenceSmallContent(colors: FavoritesWidgetColors) {
-    val context = LocalContext.current
+private fun FarewellSmallContent(message: String, colors: FavoritesWidgetColors) {
     Box(
         modifier = GlanceModifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -43,7 +65,7 @@ private fun PostConferenceSmallContent(colors: FavoritesWidgetColors) {
             SymbolMark(44.dp, colors)
             Spacer(modifier = GlanceModifier.height(GapBase))
             Text(
-                text = context.getString(R.string.widget_post_message),
+                text = message,
                 style = sansStyle(colors.onSurface, 12.sp, TextAlign.Center),
                 maxLines = 3,
             )
@@ -52,28 +74,36 @@ private fun PostConferenceSmallContent(colors: FavoritesWidgetColors) {
 }
 
 @Composable
-private fun PostConferenceMediumContent(colors: FavoritesWidgetColors) {
+private fun FarewellMediumContent(message: String, secondary: String?, colors: FavoritesWidgetColors) {
     Column(modifier = GlanceModifier.fillMaxSize()) {
         BrandRow(medium = true, colors = colors)
         Spacer(modifier = GlanceModifier.defaultWeight())
-        PostConferenceMediumBody(colors)
+        FarewellMediumBody(message, secondary, colors)
         Spacer(modifier = GlanceModifier.defaultWeight())
     }
 }
 
 @Composable
-private fun PostConferenceMediumBody(colors: FavoritesWidgetColors) {
-    val context = LocalContext.current
+private fun FarewellMediumBody(message: String, secondary: String?, colors: FavoritesWidgetColors) {
     Row(
         modifier = GlanceModifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = context.getString(R.string.widget_post_message),
-            style = sansStyle(colors.onSurface, 12.sp),
-            maxLines = 3,
-            modifier = GlanceModifier.defaultWeight(),
-        )
+        Column(modifier = GlanceModifier.defaultWeight()) {
+            Text(
+                text = message,
+                style = sansStyle(colors.onSurface, 12.sp),
+                maxLines = 3,
+            )
+            if (secondary != null) {
+                Spacer(modifier = GlanceModifier.height(GapTight))
+                Text(
+                    text = secondary,
+                    style = sansStyle(colors.onSurfaceVariant, 12.sp),
+                    maxLines = 1,
+                )
+            }
+        }
         Spacer(modifier = GlanceModifier.width(GapArt))
         Mascot(R.drawable.widget_mascot_jellyfish, 37.dp, 34.dp, colors)
     }
@@ -85,4 +115,15 @@ private fun PostConferenceMediumBody(colors: FavoritesWidgetColors) {
 @Composable
 private fun PostConferencePreview() {
     FavoritesWidgetContent(FavoritesWidgetState.PostConference, KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun DayWrapUpPreview() {
+    FavoritesWidgetContent(
+        FavoritesWidgetState.DayWrapUp(tomorrowFavorites = 3),
+        KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+    )
 }

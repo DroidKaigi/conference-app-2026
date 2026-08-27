@@ -12,10 +12,19 @@
     <string name="widget_schedule_label">My favorites</string>
     <string name="widget_favorites_label">Favorites</string>
     <string name="widget_live_badge">LIVE</string>
-    <string name="widget_empty_small">Add favorites and your next session appears here.</string>
-    <string name="widget_empty_medium">Sessions you favorite are listed here with their start times.</string>
-    <string name="widget_empty_hint">Tap to browse sessions</string>
+    <string name="widget_empty_message">No favorites for today yet</string>
+    <string name="widget_empty_hint">Tap to browse %1$s sessions</string>
+    <string name="widget_done_message">All of today\'s favorites have ended</string>
+    <string name="widget_done_hint">Tap to browse other sessions</string>
+    <string name="widget_event_day_message">Today is Event Day</string>
+    <string name="widget_event_day_note">Find the sessions that catch your eye</string>
+    <string name="widget_wrap_up_message">Thank you for today. See you tomorrow.</string>
+    <string name="widget_wrap_up_add">Add favorites for tomorrow</string>
     <string name="widget_post_message">Thank you for joining us. See you next time.</string>
     <string name="widget_same_slot_more_small">+%1$d more</string>
     <string name="widget_same_slot_more_row">+%1$d more</string>
+    <plurals name="widget_tomorrow_favorites">
+        <item quantity="one">%1$d favorite tomorrow</item>
+        <item quantity="other">%1$d favorites tomorrow</item>
+    </plurals>
 </resources>
