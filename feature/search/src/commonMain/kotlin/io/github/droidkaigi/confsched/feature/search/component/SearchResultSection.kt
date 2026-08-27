@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -51,6 +52,8 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.pluralStringResource
 import kotlin.time.Instant
 
+const val SEARCH_RESULT_SECTION_COUNT_TEST_TAG = "SearchResultSectionCountTestTag"
+
 @Composable
 internal fun SearchResultSection(
     uiState: SearchResultUiState.Found,
@@ -72,6 +75,7 @@ internal fun SearchResultSection(
                 .fillMaxWidth()
                 .heightIn(min = 32.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
+                .testTag(SEARCH_RESULT_SECTION_COUNT_TEST_TAG)
                 .semantics { liveRegion = LiveRegionMode.Polite },
         )
         LazyColumn(

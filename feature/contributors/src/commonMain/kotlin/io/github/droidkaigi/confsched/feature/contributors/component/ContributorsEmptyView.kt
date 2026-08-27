@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -18,9 +19,14 @@ import io.github.droidkaigi.confsched.feature.contributors.generated.resources.R
 import io.github.droidkaigi.confsched.feature.contributors.generated.resources.contributors_empty
 import org.jetbrains.compose.resources.stringResource
 
+const val CONTRIBUTORS_EMPTY_VIEW_TEST_TAG = "ContributorsEmptyViewTestTag"
+
 @Composable
 internal fun ContributorsEmptyView(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier.fillMaxSize().testTag(CONTRIBUTORS_EMPTY_VIEW_TEST_TAG),
+        contentAlignment = Alignment.Center,
+    ) {
         Text(
             text = stringResource(Res.string.contributors_empty),
             style = MaterialTheme.typography.bodyLarge,

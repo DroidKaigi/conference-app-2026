@@ -7,12 +7,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Sponsors
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.sponsors.component.SPONSORS_EMPTY_VIEW_TEST_TAG
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
@@ -57,7 +60,7 @@ class SponsorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription("Back").performClick()
+        composeUiTest.onNodeWithTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -90,10 +93,10 @@ class SponsorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkErrorDisplayed() {
-        composeUiTest.onNodeWithText("Failed to load").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkEmptyStateDisplayed() {
-        composeUiTest.onNodeWithText("Sponsors have not been announced yet.").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SPONSORS_EMPTY_VIEW_TEST_TAG).assertIsDisplayed()
     }
 }

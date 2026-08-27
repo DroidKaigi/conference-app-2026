@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -63,6 +64,19 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.compose.resources.stringResource
 
+const val SEARCH_FILTER_DAY_CHIP_TEST_TAG = "SearchFilterDayChipTestTag"
+const val SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG = "SearchFilterCategoryChipTestTag"
+const val SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG = "SearchFilterSessionTypeChipTestTag"
+const val SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG = "SearchFilterLanguageChipTestTag"
+
+fun searchFilterDayOptionTestTag(day: DroidKaigi2026Day) = "SearchFilterDayOption:${day.name}"
+
+fun searchFilterCategoryOptionTestTag(categoryId: Long) = "SearchFilterCategoryOption:$categoryId"
+
+fun searchFilterSessionTypeOptionTestTag(sessionType: SessionType) = "SearchFilterSessionTypeOption:${sessionType.name}"
+
+fun searchFilterLanguageOptionTestTag(language: Language) = "SearchFilterLanguageOption:${language.name}"
+
 @Composable
 internal fun SearchFilterRow(
     uiState: SearchFilterRowUiState,
@@ -83,9 +97,14 @@ internal fun SearchFilterRow(
             label = uiState.selectedDay?.label ?: stringResource(Res.string.search_filter_date),
             selected = uiState.selectedDay != null,
             seed = 841,
+            modifier = Modifier.testTag(SEARCH_FILTER_DAY_CHIP_TEST_TAG),
         ) { dismiss ->
             for (day in DroidKaigi2026Day.entries) {
-                FilterMenuItem(label = day.label, selected = uiState.selectedDay == day) {
+                FilterMenuItem(
+                    label = day.label,
+                    selected = uiState.selectedDay == day,
+                    modifier = Modifier.testTag(searchFilterDayOptionTestTag(day)),
+                ) {
                     onDayClick(day)
                     dismiss()
                 }
@@ -96,11 +115,13 @@ internal fun SearchFilterRow(
             label = countedLabel(stringResource(Res.string.search_filter_category), uiState.selectedCategoryIds.size),
             selected = uiState.selectedCategoryIds.isNotEmpty(),
             seed = 842,
+            modifier = Modifier.testTag(SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG),
         ) {
             for (category in uiState.categories) {
                 FilterMenuItem(
                     label = category.name.current(),
                     selected = category.id in uiState.selectedCategoryIds,
+                    modifier = Modifier.testTag(searchFilterCategoryOptionTestTag(category.id)),
                 ) { onCategoryClick(category.id) }
             }
         }
@@ -112,11 +133,13 @@ internal fun SearchFilterRow(
             ),
             selected = uiState.selectedSessionTypes.isNotEmpty(),
             seed = 843,
+            modifier = Modifier.testTag(SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG),
         ) {
             for (sessionType in uiState.sessionTypes) {
                 FilterMenuItem(
                     label = stringResource(sessionType.labelResource()),
                     selected = sessionType in uiState.selectedSessionTypes,
+                    modifier = Modifier.testTag(searchFilterSessionTypeOptionTestTag(sessionType)),
                 ) { onSessionTypeClick(sessionType) }
             }
         }
@@ -125,11 +148,13 @@ internal fun SearchFilterRow(
             label = countedLabel(stringResource(Res.string.search_filter_language), uiState.selectedLanguages.size),
             selected = uiState.selectedLanguages.isNotEmpty(),
             seed = 844,
+            modifier = Modifier.testTag(SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG),
         ) {
             for (language in Language.entries) {
                 FilterMenuItem(
                     label = stringResource(language.labelResource()),
                     selected = language in uiState.selectedLanguages,
+                    modifier = Modifier.testTag(searchFilterLanguageOptionTestTag(language)),
                 ) { onLanguageClick(language) }
             }
         }
@@ -141,6 +166,7 @@ private fun SearchFilterChip(
     label: String,
     selected: Boolean,
     seed: Int,
+    modifier: Modifier = Modifier,
     menuContent: @Composable (dismiss: () -> Unit) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -156,7 +182,7 @@ private fun SearchFilterChip(
         cornerRadius = 24.dp,
         borderThickness = menuBorderThickness,
     )
-    Box {
+    Box(modifier = modifier) {
         KaigiFilterChip(
             selected = selected,
             onClick = {
@@ -201,9 +227,14 @@ private fun SearchFilterChip(
 }
 
 @Composable
-private fun FilterMenuItem(label: String, selected: Boolean, onClick: () -> Unit) {
+private fun FilterMenuItem(
+    label: String,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(min = FilterMenuDefaults.itemHeight)
             .clickable(role = Role.Button, onClick = onClick)

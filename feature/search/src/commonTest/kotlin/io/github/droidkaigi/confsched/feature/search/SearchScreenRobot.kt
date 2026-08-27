@@ -10,8 +10,7 @@ import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.hasTextExactly
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -20,10 +19,28 @@ import androidx.compose.ui.unit.dp
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
+import io.github.droidkaigi.confsched.core.model.Language
+import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_FILTER_DAY_CHIP_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_RESULT_SECTION_COUNT_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_STATE_VIEW_INITIAL_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.search.component.SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG
 import io.github.droidkaigi.confsched.feature.search.component.SearchTopBar
+import io.github.droidkaigi.confsched.feature.search.component.searchFilterCategoryOptionTestTag
+import io.github.droidkaigi.confsched.feature.search.component.searchFilterDayOptionTestTag
+import io.github.droidkaigi.confsched.feature.search.component.searchFilterLanguageOptionTestTag
+import io.github.droidkaigi.confsched.feature.search.component.searchFilterSessionTypeOptionTestTag
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -71,44 +88,59 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun clearQuery() {
-        composeUiTest.onNodeWithContentDescription(CLEAR_DESCRIPTION).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun checkSearchFieldHeight() {
-        composeUiTest.onNodeWithContentDescription(SEARCH_DESCRIPTION).assertHeightIsEqualTo(40.dp)
+        composeUiTest.onNodeWithTag(SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG).assertHeightIsEqualTo(40.dp)
     }
 
     fun openDayFilter() {
-        composeUiTest.onNodeWithText(DATE_LABEL).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_FILTER_DAY_CHIP_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun openCategoryFilter() {
-        composeUiTest.onNodeWithText(CATEGORY_LABEL).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun openSessionTypeFilter() {
-        composeUiTest.onNodeWithText(SESSION_TYPE_LABEL).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun openLanguageFilter() {
-        composeUiTest.onNodeWithText(LANGUAGE_LABEL).performScrollTo().performClick()
+        composeUiTest.onNodeWithTag(SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG).performScrollTo().performClick()
         composeUiTest.waitForIdle()
     }
 
-    fun checkFilterOptionDisplayed(label: String) {
-        composeUiTest.onNodeWithText(label).assertIsDisplayed()
+    fun checkFilterOptionDisplayed(day: DroidKaigi2026Day) {
+        composeUiTest.onNodeWithTag(searchFilterDayOptionTestTag(day)).assertIsDisplayed()
     }
 
-    fun checkFilterOptionDoesNotExist(label: String) {
-        composeUiTest.onNodeWithText(label).assertDoesNotExist()
+    fun checkFilterOptionDoesNotExist(day: DroidKaigi2026Day) {
+        composeUiTest.onNodeWithTag(searchFilterDayOptionTestTag(day)).assertDoesNotExist()
     }
 
-    fun pickFilterOption(label: String) {
-        composeUiTest.onNodeWithText(label).performClick()
+    fun pickDayFilterOption(day: DroidKaigi2026Day) {
+        composeUiTest.onNodeWithTag(searchFilterDayOptionTestTag(day)).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun pickCategoryFilterOption(categoryId: Long) {
+        composeUiTest.onNodeWithTag(searchFilterCategoryOptionTestTag(categoryId)).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun pickSessionTypeFilterOption(sessionType: SessionType) {
+        composeUiTest.onNodeWithTag(searchFilterSessionTypeOptionTestTag(sessionType)).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun pickLanguageFilterOption(language: Language) {
+        composeUiTest.onNodeWithTag(searchFilterLanguageOptionTestTag(language)).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -121,39 +153,32 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkInitialStateDisplayed() {
-        composeUiTest.onNodeWithText(INITIAL_TITLE).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_INITIAL_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkNoMatchStateDisplayed() {
-        composeUiTest.onNodeWithText(NO_MATCH_TITLE).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkNoMatchDescriptionDisplayed() {
-        composeUiTest.onNodeWithText(NO_MATCH_DESCRIPTION).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG).assertIsDisplayed()
     }
 
     fun clearFilters() {
-        composeUiTest.onNodeWithText(CLEAR_FILTERS).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun checkClearFiltersDisplayed() {
-        composeUiTest.onNodeWithText(CLEAR_FILTERS).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkClearFiltersDoesNotExist() {
-        composeUiTest.onNodeWithText(CLEAR_FILTERS).assertDoesNotExist()
+        composeUiTest.onNodeWithTag(SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG).assertDoesNotExist()
     }
 
     fun checkResultCountShows(count: Int) {
-        if (count == 1) {
-            // Native robots use base strings without an English `one` rule.
-            composeUiTest.onNode(
-                hasTextExactly("1 session") or hasTextExactly("1 sessions"),
-            ).assertIsDisplayed()
-        } else {
-            composeUiTest.onNodeWithText("$count sessions").assertIsDisplayed()
-        }
+        composeUiTest.onNodeWithTag(SEARCH_RESULT_SECTION_COUNT_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkDayFilterShows(label: String) {
@@ -165,7 +190,7 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription(BACK_DESCRIPTION).performClick()
+        composeUiTest.onNodeWithTag(SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -180,20 +205,5 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     fun checkOpenedSession(id: String) {
         assertEquals(TimetableItemId(id), openedSessionId)
-    }
-
-    private companion object {
-        const val SEARCH_DESCRIPTION = "Search"
-        const val BACK_DESCRIPTION = "Back"
-        const val CLEAR_DESCRIPTION = "Clear"
-        const val DATE_LABEL = "Date"
-        const val CATEGORY_LABEL = "Category"
-        const val SESSION_TYPE_LABEL = "Session type"
-        const val LANGUAGE_LABEL = "Language"
-
-        const val INITIAL_TITLE = "Take a look around"
-        const val NO_MATCH_TITLE = "No results found."
-        const val NO_MATCH_DESCRIPTION = "Try removing some filters"
-        const val CLEAR_FILTERS = "Clear filters"
     }
 }

@@ -62,11 +62,18 @@ fun DefaultSuspenseFallbackContent(modifier: Modifier = Modifier) {
     }
 }
 
+const val DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG = "DefaultErrorFallbackContentTestTag"
+
 @Composable
 context(errorContext: SoilErrorContext)
 fun DefaultErrorFallbackContent(modifier: Modifier = Modifier) {
     val boundary = errorContext.errorBoundaryContext
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG),
+        contentAlignment = Alignment.Center,
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -45,6 +46,7 @@ internal fun SketchStrengthGroupSection(
                     selected = entry == sketchStrength,
                     seed = SketchStrengthGroupDefaults.FIRST_OPTION_SEED + index,
                     onClick = { onSketchStrengthClick(entry) },
+                    modifier = Modifier.testTag(sketchStrengthOptionItemTestTag(entry)),
                 )
             }
         }

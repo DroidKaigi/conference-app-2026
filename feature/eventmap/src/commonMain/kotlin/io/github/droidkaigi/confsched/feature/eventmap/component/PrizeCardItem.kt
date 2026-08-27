@@ -17,11 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.PrizeId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
@@ -29,8 +31,11 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.RemoteImage
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 
+fun prizeCardItemTestTag(prizeId: PrizeId) = "PrizeCardItem:${prizeId.value}"
+
 @Composable
 internal fun PrizeCardItem(
+    id: PrizeId,
     name: String,
     imageUrl: String,
     seed: Int,
@@ -39,7 +44,9 @@ internal fun PrizeCardItem(
 ) {
     SketchCard(
         shape = SketchRoundRectShape(seed = seed, cornerRadius = 20.dp, borderThickness = 2.dp),
-        modifier = modifier.clickable(role = Role.Button, onClick = onClick),
+        modifier = modifier
+            .testTag(prizeCardItemTestTag(id))
+            .clickable(role = Role.Button, onClick = onClick),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -77,6 +84,7 @@ private fun PrizeCardItemPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         PrizeCardItem(
+            id = PrizeId("prize-1"),
             name = "Prize 1",
             imageUrl = PreviewImage.PrizePhoto.imageUrl,
             seed = 210,

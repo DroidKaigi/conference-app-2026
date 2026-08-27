@@ -3,13 +3,19 @@ package io.github.droidkaigi.confsched.feature.contributors
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Contributors
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.contributors.component.CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG
+import io.github.droidkaigi.confsched.feature.contributors.component.CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG
+import io.github.droidkaigi.confsched.feature.contributors.component.CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG
+import io.github.droidkaigi.confsched.feature.contributors.component.CONTRIBUTORS_EMPTY_VIEW_TEST_TAG
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
@@ -44,9 +50,9 @@ class ContributorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTes
     }
 
     fun checkCountDisplayed(count: Int) {
-        composeUiTest.onNodeWithText("TOTAL").assertIsDisplayed()
-        composeUiTest.onNodeWithText("$count").assertIsDisplayed()
-        composeUiTest.onNodeWithText("persons").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG).assertTextEquals("$count")
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkOpenedProfiles(vararg urls: String) {
@@ -54,7 +60,7 @@ class ContributorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTes
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription("Back").performClick()
+        composeUiTest.onNodeWithTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -63,6 +69,6 @@ class ContributorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTes
     }
 
     fun checkEmptyStateDisplayed() {
-        composeUiTest.onNodeWithText("No contributors to show yet.").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_EMPTY_VIEW_TEST_TAG).assertIsDisplayed()
     }
 }

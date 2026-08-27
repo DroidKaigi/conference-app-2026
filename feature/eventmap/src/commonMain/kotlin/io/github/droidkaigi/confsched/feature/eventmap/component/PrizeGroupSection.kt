@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Prize
+import io.github.droidkaigi.confsched.core.model.PrizeGroup
 import io.github.droidkaigi.confsched.core.model.Prizes
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -30,6 +32,8 @@ private const val PRIZE_MIN_COLUMNS = 2
 private val PrizeColumnMinWidth = 158.dp
 private val PrizeSpacing = 12.dp
 
+fun prizeGroupSectionTestTag(group: PrizeGroup) = "PrizeGroupSection:${group.name}"
+
 @Composable
 internal fun PrizeGroupSection(
     group: StampCollectingPrizeGroup,
@@ -44,7 +48,10 @@ internal fun PrizeGroupSection(
         Column(
             verticalArrangement = Arrangement.spacedBy(PrizeSpacing),
         ) {
-            StampCollectingSectionHeader(title = stringResource(Res.string.stamp_collecting_group, group.group.name))
+            StampCollectingSectionHeader(
+                title = stringResource(Res.string.stamp_collecting_group, group.group.name),
+                modifier = Modifier.testTag(prizeGroupSectionTestTag(group.group)),
+            )
             for (rowPrizes in group.prizes.withIndex().chunked(columns)) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(PrizeSpacing),
@@ -52,6 +59,7 @@ internal fun PrizeGroupSection(
                 ) {
                     for ((index, prize) in rowPrizes) {
                         PrizeCardItem(
+                            id = prize.id,
                             name = prize.name.current(),
                             imageUrl = prize.imageUrl,
                             seed = seed + index,

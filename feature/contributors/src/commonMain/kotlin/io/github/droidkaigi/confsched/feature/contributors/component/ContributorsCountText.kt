@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -43,6 +44,10 @@ import io.github.droidkaigi.confsched.feature.contributors.generated.resources.c
 import io.github.droidkaigi.confsched.feature.contributors.generated.resources.contributors_count_unit
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+
+const val CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG = "ContributorsCountTextLabelTestTag"
+const val CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG = "ContributorsCountTextCountTestTag"
+const val CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG = "ContributorsCountTextUnitTestTag"
 
 @Composable
 internal fun ContributorsCountText(
@@ -87,7 +92,7 @@ internal fun ContributorsCountText(
                     text = stringResource(Res.string.contributors_count_label),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.alignByBaseline(),
+                    modifier = Modifier.testTag(CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG).alignByBaseline(),
                 )
                 Text(
                     text = displayedCount.value.toString(),
@@ -95,6 +100,7 @@ internal fun ContributorsCountText(
                         fontFeatureSettings = ContributorsCountTextDefaults.TABULAR_FIGURES_FEATURE,
                     ),
                     modifier = Modifier
+                        .testTag(CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG)
                         .width(ContributorsCountTextDefaults.countDigitsWidth)
                         .alignByBaseline(),
                     textAlign = TextAlign.Center,
@@ -103,7 +109,7 @@ internal fun ContributorsCountText(
                     text = pluralStringResource(Res.plurals.contributors_count_unit, count),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.alignByBaseline(),
+                    modifier = Modifier.testTag(CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG).alignByBaseline(),
                 )
             }
             OrnamentMark(OrnamentShape.BracketTopStart, Modifier.align(Alignment.TopStart))

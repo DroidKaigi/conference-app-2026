@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -40,6 +41,13 @@ import org.jetbrains.compose.resources.stringResource
 private const val PRIZE_SEED_BASE = 210
 private const val PRIZE_SEED_STRIDE = 10
 
+const val STAMP_COLLECTING_INTRODUCING_TEST_TAG = "StampCollectingIntroducingTestTag"
+const val STAMP_COLLECTING_EXCHANGE_PLACE_TITLE_TEST_TAG = "StampCollectingExchangePlaceTitleTestTag"
+const val STAMP_COLLECTING_EXHIBITION_AREA_TEST_TAG = "StampCollectingExhibitionAreaTestTag"
+const val STAMP_COLLECTING_EXCHANGE_HOURS_TITLE_TEST_TAG = "StampCollectingExchangeHoursTitleTestTag"
+const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY1_TEST_TAG = "StampCollectingExchangeHoursDay1TestTag"
+const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY2_TEST_TAG = "StampCollectingExchangeHoursDay2TestTag"
+
 @Composable
 fun StampCollectingScreen(
     uiState: StampCollectingScreenUiState,
@@ -66,17 +74,22 @@ fun StampCollectingScreen(
                     text = stringResource(Res.string.stamp_collecting_introducing),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.testTag(STAMP_COLLECTING_INTRODUCING_TEST_TAG),
                 )
             }
             item {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    StampCollectingSectionHeader(title = stringResource(Res.string.stamp_collecting_exchange_place_title))
+                    StampCollectingSectionHeader(
+                        title = stringResource(Res.string.stamp_collecting_exchange_place_title),
+                        modifier = Modifier.testTag(STAMP_COLLECTING_EXCHANGE_PLACE_TITLE_TEST_TAG),
+                    )
                     Text(
                         text = stringResource(Res.string.stamp_collecting_exhibition_area),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.testTag(STAMP_COLLECTING_EXHIBITION_AREA_TEST_TAG),
                     )
                     ExhibitionAreaMapView()
                 }
@@ -85,16 +98,21 @@ fun StampCollectingScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    StampCollectingSectionHeader(title = stringResource(Res.string.stamp_collecting_exchange_hours_title))
+                    StampCollectingSectionHeader(
+                        title = stringResource(Res.string.stamp_collecting_exchange_hours_title),
+                        modifier = Modifier.testTag(STAMP_COLLECTING_EXCHANGE_HOURS_TITLE_TEST_TAG),
+                    )
                     Text(
                         text = stringResource(Res.string.stamp_collecting_exchange_hours_day1),
                         style = MaterialTheme.typography.titleSmallEmphasized,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.testTag(STAMP_COLLECTING_EXCHANGE_HOURS_DAY1_TEST_TAG),
                     )
                     Text(
                         text = stringResource(Res.string.stamp_collecting_exchange_hours_day2),
                         style = MaterialTheme.typography.titleSmallEmphasized,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.testTag(STAMP_COLLECTING_EXCHANGE_HOURS_DAY2_TEST_TAG),
                     )
                 }
             }

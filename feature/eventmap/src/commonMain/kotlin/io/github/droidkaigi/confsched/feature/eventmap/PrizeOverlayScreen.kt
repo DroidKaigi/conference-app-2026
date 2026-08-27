@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -50,6 +51,8 @@ import org.jetbrains.compose.resources.stringResource
 private const val PRIZE_PAGE_SEED_BASE = 310
 
 private val PrizePageSpacing = 16.dp
+
+const val PRIZE_OVERLAY_SCREEN_CLOSE_BUTTON_TEST_TAG = "PrizeOverlayScreenCloseButtonTestTag"
 
 @Composable
 fun PrizeOverlayScreen(
@@ -86,6 +89,7 @@ fun PrizeOverlayScreen(
                 ) { page ->
                     val prize = uiState.prizes[page]
                     PrizePageCard(
+                        id = prize.id,
                         name = prize.name.current(),
                         imageUrl = prize.imageUrl,
                         group = prize.group,
@@ -113,7 +117,8 @@ fun PrizeOverlayScreen(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .statusBarsPadding()
-                .padding(end = 8.dp),
+                .padding(end = 8.dp)
+                .testTag(PRIZE_OVERLAY_SCREEN_CLOSE_BUTTON_TEST_TAG),
         ) {
             Image(
                 painter = painterResource(Res.drawable.prize_overlay_close),

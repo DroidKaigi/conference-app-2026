@@ -31,6 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -58,6 +59,10 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_clear
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_hint
 import org.jetbrains.compose.resources.stringResource
+
+const val SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG = "SearchTopBarBackButtonTestTag"
+const val SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG = "SearchTopBarQueryFieldTestTag"
+const val SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG = "SearchTopBarClearButtonTestTag"
 
 @Composable
 internal fun SearchTopBar(
@@ -97,6 +102,7 @@ private fun SearchBackButton(
 ) {
     Box(
         modifier = modifier
+            .testTag(SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(9.dp),
     ) {
@@ -160,6 +166,7 @@ private fun SearchQueryField(
         },
         modifier = modifier
             .height(40.dp)
+            .testTag(SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG)
             .focusRequester(focusRequester)
             .semantics { contentDescription = searchDescription },
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
@@ -215,6 +222,7 @@ private fun SearchQueryField(
                             pendingQueryText = ""
                             onQueryTextChange("")
                         },
+                        modifier = Modifier.testTag(SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG),
                     ) {
                         Icon(
                             imageVector = KaigiIcons.Default.Close,

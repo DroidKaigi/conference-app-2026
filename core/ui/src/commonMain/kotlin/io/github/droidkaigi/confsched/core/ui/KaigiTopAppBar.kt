@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -122,6 +123,8 @@ fun KaigiLargeTopAppBar(
     )
 }
 
+const val KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG = "KaigiTopAppBarBackButtonTestTag"
+
 /**
  * The back arrow every screen reached from another leads its bar with, sized and described the
  * same way in each of them.
@@ -134,7 +137,10 @@ fun KaigiLargeTopAppBar(
  */
 @Composable
 fun KaigiTopAppBarBackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    IconButton(onClick = onClick, modifier = modifier) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.testTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG),
+    ) {
         Icon(
             imageVector = KaigiIcons.Default.ArrowBack,
             contentDescription = stringResource(Res.string.back),
