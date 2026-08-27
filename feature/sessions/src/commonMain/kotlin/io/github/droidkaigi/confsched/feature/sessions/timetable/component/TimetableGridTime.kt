@@ -16,7 +16,6 @@ internal val TimetableGridRoomColumnGap = 8.dp
 internal fun timetableGridContentWidth(roomCount: Int, columnWidth: Dp): Dp =
     columnWidth * roomCount + TimetableGridRoomColumnGap * (roomCount - 1)
 
-/** Columns keep their design width and stretch evenly once the viewport is wider than the grid. */
 internal fun timetableGridColumnWidth(availableWidth: Dp, roomCount: Int): Dp {
     val stretched = (availableWidth - TimetableGridRoomColumnGap * (roomCount - 1)) / roomCount
     return stretched.coerceAtLeast(TimetableGridRoomColumnWidth)

@@ -63,7 +63,6 @@ internal class TimetableGridScrollState(
         scrollY = scrollY.coerceIn(0f, this.maxScrollY)
     }
 
-    /** Moves the content by [delta] and returns the part of it that was actually applied. */
     fun dragBy(delta: Offset): Offset {
         val nextX = (scrollX - delta.x).coerceIn(0f, maxScrollX)
         val nextY = (scrollY - delta.y).coerceIn(0f, maxScrollY)
