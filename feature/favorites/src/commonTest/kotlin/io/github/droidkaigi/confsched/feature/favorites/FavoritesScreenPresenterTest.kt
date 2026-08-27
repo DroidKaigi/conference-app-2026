@@ -4,7 +4,7 @@ import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.AppError
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
@@ -21,10 +21,10 @@ class FavoritesScreenPresenterTest {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-            testTimetableItem(id = "d1b", title = "Day1 B", room = Room.OTTER, speaker = "Sp2", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
-            testTimetableItem(id = "d2a", title = "Day2 A", room = Room.NARWHAL, speaker = "Sp3", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
-            testTimetableItem(id = "d2b", title = "Day2 B", room = Room.OTTER, speaker = "Sp4", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "11:00", endsAt = "11:40"),
+            testTimetableItem(id = "d1a", title = "Day1 A", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1b", title = "Day1 B", room = SessionRoom.OTTER, speaker = "Sp2", language = Language.MIXED, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+            testTimetableItem(id = "d2a", title = "Day2 A", room = SessionRoom.NARWHAL, speaker = "Sp3", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d2b", title = "Day2 B", room = SessionRoom.OTTER, speaker = "Sp4", language = Language.MIXED, day = DroidKaigi2026Day.Day2, startsAt = "11:00", endsAt = "11:40"),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a"), TimetableItemId("d2a"), TimetableItemId("d2b")),
     )

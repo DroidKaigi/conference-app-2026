@@ -15,7 +15,7 @@ import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
@@ -44,9 +44,9 @@ class TimetableScreenPresenterTest {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-            testTimetableItem(id = "d1b", title = "Day1 B", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
-            testTimetableItem(id = "d2a", title = "Day2 A", room = Room.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1a", title = "Day1 A", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1b", title = "Day1 B", room = SessionRoom.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+            testTimetableItem(id = "d2a", title = "Day2 A", room = SessionRoom.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day2, startsAt = "10:00", endsAt = "10:40"),
         ),
         bookmarks = persistentSetOf(TimetableItemId("d1a")),
     )
@@ -81,9 +81,9 @@ class TimetableScreenPresenterTest {
     fun sessions_sharing_a_time_are_grouped_into_one_slot() {
         val concurrent = Timetable(
             items = persistentListOf(
-                testTimetableItem(id = "d1a", title = "Day1 A", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-                testTimetableItem(id = "d1b", title = "Day1 B", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-                testTimetableItem(id = "d1c", title = "Day1 C", room = Room.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+                testTimetableItem(id = "d1a", title = "Day1 A", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "d1b", title = "Day1 B", room = SessionRoom.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "d1c", title = "Day1 C", room = SessionRoom.NARWHAL, speaker = "Sp3", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
             ),
         )
         runPresenterTest(
@@ -204,8 +204,8 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_shows_next_favorited_session_and_handles_hours_and_past_sessions() {
         val timetable = Timetable(
             items = persistentListOf(
-                testTimetableItem(id = "s1", title = "Session 1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-                testTimetableItem(id = "s2", title = "Session 2", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+                testTimetableItem(id = "s1", title = "Session 1", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s2", title = "Session 2", room = SessionRoom.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
             ),
             bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
         )
@@ -244,7 +244,7 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_is_null_when_no_favorited_sessions_exist() {
         val timetable = Timetable(
             items = persistentListOf(
-                testTimetableItem(id = "s1", title = "S1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s1", title = "S1", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
             ),
             bookmarks = persistentSetOf(),
         )
@@ -263,8 +263,8 @@ class TimetableScreenPresenterTest {
     fun countdown_banner_shows_multiple_sessions_if_concurrent_favorited_sessions_exist() {
         val timetable = Timetable(
             items = persistentListOf(
-                testTimetableItem(id = "s1", title = "S1", room = Room.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-                testTimetableItem(id = "s2", title = "S2", room = Room.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s1", title = "S1", room = SessionRoom.NARWHAL, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+                testTimetableItem(id = "s2", title = "S2", room = SessionRoom.OTTER, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
             ),
             bookmarks = persistentSetOf(TimetableItemId("s1"), TimetableItemId("s2")),
         )

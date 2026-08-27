@@ -11,14 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.RoomShape
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.MultiLangText
+import io.github.droidkaigi.confsched.core.model.NamedRoom
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /** The room a session is in, named and marked in the room's own color. */
@@ -27,7 +30,7 @@ fun RoomChip(room: Room, seed: Int) {
     val theme = roomTheme(room)
     KaigiChip(seed = seed, containerColor = theme.container, contentColor = theme.onContainer) {
         theme.shape?.let { RoomMark(shape = it, color = theme.onContainer) }
-        Text(text = room.name, style = KaigiChipDefaults.labelStyle)
+        Text(text = room.label.current(), style = KaigiChipDefaults.labelStyle)
     }
 }
 
@@ -80,7 +83,7 @@ private fun RoomMark(shape: RoomShape, color: Color) {
     }
 }
 
-@Preview
+@LocalePreviews
 @Composable
 private fun RoomChipPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
@@ -90,9 +93,10 @@ private fun RoomChipPreview(
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            RoomChip(room = Room.NARWHAL, seed = 1)
-            RoomChip(room = Room.QUAIL, seed = 2)
-            RoomChip(room = Room.MEERKAT, seed = 3)
+            RoomChip(room = SessionRoom.NARWHAL, seed = 1)
+            RoomChip(room = SessionRoom.QUAIL, seed = 2)
+            RoomChip(room = SessionRoom.MEERKAT, seed = 3)
+            RoomChip(room = NamedRoom(MultiLangText(ja = "ホワイエ", en = "Foyer")), seed = 4)
         }
     }
 }

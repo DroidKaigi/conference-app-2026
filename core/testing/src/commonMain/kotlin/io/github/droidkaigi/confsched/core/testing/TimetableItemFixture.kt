@@ -3,7 +3,7 @@ package io.github.droidkaigi.confsched.core.testing
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionCategory
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.TimetableItem
@@ -17,7 +17,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun testTimetableItem(
     id: String,
     title: String,
-    room: Room,
+    room: SessionRoom,
     speaker: String,
     language: Language,
     day: DroidKaigi2026Day,

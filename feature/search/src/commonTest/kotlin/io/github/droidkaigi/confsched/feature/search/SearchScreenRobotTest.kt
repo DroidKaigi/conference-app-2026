@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionCategory
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -259,7 +259,7 @@ class SearchScreenRobotTest : RobotTest() {
     ) = testTimetableItem(
         id = id,
         title = title,
-        room = Room.NARWHAL,
+        room = SessionRoom.NARWHAL,
         speaker = "Speaker A",
         language = language,
         day = day,

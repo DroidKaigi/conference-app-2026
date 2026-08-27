@@ -16,7 +16,7 @@ class FavoritesWidgetStateTest {
         day: DroidKaigi2026Day = DroidKaigi2026Day.Day1,
         startsAt: String,
         endsAt: String,
-        room: Room = Room.OTTER,
+        room: SessionRoom = SessionRoom.OTTER,
     ): TimetableItem {
         val startHour = startsAt.substringBefore(':').toInt()
         val startMinute = startsAt.substringAfter(':').toInt()
@@ -164,8 +164,8 @@ class FavoritesWidgetStateTest {
         val state = computeFavoritesWidgetState(
             now,
             timetable(
-                item("a", startsAt = "10:00", endsAt = "10:40", room = Room.OTTER),
-                item("b", startsAt = "10:00", endsAt = "10:40", room = Room.PANDA),
+                item("a", startsAt = "10:00", endsAt = "10:40", room = SessionRoom.OTTER),
+                item("b", startsAt = "10:00", endsAt = "10:40", room = SessionRoom.PANDA),
             ),
             ids("a", "b"),
         )

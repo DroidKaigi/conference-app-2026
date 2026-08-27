@@ -5,7 +5,7 @@ import io.github.droidkaigi.confsched.core.common.AppError
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionCategory
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -347,7 +347,7 @@ class SearchScreenPresenterTest {
     ) = testTimetableItem(
         id = id,
         title = title.en,
-        room = Room.NARWHAL,
+        room = SessionRoom.NARWHAL,
         speaker = speaker,
         language = language,
         day = day,

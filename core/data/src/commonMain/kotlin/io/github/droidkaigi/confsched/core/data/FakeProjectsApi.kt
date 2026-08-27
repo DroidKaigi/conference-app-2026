@@ -38,7 +38,7 @@ class FakeProjectsApi : ProjectsApi {
             rooms = listOf(
                 fakeRoom(101, "NARWHAL"),
                 fakeRoom(102, "OTTER"),
-                fakeRoom(103, "QUAIL"),
+                RoomResponse(id = 103, name = LocaledResponse(ja = "ホワイエ", en = "Foyer"), sort = 2),
             ),
         )
     }

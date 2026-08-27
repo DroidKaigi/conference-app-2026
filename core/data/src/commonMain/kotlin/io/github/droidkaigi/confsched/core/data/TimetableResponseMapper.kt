@@ -3,7 +3,7 @@ package io.github.droidkaigi.confsched.core.data
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionCategory
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
@@ -30,7 +30,7 @@ fun TimetableResponse.toTimetableItems(): List<TimetableItem> =
 private fun TimetableResponse.toTimetableItems(
     categoryById: Map<Long, SessionCategory>,
 ): List<TimetableItem> {
-    // Room is named in English, so that is the side Room.of matches.
+    // Room is named in English, so that is the side SessionRoom.of matches.
     val roomNameById = rooms.associateBy({ it.id }, { it.name.toMultiLangText().en })
     val speakerById = speakers.associateBy { it.id }
     // Conference days are not encoded in the payload; the two distinct dates map to Day1/Day2.
@@ -43,7 +43,7 @@ private fun TimetableResponse.toTimetableItems(
             TimetableItem(
                 id = TimetableItemId(session.id),
                 title = session.title.toMultiLangText(),
-                room = Room.of(roomNameById[session.roomId].orEmpty()),
+                room = SessionRoom.of(roomNameById[session.roomId].orEmpty()),
                 speakers = session.speakers
                     .mapNotNull { speakerById[it] }
                     .map { it.toTimetableSpeaker() }
