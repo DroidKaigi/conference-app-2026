@@ -3,6 +3,8 @@
     <application
         android:name=".app.KaigiApplication"
         android:label="DroidKaigi 2026"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.KaigiApp"
         android:supportsRtl="true">
         <!-- singleTask: a deep link from the widget brings the existing task forward through

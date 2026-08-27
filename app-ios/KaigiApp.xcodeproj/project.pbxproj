@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		29B7AC689D7ECABE862F8993 /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 86FC7F99DFAC930297E290C9 /* KotlinMultiplatformLinkedPackage */; };
 		83641F60A8AD9D1EF32AD59D /* RootTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE6C3B10B0A858E2CE5167D /* RootTabBar.swift */; };
+		A4676EF62EEC5C2C04DFD96B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D405205C53031FB81660F831 /* Assets.xcassets */; };
 		D704DE42B3A2D6012FBD2465 /* KaigiAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8485AEBFE26147661BEDAD60 /* KaigiAppApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -16,6 +17,7 @@
 		176C221CF46F0DEA006730BF /* KotlinMultiplatformLinkedPackage */ = {isa = PBXFileReference; lastKnownFileType = folder; name = KotlinMultiplatformLinkedPackage; path = KotlinMultiplatformLinkedPackage; sourceTree = SOURCE_ROOT; };
 		7E532852B454CE5AA4197950 /* KaigiApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = KaigiApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8485AEBFE26147661BEDAD60 /* KaigiAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaigiAppApp.swift; sourceTree = "<group>"; };
+		D405205C53031FB81660F831 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EFE6C3B10B0A858E2CE5167D /* RootTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -34,6 +36,7 @@
 		222E49AA41115FA6A90758FF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				D405205C53031FB81660F831 /* Assets.xcassets */,
 				8485AEBFE26147661BEDAD60 /* KaigiAppApp.swift */,
 				EFE6C3B10B0A858E2CE5167D /* RootTabBar.swift */,
 			);
@@ -75,6 +78,7 @@
 				1DB46F5BFC29D84D2A7D5114 /* Embed Kotlin Swift Export Library */,
 				7E31774264CF47925A1A2DE0 /* Generate Swift Package Licenses */,
 				A76C21A78BACE5B40893A930 /* Sources */,
+				A4A0E4BEAA419429A1E3D4BB /* Resources */,
 				1D6DB8C56FA9ADC3C7F33FAC /* Frameworks */,
 			);
 			buildRules = (
@@ -121,6 +125,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A4A0E4BEAA419429A1E3D4BB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A4676EF62EEC5C2C04DFD96B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		1DB46F5BFC29D84D2A7D5114 /* Embed Kotlin Swift Export Library */ = {
