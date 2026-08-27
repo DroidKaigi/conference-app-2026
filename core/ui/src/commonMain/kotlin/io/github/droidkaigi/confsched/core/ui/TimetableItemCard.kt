@@ -194,12 +194,21 @@ private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        KaigiPlaceholderAvatar(
-            seed = seed,
-            size = TimetableItemCardDefaults.avatarSize,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            borderColor = MaterialTheme.colorScheme.primaryContainer,
-        ) {}
+        val iconUrl = speaker.iconUrl
+        if (iconUrl != null) {
+            KaigiAvatar(
+                imageUrl = iconUrl,
+                contentDescription = null,
+                size = TimetableItemCardDefaults.avatarSize,
+            )
+        } else {
+            KaigiPlaceholderAvatar(
+                seed = seed,
+                size = TimetableItemCardDefaults.avatarSize,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                borderColor = MaterialTheme.colorScheme.primaryContainer,
+            ) {}
+        }
         Text(
             text = speaker.name,
             style = MaterialTheme.typography.bodySmall,
