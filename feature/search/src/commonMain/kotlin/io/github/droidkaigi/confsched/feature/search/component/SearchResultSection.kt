@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -69,7 +69,7 @@ internal fun SearchResultSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(32.dp)
+                .heightIn(min = 32.dp)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .semantics { liveRegion = LiveRegionMode.Polite },
         )
