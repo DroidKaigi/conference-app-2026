@@ -10,6 +10,7 @@ import app.cash.molecule.moleculeFlow
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import dev.zacsweers.metro.createGraph
+import io.github.droidkaigi.confsched.core.common.AppError
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
@@ -167,7 +168,7 @@ class TimetableScreenPresenterTest {
 
             val result = results.awaitItem()
             assertIs<TimetableScreenActionResult.ShowMessage>(result)
-            assertEquals("boom", result.message.text)
+            assertIs<AppError.UnknownException>(result.message.error)
         }
     }
 

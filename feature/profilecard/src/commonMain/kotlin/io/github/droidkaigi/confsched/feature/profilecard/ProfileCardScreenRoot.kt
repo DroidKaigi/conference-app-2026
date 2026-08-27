@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberImagePicker
 import io.github.droidkaigi.confsched.core.ui.rememberImageSharer
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_message
 import org.jetbrains.compose.resources.stringResource
@@ -31,7 +32,7 @@ fun ProfileCardScreenRoot() {
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
-                is ProfileCardScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is ProfileCardScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
                 is ProfileCardScreenActionResult.ShareImage -> shareImage(shareMessage, result.image.pngBytes)
             }
         }

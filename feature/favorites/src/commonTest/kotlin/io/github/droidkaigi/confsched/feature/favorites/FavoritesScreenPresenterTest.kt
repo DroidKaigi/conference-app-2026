@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.favorites
 
 import dev.zacsweers.metro.createGraph
+import io.github.droidkaigi.confsched.core.common.AppError
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.Room
@@ -97,7 +98,7 @@ class FavoritesScreenPresenterTest {
 
             val result = results.awaitItem()
             assertIs<FavoritesScreenActionResult.ShowMessage>(result)
-            assertEquals("boom", result.message.text)
+            assertIs<AppError.UnknownException>(result.message.error)
         }
     }
 }

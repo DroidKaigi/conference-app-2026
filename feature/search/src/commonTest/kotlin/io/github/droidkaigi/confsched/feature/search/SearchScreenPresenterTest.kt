@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.search
 
 import dev.zacsweers.metro.createGraph
+import io.github.droidkaigi.confsched.core.common.AppError
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
@@ -198,7 +199,7 @@ class SearchScreenPresenterTest {
 
             val result = results.awaitItem()
             assertIs<SearchScreenActionResult.ShowMessage>(result)
-            assertEquals("boom", result.message.text)
+            assertIs<AppError.UnknownException>(result.message.error)
         }
     }
 

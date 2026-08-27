@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.sessionUrl
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberQuery
 import soil.query.compose.rememberSubscription
 
@@ -34,7 +35,7 @@ fun TimetableItemDetailScreenRoot(
         val snackbarHostState = LocalSnackbarHostState.current
         ActionResultEffect(screenChannel) { result ->
             when (result) {
-                is TimetableItemDetailScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is TimetableItemDetailScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
             }
         }
 
