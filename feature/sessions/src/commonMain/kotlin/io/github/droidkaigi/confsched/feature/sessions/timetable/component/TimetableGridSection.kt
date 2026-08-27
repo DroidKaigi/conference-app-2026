@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -170,7 +170,7 @@ private fun TimetableGridContent(
  */
 private class TimetableGridLayout(
     val sessions: PersistentList<TimetableItem>,
-    val rooms: PersistentList<Room>,
+    val rooms: PersistentList<SessionRoom>,
     val columnWidth: Dp,
     val endMinute: Int,
     val hourHeight: Dp,
@@ -266,7 +266,7 @@ private sealed interface TimetableGridLayoutItem {
         override val key: Any = "hourRule:$minute"
     }
 
-    class RoomHeader(val room: Room, override val bounds: DpRect) : TimetableGridLayoutItem {
+    class RoomHeader(val room: SessionRoom, override val bounds: DpRect) : TimetableGridLayoutItem {
         override val key: Any = "roomHeader:${room.name}"
     }
 
@@ -528,12 +528,12 @@ private fun List<PointerInputChange>.verticalSpan(): Float {
     return abs(this[0].position.y - this[1].position.y)
 }
 
-private val TimetableGridDefaultRooms: PersistentList<Room> = listOf(
-    Room.NARWHAL,
-    Room.OTTER,
-    Room.PANDA,
-    Room.QUAIL,
-    Room.MEERKAT,
+private val TimetableGridDefaultRooms: PersistentList<SessionRoom> = listOf(
+    SessionRoom.NARWHAL,
+    SessionRoom.OTTER,
+    SessionRoom.PANDA,
+    SessionRoom.QUAIL,
+    SessionRoom.MEERKAT,
 ).toPersistentList()
 
 @LocalePreviews

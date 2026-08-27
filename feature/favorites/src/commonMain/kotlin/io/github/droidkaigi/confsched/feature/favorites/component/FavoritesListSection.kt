@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
@@ -119,7 +119,7 @@ private fun FavoriteSessionRow(
 private fun FavoriteTimetableItemCard(
     id: TimetableItemId,
     title: String,
-    room: Room,
+    room: SessionRoom,
     speakers: List<TimetableSpeaker>,
     language: Language,
     isCancelled: Boolean,

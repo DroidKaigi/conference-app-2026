@@ -5,7 +5,7 @@ import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
@@ -38,7 +38,7 @@ class FavoritesWidgetRenderTest {
             TimetableItem(
                 id = sessionId,
                 title = MultiLangText(ja = "セッション A", en = "Session A"),
-                room = Room.OTTER,
+                room = SessionRoom.OTTER,
                 speakers = persistentListOf(
                     TimetableSpeaker(
                         id = TimetableSpeakerId("speaker-a"),

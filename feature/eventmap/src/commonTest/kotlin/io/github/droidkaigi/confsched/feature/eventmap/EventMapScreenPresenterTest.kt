@@ -6,7 +6,7 @@ import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Project
 import io.github.droidkaigi.confsched.core.model.ProjectId
 import io.github.droidkaigi.confsched.core.model.Projects
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.test.Test
@@ -22,7 +22,7 @@ class EventMapScreenPresenterTest {
                 id = ProjectId("1"),
                 title = MultiLangText(ja = "Meetup", en = "Meetup"),
                 description = MultiLangText(ja = "Description", en = "Description"),
-                room = Room.NARWHAL,
+                room = SessionRoom.NARWHAL,
             ),
         ),
     )
