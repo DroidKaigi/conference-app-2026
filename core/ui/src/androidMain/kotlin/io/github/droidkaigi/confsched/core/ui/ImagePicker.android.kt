@@ -41,7 +41,8 @@ private fun CoroutineScope.readImage(resolver: ContentResolver, uri: Uri, onImag
     launch {
         val bytes = withContext(Dispatchers.IO) {
             decodeUpright(resolver, uri)?.let { bitmap ->
-                ByteArrayOutputStream().also { bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it) }.toByteArray()
+                val out = ByteArrayOutputStream()
+                if (bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)) out.toByteArray() else null
             }
         }
         if (bytes != null) onImagePicked(bytes)
