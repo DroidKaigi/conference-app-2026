@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,19 +11,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Category
+import io.github.droidkaigi.confsched.core.designsystem.icon.ChevronRight
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Language
 import io.github.droidkaigi.confsched.core.designsystem.icon.LocationOn
-import io.github.droidkaigi.confsched.core.designsystem.icon.Map
 import io.github.droidkaigi.confsched.core.designsystem.icon.Schedule
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -83,8 +80,7 @@ internal fun SessionInfoCard(
                 text = room.locationText(),
                 action = onOpenEventMapDialog?.let {
                     InfoRowAction(
-                        actionIconImageVector = KaigiIcons.Default.Map, // FIXME: Replace with actual icon (pop-out)
-                        actionContentDescription = stringResource(Res.string.open_event_map),
+                        actionLabel = stringResource(Res.string.open_event_map),
                         onClick = it,
                     )
                 },
@@ -107,37 +103,41 @@ private fun InfoRow(
     text: String,
     action: InfoRowAction? = null,
 ) {
-    val interactionSource = remember(::MutableInteractionSource)
-
     Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(SessionInfoCardDefaults.iconSize),
-        )
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        if (action != null) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Icon(
-                imageVector = action.actionIconImageVector,
-                contentDescription = action.actionContentDescription,
+                imageVector = imageVector,
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .clickable(
-                        onClick = action.onClick,
-                        indication = ripple(bounded = false),
-                        interactionSource = interactionSource,
-                    )
-                    .size(SessionInfoCardDefaults.iconSize)
-                    .padding(2.dp),
+                modifier = Modifier.size(SessionInfoCardDefaults.iconSize),
             )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        if (action != null) {
+            Row(modifier = Modifier.clickable(onClick = action.onClick).padding(4.dp)) {
+                Text(
+                    text = action.actionLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Icon(
+                    imageVector = KaigiIcons.Default.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
     }
 }
@@ -176,8 +176,7 @@ private object SessionInfoCardDefaults {
 }
 
 private data class InfoRowAction(
-    val actionIconImageVector: ImageVector,
-    val actionContentDescription: String,
+    val actionLabel: String,
     val onClick: () -> Unit,
 )
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.window.Dialog
 import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -73,7 +74,7 @@ private fun SessionEventMapDialogPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         SessionEventMapDialog(
-            room = Room.NARWHAL,
+            room = SessionRoom.NARWHAL,
             isOpen = true,
             onDismiss = {},
         )
