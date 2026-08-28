@@ -19,7 +19,9 @@ class EventMapNavEntryProvider(
         entry<EventMapNavKey>(metadata = instantNavTransition()) {
             val graph = retain(screenGraphFactory::createEventMapScreenGraph)
             context(graph.screenContext) {
-                EventMapScreenRoot()
+                EventMapScreenRoot(
+                    onNavigateToStampCollecting = graph.screenNavigator::openStampCollecting,
+                )
             }
         }
     }

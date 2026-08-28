@@ -19,21 +19,20 @@ kotlin {
             api(libs.soilQueryCore)
             api(libs.soilQueryCompose)
             api(libs.soilReacty)
+            implementation(libs.lifecycleRuntimeCompose)
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
-            implementation(libs.ktorClientCore)
+            implementation(libs.kotlinxDatetime)
         }
-        jvmMain.dependencies {
-            implementation(libs.ktorClientCio)
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
         androidMain.dependencies {
-            implementation(libs.ktorClientOkhttp)
+            implementation(libs.androidxActivityCompose)
+            implementation(libs.androidxCore)
         }
         wasmJsMain.dependencies {
-            implementation(libs.ktorClientJs)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktorClientDarwin)
+            implementation(libs.kotlinxBrowser)
         }
     }
 }

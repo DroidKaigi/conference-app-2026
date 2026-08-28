@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +38,9 @@ internal fun SessionDescriptionSection(
 ) {
     var isTruncated by remember { mutableStateOf(false) }
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .animateContentSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SessionSectionLabel(text = stringResource(Res.string.description))

@@ -14,8 +14,9 @@ import io.github.droidkaigi.confsched.core.model.TimetableScreenScope
 @Inject
 class TimetablePresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
-    val logger: KaigiLogger,
     val clock: KaigiClock,
+    val dayRequestStore: TimetableDayRequestStore,
+    override val logger: KaigiLogger,
 ) : PresenterContext
 
 @Inject
@@ -23,5 +24,6 @@ class TimetablePresenterContext(
 class TimetableScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    override val logger: KaigiLogger,
     val presenterContext: TimetablePresenterContext,
 ) : ScreenContext

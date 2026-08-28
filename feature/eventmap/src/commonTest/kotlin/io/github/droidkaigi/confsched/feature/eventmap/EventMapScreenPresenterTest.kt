@@ -6,7 +6,7 @@ import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.Project
 import io.github.droidkaigi.confsched.core.model.ProjectId
 import io.github.droidkaigi.confsched.core.model.Projects
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlin.test.Test
@@ -22,7 +22,7 @@ class EventMapScreenPresenterTest {
                 id = ProjectId("1"),
                 title = MultiLangText(ja = "Meetup", en = "Meetup"),
                 description = MultiLangText(ja = "Description", en = "Description"),
-                room = Room.NARWHAL,
+                room = SessionRoom.NARWHAL,
             ),
         ),
     )
@@ -44,6 +44,48 @@ class EventMapScreenPresenterTest {
             send(EventMapScreenAction.SelectFloor(Floor.Basement))
             val onBasement = uiStates.awaitItem()
             assertEquals(Floor.Basement, onBasement.selectedFloor)
+        }
+    }
+
+    @Test
+    fun repeated_toggle_actions_alternate_between_the_two_floors() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                eventMapScreenPresenter(
+                    screenChannel = channel,
+                    projects = sampleProjects,
+                )
+            },
+        ) {
+            assertEquals(Floor.Ground, uiStates.awaitItem().selectedFloor)
+
+            send(EventMapScreenAction.ToggleFloor)
+            assertEquals(Floor.Basement, uiStates.awaitItem().selectedFloor)
+
+            send(EventMapScreenAction.ToggleFloor)
+            assertEquals(Floor.Ground, uiStates.awaitItem().selectedFloor)
+        }
+    }
+
+    @Test
+    fun toggle_action_starts_from_the_floor_the_previous_selection_left() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                eventMapScreenPresenter(
+                    screenChannel = channel,
+                    projects = sampleProjects,
+                )
+            },
+        ) {
+            assertEquals(Floor.Ground, uiStates.awaitItem().selectedFloor)
+
+            send(EventMapScreenAction.SelectFloor(Floor.Basement))
+            assertEquals(Floor.Basement, uiStates.awaitItem().selectedFloor)
+
+            send(EventMapScreenAction.ToggleFloor)
+            assertEquals(Floor.Ground, uiStates.awaitItem().selectedFloor)
         }
     }
 }

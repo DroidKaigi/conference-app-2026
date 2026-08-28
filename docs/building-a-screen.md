@@ -90,6 +90,7 @@ Do here:
 @Inject
 class TimetablePresenterContext(
     val favoriteTimetableItemIdMutationKey: FavoriteTimetableItemIdMutationKey,
+    override val logger: KaigiLogger,
 ) : PresenterContext
 
 @Inject
@@ -97,6 +98,7 @@ class TimetablePresenterContext(
 class TimetableScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    override val logger: KaigiLogger,
     val presenterContext: TimetablePresenterContext,  // holds the instance; not `: TimetablePresenterContext`
 ) : ScreenContext
 ```
@@ -292,7 +294,10 @@ fun selectDay_switchesSessions() {
         mutate = { /* record */ },
     )
     runPresenterTest(
-        presenterContext = TimetablePresenterContext(favoriteTimetableItemIdMutationKey = favoriteKey),
+        presenterContext = TimetablePresenterContext(
+            favoriteTimetableItemIdMutationKey = favoriteKey,
+            logger = FakeKaigiLogger(),
+        ),
         presenter = { channel -> timetableScreenPresenter(channel, sampleTimetable) },
     ) {
         uiStates.awaitItem()                                            // initial UiState (Day1)

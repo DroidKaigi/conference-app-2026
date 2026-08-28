@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
@@ -59,6 +60,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Map
 import io.github.droidkaigi.confsched.core.designsystem.icon.ProfileCard
 import io.github.droidkaigi.confsched.core.designsystem.icon.Timetable
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBar
+import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarItem
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRail
 import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRailDefaults
@@ -149,7 +151,10 @@ private class RootTabScene(
             }
         } else {
             Box(Modifier.fillMaxSize()) {
-                movableContent()
+                CompositionLocalProvider(
+                    LocalNavigationBarOccupiedHeight provides KaigiNavigationBarDefaults.occupiedHeightWithInset,
+                    content = movableContent,
+                )
                 RootTabBar(
                     currentTab = currentTab,
                     onSelectTab = onSelectTab,
@@ -362,6 +367,7 @@ private fun RootTabRailDragHandle(
                 orientation = Orientation.Horizontal,
                 interactionSource = interactionSource,
             )
+            .pointerHoverIcon(HorizontalResizePointerIcon)
             .semantics {
                 customActions = listOf(
                     CustomAccessibilityAction(

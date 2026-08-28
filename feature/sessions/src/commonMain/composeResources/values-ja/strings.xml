@@ -2,8 +2,15 @@
     <string name="timetable">タイムテーブル</string>
     <string name="search">検索</string>
     <string name="switch_to_grid_view">グリッド表示に切り替え</string>
+    <string name="switch_to_list_view">リスト表示に切り替え</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
+    <string name="schedule">日時</string>
+    <string name="location">会場</string>
+    <string name="speaker_overflow">+%1$d名</string>
+    <string name="countdown_banner_title">次のお気に入りセッションまで</string>
+    <string name="countdown_minutes">あと %1$d分</string>
+    <string name="countdown_hours_minutes">あと %1$d時間%2$d分</string>
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
     <string name="archive">アーカイブ</string>
     <string name="archive_video">動画</string>

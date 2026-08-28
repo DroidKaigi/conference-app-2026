@@ -28,7 +28,7 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
         commandChannel.trySend(NavCommand.Push(key))
     }
 
-    fun back(origin: NavKey? = null) {
+    override fun back(origin: NavKey?) {
         logger.debug { "back from $origin" }
         commandChannel.trySend(NavCommand.Pop(origin = origin))
     }

@@ -30,6 +30,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -140,6 +141,41 @@ fun SketchHorizontalDivider(
                     tremor = tremor,
                     sweepWavelength = sweepWavelength,
                     tremorWavelength = tremorWavelength,
+                    seed = combinedSeed,
+                )
+                val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
+                onDrawBehind {
+                    drawPath(path = path, color = color, style = stroke)
+                }
+            },
+    )
+}
+
+/** A ground line whose point count grows with its width while its wavelength stays fixed. */
+@Composable
+fun SketchGroundLine(
+    seed: Int,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    thickness: Dp = 2.dp,
+    amplitude: Dp = 1.6.dp,
+    period: Dp = 26.dp,
+) {
+    require(thickness >= 0.dp) { "thickness must not be negative, was $thickness" }
+    require(amplitude >= 0.dp) { "amplitude must not be negative, was $amplitude" }
+    require(period > 0.dp) { "period must be positive, was $period" }
+    val resolvedAmplitude = scaleSketchAmplitude(amplitude)
+    val combinedSeed = combineSketchSeed(seed)
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(thickness + resolvedAmplitude * 2)
+            .drawWithCache {
+                val path = sketchGroundLinePath(
+                    width = size.width,
+                    centerY = size.height / 2f,
+                    amplitude = resolvedAmplitude,
+                    period = period,
                     seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
@@ -361,6 +397,22 @@ fun Modifier.sketchBorder(shape: SketchOutlineShape, color: Color): Modifier {
 }
 
 /**
+ * Strokes the bottom edge of [shape] at [thickness], leaving the straight top and sides that
+ * close its outline undrawn, so content filled with the same instance meets the stroke down its
+ * centre.
+ */
+fun Modifier.sketchBottomEdge(shape: SketchBottomEdgeShape, color: Color, thickness: Dp): Modifier {
+    require(thickness > 0.dp) { "thickness must be positive, was $thickness" }
+    return drawWithCache {
+        val path = with(shape) { edgePathOrNull(size) }
+        val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
+        onDrawBehind {
+            if (path != null) drawPath(path = path, color = color, style = stroke)
+        }
+    }
+}
+
+/**
  * A hand-sketched closed outline that reserves room for the stroke [Modifier.sketchBorder]
  * draws it at, so content clipped to the same instance meets that stroke down its centre.
  */
@@ -449,6 +501,55 @@ data class SketchRoundRectShape(
         val insetWidth = width - inset * 2f
         val insetHeight = height - inset * 2f
         return if (insetWidth > 0f && insetHeight > 0f) Size(insetWidth, insetHeight) else null
+    }
+}
+
+/**
+ * A rectangle whose bottom edge is the hand-sketched line, with the top and the sides left
+ * straight, for `Modifier.clip`, `Modifier.background` and any `shape` parameter. The edge is
+ * given `roughness + tremor` of the height to swing in, so its lowest point lands on the bottom
+ * of the shape rather than being cut off there, and [Modifier.sketchBottomEdge] strokes that
+ * same edge.
+ */
+@Immutable
+data class SketchBottomEdgeShape(
+    val seed: Int,
+    val roughness: Dp = DefaultRoughness,
+    val tremor: Dp = DefaultTremor,
+    val sweepWavelength: Dp = DefaultSweepWavelength,
+    val tremorWavelength: Dp = DefaultTremorWavelength,
+) : Shape {
+    init {
+        requireWobble(roughness, tremor, sweepWavelength, tremorWavelength)
+    }
+
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Outline = with(density) {
+        val path = edgePathOrNull(size) ?: return Outline.Rectangle(size.toRect())
+        // The edge is drawn left to right, so the two corners of the top close it and the
+        // straight seam `close` adds falls down the left side instead of across the wobble.
+        path.lineTo(size.width, 0f)
+        path.lineTo(0f, 0f)
+        path.close()
+        Outline.Generic(path)
+    }
+
+    /** The bottom edge on its own, or `null` on a box too short to hold the swing. */
+    internal fun Density.edgePathOrNull(size: Size): Path? {
+        val reach = (roughness + tremor).toPx()
+        if (size.width <= 0f || size.height <= reach * 2f) return null
+        return sketchHorizontalLinePath(
+            width = size.width,
+            centerY = size.height - reach,
+            roughness = roughness,
+            tremor = tremor,
+            sweepWavelength = sweepWavelength,
+            tremorWavelength = tremorWavelength,
+            seed = seed,
+        )
     }
 }
 

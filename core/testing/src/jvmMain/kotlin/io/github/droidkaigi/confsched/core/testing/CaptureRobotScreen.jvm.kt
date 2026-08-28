@@ -2,7 +2,8 @@ package io.github.droidkaigi.confsched.core.testing
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.onFirst
 import com.github.takahirom.roborazzi.InternalRoborazziApi
 import com.github.takahirom.roborazzi.provideRoborazziContext
 import io.github.takahirom.roborazzi.captureRoboImage
@@ -13,5 +14,6 @@ internal actual fun ComposeUiTest.captureRobotScreen(name: String) {
     // Roborazzi resolves a bare name against the working directory, so the capture is placed in the
     // configured output directory, beside the goldens the preview tests write.
     val filePath = File(provideRoborazziContext().outputDirectory, "$name.png").path
-    onRoot().captureRoboImage(filePath = filePath)
+    // A popup such as a dropdown menu adds a second root, which onRoot() rejects.
+    onAllNodes(isRoot()).onFirst().captureRoboImage(filePath = filePath)
 }

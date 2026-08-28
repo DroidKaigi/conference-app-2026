@@ -5,4 +5,11 @@
     <string name="event_map_stamp_title">スタンプラリー</string>
     <string name="event_map_stamp_description">スタンプを集めて景品と交換しましょう！</string>
     <string name="event_map_learn_more_button_label">詳しく見る</string>
+    <string name="stamp_collecting_title">スタンプラリー</string>
+    <string name="stamp_collecting_introducing">今年もDroidKaigiではスタンプラリーを楽しんでいただけます。スタンプは協賛エリアの各ブースで貯められるようになっています。集めたスタンプの数に応じて豪華なDroidKaigiオリジナル景品を用意しています。最大4つ受け取れますので皆さま奮ってご参加ください。</string>
+    <string name="stamp_collecting_exchange_place_title">景品交換できる場所</string>
+    <string name="stamp_collecting_exhibition_area">協賛エリア（B1F）</string>
+    <string name="stamp_collecting_map_content_description">協賛エリアを強調したB1Fのマップ</string>
+    <string name="stamp_collecting_exchange_hours_title">景品交換できる時間</string>
+    <string name="stamp_collecting_prize_overlay_close">閉じる</string>
 </resources>

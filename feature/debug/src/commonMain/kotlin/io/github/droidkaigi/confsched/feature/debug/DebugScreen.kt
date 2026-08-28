@@ -16,6 +16,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -26,6 +27,8 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_HEIGHT_DP
 import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_WIDTH_DP
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
+import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +78,20 @@ fun DebugScreen(
             )
             HorizontalDivider()
 
+            SectionHeader("Device tilt")
+            val tilt by LocalDeviceTiltSource.current.tiltAsState()
+            ListItem(
+                headlineContent = { Text("Pitch") },
+                supportingContent = { Text("Top edge toward the ground is positive") },
+                trailingContent = { Text(formatDegrees(tilt.pitchDegrees)) },
+            )
+            ListItem(
+                headlineContent = { Text("Roll") },
+                supportingContent = { Text("Left edge toward the ground is positive") },
+                trailingContent = { Text(formatDegrees(tilt.rollDegrees)) },
+            )
+            HorizontalDivider()
+
             SectionHeader("Soil")
             ListItem(
                 headlineContent = { Text("Show Soil error sheet") },
@@ -111,6 +128,9 @@ fun DebugScreen(
         }
     }
 }
+
+// Adding zero turns -0.0 into 0.0, which a device near level would otherwise flicker between.
+private fun formatDegrees(degrees: Float): String = "${round(degrees * 10f) / 10f + 0f}°"
 
 @Preview(widthDp = SCREEN_PREVIEW_WIDTH_DP, heightDp = SCREEN_PREVIEW_HEIGHT_DP)
 @Composable

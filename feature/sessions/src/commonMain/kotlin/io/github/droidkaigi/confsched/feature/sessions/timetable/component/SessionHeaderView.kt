@@ -21,7 +21,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -37,7 +37,7 @@ import kotlinx.collections.immutable.PersistentList
 
 @Composable
 internal fun SessionHeaderView(
-    room: Room,
+    room: SessionRoom,
     title: String,
     language: Language,
     hasInterpretation: Boolean,

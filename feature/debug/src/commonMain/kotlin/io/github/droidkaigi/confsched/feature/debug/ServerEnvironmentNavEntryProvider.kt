@@ -9,11 +9,10 @@ import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
 
-@ContributesIntoSet(UiScope::class)
 @Inject
+@ContributesIntoSet(UiScope::class)
 class ServerEnvironmentNavEntryProvider(
     private val screenGraphFactory: ServerEnvironmentScreenGraph.Factory,
-    private val screenNavigator: ServerEnvironmentScreenNavigator,
 ) : NavEntryProvider {
 
     override fun EntryProviderScope<NavKey>.register() {
@@ -21,7 +20,7 @@ class ServerEnvironmentNavEntryProvider(
             val graph = retain(screenGraphFactory::createServerEnvironmentScreenGraph)
             context(graph.screenContext) {
                 ServerEnvironmentScreenRoot(
-                    onNavigateToTimetable = screenNavigator::openTimetable,
+                    onNavigateToTimetable = graph.screenNavigator::openTimetable,
                 )
             }
         }

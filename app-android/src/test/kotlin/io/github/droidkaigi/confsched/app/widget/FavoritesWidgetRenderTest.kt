@@ -5,7 +5,8 @@ import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
+import io.github.droidkaigi.confsched.core.model.SessionType
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemAsset
@@ -18,11 +19,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FavoritesWidgetRenderTest {
@@ -32,7 +38,7 @@ class FavoritesWidgetRenderTest {
             TimetableItem(
                 id = sessionId,
                 title = MultiLangText(ja = "セッション A", en = "Session A"),
-                room = Room.OTTER,
+                room = SessionRoom.OTTER,
                 speakers = persistentListOf(
                     TimetableSpeaker(
                         id = TimetableSpeakerId("speaker-a"),
@@ -45,6 +51,7 @@ class FavoritesWidgetRenderTest {
                 day = DroidKaigi2026Day.Day1,
                 startsAt = "10:00",
                 endsAt = "10:40",
+                sessionType = SessionType.NORMAL,
                 startsAtInstant = DroidKaigi2026Day.Day1.at(10, 0),
                 endsAtInstant = DroidKaigi2026Day.Day1.at(10, 40),
                 description = MultiLangText(ja = "", en = ""),
@@ -53,6 +60,7 @@ class FavoritesWidgetRenderTest {
                 asset = TimetableItemAsset.Empty,
                 hasInterpretation = false,
                 isCancelled = false,
+                message = null,
             ),
         ),
     )
@@ -61,13 +69,45 @@ class FavoritesWidgetRenderTest {
     private fun renders(
         favoriteIds: MutableStateFlow<Set<TimetableItemId>> = MutableStateFlow(emptySet()),
         colorSchemes: MutableStateFlow<KaigiColorScheme> = MutableStateFlow(KaigiColorScheme.entries.first()),
-        readTimetable: suspend () -> Timetable? = { timetable },
+        clockOffsets: MutableStateFlow<Duration> = MutableStateFlow(Duration.ZERO),
+        timetables: MutableStateFlow<Timetable?> = MutableStateFlow(timetable),
+        now: () -> Instant = { duringDay1 },
     ) = favoritesWidgetRenders(
         favoriteIds = favoriteIds,
         colorSchemes = colorSchemes,
-        readTimetable = readTimetable,
-        now = { duringDay1 },
+        clockOffsets = clockOffsets,
+        timetables = timetables,
+        now = now,
     )
+
+    @Test
+    fun a_favorite_starting_while_collected_produces_a_live_render() = runTest {
+        var now = duringDay1
+        val collected = mutableListOf<FavoritesWidgetRender>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            renders(favoriteIds = MutableStateFlow(setOf(sessionId)), now = { now }).toList(collected)
+        }
+        assertEquals(1, collected.size)
+
+        now = DroidKaigi2026Day.Day1.at(10, 0)
+        advanceTimeBy(1.hours + 1.milliseconds)
+
+        assertEquals(2, collected.size)
+        assertTrue((collected.last().state as FavoritesWidgetState.Schedule).slots.single().isLive)
+    }
+
+    @Test
+    fun a_clock_offset_change_after_the_first_render_produces_a_new_render() = runTest {
+        val clockOffsets = MutableStateFlow(Duration.ZERO)
+        val collected = mutableListOf<FavoritesWidgetRender>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            renders(clockOffsets = clockOffsets).toList(collected)
+        }
+
+        clockOffsets.value = 1.hours
+
+        assertEquals(2, collected.size)
+    }
 
     @Test
     fun a_favorite_added_after_the_first_render_produces_a_new_render() = runTest {
@@ -77,7 +117,10 @@ class FavoritesWidgetRenderTest {
             renders(favoriteIds = favoriteIds).toList(collected)
         }
 
-        assertEquals(FavoritesWidgetState.Empty, collected.single().state)
+        assertEquals(
+            FavoritesWidgetState.Empty(day = DroidKaigi2026Day.Day1, otherDayFavorites = 0),
+            collected.single().state,
+        )
 
         favoriteIds.value = setOf(sessionId)
 
@@ -101,27 +144,27 @@ class FavoritesWidgetRenderTest {
     }
 
     @Test
-    fun each_render_re_reads_the_persisted_timetable() = runTest {
-        val favoriteIds = MutableStateFlow<Set<TimetableItemId>>(emptySet())
-        var reads = 0
+    fun a_timetable_persisted_after_the_first_render_produces_a_new_render() = runTest {
+        val timetables = MutableStateFlow<Timetable?>(null)
         val collected = mutableListOf<FavoritesWidgetRender>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            renders(favoriteIds = favoriteIds, readTimetable = {
-                reads++
-                timetable
-            }).toList(collected)
+            renders(favoriteIds = MutableStateFlow(setOf(sessionId)), timetables = timetables).toList(collected)
         }
 
-        favoriteIds.value = setOf(sessionId)
+        assertTrue(collected.single().state is FavoritesWidgetState.Empty)
 
-        assertEquals(2, reads)
+        timetables.value = timetable
+
+        assertEquals(2, collected.size)
+        val slots = (collected.last().state as FavoritesWidgetState.Schedule).slots
+        assertEquals(listOf(sessionId), slots.single().sessions.map { it.id })
     }
 
     @Test
     fun a_missing_persisted_timetable_still_renders() = runTest {
         val collected = mutableListOf<FavoritesWidgetRender>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            renders(favoriteIds = MutableStateFlow(setOf(sessionId)), readTimetable = { null }).toList(collected)
+            renders(favoriteIds = MutableStateFlow(setOf(sessionId)), timetables = MutableStateFlow(null)).toList(collected)
         }
 
         assertTrue(collected.single().state is FavoritesWidgetState.Empty)

@@ -24,9 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 // The list-detail directive sets its own spacer to zero so pane backgrounds meet edge-to-edge;
@@ -103,15 +106,23 @@ private fun ThreePaneScaffoldScope.PaneExpansionDragHandle(
 ) {
     val interactionSource = remember(::MutableInteractionSource)
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = Modifier
             .fillMaxHeight()
             // The handle is placed centered on the seam, so its own coordinates are where the
-            // seam position for drag clamping is read from.
+            // seam position for drag clamping is read from. positionInParent().x is always
+            // physical-left-based; PaneExpansionState's offset space runs from the start edge,
+            // so it needs mirroring under Rtl to stay in the same space as minBound/maxBound.
             .onPlaced { coordinates ->
                 val scaffold = coordinates.parentLayoutCoordinates ?: return@onPlaced
                 val minWidthPx = with(density) { PaneMinWidth.toPx() }
-                dragBounds.seamPosition = coordinates.positionInParent().x + coordinates.size.width / 2f
+                val physicalSeamX = coordinates.positionInParent().x + coordinates.size.width / 2f
+                dragBounds.seamPosition = if (layoutDirection == LayoutDirection.Rtl) {
+                    scaffold.size.width - physicalSeamX
+                } else {
+                    physicalSeamX
+                }
                 dragBounds.minBound = minWidthPx
                 dragBounds.maxBound = scaffold.size.width - minWidthPx
                 dragBounds.maxOvershoot = with(density) { PaneMaxOvershoot.toPx() }
@@ -120,24 +131,28 @@ private fun ThreePaneScaffoldScope.PaneExpansionDragHandle(
                 state = state,
                 minTouchTargetSize = LocalMinimumInteractiveComponentSize.current,
                 interactionSource = interactionSource,
-            ),
+            )
+            .pointerHoverIcon(HorizontalResizePointerIcon),
         contentAlignment = Alignment.Center,
     ) {
         // Panes are clipped to their own bounds, so the detail pane cannot cast a real shadow
         // across the seam; this band, drawn from the drag handle slot placed above both panes,
-        // stands in for that shadow on the list side.
+        // stands in for that shadow on the list side. Brush.horizontalGradient stops are always
+        // physical-left-to-right, so they need reversing under Rtl to keep darkening toward the
+        // detail pane, which sits on the physical left there instead of the physical right.
+        val scrimColor = MaterialTheme.colorScheme.scrim.copy(alpha = PANE_SHADOW_MAX_ALPHA)
+        val shadowGradient = if (layoutDirection == LayoutDirection.Rtl) {
+            Brush.horizontalGradient(0f to scrimColor, 1f to Color.Transparent)
+        } else {
+            Brush.horizontalGradient(0f to Color.Transparent, 1f to scrimColor)
+        }
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .offset(x = -PaneShadowWidth / 2)
                 .fillMaxHeight()
                 .width(PaneShadowWidth)
-                .background(
-                    Brush.horizontalGradient(
-                        0f to Color.Transparent,
-                        1f to MaterialTheme.colorScheme.scrim.copy(alpha = PANE_SHADOW_MAX_ALPHA),
-                    ),
-                ),
+                .background(shadowGradient),
         )
         VerticalDragHandle(
             // The scaffold centers the handle on the pane boundary, but the visible gap is the

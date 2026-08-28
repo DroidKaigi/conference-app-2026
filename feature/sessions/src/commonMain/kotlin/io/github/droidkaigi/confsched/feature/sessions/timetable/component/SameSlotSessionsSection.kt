@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Timetable
-import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -43,7 +42,7 @@ internal fun SameSlotSessionsSection(
             TimetableItemCard(
                 title = item.title.of(displayLanguage),
                 room = item.room,
-                speaker = item.speakerNames,
+                speakers = item.speakers,
                 language = item.language,
                 isFavorite = sameSlotItem.isFavorite,
                 isCancelled = item.isCancelled,

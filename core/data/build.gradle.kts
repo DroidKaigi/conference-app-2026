@@ -18,13 +18,13 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:model"))
             implementation(project(":core:common"))
+            implementation(project(":core:preview:api"))
             api(libs.androidxDatastoreCore)
             api(libs.androidxDatastorePreferencesCore)
             implementation(libs.soilQueryCore)
             implementation(libs.kotlinxCollectionsImmutable)
             implementation(libs.kotlinxCoroutinesCore)
             implementation(libs.kotlinxSerializationJson)
-            implementation(libs.ktorClientCore)
             implementation(libs.ktorClientContentNegotiation)
             implementation(libs.ktorSerializationKotlinxJson)
             implementation(libs.ktorfitLib)
@@ -35,21 +35,11 @@ kotlin {
             implementation(kotlin("test"))
             implementation(libs.kotlinxCollectionsImmutable)
         }
-        jvmMain.dependencies {
-            implementation(libs.ktorClientCio)
-        }
         jvmTest.dependencies {
             implementation(libs.kotlinxCoroutinesTest)
         }
-        androidMain.dependencies {
-            implementation(libs.ktorClientOkhttp)
-        }
-        iosMain.dependencies {
-            implementation(libs.ktorClientDarwin)
-        }
         wasmJsMain.dependencies {
             implementation(libs.kotlinxBrowser)
-            implementation(libs.ktorClientJs)
         }
     }
 }

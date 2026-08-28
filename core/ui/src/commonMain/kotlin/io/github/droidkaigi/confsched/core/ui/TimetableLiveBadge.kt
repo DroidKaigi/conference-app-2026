@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -89,6 +91,12 @@ internal fun TimetableLiveBadge(
                 fontWeight = FontWeight.Normal,
             ),
             color = MaterialTheme.colorScheme.onPrimary,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(
+                minFontSize = 6.sp,
+                maxFontSize = MaterialTheme.typography.labelSmall.fontSize,
+                stepSize = 0.5.sp,
+            ),
         )
     }
 }

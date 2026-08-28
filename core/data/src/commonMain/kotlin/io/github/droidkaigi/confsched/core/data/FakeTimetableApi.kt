@@ -17,9 +17,11 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-02T10:00:00+09:00",
                     endsAt = "2026-09-02T10:40:00+09:00",
                     categoryItemId = JETPACK_COMPOSE,
+                    sessionType = SessionTypeResponse.NORMAL,
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s2",
@@ -33,11 +35,16 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-02T11:20:00+09:00",
                     endsAt = "2026-09-02T12:00:00+09:00",
                     categoryItemId = JETPACK_COMPOSE,
+                    sessionType = SessionTypeResponse.NORMAL,
                     interpretationTarget = true,
                     noShow = false,
                     asset = SessionAssetResponse(
                         videoUrl = "https://example.com/sessions/s2/video",
                         slideUrl = "https://example.com/sessions/s2/slides",
+                    ),
+                    message = LocaledResponse(
+                        ja = "※このセッションは会場が変更されました",
+                        en = "* The room of this session has changed",
                     ),
                 ),
                 fakeSession(
@@ -49,9 +56,11 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-02T11:20:00+09:00",
                     endsAt = "2026-09-02T12:00:00+09:00",
                     categoryItemId = KOTLIN_MULTIPLATFORM,
+                    sessionType = SessionTypeResponse.CODELABS,
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s4",
@@ -62,9 +71,11 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-02T11:20:00+09:00",
                     endsAt = "2026-09-02T12:00:00+09:00",
                     categoryItemId = KOTLIN_MULTIPLATFORM,
+                    sessionType = SessionTypeResponse.FIRESIDE_CHAT,
                     interpretationTarget = false,
                     noShow = true,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s5",
@@ -75,9 +86,11 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-03T10:00:00+09:00",
                     endsAt = "2026-09-03T10:40:00+09:00",
                     categoryItemId = BUILD_AND_TOOLING,
+                    sessionType = SessionTypeResponse.NORMAL,
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
                 fakeSession(
                     id = "s6",
@@ -91,9 +104,11 @@ class FakeTimetableApi : TimetableApi {
                     startsAt = "2026-09-03T11:00:00+09:00",
                     endsAt = "2026-09-03T11:40:00+09:00",
                     categoryItemId = BUILD_AND_TOOLING,
+                    sessionType = SessionTypeResponse.FIRESIDE_CHAT,
                     interpretationTarget = false,
                     noShow = false,
                     asset = SessionAssetResponse(),
+                    message = null,
                 ),
             ),
             rooms = listOf(
@@ -146,10 +161,12 @@ class FakeTimetableApi : TimetableApi {
         language: LanguageResponse,
         startsAt: String,
         endsAt: String,
-        categoryItemId: Long,
+        sessionType: SessionTypeResponse,
+        categoryItemId: Long?,
         interpretationTarget: Boolean,
         noShow: Boolean,
         asset: SessionAssetResponse,
+        message: LocaledResponse?,
     ) = SessionResponse(
         id = id,
         title = title,
@@ -159,8 +176,9 @@ class FakeTimetableApi : TimetableApi {
         language = language,
         roomId = roomId,
         lengthInMinutes = 40,
-        sessionType = SessionTypeResponse.NORMAL,
+        sessionType = sessionType,
         noShow = noShow,
+        message = message,
         targetAudience = LocaledResponse(
             ja = "モダンなAndroidアプリ開発の設計に興味がある方\nKotlin Multiplatformの実践的な適用例を知りたい方\nマルチプラットフォーム対応の知見を自分のプロジェクトに活かしたい方",
             en = "Anyone interested in the design of a modern Android app\nAnyone after a worked example of Kotlin Multiplatform\nAnyone taking multiplatform findings back to their own project",
@@ -171,6 +189,7 @@ class FakeTimetableApi : TimetableApi {
             ja = "本セッションでは、サンプルアプリの設計とその変遷をたどります。積み重ねてきた選択のひとつひとつを、実際のコードとともに解説いたします。折り返しと「もっとみる」の挙動を確かめられるだけの長さを持たせたプレースホルダーの本文です。",
             en = "This session walks through the architecture of a sample app and how it has changed, taking each of the choices behind it in turn alongside the code. The placeholder body runs long enough to exercise wrapping and the show-more control.",
         ),
+        sessionCategoryItemId = categoryItemId,
     )
 
     private fun fakeSpeaker(id: String, fullName: String) = SpeakerResponse(

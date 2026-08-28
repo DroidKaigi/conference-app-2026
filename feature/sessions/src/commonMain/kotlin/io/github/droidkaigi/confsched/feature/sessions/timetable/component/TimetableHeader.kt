@@ -1,17 +1,12 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Search
-import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
+import io.github.droidkaigi.confsched.core.designsystem.icon.ViewTimeline
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -21,27 +16,29 @@ import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.search
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.switch_to_grid_view
+import io.github.droidkaigi.confsched.feature.sessions.generated.resources.switch_to_list_view
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.timetable
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableViewMode
 import org.jetbrains.compose.resources.stringResource
 
-/** The title, the two actions and the day picker, all on the one dark band. */
+/** The title and the two actions, on the dark band the day picker continues below them. */
 @Composable
 internal fun TimetableHeader(
-    selectedDay: DroidKaigi2026Day,
-    onDayClick: (DroidKaigi2026Day) -> Unit,
+    viewMode: TimetableViewMode,
     onSearchClick: () -> Unit,
     onUiTypeChangeClick: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.inverseSurface)) {
-        KaigiTopAppBar(title = stringResource(Res.string.timetable)) {
-            KaigiIconButton(seed = 777, onClick = onSearchClick) {
-                Icon(KaigiIcons.Default.Search, contentDescription = stringResource(Res.string.search))
-            }
-            KaigiIconButton(seed = 778, onClick = onUiTypeChangeClick) {
-                Icon(KaigiIcons.Default.GridView, contentDescription = stringResource(Res.string.switch_to_grid_view))
-            }
+    KaigiTopAppBar(title = stringResource(Res.string.timetable)) {
+        KaigiIconButton(seed = 777, onClick = onSearchClick) {
+            Icon(KaigiIcons.Default.Search, contentDescription = stringResource(Res.string.search))
         }
-        DayTabRow(selectedDay = selectedDay, onDayClick = onDayClick)
+        KaigiIconButton(seed = 778, onClick = onUiTypeChangeClick) {
+            val (icon, description) = when (viewMode) {
+                TimetableViewMode.List -> KaigiIcons.Default.GridView to Res.string.switch_to_grid_view
+                TimetableViewMode.Grid -> KaigiIcons.Default.ViewTimeline to Res.string.switch_to_list_view
+            }
+            Icon(icon, contentDescription = stringResource(description))
+        }
     }
 }
 
@@ -52,8 +49,7 @@ private fun TimetableHeaderPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         TimetableHeader(
-            selectedDay = DroidKaigi2026Day.Day1,
-            onDayClick = {},
+            viewMode = TimetableViewMode.List,
             onSearchClick = {},
             onUiTypeChangeClick = {},
         )

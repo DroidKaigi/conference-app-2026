@@ -18,12 +18,15 @@ okio = "3.16.4"
 turbine = "1.2.1"
 composeRuntimeRetain = "1.12.0-alpha03"
 androidxNavigation3 = "1.1.1"
+androidxLifecycle = "2.9.6"
 # Material3 adaptive list-detail SceneStrategy for Navigation3 (regular Maven Central release).
 composeMaterial3AdaptiveNavigation3 = "1.3.0-beta02"
 agp = "9.2.1"
 androidxActivityCompose = "1.10.1"
+androidxCore = "1.16.0"
 # Jetpack Glance home-screen widget framework (app-android only).
 androidxGlance = "1.2.0-rc01"
+androidxWork = "2.10.5"
 # KSP 2.3.x is decoupled from the Kotlin compiler version (KSP2 standalone Analysis-API backend), so a
 # single 2.3.x release runs against Kotlin 2.4.0.
 ksp = "2.3.9"
@@ -40,9 +43,12 @@ jetwhale = "1.0.0-alpha11"
 # Compose Multiplatform the targeted JetWhale host release itself was built with.
 jetwhaleHostCompose = "1.11.1"
 # Single source of truth for the app version; flows to common Kotlin via the generated BuildKonfig.
-droidkaigiApp = "0.1.0"
+droidkaigiApp = "1.0.0"
 # KMP logger with platform-native writers (Logcat / os_log / SLF4J / console), wasmJs-capable.
 kermit = "2.1.0"
+# QR encoder used for the profile card's back face; only its module matrix is consumed, the drawing
+# stays in the app's own Canvas code.
+qrcodeKotlin = "4.5.0"
 # Retrofit-style declarative HTTP clients over Ktor (KSP-generated implementations).
 ktorfit = "2.7.5"
 # Collects the open source dependencies of each platform entry module and their licenses; the Gradle
@@ -70,6 +76,7 @@ shadow = "9.6.1"
 composeRuntimeRetain = { module = "androidx.compose.runtime:runtime-retain", version.ref = "composeRuntimeRetain" }
 navigation3Runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "androidxNavigation3" }
 navigation3Ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidxNavigation3" }
+lifecycleRuntimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 composeMaterial3AdaptiveNavigation3 = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation3", version.ref = "composeMaterial3AdaptiveNavigation3" }
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -99,9 +106,11 @@ androidxDatastorePreferencesCore = { module = "androidx.datastore:datastore-pref
 androidxDatastoreCoreOkio = { module = "androidx.datastore:datastore-core-okio", version.ref = "androidxDatastore" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 androidxActivityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityCompose" }
+androidxCore = { module = "androidx.core:core", version.ref = "androidxCore" }
 androidxGlanceAppwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidxGlance" }
 androidxGlancePreview = { module = "androidx.glance:glance-preview", version.ref = "androidxGlance" }
 androidxGlanceAppwidgetPreview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidxGlance" }
+androidxWorkRuntime = { module = "androidx.work:work-runtime", version.ref = "androidxWork" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 kotlinCompiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
 kotlinCompilerInternalTestFramework = { module = "org.jetbrains.kotlin:kotlin-compiler-internal-test-framework", version.ref = "kotlin" }
@@ -130,6 +139,7 @@ ktorSerializationKotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-js
 ktorfitLib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 ktorfitKsp = { module = "de.jensklingenberg.ktorfit:ktorfit-ksp", version.ref = "ktorfit" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+qrcodeKotlin = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcodeKotlin" }
 aboutlibrariesCore = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutlibraries" }
 # Ready-made Material 3 list, detail expansion and license dialog over the collected libraries.
 aboutlibrariesComposeM3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
@@ -150,6 +160,7 @@ jetwhaleHostComposeFoundation = { module = "org.jetbrains.compose.foundation:fou
 jetwhaleHostComposeUi = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetwhaleHostCompose" }
 jetwhaleHostComposeMaterial3 = { module = "org.jetbrains.compose.material3:material3", version = "1.11.0-alpha07" }
 firebaseCrashlytics = { module = "com.google.firebase:firebase-crashlytics", version = "20.1.0" }
+androidxFragment = { module = "androidx.fragment:fragment", version = "1.9.0" }
 roborazziComposeDesktop = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop", version.ref = "roborazzi" }
 roborazziDesktopPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop-preview-scanner-support", version.ref = "roborazzi" }
 # The :android artifact scans androidx.compose.ui.tooling.preview.Preview, which is the annotation
@@ -165,6 +176,8 @@ kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "jetbrainsCompose" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+googleServices = { id = "com.google.gms.google-services", version = "4.5.0" }
+firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.8" }
 androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

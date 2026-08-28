@@ -3,13 +3,19 @@ package io.github.droidkaigi.confsched.app
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
+import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.StaffScreenScope
 import io.github.droidkaigi.confsched.feature.staff.StaffScreenNavigator
 
 @Inject
 @SingleIn(StaffScreenScope::class)
-@ContributesBinding(StaffScreenScope::class)
+@ContributesBinding(
+    scope = StaffScreenScope::class,
+    binding = binding<StaffScreenNavigator>(),
+)
 class DefaultStaffScreenNavigator(
-    @Suppress("unused") private val appNavigator: AppNavigator,
-) : StaffScreenNavigator
+    appNavigator: AppNavigator,
+) : DefaultScreenNavigator(appNavigator),
+    StaffScreenNavigator
