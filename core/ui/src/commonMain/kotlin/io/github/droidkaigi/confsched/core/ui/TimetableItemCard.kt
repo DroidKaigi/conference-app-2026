@@ -93,7 +93,8 @@ fun TimetableItemCard(
             isCancelled = isCancelled,
             seed = seed,
             titleMarkSeed = titleMarkSeed,
-            modifier = Modifier.clickable(onClick = onClick),
+            // clip precedes clickable so the ripple follows the sketched round rect
+            modifier = Modifier.clip(shape).clickable(onClick = onClick),
         )
         if (isFavorite) {
             room.mascot?.let { mascot ->
