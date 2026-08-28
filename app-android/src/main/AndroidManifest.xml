@@ -1,32 +1,40 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".app.KaigiApplication"
-        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:theme="@style/Theme.KaigiApp"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.KaigiApp">
         <!-- singleTask: a deep link from the widget brings the existing task forward through
              onNewIntent instead of stacking a second copy of the single-activity app. -->
         <activity
             android:name=".app.MainActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="droidkaigi2026" android:host="session" />
-                <data android:scheme="droidkaigi2026" android:host="favorites" />
-                <data android:scheme="droidkaigi2026" android:host="about" />
+
+                <data
+                    android:host="session"
+                    android:scheme="droidkaigi2026" />
+                <data
+                    android:host="favorites"
+                    android:scheme="droidkaigi2026" />
+                <data
+                    android:host="about"
+                    android:scheme="droidkaigi2026" />
             </intent-filter>
         </activity>
         <!-- Grants the share sheet read access to the images the app writes to its cache. -->
@@ -39,6 +47,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <receiver
             android:name=".app.widget.FavoritesWidgetReceiver"
             android:exported="true">
