@@ -107,6 +107,8 @@ private fun SketchStrengthSampleView(sketchStrength: SketchStrength, seed: Int) 
                 width = SketchStrengthOptionDefaults.sampleWidth,
                 height = SketchStrengthOptionDefaults.sampleHeight,
             )
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .sketchBorder(shape = shape, color = MaterialTheme.colorScheme.outline),
     ) {
         SketchHorizontalDivider(
@@ -115,7 +117,7 @@ private fun SketchStrengthSampleView(sketchStrength: SketchStrength, seed: Int) 
                 .align(Alignment.TopCenter)
                 .offset(y = SketchStrengthOptionDefaults.sampleHeight * 0.7f - dividerHeight / 2)
                 .width(SketchStrengthOptionDefaults.sampleDividerWidth),
-            color = MaterialTheme.colorScheme.outline,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             thickness = SketchStrengthOptionDefaults.sampleStroke,
             roughness = dividerRoughness,
             tremor = 0.dp,
