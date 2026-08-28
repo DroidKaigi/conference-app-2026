@@ -152,7 +152,7 @@ private fun fakeSpeaker(id: String, name: String) = TimetableSpeaker(
     id = TimetableSpeakerId(id),
     name = name,
     tagLine = "Job Title / Affiliation",
-    iconUrl = null,
+    iconUrl = PreviewImage.AvatarSample.imageUrl,
 )
 
 private fun fakeItem(
