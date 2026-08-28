@@ -49,3 +49,4 @@ app-android/src/prod/google-services.json
 # --- App Store Connect CLI (asc) local release workflow ---
 .asc/runs/
 .asc/artifacts/
+.asc/metadata/review/
