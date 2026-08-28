@@ -121,7 +121,12 @@ jobs:
             }
 
             const limitMessage = (candidate, blocking) =>
-              `@${candidate} Thank you for offering to help — it's great to have you here. You already have ${issueList(blocking)} assigned to you. We assign one open issue per person at a time, so that as many people as possible have a chance to take part. ${blocking.length === 1 ? 'Once that issue is closed' : 'Once those issues are closed'}, you're very welcome to come back to this one.`
+              [
+                `@${candidate} Thank you for offering to help — it's great to have you here. You already have ${issueList(blocking)} assigned to you, so we can't assign this one to you right now.`,
+                `This year we want to welcome contributions from as many people as possible, so we may limit the number of assignments per person (for example by unassigning or closing some of them) to keep issues available for others.`,
+                `If the issues depend on each other or otherwise need to be worked on together, please reply here and a maintainer will consider an exception. ${blocking.length === 1 ? 'Once that issue is closed' : 'Once those issues are closed'}, you're very welcome to come back to this one.`,
+                `Thank you for your understanding and cooperation.`,
+              ].join('\n\n')
 
             async function assign(candidate) {
               plan(`assign ${candidate} to #${issueNumber}`)
