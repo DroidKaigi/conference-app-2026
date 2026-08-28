@@ -1,6 +1,6 @@
 # Platforms & modules
 
-The app targets four platforms — **Android / iOS / Desktop (JVM) / Web (wasmJS)**. This page defines the contracts that decide **where new code goes**. For the module list and the dependency graph, see [Module structure](./project-structure.md).
+The app targets four platforms — **Android / iOS / Desktop (JVM) / Web (wasmJs)**. This page defines the contracts that decide **where new code goes**. For the module list and the dependency graph, see [Module structure](./project-structure.md).
 
 ## What goes in `:core:model`
 

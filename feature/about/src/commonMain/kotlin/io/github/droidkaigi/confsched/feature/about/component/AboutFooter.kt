@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -52,20 +54,21 @@ internal fun AboutFooter(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Third-party brand marks: never tint them, the ground is baked into the asset.
+                // clip precedes clickable so the ripple stays in the ring, not a 48dp square.
                 Image(
                     painter = painterResource(Res.drawable.ic_social_youtube),
                     contentDescription = stringResource(Res.string.about_social_youtube),
-                    modifier = Modifier.size(48.dp).clickable(onClick = onOpenYoutube),
+                    modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenYoutube),
                 )
                 Image(
                     painter = painterResource(Res.drawable.ic_social_x),
                     contentDescription = stringResource(Res.string.about_social_x),
-                    modifier = Modifier.size(48.dp).clickable(onClick = onOpenX),
+                    modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenX),
                 )
                 Image(
                     painter = painterResource(Res.drawable.ic_social_medium),
                     contentDescription = stringResource(Res.string.about_social_medium),
-                    modifier = Modifier.size(48.dp).clickable(onClick = onOpenMedium),
+                    modifier = Modifier.size(48.dp).clip(CircleShape).clickable(onClick = onOpenMedium),
                 )
             }
             Icon(

@@ -139,10 +139,12 @@ Soil keeps mutation state in the `SwrClient` keyed by `MutationId(namespace, *ta
 The isolation is mechanical, not conventional: every `MutationKey` implementation takes a `MutationTag` (a `value class` in `:core:model`) and bakes it into the `MutationId`; each per-screen `@GraphExtension` `@Provides` its own screen-type tag. The mutation-key binding moves from `AppScope` to the per-screen scopes:
 
 ```kotlin
-// :core:data — one impl, bound into each sessions screen scope
+// :core:data — one impl, bound into each screen scope that toggles favorites
 @Inject
 @ContributesBinding(TimetableScreenScope::class)
 @ContributesBinding(TimetableItemDetailScreenScope::class)
+@ContributesBinding(FavoritesScreenScope::class)
+@ContributesBinding(SearchScreenScope::class)
 class DefaultFavoriteTimetableItemIdMutationKey(
     extraTag: MutationTag,
     private val store: FavoritesStore,
