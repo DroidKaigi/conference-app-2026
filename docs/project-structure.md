@@ -27,7 +27,7 @@ A three-way split that keeps preview image binaries off production classpaths �
 
 ## `:feature:*` — one module per feature
 
-`:feature:sessions` / `:feature:contributors` / `:feature:sponsors` / `:feature:eventmap` / `:feature:about` / `:feature:favorites` / `:feature:profilecard` / `:feature:staff` / `:feature:settings`, plus the dev-only `:feature:debug`. Each holds one feature's screens and NavKeys; features never import each other, the one exception being `:feature:debug`, which reaches into `:feature:sessions` and never ships.
+`:feature:sessions` / `:feature:contributors` / `:feature:sponsors` / `:feature:eventmap` / `:feature:about` / `:feature:favorites` / `:feature:profilecard` / `:feature:staff` / `:feature:settings` / `:feature:search`, plus the dev-only `:feature:debug`. Each holds one feature's screens and NavKeys; features never import each other, the one exception being `:feature:debug`, which reaches into `:feature:sessions` and never ships.
 
 ## `:app-*` — aggregation and platform entries
 
@@ -93,6 +93,8 @@ graph TD
     core_ui["core:ui"]
   end
   app_android --> app_shared
+  app_android --> core_preview_api
+  app_android -. "dev/debug only" .-> core_preview_impl
   app_android -. "dev/debug only" .-> feature_debug
   app_desktop --> app_shared
   app_desktop -. "dev/debug only" .-> feature_debug
@@ -102,12 +104,14 @@ graph TD
   app_shared ==> core_data
   app_shared ==> core_designsystem
   app_shared ==> core_model
+  app_shared ==> core_preview_api
   app_shared ==> core_ui
   app_shared ==> feature_sessions
   app_web --> app_shared
   app_web -. "dev/debug only" .-> feature_debug
   core_data --> core_common
   core_data --> core_model
+  core_data --> core_preview_api
   core_designsystem ==> core_model
   core_preview_api ==> core_designsystem
   core_preview_api ==> core_model
