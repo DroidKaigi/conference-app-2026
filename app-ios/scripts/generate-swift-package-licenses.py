@@ -60,12 +60,23 @@ def require_env(name):
 
 
 def find_checkouts(build_dir):
-    # Xcode builds into <DerivedData>/<project>/Build/Products, and checks packages out into a
-    # sibling of Build. No build setting names the directory, so it is derived from BUILD_DIR.
-    candidate = pathlib.Path(build_dir).resolve().parent.parent / "SourcePackages" / "checkouts"
-    if not candidate.is_dir():
-        fail(f"no Swift package checkouts at {candidate}")
-    return candidate
+    # The archive action redirects BUILD_DIR into ArchiveIntermediates, so the depth of the derived
+    # data root above it varies between a build and an archive; walk up rather than assume one.
+    # SWIFT_PACKAGE_CHECKOUTS overrides the search for a build whose products sit outside that root.
+    override = os.environ.get("SWIFT_PACKAGE_CHECKOUTS")
+    if override:
+        candidate = pathlib.Path(override)
+        if not candidate.is_dir():
+            fail(f"SWIFT_PACKAGE_CHECKOUTS names {candidate}, which is not a directory")
+        return candidate
+
+    tried = []
+    for ancestor in pathlib.Path(build_dir).resolve().parents:
+        candidate = ancestor / "SourcePackages" / "checkouts"
+        tried.append(candidate)
+        if candidate.is_dir():
+            return candidate
+    fail("no Swift package checkouts above BUILD_DIR; tried " + ", ".join(str(p) for p in tried))
 
 
 def read_license_text(checkout):
