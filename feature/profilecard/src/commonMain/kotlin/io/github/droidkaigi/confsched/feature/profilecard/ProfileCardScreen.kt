@@ -1,54 +1,41 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiButton
-import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
-import io.github.droidkaigi.confsched.feature.profilecard.component.Mascot
-import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardBack
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
-import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFront
-import io.github.droidkaigi.confsched.feature.profilecard.component.Sketchiness
+import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardView
+import io.github.droidkaigi.confsched.feature.profilecard.component.sampleAvatarImage
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.edit_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_card
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ProfileCardScreen(
     uiState: ProfileCardScreenUiState,
+    colorScheme: KaigiColorScheme,
     onNickNameChange: (String) -> Unit,
     onOccupationChange: (String) -> Unit,
     onLinkChange: (String) -> Unit,
-    onMascotSelected: (Mascot) -> Unit,
-    onSketchinessSelected: (Sketchiness) -> Unit,
+    onMascotClick: (Mascot) -> Unit,
+    onSketchinessClick: (Sketchiness) -> Unit,
     onAddImageClick: () -> Unit,
+    onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
-    onFlipCard: () -> Unit,
-    onEditCard: () -> Unit,
+    onCardClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onShareClick: (ImageBitmap) -> Unit,
 ) {
     Scaffold(
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.profile_card)) },
@@ -61,58 +48,23 @@ fun ProfileCardScreen(
                 onNickNameChange = onNickNameChange,
                 onOccupationChange = onOccupationChange,
                 onLinkChange = onLinkChange,
-                onMascotSelected = onMascotSelected,
-                onSketchinessSelected = onSketchinessSelected,
+                onMascotClick = onMascotClick,
+                onSketchinessClick = onSketchinessClick,
                 onAddImageClick = onAddImageClick,
+                onRemoveAvatarImageClick = onRemoveAvatarImageClick,
                 onSubmitClick = onSubmitClick,
             )
 
-            is ProfileCardScreenUiState.Card -> Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                if (uiState.isShowingBack) {
-                    ProfileCardBack(
-                        nickName = uiState.nickName,
-                        mascot = uiState.mascot,
-                        sketchiness = uiState.sketchiness,
-                        modifier = Modifier.clickable(onClick = onFlipCard),
-                    )
-                } else {
-                    ProfileCardFront(
-                        nickName = uiState.nickName,
-                        occupation = uiState.occupation,
-                        mascot = uiState.mascot,
-                        sketchiness = uiState.sketchiness,
-                        avatarImage = uiState.avatarImage,
-                        modifier = Modifier.clickable(onClick = onFlipCard),
-                    )
-                }
-                KaigiButton(
-                    onClick = {},
-                    seed = ProfileCardScreenDefaults.shareButtonSeed,
-                    containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.24f),
-                    contentColor = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(Res.string.share_button), style = KaigiButtonDefaults.labelStyle)
-                }
-                TextButton(onClick = onEditCard) {
-                    Text(stringResource(Res.string.edit_button))
-                }
-            }
+            is ProfileCardScreenUiState.Card -> ProfileCardView(
+                uiState = uiState,
+                colorScheme = colorScheme,
+                onCardClick = onCardClick,
+                onEditClick = onEditClick,
+                onShareClick = onShareClick,
+                modifier = Modifier.padding(innerPadding),
+            )
         }
     }
-}
-
-private object ProfileCardScreenDefaults {
-    val shareButtonSeed = 730
 }
 
 @LocaleScreenPreviews
@@ -122,16 +74,52 @@ private fun ProfileCardScreenFormPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         ProfileCardScreen(
-            uiState = ProfileCardScreenUiState.Form(),
+            colorScheme = colorScheme,
+            onShareClick = {},
+            uiState = ProfileCardScreenUiState.Form(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+            ),
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
+            onCardClick = {},
+            onEditClick = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun ProfileCardScreenFormErrorPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            uiState = ProfileCardScreenUiState.Form(
+                nickNameError = ProfileCardFormError.NickNameRequired,
+                occupationError = ProfileCardFormError.OccupationRequired,
+                linkError = ProfileCardFormError.LinkRequired,
+                avatarImageError = ProfileCardFormError.AvatarImageRequired,
+            ),
+            colorScheme = colorScheme,
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
+            onAddImageClick = {},
+            onRemoveAvatarImageClick = {},
+            onSubmitClick = {},
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
         )
     }
 }
@@ -146,20 +134,84 @@ private fun ProfileCardScreenCardPreview(
             uiState = ProfileCardScreenUiState.Card(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
-                link = "https://example.com",
+                link = "https://example.com/user",
                 mascot = Mascot.Koala,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
             ),
+            colorScheme = colorScheme,
             onNickNameChange = {},
             onOccupationChange = {},
             onLinkChange = {},
-            onMascotSelected = {},
-            onSketchinessSelected = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
             onAddImageClick = {},
+            onRemoveAvatarImageClick = {},
             onSubmitClick = {},
-            onFlipCard = {},
-            onEditCard = {},
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun ProfileCardScreenCardBackPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            colorScheme = colorScheme,
+            onShareClick = {},
+            uiState = ProfileCardScreenUiState.Card(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+                mascot = Mascot.Koala,
+                sketchiness = Sketchiness.Normal,
+                avatarImage = null,
+                isShowingBack = true,
+            ),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
+            onAddImageClick = {},
+            onRemoveAvatarImageClick = {},
+            onSubmitClick = {},
+            onCardClick = {},
+            onEditClick = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun ProfileCardScreenFormWithImagePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardScreen(
+            colorScheme = colorScheme,
+            onShareClick = {},
+            uiState = ProfileCardScreenUiState.Form(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+                avatarImage = sampleAvatarImage(),
+            ),
+            onNickNameChange = {},
+            onOccupationChange = {},
+            onLinkChange = {},
+            onMascotClick = {},
+            onSketchinessClick = {},
+            onAddImageClick = {},
+            onRemoveAvatarImageClick = {},
+            onSubmitClick = {},
+            onCardClick = {},
+            onEditClick = {},
         )
     }
 }

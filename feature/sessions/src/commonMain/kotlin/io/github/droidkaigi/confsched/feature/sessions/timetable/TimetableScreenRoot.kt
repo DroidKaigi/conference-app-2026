@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberQuery
 import soil.query.compose.rememberSubscription
 
@@ -26,7 +27,7 @@ fun TimetableScreenRoot(
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
-                is TimetableScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is TimetableScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
             }
         }
 

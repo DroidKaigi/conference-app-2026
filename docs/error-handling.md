@@ -11,7 +11,7 @@ Errors split by severity, and each layer has one sink:
 
 Separately from both layers, `SoilErrorMonitor` (`:core:common`) renders an app-global overlay listing the errors Soil reports. Its production binding is a no-op; `:feature:debug` replaces it, so the overlay is a development aid rather than a user-facing sink — see [Debugging](./debugging.md).
 
-The `UserMessage` type and the exception-to-message mapping carry the text into the snackbar.
+`Throwable.toUserMessage()` (`:core:common`) classifies the exception into an `AppError` and wraps it in a `UserMessage`; `SnackbarHostState.showSnackbar(UserMessage)` (`:core:ui`) resolves the localized text for that category. Exception messages never reach the user.
 
 ## One-off events
 
@@ -49,13 +49,13 @@ Each end is gated by a context parameter, so using the wrong end from the wrong 
 // Presenter (context: PresenterContext)
 ActionEffect(screenChannel) { action -> if (action is Save) mutation.mutateAsync(action.value) }
 MutationSuccessEffect(mutation) { screenChannel.emit(NavigateToCard) }
-MutationErrorEffect(mutation) { screenChannel.emit(ShowMessage(it)) }
+MutationErrorEffect(mutation) { screenChannel.emit(ShowMessage(it.toUserMessage())) }
 
 // Root (context: ScreenContext)
 ActionResultEffect(screenChannel) { result ->
     when (result) {
         NavigateToCard -> onSaved()
-        is ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+        is ShowMessage -> snackbarHostState.showSnackbar(result.message)
     }
 }
 // UI input: onSaveClick = { screenChannel.send(Save(value)) }

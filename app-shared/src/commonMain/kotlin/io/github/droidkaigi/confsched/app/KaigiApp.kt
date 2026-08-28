@@ -7,8 +7,10 @@ import io.github.droidkaigi.confsched.core.common.NavigatorEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
+import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
 import io.github.droidkaigi.confsched.core.ui.SetupRemoteImageLoader
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.rememberDeviceTiltSource
 import soil.query.compose.SwrClientProvider
 import soil.query.compose.rememberSubscription
 import kotlin.random.Random
@@ -27,7 +29,10 @@ fun KaigiApp() {
 
     SetupRemoteImageLoader()
 
-    CompositionLocalProvider(LocalPreviewImageResolver provides uiGraph.previewImageResolver) {
+    CompositionLocalProvider(
+        LocalDeviceTiltSource provides rememberDeviceTiltSource(),
+        LocalPreviewImageResolver provides uiGraph.previewImageResolver,
+    ) {
         SwrClientProvider(client = uiGraph.swrClient) {
             SoilDataBoundary(
                 state = rememberSubscription(uiGraph.appearanceSubscriptionKey),
@@ -45,6 +50,7 @@ fun KaigiApp() {
                     )
                     DeepLinkEffect(
                         deepLinkStore = uiGraph.deepLinkStore,
+                        timetableDayRequestStore = uiGraph.timetableDayRequestStore,
                         backStack = backStack,
                         logger = uiGraph.logger,
                         onNavigate = uiGraph.appNavigator::moveToTop,

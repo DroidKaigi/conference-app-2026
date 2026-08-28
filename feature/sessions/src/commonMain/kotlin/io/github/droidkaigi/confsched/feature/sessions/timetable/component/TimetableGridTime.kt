@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 internal val TimetableGridHeaderHeight = 34.dp
 internal val TimetableGridSessionGap = 4.dp
 internal val TimetableGridSessionMinHeight = 40.dp
-internal val TimetableGridDefaultHourHeight = 132.dp
+internal val TimetableGridDefaultHourHeight = 144.dp
 internal val TimetableGridMaxHourHeight = 220.dp
 internal val TimetableGridVerticalPadding = 12.dp
 internal val TimetableGridTimeGutterWidth = 52.dp

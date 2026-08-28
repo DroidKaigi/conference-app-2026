@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Text
@@ -14,8 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.toAppError
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.failed_to_load
+import io.github.droidkaigi.confsched.core.ui.generated.resources.retry
 import org.jetbrains.compose.resources.stringResource
 
 sealed interface SoilFallback {
@@ -61,16 +64,20 @@ fun DefaultSuspenseFallbackContent(modifier: Modifier = Modifier) {
 @Composable
 context(errorContext: SoilErrorContext)
 fun DefaultErrorFallbackContent(modifier: Modifier = Modifier) {
+    val boundary = errorContext.errorBoundaryContext
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
+            modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(stringResource(Res.string.failed_to_load))
-            Text(
-                errorContext.errorBoundaryContext.err.message ?: "",
-                modifier = Modifier.padding(16.dp),
-            )
+            Text(boundary.err.toAppError().localizedMessage())
+            boundary.reset?.let { reset ->
+                Button(onClick = reset) {
+                    Text(stringResource(Res.string.retry))
+                }
+            }
         }
     }
 }

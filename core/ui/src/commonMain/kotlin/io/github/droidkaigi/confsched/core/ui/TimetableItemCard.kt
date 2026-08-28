@@ -28,7 +28,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -56,7 +56,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun TimetableItemCard(
     title: String,
-    room: Room,
+    room: SessionRoom,
     speakers: List<TimetableSpeaker>,
     language: Language,
     isFavorite: Boolean,
@@ -93,7 +93,8 @@ fun TimetableItemCard(
             isCancelled = isCancelled,
             seed = seed,
             titleMarkSeed = titleMarkSeed,
-            modifier = Modifier.clickable(onClick = onClick),
+            // clip precedes clickable so the ripple follows the sketched round rect
+            modifier = Modifier.clip(shape).clickable(onClick = onClick),
         )
         if (isFavorite) {
             room.mascot?.let { mascot ->
@@ -127,7 +128,7 @@ fun TimetableItemCard(
 private fun CardBody(
     title: String,
     titleMark: String,
-    room: Room,
+    room: SessionRoom,
     speakers: List<TimetableSpeaker>,
     language: Language,
     isCancelled: Boolean,
@@ -137,7 +138,7 @@ private fun CardBody(
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         if (isCancelled) {
             CancelledBanner(modifier = Modifier.padding(end = TimetableItemCardDefaults.cancelledBannerEndInset))
@@ -172,8 +173,8 @@ private fun CancelledBanner(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ChipRow(room: Room, language: Language, seed: Int) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+private fun ChipRow(room: SessionRoom, language: Language, seed: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         RoomChip(room = room, seed = seed + 1)
         LanguageChip(language = language, seed = seed + 2)
     }
@@ -219,7 +220,7 @@ private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
 
 @Composable
 private fun FavoriteMark(
-    room: Room,
+    room: SessionRoom,
     isFavorite: Boolean,
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -235,14 +236,14 @@ private fun FavoriteMark(
 }
 
 /** The mascot drawn on a saved session's card, or null for a room the design gives none. */
-private val Room.mascot: DrawableResource?
+private val SessionRoom.mascot: DrawableResource?
     get() = when (this) {
-        Room.NARWHAL -> Res.drawable.room_mascot_narwhal
-        Room.OTTER -> Res.drawable.room_mascot_otter
-        Room.PANDA -> Res.drawable.room_mascot_panda
-        Room.QUAIL -> Res.drawable.room_mascot_quail
-        Room.MEERKAT -> Res.drawable.room_mascot_meerkat
-        Room.UNKNOWN -> null
+        SessionRoom.NARWHAL -> Res.drawable.room_mascot_narwhal
+        SessionRoom.OTTER -> Res.drawable.room_mascot_otter
+        SessionRoom.PANDA -> Res.drawable.room_mascot_panda
+        SessionRoom.QUAIL -> Res.drawable.room_mascot_quail
+        SessionRoom.MEERKAT -> Res.drawable.room_mascot_meerkat
+        SessionRoom.UNKNOWN -> null
     }
 
 private object TimetableItemCardDefaults {
@@ -250,7 +251,7 @@ private object TimetableItemCardDefaults {
     val borderThickness = 2.dp
     val favoriteSize = 24.dp
     val favoritePadding = 12.dp
-    val avatarSize = 24.dp
+    val avatarSize = 32.dp
     val cancelledBannerCornerRadius = 6.dp
 
     /** Keeps the banner clear of the bookmark, which the card draws over the same corner. */
@@ -281,7 +282,7 @@ private fun TimetableItemCardSamples() {
     ) {
         TimetableItemCard(
             title = "Sample Session A",
-            room = Room.NARWHAL,
+            room = SessionRoom.NARWHAL,
             speakers = emptyList(),
             language = Language.MIXED,
             isFavorite = true,
@@ -292,7 +293,7 @@ private fun TimetableItemCardSamples() {
         )
         TimetableItemCard(
             title = "サンプルセッションE、折り返しを確かめるための長いプレースホルダーのタイトル",
-            room = Room.OTTER,
+            room = SessionRoom.OTTER,
             speakers = listOf(sampleSpeaker("Speaker B")),
             language = Language.ENGLISH,
             isFavorite = false,
@@ -303,7 +304,7 @@ private fun TimetableItemCardSamples() {
         )
         TimetableItemCard(
             title = "Sample Session C",
-            room = Room.QUAIL,
+            room = SessionRoom.QUAIL,
             speakers = listOf(sampleSpeaker("Speaker C"), sampleSpeaker("Speaker D")),
             language = Language.ENGLISH,
             isFavorite = true,

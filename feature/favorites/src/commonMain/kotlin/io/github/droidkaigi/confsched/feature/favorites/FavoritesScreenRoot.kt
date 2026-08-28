@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberQuery
 import soil.query.compose.rememberSubscription
 
@@ -25,7 +26,7 @@ fun FavoritesScreenRoot(
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
-                is FavoritesScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message.text)
+                is FavoritesScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
             }
         }
 

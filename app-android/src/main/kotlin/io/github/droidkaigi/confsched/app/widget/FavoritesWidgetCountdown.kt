@@ -98,6 +98,44 @@ private fun CountdownFigures(
     }
 }
 
+@Composable
+internal fun EventDayContent(colors: FavoritesWidgetColors) {
+    val medium = isMedium(LocalSize.current)
+    Column(modifier = GlanceModifier.fillMaxSize()) {
+        BrandRow(medium, colors)
+        Spacer(modifier = GlanceModifier.defaultWeight())
+        EventDayBody(colors, medium)
+        Spacer(modifier = GlanceModifier.defaultWeight())
+    }
+}
+
+@Composable
+private fun EventDayBody(colors: FavoritesWidgetColors, medium: Boolean) {
+    val context = LocalContext.current
+    Row(
+        modifier = GlanceModifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column {
+            Text(
+                text = context.getString(R.string.widget_event_day_message),
+                style = monoStyle(colors.primary, 14.sp, FontWeight.Bold),
+                maxLines = 2,
+            )
+            Spacer(modifier = GlanceModifier.height(GapTight))
+            Text(
+                text = context.getString(R.string.widget_event_day_note),
+                style = sansStyle(colors.onSurfaceVariant, 12.sp),
+                maxLines = 3,
+            )
+        }
+        if (medium) {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            Mascot(R.drawable.widget_mascot_koala, 28.dp, 30.dp, colors)
+        }
+    }
+}
+
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
@@ -105,6 +143,17 @@ private fun CountdownFigures(
 private fun CountdownPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.Countdown(daysUntilStart = 12),
+        KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+    )
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = PREVIEW_SMALL_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
+@Composable
+private fun EventDayPreview() {
+    FavoritesWidgetContent(
+        FavoritesWidgetState.EventDay,
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
     )
 }

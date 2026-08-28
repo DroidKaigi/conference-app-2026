@@ -2,8 +2,8 @@ package io.github.droidkaigi.confsched.core.data
 
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.MultiLangText
-import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.SessionCategory
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.SessionType
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,7 +18,7 @@ class TimetableResponseMapperTest {
             sessions = listOf(sessionResponse("s1", roomId = 81666L, language = LanguageResponse.JAPANESE)),
         ).toTimetableItems()
 
-        assertEquals(Room.MEERKAT, items.single().room)
+        assertEquals(SessionRoom.MEERKAT, items.single().room)
     }
 
     @Test
@@ -28,7 +28,7 @@ class TimetableResponseMapperTest {
             sessions = listOf(sessionResponse("s1", roomId = 99999L, language = LanguageResponse.ENGLISH)),
         ).toTimetableItems()
 
-        assertEquals(Room.UNKNOWN, items.single().room)
+        assertEquals(SessionRoom.UNKNOWN, items.single().room)
     }
 
     @Test
@@ -38,7 +38,7 @@ class TimetableResponseMapperTest {
             sessions = listOf(sessionResponse("s1", roomId = 81670L, language = LanguageResponse.MIXED)),
         ).toTimetableItems()
 
-        assertEquals(Room.QUAIL, items.single().room)
+        assertEquals(SessionRoom.QUAIL, items.single().room)
     }
 
     @Test

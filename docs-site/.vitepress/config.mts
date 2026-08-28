@@ -44,6 +44,7 @@ export default withMermaid(defineConfig({
           { text: 'Enforcement', link: '/enforcement' },
           { text: 'Naming review', link: '/naming-review' },
           { text: 'CompositionLocal review', link: '/compositionlocal-review' },
+          { text: 'Session reminders', link: '/session-reminders' },
         ],
       },
       {
@@ -107,6 +108,7 @@ export default withMermaid(defineConfig({
           { text: 'iOS top bar', link: '/ios-top-bar' },
           { text: 'Swift ↔ Kotlin interop', link: '/ios-interop' },
           { text: 'CMP on iOS (embedding)', link: '/ios-cmp-embedding' },
+          { text: 'iOS favorites widget', link: '/ios-favorites-widget' },
         ],
       },
       {

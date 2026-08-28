@@ -22,7 +22,6 @@ A set of documents covering the architecture and implementation policy of the Dr
 
 - [Building a screen](./building-a-screen.md) … implementing one screen end to end using TimetableScreen as an example (steps and checklist)
 - [ScreenContext design](./screen-context.md) … concrete class + retain, role-context separation (composition, capability gating)
-
 ### Dependency injection
 
 - [AppGraph and UiGraph](./di-app-graph.md) … process-scoped and UI-scoped Metro graphs
@@ -46,6 +45,10 @@ A set of documents covering the architecture and implementation policy of the Dr
 - [SoilDataBoundary](./soil-data-boundary.md) … loading and error boundary at the screen root
 - [Soil mutation](./soil-mutation.md) … `mutateAsync` + `MutationSuccessEffect` + failure handling
 - [Soil persistence](./soil-persistence.md) … offline-first cache persistence via `buildPersistedQueryKey`
+
+### Notifications & Reminders
+
+- [Session reminders](./session-reminders.md) … the shared "starts soon" computation and the Android / iOS schedulers that carry it out
 
 ### Build
 
@@ -87,5 +90,4 @@ A set of documents covering the architecture and implementation policy of the Dr
 ### AI-assisted development
 
 - [AI-assisted development](./ai-development.md) … compiler guardrails, scaffolding scripts, and AI workflows
-
 

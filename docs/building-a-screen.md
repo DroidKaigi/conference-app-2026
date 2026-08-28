@@ -294,7 +294,10 @@ fun selectDay_switchesSessions() {
         mutate = { /* record */ },
     )
     runPresenterTest(
-        presenterContext = TimetablePresenterContext(favoriteTimetableItemIdMutationKey = favoriteKey),
+        presenterContext = TimetablePresenterContext(
+            favoriteTimetableItemIdMutationKey = favoriteKey,
+            logger = FakeKaigiLogger(),
+        ),
         presenter = { channel -> timetableScreenPresenter(channel, sampleTimetable) },
     ) {
         uiStates.awaitItem()                                            // initial UiState (Day1)

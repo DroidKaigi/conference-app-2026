@@ -41,7 +41,7 @@ fun <T> SoilDataBoundary(
 
 ## Customizing the fallback screens
 
-The loading and error UI plug in through the `fallback: SoilFallback` parameter. The default (`SoilFallbackDefaults.default()`) shows a centered `CircularProgressIndicator` while loading and a "Failed to load" message on error; a screen that wants its own look passes `SoilFallbackDefaults.custom(...)`:
+The loading and error UI plug in through the `fallback: SoilFallback` parameter. The default (`SoilFallbackDefaults.default()`) shows a centered `CircularProgressIndicator` while loading and a "Failed to load" message with the localized `AppError` category and a retry button on error; a screen that wants its own look passes `SoilFallbackDefaults.custom(...)`:
 
 ```kotlin
 SoilDataBoundary(
