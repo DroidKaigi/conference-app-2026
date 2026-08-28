@@ -34,6 +34,7 @@ fun TimetableScreen(
     Scaffold(
         topBar = {
             TimetableHeader(
+                viewMode = uiState.viewMode,
                 onSearchClick = onSearchClick,
                 onUiTypeChangeClick = onUiTypeChangeClick,
             )
