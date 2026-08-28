@@ -53,6 +53,14 @@ class TimetableScreenRobotTest : RobotTest() {
                     checkSearchOpened()
                 }
             }
+            describe("and the grid view action is tapped") {
+                doIt {
+                    clickSwitchToGridView()
+                }
+                itShould("show the switch to list view action") {
+                    checkSwitchToListViewActionDisplayed()
+                }
+            }
             describe("and the Day2 tab is tapped") {
                 doIt {
                     clickDayTab(DroidKaigi2026Day.Day2)
