@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.Language
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.RobotTest
@@ -19,8 +19,8 @@ class TimetableItemDetailScreenRobotTest : RobotTest() {
 
     private val sampleTimetable = Timetable(
         items = persistentListOf(
-            testTimetableItem(id = "d1a", title = "Day1 A", room = Room.OTTER, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
-            testTimetableItem(id = "d1b", title = "Day1 B", room = Room.UNKNOWN, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
+            testTimetableItem(id = "d1a", title = "Day1 A", room = SessionRoom.OTTER, speaker = "Sp1", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "10:00", endsAt = "10:40"),
+            testTimetableItem(id = "d1b", title = "Day1 B", room = SessionRoom.UNKNOWN, speaker = "Sp2", language = Language.ENGLISH, day = DroidKaigi2026Day.Day1, startsAt = "11:00", endsAt = "11:40"),
         ),
         bookmarks = persistentSetOf(),
     )
@@ -35,7 +35,7 @@ class TimetableItemDetailScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("offer the map from the room it names, with the map still closed") {
-                checkLocationOffersMap(Room.OTTER)
+                checkLocationOffersMap(SessionRoom.OTTER)
                 checkEventMapDoesNotExist()
             }
             describe("and the map action is tapped") {
@@ -59,7 +59,7 @@ class TimetableItemDetailScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("name the room without offering a map") {
-                checkLocationOffersNoMap(Room.UNKNOWN)
+                checkLocationOffersNoMap(SessionRoom.UNKNOWN)
                 checkEventMapDoesNotExist()
             }
         }
