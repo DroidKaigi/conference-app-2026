@@ -19,6 +19,7 @@ kotlin {
             api(libs.soilQueryCore)
             api(libs.soilQueryCompose)
             api(libs.soilReacty)
+            implementation(libs.lifecycleRuntimeCompose)
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
             implementation(libs.kotlinxDatetime)
