@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
@@ -14,11 +15,14 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -28,6 +32,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import kotlin.math.max
 
 /**
  * Defines the unique style of a lantern.
@@ -115,99 +120,137 @@ internal fun Lantern(
         PathParser().parsePathString(style.capPathData).toPath()
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .wrapContentSize(),
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = modifier.wrapContentSize(),
     ) {
-        // Hanging cord (16dp height / 1.3dp thickness)
-        SketchVerticalDivider(
-            seed = combinedSeed + 1,
-            thickness = 1.3.dp,
-            color = borderColor,
-            modifier = Modifier
-                .height(style.hangingCord),
-        )
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.wrapContentSize(),
-        ) {
-            // TODO: Glow effect
-
+        if (isLit) {
+            // Glow Effect
             Canvas(
-                modifier = Modifier.size(style.width, style.height),
+                modifier = Modifier
+                    .padding(top = style.hangingCord)
+                    .size(style.width, style.height)
+                    .graphicsLayer {
+                        scaleX = 1.32f
+                        scaleY = 1.32f
+                    }
+                    .blur(1.32.dp),
             ) {
-                // Calculate scale factors based on viewBox
                 val scaleX = size.width / style.viewBox.first
                 val scaleY = size.height / style.viewBox.second
 
-                // All drawing operations happen within the scaled viewBox coordinate system
                 withTransform(
                     {
                         scale(scaleX, scaleY, pivot = Offset.Zero)
                     },
                 ) {
-                    // 1. Draw Lantern Body
-                    drawPath(path = bodyPath, color = bodyColor)
                     drawPath(
                         path = bodyPath,
-                        color = borderColor,
-                        style = Stroke(
-                            width = 2.dp.toPx() / scaleX,
-                            cap = StrokeCap.Round,
-                            join = StrokeJoin.Round,
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                lanternGlowColor,
+                                lanternGlowColor.copy(alpha = 0.22f),
+                                lanternGlowColor.copy(alpha = 0f),
+                            ),
+                            center = Offset(style.viewBox.first / 2f, style.viewBox.second / 2f),
+                            radius = max(style.viewBox.first, style.viewBox.second),
                         ),
                     )
+                }
+            }
+        }
 
-                    // 2. Draw Lantern Ribs
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.wrapContentSize(),
+        ) {
+            // Hanging cord
+            SketchVerticalDivider(
+                seed = combinedSeed + 1,
+                thickness = 1.3.dp,
+                color = borderColor,
+                modifier = Modifier
+                    .height(style.hangingCord),
+            )
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.wrapContentSize(),
+            ) {
+                Canvas(
+                    modifier = Modifier.size(style.width, style.height),
+                ) {
+                    // Calculate scale factors based on viewBox
+                    val scaleX = size.width / style.viewBox.first
+                    val scaleY = size.height / style.viewBox.second
+
+                    // All drawing operations happen within the scaled viewBox coordinate system
                     withTransform(
                         {
-                            translate(0f, style.ribOffsetY)
+                            scale(scaleX, scaleY, pivot = Offset.Zero)
                         },
                     ) {
-                        ribPaths.forEach { ribPath ->
+                        // 1. Draw Lantern Body
+                        drawPath(path = bodyPath, color = bodyColor)
+                        drawPath(
+                            path = bodyPath,
+                            color = borderColor,
+                            style = Stroke(
+                                width = 2.dp.toPx() / scaleX,
+                                cap = StrokeCap.Round,
+                                join = StrokeJoin.Round,
+                            ),
+                        )
+
+                        // 2. Draw Lantern Ribs
+                        withTransform(
+                            {
+                                translate(0f, style.ribOffsetY)
+                            },
+                        ) {
+                            ribPaths.forEach { ribPath ->
+                                drawPath(
+                                    path = ribPath,
+                                    color = borderColor.copy(alpha = ribOpacity),
+                                    style = Stroke(
+                                        width = 1.3.dp.toPx() / scaleX,
+                                        cap = StrokeCap.Round,
+                                        join = StrokeJoin.Round,
+                                    ),
+                                )
+                            }
+                        }
+
+                        // 3. Draw Lantern Cap (Fine-tuned position above the body)
+                        withTransform(
+                            {
+                                val capOffsetX = (style.viewBox.first - style.capViewBox.first) / 2f
+                                translate(capOffsetX, -2.2f)
+                            },
+                        ) {
                             drawPath(
-                                path = ribPath,
-                                color = borderColor.copy(alpha = ribOpacity),
+                                path = capPath,
+                                color = borderColor,
                                 style = Stroke(
-                                    width = 1.3.dp.toPx() / scaleX,
+                                    width = 2.2.dp.toPx() / scaleX,
                                     cap = StrokeCap.Round,
                                     join = StrokeJoin.Round,
                                 ),
                             )
                         }
                     }
-
-                    // 3. Draw Lantern Cap (Fine-tuned position above the body)
-                    withTransform(
-                        {
-                            val capOffsetX = (style.viewBox.first - style.capViewBox.first) / 2f
-                            translate(capOffsetX, -2.2f)
-                        },
-                    ) {
-                        drawPath(
-                            path = capPath,
-                            color = borderColor,
-                            style = Stroke(
-                                width = 2.2.dp.toPx() / scaleX,
-                                cap = StrokeCap.Round,
-                                join = StrokeJoin.Round,
-                            ),
-                        )
-                    }
                 }
             }
-        }
 
-        // Tassel (9dp height / 1.4dp thickness)
-        SketchVerticalDivider(
-            seed = combinedSeed + 2,
-            thickness = 1.4.dp,
-            color = borderColor,
-            modifier = Modifier
-                .height(9.dp),
-        )
+            // Tassel (9dp height / 1.4dp thickness)
+            SketchVerticalDivider(
+                seed = combinedSeed + 2,
+                thickness = 1.4.dp,
+                color = borderColor,
+                modifier = Modifier
+                    .height(9.dp),
+            )
+        }
     }
 }
 

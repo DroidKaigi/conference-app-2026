@@ -66,23 +66,7 @@ internal fun LanternLoadingFallback(
                 modifier = wireModifier,
             )
 
-            Row(
-                verticalAlignment = Alignment.Top,
-            ) {
-                LanternStyle.entries.forEach { style ->
-                    Box(
-                        contentAlignment = Alignment.TopCenter,
-                        modifier = Modifier
-                            .width(58.dp),
-                    ) {
-                        Lantern(
-                            style = style,
-                            seed = style.ordinal,
-                            isLit = false, // Animation TODO
-                        )
-                    }
-                }
-            }
+            LanternRow()
         }
 
         Spacer(modifier = Modifier.height(75.dp))
@@ -103,6 +87,30 @@ internal fun LanternLoadingFallback(
                 ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+@Composable
+private fun LanternRow(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.Top,
+        modifier = modifier,
+    ) {
+        LanternStyle.entries.forEach { style ->
+            Box(
+                contentAlignment = Alignment.TopCenter,
+                modifier = Modifier
+                    .width(58.dp),
+            ) {
+                Lantern(
+                    style = style,
+                    seed = style.ordinal,
+                    isLit = true, // Animation TODO
+                )
+            }
         }
     }
 }
