@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -146,9 +146,9 @@ private fun Emissions.loopEmissions(): Emissions = Emissions(
 
 private fun FirWhenExpression.branchEmissions(session: FirSession): Emissions {
     val paths = branches.map { it.result.emissions(session) }
-    // A `when` with no else has a path that runs none of the branches.
-    val missingElse = branches.none { it.condition is FirElseIfTrueCondition }
-    return (if (missingElse) paths + EMITS_NOTHING else paths).merge()
+    // A `when` that does not cover its subject has a path that runs none of the branches.
+    val uncovered = exhaustivenessStatus is ExhaustivenessStatus.NotExhaustive
+    return (if (uncovered) paths + EMITS_NOTHING else paths).merge()
 }
 
 // Alternatives: the paths never meet, so each way of ending takes the worst of its own kind.

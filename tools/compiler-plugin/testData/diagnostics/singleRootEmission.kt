@@ -188,6 +188,18 @@ private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsInsideInlineLambda<!>(label: 
     }
 }
 
+private enum class Density { Compact, Comfortable }
+
+@Composable
+private fun ReturnsFromEveryBranch(density: Density, label: String) {
+    when (density) {
+        Density.Compact -> return
+        Density.Comfortable -> return
+    }
+    Text(label)
+    Text(label)
+}
+
 @Composable
 private fun EffectsBesideEmission(label: String) {
     LaunchedEffect(label) {}
