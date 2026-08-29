@@ -27,10 +27,30 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.loading_descri
 import io.github.droidkaigi.confsched.core.ui.generated.resources.loading_headline
 import org.jetbrains.compose.resources.stringResource
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+
 @Composable
 internal fun LanternLoadingFallback(
     modifier: Modifier = Modifier,
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "LanternLoading")
+    val cycleTime by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 2000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "LanternCycleTime",
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -66,7 +86,7 @@ internal fun LanternLoadingFallback(
                 modifier = wireModifier,
             )
 
-            LanternRow()
+            Lanterns(cycleTime = cycleTime)
         }
 
         Spacer(modifier = Modifier.height(75.dp))
@@ -92,14 +112,22 @@ internal fun LanternLoadingFallback(
 }
 
 @Composable
-private fun LanternRow(
+private fun Lanterns(
+    cycleTime: Float,
     modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.Top,
         modifier = modifier,
     ) {
-        LanternStyle.entries.forEach { style ->
+        val lanterns = LanternStyle.entries
+        lanterns.forEachIndexed { index, style ->
+            val litProgress = calculateLanternLitProgress(
+                index = index,
+                totalLanterns = lanterns.size,
+                cycleTime = cycleTime,
+            )
+
             Box(
                 contentAlignment = Alignment.TopCenter,
                 modifier = Modifier
@@ -108,10 +136,40 @@ private fun LanternRow(
                 Lantern(
                     style = style,
                     seed = style.ordinal,
-                    isLit = true, // Animation TODO
+                    litProgress = litProgress,
                 )
             }
         }
+    }
+}
+
+/**
+ * Calculates the lighting progress for an individual lantern based on the cycle time.
+ *
+ * Animation Specs:
+ * - Stagger: 250ms
+ * - Duration: 400ms
+ * - Hold: 300ms after all lit
+ * - Cycle: 2000ms
+ */
+private fun calculateLanternLitProgress(
+    index: Int,
+    totalLanterns: Int,
+    cycleTime: Float,
+): Float {
+    val startTime = index * 250f
+    val duration = 400f
+    val allLitTime = (totalLanterns - 1) * 250f + duration
+    val endTime = allLitTime + 300f
+
+    return when {
+        cycleTime < startTime -> 0f
+        cycleTime < startTime + duration -> {
+            val progress = (cycleTime - startTime) / duration
+            EaseInOut.transform(progress)
+        }
+        cycleTime < endTime -> 1f
+        else -> 0f
     }
 }
 

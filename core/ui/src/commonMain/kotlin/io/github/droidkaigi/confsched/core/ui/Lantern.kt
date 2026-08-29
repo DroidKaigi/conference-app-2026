@@ -98,12 +98,13 @@ internal fun Lantern(
     style: LanternStyle,
     seed: Int,
     modifier: Modifier = Modifier,
-    isLit: Boolean = false,
+    litProgress: Float = 0f,
 ) {
     val combinedSeed = combineSketchSeed(seed)
-    // Figma Spec: Opacity is 1.0 when lit, 0.22 (paper) / 0.45 (ribs) when unlit
-    val bodyOpacity = if (isLit) 1.0f else 0.22f
-    val ribOpacity = if (isLit) 1.0f else 0.45f
+    // Figma Spec base: 0.22 (paper) / 0.45 (ribs)
+    // When fully lit: 1.0
+    val bodyOpacity = 0.22f + (0.78f * litProgress)
+    val ribOpacity = 0.45f + (0.55f * litProgress)
 
     val lanternGlowColor = LocalKaigiIllustrationColors.current.lanternGlow
     val bodyColor = lanternGlowColor.copy(alpha = bodyOpacity)
@@ -124,17 +125,19 @@ internal fun Lantern(
         contentAlignment = Alignment.TopCenter,
         modifier = modifier.wrapContentSize(),
     ) {
-        if (isLit) {
+        if (litProgress > 0f) {
             // Glow Effect
             Canvas(
                 modifier = Modifier
                     .padding(top = style.hangingCord)
                     .size(style.width, style.height)
                     .graphicsLayer {
-                        scaleX = 1.32f
-                        scaleY = 1.32f
+                        val scale = 1f + (0.32f * litProgress)
+                        scaleX = scale
+                        scaleY = scale
+                        alpha = litProgress
                     }
-                    .blur(1.32.dp),
+                    .blur(1.32.dp * litProgress),
             ) {
                 val scaleX = size.width / style.viewBox.first
                 val scaleY = size.height / style.viewBox.second
@@ -149,7 +152,7 @@ internal fun Lantern(
                         brush = Brush.radialGradient(
                             colors = listOf(
                                 lanternGlowColor,
-                                lanternGlowColor.copy(alpha = 0.22f),
+                                lanternGlowColor.copy(alpha = 0.22f * litProgress),
                                 lanternGlowColor.copy(alpha = 0f),
                             ),
                             center = Offset(style.viewBox.first / 2f, style.viewBox.second / 2f),
@@ -190,7 +193,7 @@ internal fun Lantern(
                             scale(scaleX, scaleY, pivot = Offset.Zero)
                         },
                     ) {
-                        // 1. Draw Lantern Body
+                        // Lantern Body
                         drawPath(path = bodyPath, color = bodyColor)
                         drawPath(
                             path = bodyPath,
@@ -202,7 +205,7 @@ internal fun Lantern(
                             ),
                         )
 
-                        // 2. Draw Lantern Ribs
+                        // Lantern Ribs
                         withTransform(
                             {
                                 translate(0f, style.ribOffsetY)
@@ -221,7 +224,7 @@ internal fun Lantern(
                             }
                         }
 
-                        // 3. Draw Lantern Cap (Fine-tuned position above the body)
+                        // Lantern Cap (Fine-tuned position above the body)
                         withTransform(
                             {
                                 val capOffsetX = (style.viewBox.first - style.capViewBox.first) / 2f
@@ -261,9 +264,9 @@ private fun LanternPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
-            Lantern(style = LanternStyle.Type0, seed = 1, isLit = true)
-            Lantern(style = LanternStyle.Type1, seed = 2, isLit = true)
-            Lantern(style = LanternStyle.Type2, seed = 3, isLit = false)
+            Lantern(style = LanternStyle.Type0, seed = 1, litProgress = 1f)
+            Lantern(style = LanternStyle.Type1, seed = 2, litProgress = 1f)
+            Lantern(style = LanternStyle.Type2, seed = 3, litProgress = 0f)
         }
     }
 }
