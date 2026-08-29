@@ -201,6 +201,57 @@ private fun ReturnsFromEveryBranch(density: Density, label: String) {
 }
 
 @Composable
+private fun EarlyReturnBeforeFallback(compact: Boolean, label: String) {
+    if (compact) {
+        Text(label)
+        return
+    }
+    Box {}
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsAfterConditionalReturn<!>(compact: Boolean, label: String) {
+    Text(label)
+    if (compact) return
+    Box {}
+}
+
+@Composable
+private fun ThrowsAfterEmitting(compact: Boolean, label: String) {
+    if (compact) {
+        Text(label)
+        throw IllegalStateException(label)
+    }
+    Box {}
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsWhileRepeating<!>(pending: Boolean, label: String) {
+    while (pending) {
+        Text(label)
+    }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SkipsIterationsBeforeEmitting<!>(labels: List<String>) {
+    for (label in labels) {
+        if (label.isEmpty()) {
+            continue
+        }
+        Text(label)
+    }
+}
+
+@Composable
+private fun String.<!COMPOSABLE_EMITS_FLAT_SIBLINGS!>DecoratedSiblings<!>() {
+    Text(this)
+    Text(this)
+}
+
+@Composable
+private fun SoleEmissionAsExpression(label: String) = Text(label)
+
+@Composable
 private fun EffectsBesideEmission(label: String) {
     LaunchedEffect(label) {}
     SideEffect {}
