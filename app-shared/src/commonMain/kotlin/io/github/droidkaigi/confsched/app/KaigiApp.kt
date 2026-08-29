@@ -8,7 +8,7 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
-import io.github.droidkaigi.confsched.core.ui.SetupRemoteImageLoader
+import io.github.droidkaigi.confsched.core.ui.RemoteImageLoaderEffect
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberDeviceTiltSource
 import soil.query.compose.SwrClientProvider
@@ -27,7 +27,7 @@ fun KaigiApp() {
     uiGraph.backStackDebuggingEffect(backStack)
     uiGraph.semanticsDebuggingEffect()
 
-    SetupRemoteImageLoader()
+    RemoteImageLoaderEffect()
 
     CompositionLocalProvider(
         LocalDeviceTiltSource provides rememberDeviceTiltSource(),

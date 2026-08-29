@@ -65,7 +65,7 @@ fun ByteArrayImage(
 }
 
 @Composable
-fun SetupRemoteImageLoader() {
+fun RemoteImageLoaderEffect() {
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
             .components { add(KtorNetworkFetcherFactory(HttpClient(httpClientEngineFactory()))) }
