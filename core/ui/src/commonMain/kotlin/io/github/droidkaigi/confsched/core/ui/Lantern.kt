@@ -2,20 +2,13 @@ package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -23,7 +16,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -89,7 +81,7 @@ internal enum class LanternStyle(
 }
 
 /**
- * A lantern component based on Figma specs.
+ * A lantern component
  */
 @Composable
 internal fun Lantern(
@@ -99,8 +91,7 @@ internal fun Lantern(
     litProgress: Float = 0f,
 ) {
     val combinedSeed = combineSketchSeed(seed)
-    // Figma Spec base: 0.22 (paper) / 0.45 (ribs)
-    // When fully lit: 1.0
+    // Figma Spec base: 0.22 (paper) / 0.45 (ribs). When fully lit: 1.0
     val bodyOpacity = 0.22f + (0.78f * litProgress)
     val ribOpacity = 0.45f + (0.55f * litProgress)
 
@@ -119,137 +110,143 @@ internal fun Lantern(
         PathParser().parsePathString(style.capPathData).toPath()
     }
 
-    Box(
-        contentAlignment = Alignment.TopCenter,
-        modifier = modifier.wrapContentSize(),
-    ) {
-        if (litProgress > 0f) {
-            // Glow Effect
-            Canvas(
-                modifier = Modifier
-                    .padding(top = style.hangingCord)
-                    .size(style.size)
-                    .graphicsLayer {
-                        val scale = 1f + (0.32f * litProgress)
-                        scaleX = scale
-                        scaleY = scale
-                        alpha = litProgress
-                    }
-                    .blur(1.32.dp * litProgress),
-            ) {
-                val scaleX = size.width / style.viewBox.width
-                val scaleY = size.height / style.viewBox.height
+    val totalHeight = style.hangingCord + style.size.height + 9.dp
+    val roughness = SketchDefaults.roughness
+    val tremor = SketchDefaults.tremor
 
-                withTransform(
-                    {
-                        scale(scaleX, scaleY, pivot = Offset.Zero)
-                    },
-                ) {
+    Canvas(
+        modifier = modifier
+            .size(58.dp, totalHeight),
+    ) {
+        val hangingCordPx = style.hangingCord.toPx()
+        val lanternWidthPx = style.size.width.toPx()
+        val lanternHeightPx = style.size.height.toPx()
+        val centerX = size.width / 2f
+        val bodyLeft = (size.width - lanternWidthPx) / 2f
+
+        // Glow Effect (Drawn first to be behind everything)
+        if (litProgress > 0f) {
+            val baseScaleX = lanternWidthPx / style.viewBox.width
+            val baseScaleY = lanternHeightPx / style.viewBox.height
+            val glowScale = 1f + (0.32f * litProgress)
+
+            withTransform(
+                {
+                    translate(left = bodyLeft, top = hangingCordPx)
+                    scale(
+                        scaleX = baseScaleX,
+                        scaleY = baseScaleY,
+                        pivot = Offset.Zero,
+                    )
+                    // Now in viewBox coordinates, scale around the center
+                    scale(
+                        scaleX = glowScale,
+                        scaleY = glowScale,
+                        pivot = Offset(style.viewBox.width / 2f, style.viewBox.height / 2f),
+                    )
+                },
+            ) {
+                drawPath(
+                    path = bodyPath,
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            lanternGlowColor.copy(alpha = litProgress),
+                            lanternGlowColor.copy(alpha = 0.22f * litProgress),
+                            lanternGlowColor.copy(alpha = 0f),
+                        ),
+                        center = Offset(style.viewBox.width / 2f, style.viewBox.height / 2f),
+                        radius = max(style.viewBox.width, style.viewBox.height),
+                    ),
+                )
+            }
+        }
+
+        // Hanging Cord
+        val cordPath = sketchVerticalLinePath(
+            height = hangingCordPx,
+            centerX = centerX,
+            roughness = roughness,
+            tremor = tremor,
+            sweepWavelength = 140.dp,
+            tremorWavelength = 42.dp,
+            seed = combinedSeed + 1,
+        )
+        drawPath(
+            path = cordPath,
+            color = borderColor,
+            style = Stroke(width = 1.3.dp.toPx(), cap = StrokeCap.Round),
+        )
+
+        // Lantern Elements (Cap, Body, Ribs)
+        withTransform(
+            {
+                translate(left = bodyLeft, top = hangingCordPx)
+                scale(
+                    scaleX = lanternWidthPx / style.viewBox.width,
+                    scaleY = lanternHeightPx / style.viewBox.height,
+                    pivot = Offset.Zero,
+                )
+            },
+        ) {
+            val scaleX = lanternWidthPx / style.viewBox.width
+
+            // Lantern Cap
+            val capOffsetX = (style.viewBox.width - style.capViewBox.width) / 2f
+            withTransform({ translate(capOffsetX, -2.2f) }) {
+                drawPath(
+                    path = capPath,
+                    color = borderColor,
+                    style = Stroke(
+                        width = 2.2.dp.toPx() / scaleX,
+                        cap = StrokeCap.Round,
+                        join = StrokeJoin.Round,
+                    ),
+                )
+            }
+
+            // Lantern Body
+            drawPath(path = bodyPath, color = bodyColor)
+            drawPath(
+                path = bodyPath,
+                color = borderColor,
+                style = Stroke(
+                    width = 2.dp.toPx() / scaleX,
+                    cap = StrokeCap.Round,
+                    join = StrokeJoin.Round,
+                ),
+            )
+
+            // Lantern Ribs
+            withTransform({ translate(0f, style.ribOffsetY) }) {
+                ribPaths.forEach { ribPath ->
                     drawPath(
-                        path = bodyPath,
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                lanternGlowColor,
-                                lanternGlowColor.copy(alpha = 0.22f * litProgress),
-                                lanternGlowColor.copy(alpha = 0f),
-                            ),
-                            center = Offset(style.viewBox.width / 2f, style.viewBox.height / 2f),
-                            radius = max(style.viewBox.width, style.viewBox.height),
+                        path = ribPath,
+                        color = borderColor.copy(alpha = ribOpacity),
+                        style = Stroke(
+                            width = 1.3.dp.toPx() / scaleX,
+                            cap = StrokeCap.Round,
+                            join = StrokeJoin.Round,
                         ),
                     )
                 }
             }
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.wrapContentSize(),
-        ) {
-            // Hanging cord
-            SketchVerticalDivider(
-                seed = combinedSeed + 1,
-                thickness = 1.3.dp,
+        // 4. Tassel
+        val tasselPath = sketchVerticalLinePath(
+            height = 9.dp.toPx(),
+            centerX = centerX,
+            roughness = roughness,
+            tremor = tremor,
+            sweepWavelength = 140.dp,
+            tremorWavelength = 42.dp,
+            seed = combinedSeed + 2,
+        )
+        withTransform({ translate(top = hangingCordPx + lanternHeightPx) }) {
+            drawPath(
+                path = tasselPath,
                 color = borderColor,
-                modifier = Modifier
-                    .height(style.hangingCord),
-            )
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.wrapContentSize(),
-            ) {
-                Canvas(
-                    modifier = Modifier.size(style.size),
-                ) {
-                    // Calculate scale factors based on viewBox
-                    val scaleX = size.width / style.viewBox.width
-                    val scaleY = size.height / style.viewBox.height
-
-                    // All drawing operations happen within the scaled viewBox coordinate system
-                    withTransform(
-                        {
-                            scale(scaleX, scaleY, pivot = Offset.Zero)
-                        },
-                    ) {
-                        // Lantern Cap
-                        withTransform(
-                            {
-                                val capOffsetX = (style.viewBox.width - style.capViewBox.width) / 2f
-                                translate(capOffsetX, -2.2f)
-                            },
-                        ) {
-                            drawPath(
-                                path = capPath,
-                                color = borderColor,
-                                style = Stroke(
-                                    width = 2.2.dp.toPx() / scaleX,
-                                    cap = StrokeCap.Round,
-                                    join = StrokeJoin.Round,
-                                ),
-                            )
-                        }
-
-                        // Lantern Body
-                        drawPath(path = bodyPath, color = bodyColor)
-                        drawPath(
-                            path = bodyPath,
-                            color = borderColor,
-                            style = Stroke(
-                                width = 2.dp.toPx() / scaleX,
-                                cap = StrokeCap.Round,
-                                join = StrokeJoin.Round,
-                            ),
-                        )
-
-                        // Lantern Ribs
-                        withTransform(
-                            {
-                                translate(0f, style.ribOffsetY)
-                            },
-                        ) {
-                            ribPaths.forEach { ribPath ->
-                                drawPath(
-                                    path = ribPath,
-                                    color = borderColor.copy(alpha = ribOpacity),
-                                    style = Stroke(
-                                        width = 1.3.dp.toPx() / scaleX,
-                                        cap = StrokeCap.Round,
-                                        join = StrokeJoin.Round,
-                                    ),
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Tassel (9dp height / 1.4dp thickness)
-            SketchVerticalDivider(
-                seed = combinedSeed + 2,
-                thickness = 1.4.dp,
-                color = borderColor,
-                modifier = Modifier
-                    .height(9.dp),
+                style = Stroke(width = 1.4.dp.toPx(), cap = StrokeCap.Round),
             )
         }
     }

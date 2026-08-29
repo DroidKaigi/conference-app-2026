@@ -1,5 +1,12 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,11 +14,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,15 +33,6 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.loading_description
 import io.github.droidkaigi.confsched.core.ui.generated.resources.loading_headline
 import org.jetbrains.compose.resources.stringResource
-
-import androidx.compose.animation.core.EaseInOut
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.runtime.getValue
 
 @Composable
 internal fun LanternLoadingFallback(
@@ -130,8 +128,6 @@ private fun Lanterns(
 
             Box(
                 contentAlignment = Alignment.TopCenter,
-                modifier = Modifier
-                    .width(58.dp),
             ) {
                 Lantern(
                     style = style,
@@ -168,6 +164,7 @@ private fun calculateLanternLitProgress(
             val progress = (cycleTime - startTime) / duration
             EaseInOut.transform(progress)
         }
+
         cycleTime < endTime -> 1f
         else -> 0f
     }
