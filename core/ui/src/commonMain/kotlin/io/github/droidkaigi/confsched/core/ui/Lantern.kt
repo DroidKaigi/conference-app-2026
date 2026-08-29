@@ -77,7 +77,8 @@ internal enum class LanternStyle(
         ),
         viewBox = Size(33f, 43f),
         ribOffsetY = 9.24f,
-    );
+    ),
+    ;
 
     /**
      * Calculates the lighting progress for an individual lantern based on the cycle time.
@@ -96,12 +97,14 @@ internal enum class LanternStyle(
 
         return when {
             cycleTime < startTime -> 0f
+
             cycleTime < startTime + duration -> {
                 val progress = (cycleTime - startTime) / duration
                 EaseInOut.transform(progress)
             }
 
             cycleTime < endTime -> 1f
+
             else -> 0f
         }
     }
@@ -259,7 +262,7 @@ internal fun Lantern(
             }
         }
 
-        // 4. Tassel
+        // Tassel
         val tasselPath = sketchVerticalLinePath(
             height = 9.dp.toPx(),
             centerX = centerX,
