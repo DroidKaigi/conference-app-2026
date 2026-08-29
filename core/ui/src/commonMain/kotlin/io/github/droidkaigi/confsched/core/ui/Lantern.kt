@@ -128,7 +128,7 @@ internal fun Lantern(
         if (litProgress > 0f) {
             val baseScaleX = lanternWidthPx / style.viewBox.width
             val baseScaleY = lanternHeightPx / style.viewBox.height
-            val glowScale = 1f + (0.32f * litProgress)
+            val glowScale = 1f + (0.8f * litProgress)
 
             withTransform(
                 {
@@ -150,12 +150,13 @@ internal fun Lantern(
                     path = bodyPath,
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            lanternGlowColor.copy(alpha = litProgress),
-                            lanternGlowColor.copy(alpha = 0.22f * litProgress),
+                            lanternGlowColor.copy(alpha = 0.8f * litProgress),
+                            lanternGlowColor.copy(alpha = 0.4f * litProgress),
+                            lanternGlowColor.copy(alpha = 0.15f * litProgress),
                             lanternGlowColor.copy(alpha = 0f),
                         ),
                         center = Offset(style.viewBox.width / 2f, style.viewBox.height / 2f),
-                        radius = max(style.viewBox.width, style.viewBox.height),
+                        radius = max(style.viewBox.width, style.viewBox.height) * 0.8f,
                     ),
                 )
             }
