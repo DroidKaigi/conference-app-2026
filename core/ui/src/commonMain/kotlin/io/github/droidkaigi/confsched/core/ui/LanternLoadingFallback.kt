@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -66,15 +67,20 @@ internal fun LanternLoadingFallback(
             )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(58.dp - 29.dp),
                 verticalAlignment = Alignment.Top,
             ) {
                 LanternStyle.entries.forEach { style ->
-                    Lantern(
-                        style = style,
-                        seed = style.ordinal,
-                        isLit = false, // Animation TODO
-                    )
+                    Box(
+                        contentAlignment = Alignment.TopCenter,
+                        modifier = Modifier
+                            .width(58.dp),
+                    ) {
+                        Lantern(
+                            style = style,
+                            seed = style.ordinal,
+                            isLit = false, // Animation TODO
+                        )
+                    }
                 }
             }
         }
