@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.debug
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,7 +27,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 @Composable
-internal fun DebugClockSection(
+internal fun ColumnScope.DebugClockSection(
     uiState: DebugClockUiState,
     applyClockPreset: (DebugClockPreset) -> Unit,
     shiftClockTo: (String) -> Unit,
@@ -94,12 +95,14 @@ private fun DebugClockSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        DebugClockSection(
-            uiState = DebugClockUiState.fake(),
-            applyClockPreset = {},
-            shiftClockTo = {},
-            resetClock = {},
-            toggleClockOverlay = {},
-        )
+        Column {
+            DebugClockSection(
+                uiState = DebugClockUiState.fake(),
+                applyClockPreset = {},
+                shiftClockTo = {},
+                resetClock = {},
+                toggleClockOverlay = {},
+            )
+        }
     }
 }
