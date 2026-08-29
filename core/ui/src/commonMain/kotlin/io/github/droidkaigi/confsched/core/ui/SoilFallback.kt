@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,8 +52,11 @@ const val DEFAULT_SUSPENSE_FALLBACK_CONTENT_TEST_TAG = "DefaultSuspenseFallbackC
 context(_: SoilSuspenseContext)
 fun DefaultSuspenseFallbackContent(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize().testTag(DEFAULT_SUSPENSE_FALLBACK_CONTENT_TEST_TAG),
         contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(DEFAULT_SUSPENSE_FALLBACK_CONTENT_TEST_TAG)
+            .progressSemantics(),
     ) {
         LanternLoadingFallback()
     }
