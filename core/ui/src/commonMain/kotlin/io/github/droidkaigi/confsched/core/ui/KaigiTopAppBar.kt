@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.common.StatusBarBandEffect
 import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowBack
 import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -67,7 +66,6 @@ fun KaigiTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    StatusBarBandEffect(containerColor)
     TopAppBar(
         title = { BarTitle(title) },
         modifier = modifier,
@@ -111,7 +109,6 @@ fun KaigiLargeTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    StatusBarBandEffect(containerColor)
     LargeTopAppBar(
         title = { BarTitle(title) },
         modifier = modifier,

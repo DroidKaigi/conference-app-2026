@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.retain.retain
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
-import io.github.droidkaigi.confsched.core.common.StatusBarBandFallbackEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
@@ -40,7 +39,7 @@ fun KaigiApp() {
                     sketchStrength = appearance.settings.sketchStrength,
                     sketchBaseSeed = appSketchBaseSeed,
                 ) {
-                    StatusBarBandFallbackEffect(MaterialTheme.colorScheme.background)
+                    AndroidStatusBarIconAppearanceEffect(MaterialTheme.colorScheme.inverseSurface)
                     NavigatorEffect(
                         navigator = uiGraph.appNavigator,
                         backStack = backStack,

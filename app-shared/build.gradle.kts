@@ -33,6 +33,10 @@ kotlin {
             api(project(":feature:eventmap"))
             implementation(libs.composeMaterial3AdaptiveNavigation3)
         }
+        androidMain.dependencies {
+            // LocalActivity and enableEdgeToEdge, for the status bar icon appearance.
+            implementation(libs.androidxActivityCompose)
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
