@@ -69,10 +69,10 @@ internal fun LanternLoadingFallback(
                 horizontalArrangement = Arrangement.spacedBy(58.dp - 29.dp),
                 verticalAlignment = Alignment.Top,
             ) {
-                repeat(3) { index ->
+                LanternStyle.entries.forEach { style ->
                     Lantern(
-                        style = LanternStyle.fromIndex(index),
-                        seed = index,
+                        style = style,
+                        seed = style.ordinal,
                         isLit = false, // Animation TODO
                     )
                 }
