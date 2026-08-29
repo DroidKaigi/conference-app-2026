@@ -314,7 +314,17 @@ fun BoxScope.ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // OK
 
 Why: a composable with no root container leaves placement to whoever calls it. A centered `Box` stacks the two nodes in emission order, a `Row` or `Column` sets them side by side, so the component renders as intended at the call site it was written for and differently at the next one. A layout scope receiver — `BoxScope`, `RowScope`, `ColumnScope`, `LazyItemScope`, or a subtype such as `KaigiNavigationBarScope` — names the caller as the owner of placement, and is the sanctioned way to write a multi-emission component.
 
-Emission counting follows a single control-flow path: branches of `if` and `when` contribute the largest of their paths, and an emitter inside a loop counts as many. A call emits when its own result type is `Unit`, which admits a generic composable substituted to `Unit` at the call site, such as `key`. Composables named `…Effect` run work rather than emitting, and calls whose result is bound to a value, `remember` among them, produce no node.
+Emission counting follows a single control-flow path: branches of `if` and `when` contribute the largest of their paths, an emitter inside a loop counts as many, and a branch that returns takes the statements after it off its own path. A call emits when its own result type is `Unit`, which admits a generic composable substituted to `Unit` at the call site, such as `key`. Calls whose result is bound to a value, `remember` among them, produce no node.
+
+An effect is named `…Effect`, and a composable carrying that name is read as running work rather than emitting. The name is taken from the declaration that owns it, so a `fun interface` effect is recognised by the interface name at its `invoke` site:
+
+```kotlin
+fun interface HistorySyncEffect {
+    @Composable operator fun invoke(backStack: NavBackStack<NavKey>)
+}
+
+uiGraph.historySyncEffect(backStack)  // reads as HistorySyncEffect, so it emits nothing
+```
 
 ### `ExplicitBackingFieldRequired`
 
