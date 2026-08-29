@@ -36,6 +36,20 @@ Two corrections satisfy the rule; the difference is whether the entity already e
 | The value is that one attribute — the app displays it and reads nothing else | Rename to `<entity><Attribute>` |
 | Call sites already need two attributes together, or compare identity | Introduce the type, keep the bare name |
 
+## Effect naming
+
+The `Effect` suffix divides composables by what they do to the tree: one that runs work — collecting a flow, registering a callback, syncing external state — and emits no node takes the suffix, and one that emits any node must not. The split is load-bearing: the `SingleRootEmission` checker ([Enforcement](./enforcement.md#singlerootemission)) reads the suffix as "emits nothing" and exempts the call, so an emitting composable named `…Effect` is invisible to the rule at every call site. The checker holds the first direction — a non-emitting composable without the suffix fails compilation where it is called beside an emission — and review holds the second, which no checker can decide.
+
+```kotlin
+@Composable
+fun RemoteImageLoaderEffect() { … }   // registers a factory, emits nothing
+
+@Composable
+fun ShimmerEffect(modifier: Modifier) {   // rejected in review: emits a Box, so the name must not say Effect
+    Box(modifier.background(shimmerBrush()))
+}
+```
+
 ## Over-qualification
 
 The suffix names the attribute, not the type. `title: String` is already an attribute name and stays as it is; `titleString` and `titleText` restate what the type declares. A suffix is added only where the name currently denotes an entity.

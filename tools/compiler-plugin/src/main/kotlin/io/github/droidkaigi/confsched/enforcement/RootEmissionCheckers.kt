@@ -252,7 +252,7 @@ object RootEmissionErrorMessages : BaseDiagnosticRendererFactory() {
             "This composable emits more than one node at its root, so the caller decides how they " +
                 "are laid out. Wrap them in a layout, or declare a layout scope — ColumnScope, " +
                 "BoxScope, and the like, as a receiver or a context parameter — to hand placement " +
-                "to the caller.",
+                "to the caller. A composable that only runs work is named with the Effect suffix.",
         )
     }
 }
