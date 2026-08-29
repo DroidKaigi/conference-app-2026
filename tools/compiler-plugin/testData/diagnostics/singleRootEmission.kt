@@ -105,6 +105,28 @@ private fun EitherBranch(expanded: Boolean, label: String) {
     }
 }
 
+private fun interface LabelSyncEffect {
+    @Composable
+    operator fun invoke(label: String)
+}
+
+private fun interface LabelSlot {
+    @Composable
+    operator fun invoke(label: String)
+}
+
+@Composable
+private fun EffectInterfaceBesideEmission(sync: LabelSyncEffect, label: String) {
+    sync(label)
+    Text(label)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SlotInterfaceBesideEmission<!>(slot: LabelSlot, label: String) {
+    slot(label)
+    Text(label)
+}
+
 @Composable
 private fun EffectsBesideEmission(label: String) {
     LaunchedEffect(label) {}

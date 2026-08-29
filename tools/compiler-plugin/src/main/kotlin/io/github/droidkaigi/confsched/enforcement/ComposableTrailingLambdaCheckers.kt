@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
@@ -56,7 +55,6 @@ internal object ComposableLambdaMustBeTrailingChecker : FirFunctionCallChecker(M
         }
     }
 }
-
 
 object ComposableTrailingLambdaErrors : KtDiagnosticsContainer() {
     val COMPOSABLE_LAMBDA_MUST_BE_TRAILING by error0<PsiElement>(SourceElementPositioningStrategies.DEFAULT)
