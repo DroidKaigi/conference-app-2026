@@ -1,3 +1,4 @@
+import androidx.compose.material3.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,9 +67,11 @@ fun Retained() {
 
 @Composable
 fun Saved() {
-    Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberSaveable { listOf("a") }<!>.first())
-    Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberSerializable { mutableStateOf("label") }<!>.value)
-    Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberUpdatedState("label")<!>.value)
+    Column {
+        Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberSaveable { listOf("a") }<!>.first())
+        Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberSerializable { mutableStateOf("label") }<!>.value)
+        Text(<!REMEMBER_RESULT_MUST_BE_BOUND!>rememberUpdatedState("label")<!>.value)
+    }
 }
 
 @Composable
@@ -95,13 +98,17 @@ fun DelegatedProperty() {
 @Composable
 fun DestructuredResult() {
     val (first, second) = remember { "a" to "b" }
-    Text(first)
-    Text(second)
+    Column {
+        Text(first)
+        Text(second)
+    }
 }
 
 @Composable
 fun ForLoopSubject() {
-    for (item in <!REMEMBER_RESULT_MUST_BE_BOUND!>remember { listOf("a") }<!>) {
-        Text(item)
+    Column {
+        for (item in <!REMEMBER_RESULT_MUST_BE_BOUND!>remember { listOf("a") }<!>) {
+            Text(item)
+        }
     }
 }

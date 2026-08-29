@@ -1,3 +1,4 @@
+import androidx.compose.material3.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -48,8 +49,10 @@ private fun Observe(state: State<String>) {
 @Composable
 fun PassesTheStateAsArgument() {
     val selectedDay = remember { mutableStateOf("Day1") }
-    Text(selectedDay.value)
-    Observe(selectedDay)
+    Column {
+        Text(selectedDay.value)
+        Observe(selectedDay)
+    }
 }
 
 fun ReturnsTheState(): State<String> {

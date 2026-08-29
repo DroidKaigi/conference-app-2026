@@ -24,6 +24,7 @@ private fun SearchCardPreview() {
 // FILE: SearchRow.kt
 package io.github.droidkaigi.confsched.feature.search
 
+import androidx.compose.material3.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,8 +35,10 @@ class SearchRowUiState(val title: String, val subtitle: String)
 
 @Composable
 fun SearchRow(uiState: SearchRowUiState) {
-    Text(uiState.title)
-    Text(uiState.subtitle)
+    Column {
+        Text(uiState.title)
+        Text(uiState.subtitle)
+    }
 }
 
 @Preview
@@ -48,6 +51,7 @@ private fun SearchRowPreview() {
 // FILE: SearchSummary.kt
 package io.github.droidkaigi.confsched.feature.search
 
+import androidx.compose.material3.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,8 +67,10 @@ fun SearchSummary(uiState: SearchSummaryUiState) {
 
 @Composable
 fun SearchSummaryLabel(uiState: SearchSummaryUiState) {
-    Text(uiState.title)
-    Text(uiState.subtitle)
+    Column {
+        Text(uiState.title)
+        Text(uiState.subtitle)
+    }
 }
 
 @Preview
