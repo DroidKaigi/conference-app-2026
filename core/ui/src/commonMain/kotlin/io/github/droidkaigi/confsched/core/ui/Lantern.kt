@@ -2,7 +2,6 @@ package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiIllustrationColors
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
-import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlin.math.max
 
@@ -280,13 +279,13 @@ internal fun Lantern(
     }
 }
 
-@LocalePreviews
+@Preview
 @Composable
 private fun LanternPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+        Row {
             Lantern(style = LanternStyle.Type0, litProgress = 1f)
             Lantern(style = LanternStyle.Type1, litProgress = 1f)
             Lantern(style = LanternStyle.Type2, litProgress = 0f)
