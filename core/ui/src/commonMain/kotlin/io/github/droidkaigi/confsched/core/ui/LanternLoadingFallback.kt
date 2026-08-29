@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.core.ui
 
-import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -80,7 +79,7 @@ internal fun LanternLoadingFallback(
                 seed = 5321,
                 color = MaterialTheme.colorScheme.primary,
                 thickness = 1.3.dp,
-                sweepWavelength = 200.dp,
+                sweepWavelength = 42.dp,
                 modifier = wireModifier,
             )
 
@@ -118,55 +117,13 @@ private fun Lanterns(
         verticalAlignment = Alignment.Top,
         modifier = modifier,
     ) {
-        val lanterns = LanternStyle.entries
-        lanterns.forEachIndexed { index, style ->
-            val litProgress = calculateLanternLitProgress(
-                index = index,
-                totalLanterns = lanterns.size,
-                cycleTime = cycleTime,
+        LanternStyle.entries.forEach { style ->
+            val litProgress = style.calculateLitProgress(cycleTime)
+            Lantern(
+                style = style,
+                litProgress = litProgress,
             )
-
-            Box(
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                Lantern(
-                    style = style,
-                    seed = style.ordinal,
-                    litProgress = litProgress,
-                )
-            }
         }
-    }
-}
-
-/**
- * Calculates the lighting progress for an individual lantern based on the cycle time.
- *
- * Animation Specs:
- * - Stagger: 250ms
- * - Duration: 400ms
- * - Hold: 300ms after all lit
- * - Cycle: 2000ms
- */
-private fun calculateLanternLitProgress(
-    index: Int,
-    totalLanterns: Int,
-    cycleTime: Float,
-): Float {
-    val startTime = index * 250f
-    val duration = 400f
-    val allLitTime = (totalLanterns - 1) * 250f + duration
-    val endTime = allLitTime + 300f
-
-    return when {
-        cycleTime < startTime -> 0f
-        cycleTime < startTime + duration -> {
-            val progress = (cycleTime - startTime) / duration
-            EaseInOut.transform(progress)
-        }
-
-        cycleTime < endTime -> 1f
-        else -> 0f
     }
 }
 

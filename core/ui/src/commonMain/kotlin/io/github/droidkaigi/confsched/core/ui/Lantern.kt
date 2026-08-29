@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -78,6 +79,33 @@ internal enum class LanternStyle(
         viewBox = Size(33f, 43f),
         ribOffsetY = 9.24f,
     );
+
+    /**
+     * Calculates the lighting progress for an individual lantern based on the cycle time.
+     *
+     * Animation Specs:
+     * - Stagger: 250ms
+     * - Duration: 400ms
+     * - Hold: 300ms after all lit
+     * - Cycle: 2000ms
+     */
+    fun calculateLitProgress(cycleTime: Float): Float {
+        val startTime = ordinal * 250f
+        val duration = 400f
+        val allLitTime = (entries.size - 1) * 250f + duration
+        val endTime = allLitTime + 300f
+
+        return when {
+            cycleTime < startTime -> 0f
+            cycleTime < startTime + duration -> {
+                val progress = (cycleTime - startTime) / duration
+                EaseInOut.transform(progress)
+            }
+
+            cycleTime < endTime -> 1f
+            else -> 0f
+        }
+    }
 }
 
 /**
@@ -86,11 +114,10 @@ internal enum class LanternStyle(
 @Composable
 internal fun Lantern(
     style: LanternStyle,
-    seed: Int,
     modifier: Modifier = Modifier,
     litProgress: Float = 0f,
 ) {
-    val combinedSeed = combineSketchSeed(seed)
+    val combinedSeed = combineSketchSeed(style.ordinal)
     // Figma Spec base: 0.22 (paper) / 0.45 (ribs). When fully lit: 1.0
     val bodyOpacity = 0.22f + (0.78f * litProgress)
     val ribOpacity = 0.45f + (0.55f * litProgress)
@@ -260,9 +287,9 @@ private fun LanternPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
-            Lantern(style = LanternStyle.Type0, seed = 1, litProgress = 1f)
-            Lantern(style = LanternStyle.Type1, seed = 2, litProgress = 1f)
-            Lantern(style = LanternStyle.Type2, seed = 3, litProgress = 0f)
+            Lantern(style = LanternStyle.Type0, litProgress = 1f)
+            Lantern(style = LanternStyle.Type1, litProgress = 1f)
+            Lantern(style = LanternStyle.Type2, litProgress = 0f)
         }
     }
 }
