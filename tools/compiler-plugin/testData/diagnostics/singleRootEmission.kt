@@ -253,9 +253,35 @@ private fun SoleEmissionAsExpression(label: String) = Text(label)
 
 @Composable
 private fun EffectsBesideEmission(label: String) {
+    Text(label)
     LaunchedEffect(label) {}
     SideEffect {}
     DisposableEffect(label) { onDispose {} }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsTwiceAfterRemember<!>(label: String) {
+    val cached = remember { label }
+    Text(cached)
+    Text(cached)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsTwiceAfterLambdaLocalReturn<!>(labels: List<String>, label: String) {
+    labels.forEach { return@forEach }
+    Text(label)
+    Text(label)
+}
+
+@Composable
+private fun EffectTypedParameterBesideEmission(syncEffect: @Composable () -> Unit, label: String) {
+    syncEffect()
+    Text(label)
+}
+
+@Composable
+private fun <S : ColumnScope> S.BoundedScopeSiblings(label: String) {
+    Text(label)
     Text(label)
 }
 
