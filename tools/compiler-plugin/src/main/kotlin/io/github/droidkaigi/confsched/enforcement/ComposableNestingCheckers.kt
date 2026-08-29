@@ -21,11 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-
-private val COMPOSABLE_ANNOTATION_ID = ClassId(FqName("androidx.compose.runtime"), Name.identifier("Composable"))
 
 private const val MAX_COMPOSABLE_NESTING_DEPTH = 4
 
