@@ -191,6 +191,24 @@ internal fun Lantern(
                             scale(scaleX, scaleY, pivot = Offset.Zero)
                         },
                     ) {
+                        // Lantern Cap
+                        withTransform(
+                            {
+                                val capOffsetX = (style.viewBox.width - style.capViewBox.width) / 2f
+                                translate(capOffsetX, -2.2f)
+                            },
+                        ) {
+                            drawPath(
+                                path = capPath,
+                                color = borderColor,
+                                style = Stroke(
+                                    width = 2.2.dp.toPx() / scaleX,
+                                    cap = StrokeCap.Round,
+                                    join = StrokeJoin.Round,
+                                ),
+                            )
+                        }
+
                         // Lantern Body
                         drawPath(path = bodyPath, color = bodyColor)
                         drawPath(
@@ -220,24 +238,6 @@ internal fun Lantern(
                                     ),
                                 )
                             }
-                        }
-
-                        // Lantern Cap (Fine-tuned position above the body)
-                        withTransform(
-                            {
-                                val capOffsetX = (style.viewBox.width - style.capViewBox.width) / 2f
-                                translate(capOffsetX, -2.2f)
-                            },
-                        ) {
-                            drawPath(
-                                path = capPath,
-                                color = borderColor,
-                                style = Stroke(
-                                    width = 2.2.dp.toPx() / scaleX,
-                                    cap = StrokeCap.Round,
-                                    join = StrokeJoin.Round,
-                                ),
-                            )
                         }
                     }
                 }
