@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -125,6 +126,66 @@ private fun EffectInterfaceBesideEmission(sync: LabelSyncEffect, label: String) 
 private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SlotInterfaceBesideEmission<!>(slot: LabelSlot, label: String) {
     slot(label)
     Text(label)
+}
+
+@Composable
+private fun LeavesLoopAfterEmitting(labels: List<String>) {
+    for (label in labels) {
+        if (label.isNotEmpty()) {
+            Text(label)
+            break
+        }
+    }
+}
+
+@Composable
+private fun ReturnsFromLoopAfterEmitting(labels: List<String>) {
+    for (label in labels) {
+        Text(label)
+        return
+    }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsAfterLeavingLoop<!>(labels: List<String>, label: String) {
+    for (item in labels) {
+        Text(item)
+        break
+    }
+    Text(label)
+}
+
+context(_: ColumnScope)
+@Composable
+private fun ContextScopedSiblings(label: String) {
+    Text(label)
+    Text(label)
+}
+
+@Composable
+private fun LazyGridItemScope.GridCellSiblings(label: String) {
+    Text(label)
+    Text(label)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsInPropertyInitializer<!>(expanded: Boolean, label: String) {
+    Text(label)
+    val length = if (expanded) {
+        Text(label)
+        1
+    } else {
+        2
+    }
+    label.take(length)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsInsideInlineLambda<!>(label: String) {
+    run {
+        Text(label)
+        Text(label)
+    }
 }
 
 @Composable
