@@ -215,7 +215,7 @@ internal fun Modifier.cardOffset(offset: DpOffset): Modifier = offset(x = offset
 
 /** Draws each of [placements] centred on its own point, in [color]. */
 @Composable
-internal fun Sparkles(placements: List<SparklePlacement>, color: Color) {
+internal fun BoxScope.Sparkles(placements: List<SparklePlacement>, color: Color) {
     placements.forEach { placement ->
         SketchSparkle(
             color = color,
