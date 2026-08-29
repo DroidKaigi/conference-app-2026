@@ -23,7 +23,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.LocationOn
 import io.github.droidkaigi.confsched.core.designsystem.icon.Schedule
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -48,7 +48,7 @@ internal fun SessionInfoCard(
     day: DroidKaigi2026Day,
     startsAt: String,
     endsAt: String,
-    room: Room,
+    room: SessionRoom,
     language: SessionLanguage,
     hasInterpretation: Boolean,
     category: String?,
@@ -104,7 +104,7 @@ private fun InfoRow(imageVector: ImageVector, text: String) {
     }
 }
 
-private fun Room.locationText(): String = floor?.let { "$name (${it.label})" } ?: name
+private fun SessionRoom.locationText(): String = floor?.let { "$name (${it.label})" } ?: name
 
 private fun scheduleText(day: DroidKaigi2026Day, startsAt: String, endsAt: String): String {
     val date = day.date

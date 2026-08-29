@@ -20,4 +20,22 @@ interface DataStoreBindings {
     @SessionMemoDataStoreQualifier
     fun provideSessionMemoDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
         createDataStore(pathProducer, SESSION_MEMO_DATA_STORE_FILE_NAME)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @FavoritesDataStoreQualifier
+    fun provideFavoritesDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
+        createDataStore(pathProducer, FAVORITES_DATA_STORE_FILE_NAME)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @SessionRemindersDataStoreQualifier
+    fun provideSessionRemindersDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
+        createDataStore(pathProducer, SESSION_REMINDERS_DATA_STORE_FILE_NAME)
+
+    @Provides
+    @SingleIn(AppScope::class)
+    @ProfileCardDataStoreQualifier
+    fun provideProfileCardDataStore(pathProducer: DataStorePathProducer): DataStore<Preferences> =
+        createDataStore(pathProducer, PROFILE_CARD_DATA_STORE_FILE_NAME)
 }

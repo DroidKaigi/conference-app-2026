@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -50,6 +51,7 @@ fun KaigiButton(
     onClick: () -> Unit,
     seed: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     content: @Composable RowScope.() -> Unit,
@@ -58,6 +60,7 @@ fun KaigiButton(
         onClick = onClick,
         seed = seed,
         modifier = modifier,
+        enabled = enabled,
         containerColor = containerColor,
         contentColor = contentColor,
         borderColor = containerColor,
@@ -82,6 +85,7 @@ fun KaigiOutlinedButton(
     onClick: () -> Unit,
     seed: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -89,6 +93,7 @@ fun KaigiOutlinedButton(
         onClick = onClick,
         seed = seed,
         modifier = modifier,
+        enabled = enabled,
         containerColor = Color.Transparent,
         contentColor = contentColor,
         borderColor = contentColor,
@@ -102,6 +107,7 @@ private fun SketchButton(
     onClick: () -> Unit,
     seed: Int,
     modifier: Modifier,
+    enabled: Boolean,
     containerColor: Color,
     contentColor: Color,
     borderColor: Color,
@@ -121,14 +127,17 @@ private fun SketchButton(
     Box(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .height(KaigiButtonDefaults.height),
+            .height(KaigiButtonDefaults.height)
+            .alpha(if (enabled) 1f else KaigiButtonDefaults.disabledAlpha),
+        // So a caller-imposed min width (fillMaxWidth, weight) reaches the Row below, which
+        // otherwise hugs its content and would leave the border's matchParentSize outsizing it.
+        propagateMinConstraints = true,
     ) {
         Row(
             modifier = Modifier
-                .matchParentSize()
                 .clip(shape)
                 .background(containerColor)
-                .clickable(role = Role.Button, onClick = onClick)
+                .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
                 .padding(contentPadding),
             horizontalArrangement = Arrangement.spacedBy(
                 space = KaigiButtonDefaults.iconSpacing,
@@ -149,6 +158,7 @@ object KaigiButtonDefaults {
     val iconSize = 16.dp
     val iconSpacing = 8.dp
     val borderThickness = 1.5.dp
+    val disabledAlpha = 0.38f
     val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
     val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 

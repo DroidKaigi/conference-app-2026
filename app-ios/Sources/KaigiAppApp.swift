@@ -1,10 +1,13 @@
 import AppShared
 import SwiftUI
+import WidgetKit
 
 @main
 struct KaigiAppApp: App {
     private let host = KaigiAppHost(
-        swiftPackageLicensesJson: swiftPackageLicensesJson()
+        swiftPackageLicensesJson: swiftPackageLicensesJson(),
+        favoritesWidgetAppGroup: FavoritesWidgetContract.appGroup,
+        favoritesWidgetSnapshotSchemaVersion: Int32(FavoritesWidgetContract.snapshotSchemaVersion)
     )
 
     init() {
@@ -13,15 +16,18 @@ struct KaigiAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack(alignment: .bottom) {
-                KaigiAppView(host: host)
-                RootTabBarView(
-                    currentTab: host.currentTab.asAsyncSequence().map { $0?.tab },
-                    palette: host.tabBarPalette.asAsyncSequence(),
-                    select: host.selectTab(tab:)
-                )
-            }
-            .ignoresSafeArea()
+            RootView(host: host)
+                .ignoresSafeArea()
+                .onOpenURL { host.submitDeepLink(url: $0.absoluteString) }
+                .task { try? await reloadWidgetOnSnapshotChange() }
+        }
+    }
+
+    /// Collecting the flow is what writes the snapshot the widget extension reads, so the reload
+    /// always follows a file the extension can already see.
+    private func reloadWidgetOnSnapshotChange() async throws {
+        for try await _ in host.favoritesWidgetSnapshots.asAsyncSequence() {
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 }
@@ -38,11 +44,11 @@ private func swiftPackageLicensesJson() -> String {
     return json
 }
 
-private struct KaigiAppView: UIViewControllerRepresentable {
+private struct RootView: UIViewControllerRepresentable {
     let host: KaigiAppHost
 
     func makeUIViewController(context: Context) -> UIViewController {
-        host.viewController()
+        RootViewController(host: host)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

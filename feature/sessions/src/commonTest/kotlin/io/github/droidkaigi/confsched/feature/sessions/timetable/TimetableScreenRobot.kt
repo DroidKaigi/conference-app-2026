@@ -80,6 +80,15 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
         composeUiTest.onNodeWithContentDescription("Switch to grid view").assertIsDisplayed()
     }
 
+    fun clickSwitchToGridView() {
+        composeUiTest.onNodeWithContentDescription("Switch to grid view").performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun checkSwitchToListViewActionDisplayed() {
+        composeUiTest.onNodeWithContentDescription("Switch to list view").assertIsDisplayed()
+    }
+
     fun recordDayTabsPosition() {
         restingDayTabsTop = dayTabsBounds().top
     }

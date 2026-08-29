@@ -356,12 +356,12 @@ A component that genuinely cannot be rendered on its own carries `@Suppress("UI_
 internal fun SessionHeaderView(item: TimetableItem) { // ERROR: day, startsAt, endsAt, asset unread
     Text(item.room.name)
     Text(item.title.current())
-    Text(item.speakerNames)
+    Text(item.speakers.joinToString { it.name })
 }
 
 // OK: the properties it reads
 @Composable
-internal fun SessionHeaderView(room: Room, title: String, speakerNames: String) { … }
+internal fun SessionHeaderView(room: SessionRoom, title: String, speakers: List<TimetableSpeaker>) { … }
 ```
 
 Why: a component that takes an aggregate for a few of its properties spreads that type further than its own reads justify — every caller must hold the whole state to render the component, the preview must build it, and Compose recomposes the component when a property it never reads changes. A feature UI `@Composable` must read **every** property of a parameter it selects from; otherwise declare a UiState type for the component holding only what it reads (`FavoritesListSectionUiState` is the shape to copy), or take those properties as separate parameters.
@@ -439,7 +439,7 @@ Why: `.value` at every use is noise the language already removes. `androidx.comp
 
 The rule is stated over a **declaration**, not a use, because a delegate hands out the value and takes the object away. A declaration is rejected when it is a `val` without a delegate whose type is `androidx.compose.runtime.State` or a subtype, and **every** reference to it is a read or a write of its `value`. One use of the object itself — passed as an argument, returned, destructured, or the receiver of anything else — leaves it out, since demanding `by` there would demand a rewrite that does not exist. A declaration with no reference at all is out for the same reason: there is nothing to shorten.
 
-That exclusion records what `by` cannot express, and is not a reason to reach for the object. A screen renders an immutable `UiState` and reports interaction through a callback, so a state type does not belong in a composable's parameter list — see [Building a screen](./building-a-screen.md#action--actionresult--uistate).
+That exclusion records what `by` cannot express, and is not a reason to reach for the object. A screen renders an immutable `UiState` and reports interaction through a callback, so a state type does not belong in a composable's parameter list — see [Building a screen](./building-a-screen.md#action-actionresult-uistate).
 
 Visibility bounds the rule to what the compiler can see: only a local variable or a `private` property qualifies, because those are the declarations whose every reference lives in the file being compiled. A wider property may be read as an object from another module, and the checker would be judging it on partial evidence.
 

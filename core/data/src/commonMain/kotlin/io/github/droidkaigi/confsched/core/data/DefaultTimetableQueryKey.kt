@@ -11,10 +11,12 @@ import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 class DefaultTimetableQueryKey(
     private val api: TimetableApi,
     private val fileStorage: ServerEnvironmentScopedFileStorage,
+    private val persistedTimetableReader: PersistedTimetableReader,
 ) : TimetableQueryKey by buildPersistedQueryKey(
     id = SoilIds.timetableQuery,
     persistKey = TIMETABLE_PERSIST_KEY,
     fileStorage = fileStorage,
     fetchResponse = { api.getTimetable() },
     transformToDomainModel = TimetableResponse::toTimetable,
+    onPersisted = persistedTimetableReader::notifyPersisted,
 )

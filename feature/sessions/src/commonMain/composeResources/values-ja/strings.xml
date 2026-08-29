@@ -2,6 +2,7 @@
     <string name="timetable">タイムテーブル</string>
     <string name="search">検索</string>
     <string name="switch_to_grid_view">グリッド表示に切り替え</string>
+    <string name="switch_to_list_view">リスト表示に切り替え</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
     <string name="schedule">日時</string>

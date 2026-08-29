@@ -21,4 +21,4 @@ iOS targets iosArm64 + iosSimulatorArm64. The exported `AppShared` module links 
 
 The native Liquid Glass tab bar composites over the CMP backdrop on iOS 26. For the embedding shape, see [CMP on iOS (embedding)](./ios-cmp-embedding.md); for the tab bar, see [Liquid Glass tab bar](./ios-liquid-glass.md).
 
-Related: [CMP on iOS (embedding)](./ios-cmp-embedding.md) · [Liquid Glass tab bar](./ios-liquid-glass.md) · [iOS top bar](./ios-top-bar.md) · [Swift ↔ Kotlin interop](./ios-interop.md)
+Related: [CMP on iOS (embedding)](./ios-cmp-embedding.md) · [Liquid Glass tab bar](./ios-liquid-glass.md) · [iOS top bar](./ios-top-bar.md) · [Swift ↔ Kotlin interop](./ios-interop.md) · [iOS favorites widget](./ios-favorites-widget.md)

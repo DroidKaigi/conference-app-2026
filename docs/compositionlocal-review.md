@@ -13,6 +13,7 @@ Each is calibration for that question.
 | `LocalSnackbarHostState` | a nav entry owns its host, so a message shows on the screen that raised it |
 | `LocalPreviewImageResolver` | a preview draws its images from local drawables where a release build goes to the network |
 | `LocalSchemeIsDark` | the theme provides it, so a subtree themed differently reads differently |
+| `LocalDeviceTiltSource` | the app installs the platform sensor, a preview reads the level default so a golden does not move |
 
 ## When the answer is no
 

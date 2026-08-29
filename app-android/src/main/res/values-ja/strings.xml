@@ -9,10 +9,20 @@
     <string name="widget_live_small_label">開催中</string>
     <string name="widget_schedule_label">お気に入りの予定</string>
     <string name="widget_favorites_label">お気に入り</string>
-    <string name="widget_empty_small">お気に入りに登録すると、次の予定がここに出ます。</string>
-    <string name="widget_empty_medium">お気に入りに登録したセッションが、開始時刻とともにここに並びます。</string>
-    <string name="widget_empty_hint">タップしてセッションを探す</string>
+    <string name="widget_empty_message">今日のお気に入りはまだありません</string>
+    <string name="widget_empty_hint">タップして %1$s のセッションを見る</string>
+    <string name="widget_done_message">今日のお気に入りは終了しました</string>
+    <string name="widget_done_hint">タップして他のセッションを見る</string>
+    <string name="widget_event_day_message">今日はイベントデイ</string>
+    <string name="widget_event_day_note">気になるセッションを探してみましょう</string>
+    <string name="widget_wrap_up_message">本日はありがとうございました。明日もお会いしましょう</string>
+    <string name="widget_wrap_up_add">明日のセッションを登録</string>
     <string name="widget_post_message">ご参加ありがとうございました。またお会いしましょう。</string>
     <string name="widget_same_slot_more_small">ほか%1$d件</string>
     <string name="widget_same_slot_more_row">ほか %1$d 件</string>
+    <plurals name="widget_tomorrow_favorites">
+        <item quantity="other">明日のお気に入り %1$d 件</item>
+    </plurals>
+    <string name="session_reminder_channel_name">セッション開始のお知らせ</string>
+    <string name="session_reminder_text">%1$s 開始 · %2$s</string>
 </resources>
