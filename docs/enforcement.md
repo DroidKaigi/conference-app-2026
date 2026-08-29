@@ -42,6 +42,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | Platform-confined common declarations carry a platform prefix | FIR `PlatformOnlyNaming` |
 | A screen-level composable is the only component in its file | FIR `ScreenIsSoleComponentInFile` |
 | Content lambdas nest at most four levels deep | FIR `ComposableNestingDepth` |
+| A composable without a layout scope receiver emits one node at its root | FIR `SingleRootEmission` |
 | A private property exposed by a wider one uses an explicit backing field | FIR `ExplicitBackingFieldRequired` |
 | A private `var` exposed read-only uses `private set` | FIR `PrivateSetRequired` |
 | A feature UI composable carries a preview in its file | FIR `UiComponentRequiresPreview` |
@@ -290,6 +291,30 @@ fun TimetableScreen(uiState: TimetableScreenUiState) {
 Why: a deeply nested tree hides the structure of the screen. A `@Composable` function may nest content lambdas at most **four** levels deep; the fifth level must move into its own `@Composable` function (`TimetableCard` above). In a screen file, [`ScreenIsSoleComponentInFile`](#screenissolecomponentinfile) then gives that component its own file.
 
 A lambda counts towards the depth only when its body emits UI, so `onClick`, `remember`, and coroutine bodies are free. Builder lambdas that wrap content — `forEach`, `LazyListScope` — do count, because they add a level of braces the reader has to follow. The error is reported on the call that owns the offending lambda.
+
+### `SingleRootEmission`
+
+```kotlin
+@Composable
+fun ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // ERROR
+    if (selected) {
+        Box(Modifier.background(indicatorColor))
+    }
+    icon()
+}
+
+@Composable
+fun BoxScope.ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // OK
+    if (selected) {
+        Box(Modifier.background(indicatorColor))
+    }
+    icon()
+}
+```
+
+Why: a composable with no root container leaves placement to whoever calls it. A centered `Box` stacks the two nodes in emission order, a `Row` or `Column` sets them side by side, so the component renders as intended at the call site it was written for and differently at the next one. A layout scope receiver — `BoxScope`, `RowScope`, `ColumnScope`, `LazyItemScope`, or a subtype such as `KaigiNavigationBarScope` — names the caller as the owner of placement, and is the sanctioned way to write a multi-emission component.
+
+Emission counting follows a single control-flow path: branches of `if` and `when` contribute the largest of their paths, and an emitter inside a loop counts as many. A call emits when its own result type is `Unit`, which admits a generic composable substituted to `Unit` at the call site, such as `key`. Composables named `…Effect` run work rather than emitting, and calls whose result is bound to a value, `remember` among them, produce no node.
 
 ### `ExplicitBackingFieldRequired`
 
