@@ -11,7 +11,7 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.RootSceneStrategy
 import io.github.droidkaigi.confsched.core.common.UiScope
-import io.github.droidkaigi.confsched.core.common.consumePaneEdgeInset
+import io.github.droidkaigi.confsched.core.common.consumeListDetailPaneInsets
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
 
@@ -25,7 +25,7 @@ class TimetableNavEntryProvider(
         entry<TimetableNavKey>(
             metadata = RootSceneStrategy.root() +
                 ListDetailSceneStrategy.listPane() +
-                consumePaneEdgeInset(WindowInsetsSides.End) +
+                consumeListDetailPaneInsets(WindowInsetsSides.End) +
                 instantNavTransition(),
         ) {
             val graph = retain(screenGraphFactory::createTimetableScreenGraph)

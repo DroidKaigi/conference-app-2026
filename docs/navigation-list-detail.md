@@ -79,15 +79,15 @@ Each entry names the edge it does not touch in its metadata, and one decorator c
 ```kotlin
 entry<TimetableNavKey>(
     metadata = RootSceneStrategy.root() + ListDetailSceneStrategy.listPane() +
-        consumePaneEdgeInset(WindowInsetsSides.End),
+        consumeListDetailPaneInsets(WindowInsetsSides.End),
 ) { ... }
 
 entry<TimetableItemDetailNavKey>(
-    metadata = ListDetailSceneStrategy.detailPane() + consumePaneEdgeInset(WindowInsetsSides.Start),
+    metadata = ListDetailSceneStrategy.detailPane() + consumeListDetailPaneInsets(WindowInsetsSides.Start),
 ) { ... }
 ```
 
-`rememberPaneEdgeInsetNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps the entry in `Modifier.consumeWindowInsets` for the named edge behind the same `LocalListDetailSceneScope` gate as the pane separation: it applies only while the two-pane scaffold is live, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
+`rememberListDetailPaneInsetsNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps the entry in `Modifier.consumeWindowInsets` for the named edge behind the same `LocalListDetailSceneScope` gate as the pane separation: it applies only while the two-pane scaffold is live, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
 
 ## Resizing the split
 

@@ -11,7 +11,7 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
-import io.github.droidkaigi.confsched.core.common.consumePaneEdgeInset
+import io.github.droidkaigi.confsched.core.common.consumeListDetailPaneInsets
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.ui.rememberCalendarEventAdder
 import io.github.droidkaigi.confsched.core.ui.rememberTextSharer
@@ -24,7 +24,7 @@ class TimetableItemDetailNavEntryProvider(
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<TimetableItemDetailNavKey>(
-            metadata = ListDetailSceneStrategy.detailPane() + consumePaneEdgeInset(WindowInsetsSides.Start),
+            metadata = ListDetailSceneStrategy.detailPane() + consumeListDetailPaneInsets(WindowInsetsSides.Start),
         ) { key ->
             val graph = retain(key) { screenGraphFactory.createTimetableItemDetailScreenGraph(key.id) }
             val uriHandler = LocalUriHandler.current

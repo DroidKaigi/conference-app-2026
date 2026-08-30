@@ -19,27 +19,27 @@ import androidx.navigation3.runtime.NavMetadataKey
 import androidx.navigation3.runtime.get
 import androidx.navigation3.runtime.metadata
 
-private data object PaneEdgeInsetKey : NavMetadataKey<WindowInsetsSides>
+private data object ListDetailPaneInsetsKey : NavMetadataKey<WindowInsetsSides>
 
 /**
  * NavEntry metadata naming the window inset edges to drop from an entry while it is a pane beside
  * another pane: [WindowInsetsSides.Start] for a detail pane, [WindowInsetsSides.End] for a list
- * pane. [rememberPaneEdgeInsetNavEntryDecorator] applies it.
+ * pane. [rememberListDetailPaneInsetsNavEntryDecorator] applies it.
  */
-fun consumePaneEdgeInset(sides: WindowInsetsSides): Map<String, Any> =
-    metadata { put(PaneEdgeInsetKey, sides) }
+fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
+    metadata { put(ListDetailPaneInsetsKey, sides) }
 
 /**
- * Consumes the [consumePaneEdgeInset] edges of an entry while it is a pane of a live list-detail
- * scaffold ([LocalListDetailSceneScope] is non-null), so a pane offset from a window edge stops
- * inheriting that edge's system-bar or display-cutout inset from the shared window and padding its
- * content against the pane seam.
+ * Consumes the [consumeListDetailPaneInsets] edges of an entry while it is a pane of a live
+ * list-detail scaffold ([LocalListDetailSceneScope] is non-null), so a pane offset from a window
+ * edge stops inheriting that edge's system-bar or display-cutout inset from the shared window and
+ * padding its content against the pane seam.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun <T : Any> rememberPaneEdgeInsetNavEntryDecorator(): NavEntryDecorator<T> = remember {
+fun <T : Any> rememberListDetailPaneInsetsNavEntryDecorator(): NavEntryDecorator<T> = remember {
     NavEntryDecorator { entry ->
-        val sides = entry.metadata[PaneEdgeInsetKey]
+        val sides = entry.metadata[ListDetailPaneInsetsKey]
             .takeIf { LocalListDetailSceneScope.current != null }
         if (sides == null) {
             entry.Content()
