@@ -59,6 +59,7 @@ class ProvidedValue<T>
 infix fun <T> CompositionLocal<T>.provides(value: T): ProvidedValue<T> = ProvidedValue()
 
 @Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
 fun CompositionLocalProvider(vararg values: ProvidedValue<*>, content: @Composable () -> Unit) {
 }
 
@@ -77,4 +78,21 @@ fun DisposableEffect(key1: Any?, effect: DisposableEffectScope.() -> DisposableE
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
 fun <T> key(vararg keys: Any?, block: @Composable () -> T): T = throw UnsupportedOperationException()
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+annotation class ComposableTarget(val applier: String)
+
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+@Retention(AnnotationRetention.BINARY)
+annotation class ComposableTargetMarker(val description: String = "")
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+@Retention(AnnotationRetention.BINARY)
+annotation class ComposableInferredTarget(val scheme: String)
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+annotation class ComposableOpenTarget(val index: Int)

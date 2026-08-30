@@ -1,3 +1,4 @@
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasurePolicy
 
 interface KaigiNavigationBarScope : RowScope
 
@@ -106,12 +109,18 @@ private fun EitherBranch(expanded: Boolean, label: String) {
     }
 }
 
-private fun interface LabelSyncEffect {
+private fun interface LabelSlot {
     @Composable
     operator fun invoke(label: String)
 }
 
-private fun interface LabelSlot {
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SlotInterfaceBesideEmission<!>(slot: LabelSlot, label: String) {
+    slot(label)
+    Text(label)
+}
+
+private fun interface LabelSyncEffect {
     @Composable
     operator fun invoke(label: String)
 }
@@ -123,9 +132,19 @@ private fun EffectInterfaceBesideEmission(sync: LabelSyncEffect, label: String) 
 }
 
 @Composable
-private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SlotInterfaceBesideEmission<!>(slot: LabelSlot, label: String) {
-    slot(label)
+private fun EffectTypedParameterBesideEmission(syncEffect: @Composable () -> Unit, label: String) {
+    syncEffect()
     Text(label)
+}
+
+private interface LabelSource {
+    @Composable
+    fun rememberLabel(): String
+}
+
+@Composable
+private fun AbstractValueBesideEmission(source: LabelSource) {
+    Text(source.rememberLabel())
 }
 
 @Composable
@@ -300,12 +319,6 @@ private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsTwiceAfterLambdaLocalReturn<!
 }
 
 @Composable
-private fun EffectTypedParameterBesideEmission(syncEffect: @Composable () -> Unit, label: String) {
-    syncEffect()
-    Text(label)
-}
-
-@Composable
 private fun <S : ColumnScope> S.BoundedScopeSiblings(label: String) {
     Text(label)
     Text(label)
@@ -315,4 +328,80 @@ private fun <S : ColumnScope> S.BoundedScopeSiblings(label: String) {
 private fun RememberedValueBesideEmission(label: String) {
     val cached = remember { label }
     Text(cached)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>ProvidedSiblings<!>(label: String) {
+    CompositionLocalProvider {
+        Text(label)
+        Text(label)
+    }
+}
+
+@Composable
+private fun BackHandlerBesideEmission(label: String) {
+    BackHandler(enabled = true) {}
+    Text(label)
+}
+
+@Composable
+private fun SyncLabel(label: String) {
+    LaunchedEffect(label) {}
+}
+
+@Composable
+private fun SyncBesideEmission(label: String) {
+    SyncLabel(label)
+    Text(label)
+}
+
+@Composable
+private fun StyledLabel(label: String, content: @Composable (String) -> Unit) {
+    CompositionLocalProvider {
+        content(label)
+    }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>StyledSiblings<!>(label: String) {
+    StyledLabel(label) {
+        Text(it)
+        Text(it)
+    }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>MeasuredSiblings<!>(measurePolicy: MeasurePolicy) {
+    Layout(measurePolicy)
+    Layout(measurePolicy)
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsInsideArgumentExpression<!>(label: String) {
+    Text(
+        run {
+            Text(label)
+            label
+        },
+    )
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>ProviderAfterEmission<!>(label: String) {
+    Text(label)
+    CompositionLocalProvider {
+        Text(label)
+    }
+}
+
+@Composable
+private fun ProviderAroundOne(label: String) {
+    CompositionLocalProvider {
+        Text(label)
+    }
+}
+
+@Composable
+private fun EmitsInsideRepeatedLambda(labels: List<String>) {
+    labels.forEach { Text(it.trim()) }
 }

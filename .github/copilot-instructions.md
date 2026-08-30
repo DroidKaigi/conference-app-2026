@@ -79,7 +79,7 @@ Apply the procedure to every declaration in the diff whose type is general-purpo
 - A suffix that restates the type is over-qualification (`titleString`, `titleText`).
 - Where a value reaches one part of what its owner renders, the name states the part (`seed` → `indicatorSeed`), and where more than one member of a category is in reach, it states the member (`scope` → `coroutineScope`).
 - Compose views are named `<Feature>ScreenRoot`, `<Feature>Screen`, and `<Name><Kind>` — every other view carries a widget-kind suffix.
-- A composable named `…Effect` must not emit a node — the `SingleRootEmission` checker exempts the name, so an emitting one escapes the rule at every call site.
+- A composable named `…Effect` must not emit a node, and one that emits must not carry the name. The `SingleRootEmission` checker reads what a composable is bound to and falls back to the name only for an abstract member, an `expect` declaration, or a `@Composable` parameter, so both directions are held by review.
 
 ### Presenter responsibility
 

@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.enforcement
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -49,6 +50,8 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             ComposableNestingDepthChecker,
             UiComponentTakesWhatItReadsChecker,
             NoCallerSuppliedCallbackArgumentChecker,
+        )
+        override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
             SingleRootEmissionChecker,
         )
         override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(

@@ -314,16 +314,22 @@ fun BoxScope.ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // OK
 
 Why: a composable with no root container leaves placement to whoever calls it. A centered `Box` stacks the two nodes in emission order, a `Row` or `Column` sets them side by side, so the component renders as intended at the call site it was written for and differently at the next one. A layout scope names the caller as the owner of placement, and is the sanctioned way to write a multi-emission component. It counts whether it is declared as a receiver or as a context parameter, and any subtype of one — `KaigiNavigationBarScope` extends `RowScope` — counts too. The scopes are those of the layouts that place their children: `BoxScope`, `RowScope`, `ColumnScope`, `FlowRowScope`, `FlowColumnScope`, `LazyItemScope`, `LazyGridItemScope`, `LazyStaggeredGridItemScope`, and `PagerScope`.
 
-Emission counting follows a single control-flow path: branches of `if` and `when` contribute the largest of their paths, a branch that returns takes the statements after it off its own path, and an emitter inside a `for` or `while` body counts as two — the rule asks only whether a path carries more than one. A `@Composable` call emits when its own result type is `Unit`, which admits a generic composable substituted to `Unit` at the call site, such as `key`. Calls whose result is bound to a value, `remember` among them, produce no node, and an emission inside an inline non-composable lambda such as `run` counts at the call holding it. The rule reaches named functions; a `@Composable` lambda literal is left to the layout it is passed to, and an emitter repeated by `forEach` or `repeat` counts once, since the repetition lives in the callee.
+Emissions are counted along control flow, and the count runs on into the lambdas of a call that emits nothing itself: branches of `if` and `when` contribute the largest of their paths, a branch that returns takes the statements after it off its own path, and an emitter inside a `for` or `while` body counts as two — the rule asks only whether a path carries more than one. The rule reaches named functions; a `@Composable` lambda literal is left to the layout it is passed to, and an emitter repeated by `forEach` or `repeat` counts once, since the repetition lives in the callee.
 
-An effect is named `…Effect`, and a composable carrying that name is read as running work rather than emitting. The name is the whole test, so a composable that emits must not be named that way. The name is taken from the declaration that owns it, so a `fun interface` effect is recognised by the interface name at its `invoke` site:
+Whether a call emits is read from the applier its callee is bound to, which the Compose compiler records on every composable it compiles: `@ComposableTarget`, an annotation itself marked `@ComposableTargetMarker` such as `@UiComposable`, or a `@ComposableInferredTarget` whose scheme names an applier. Such a call counts as one node and owns whatever its content lambdas emit. A composable left open — `CompositionLocalProvider`, `key`, `ReusableContent`, `MaterialTheme` — places nothing itself, so what its content lambdas emit counts for the caller, the way an emission inside an inline non-composable lambda such as `run` does. Everything else, `LaunchedEffect` and `remember` among them, contributes nothing.
+
+A callee in the module being compiled carries no annotation yet, since the Compose compiler infers it in the backend, so its body is read with the same rules. Where neither is available — an abstract member, an `expect` declaration, a `@Composable` parameter — the name decides: one that ends in `Effect` places nothing, and any other `Unit` composable counts as the one node it may place. A composable that returns a value places nothing.
 
 ```kotlin
-fun interface HistorySyncEffect {
-    @Composable operator fun invoke(backStack: NavBackStack<NavKey>)
+@Composable
+fun SyncLabelEffect(label: String) {   // emits nothing: LaunchedEffect places no node
+    LaunchedEffect(label) { … }
 }
 
-uiGraph.historySyncEffect(backStack)  // reads as HistorySyncEffect, so it emits nothing
+@Composable
+fun StyledLabel(content: @Composable () -> Unit) {   // emits whatever the caller passes in
+    CompositionLocalProvider(LocalTextStyle provides labelStyle) { content() }
+}
 ```
 
 ### `ExplicitBackingFieldRequired`
