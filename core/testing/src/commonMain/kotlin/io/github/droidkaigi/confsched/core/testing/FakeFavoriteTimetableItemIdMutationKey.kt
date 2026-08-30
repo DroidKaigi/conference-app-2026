@@ -20,7 +20,7 @@ class FakeFavoriteTimetableItemIdMutationKey private constructor(
     mutate = { id -> state.record(id) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState<TimetableItemId, Boolean>().apply { complete(true) })
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState<TimetableItemId, Boolean>(true))
 
     val invocations: Channel<TimetableItemId> get() = state.invocations
 

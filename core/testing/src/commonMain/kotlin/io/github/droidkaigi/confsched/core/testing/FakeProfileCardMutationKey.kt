@@ -20,7 +20,7 @@ class FakeProfileCardMutationKey private constructor(
     mutate = { card -> state.record(card) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState(Unit))
 
     val invocations: Channel<ProfileCard> get() = state.invocations
 

@@ -20,7 +20,7 @@ class FakeAppearanceSettingsMutationKey private constructor(
     mutate = { settings -> state.record(settings) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState(Unit))
 
     val invocations: Channel<AppearanceSettings> get() = state.invocations
 

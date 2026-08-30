@@ -20,7 +20,7 @@ class FakeSessionMemoMutationKey private constructor(
     mutate = { edit -> state.record(edit) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState(Unit))
 
     val invocations: Channel<SessionMemoEdit> get() = state.invocations
 
