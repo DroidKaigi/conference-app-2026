@@ -17,6 +17,7 @@ import io.github.droidkaigi.confsched.core.model.Room
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.ScreenshotTestExclude
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.event_map_1f
@@ -67,6 +68,8 @@ private fun Floor.mapImage(): DrawableResource = when (this) {
     Floor.Basement -> Res.drawable.event_map_b1f
 }
 
+// The Dialog opens a composition root of its own, which the screenshot capture cannot reach.
+@ScreenshotTestExclude
 @LocalePreviews
 @Composable
 private fun SessionEventMapDialogPreview(
