@@ -70,6 +70,25 @@ val paneSpacerInset = if (LocalListDetailSceneScope.current != null) {
 
 `TimetableItemDetailScreen` is the reference consumer: its top-bar close button and summary card take the inset as padding, and `TimetableItemDetailHeadline` takes it as a `startInset` parameter applied between its background and its content. A new detail pane must follow the same pattern — nothing enforces the contract mechanically, and a pane that skips it butts its content against the seam.
 
+## Window insets on an offset pane
+
+`WindowInsets` describe the whole window, so both panes read the same edge values whatever their position. A pane held clear of a window edge by the pane beside it — the detail pane's start, the list pane's end — would still pad its content for that edge's system-bar or display-cutout inset, opening a gap against the seam.
+
+Each entry names the edge it does not touch in its metadata, and one decorator consumes it:
+
+```kotlin
+entry<TimetableNavKey>(
+    metadata = RootSceneStrategy.root() + ListDetailSceneStrategy.listPane() +
+        consumePaneEdgeInset(WindowInsetsSides.End),
+) { ... }
+
+entry<TimetableItemDetailNavKey>(
+    metadata = ListDetailSceneStrategy.detailPane() + consumePaneEdgeInset(WindowInsetsSides.Start),
+) { ... }
+```
+
+`rememberPaneEdgeInsetNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps the entry in `Modifier.consumeWindowInsets` for the named edge behind the same `LocalListDetailSceneScope` gate as the pane separation: it applies only while the two-pane scaffold is live, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
+
 ## Resizing the split
 
 The scaffold shows a drag handle on the seam (`paneExpansionDragHandle`). Releasing a drag settles the split onto the nearest of three anchors — list at `PaneMinWidth`, 50:50, and detail at `PaneMinWidth` — so the edge anchors are the panes' resting minimum widths. While the pointer is down, `PaneExpansionDragBounds` rubber-bands the seam past the edge anchors through the state's `consumeDragDelta` hook: resistance grows with distance and movement stops entirely at `PaneMaxOvershoot`, while deltas back toward the bounds pass through untouched so the release animation is unaffected.

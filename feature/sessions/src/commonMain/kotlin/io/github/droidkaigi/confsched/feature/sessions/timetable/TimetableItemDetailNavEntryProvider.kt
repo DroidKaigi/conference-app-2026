@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.retain.retain
@@ -10,6 +11,7 @@ import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
+import io.github.droidkaigi.confsched.core.common.consumePaneEdgeInset
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.ui.rememberCalendarEventAdder
 import io.github.droidkaigi.confsched.core.ui.rememberTextSharer
@@ -21,7 +23,9 @@ class TimetableItemDetailNavEntryProvider(
     private val screenGraphFactory: TimetableItemDetailScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<TimetableItemDetailNavKey>(metadata = ListDetailSceneStrategy.detailPane()) { key ->
+        entry<TimetableItemDetailNavKey>(
+            metadata = ListDetailSceneStrategy.detailPane() + consumePaneEdgeInset(WindowInsetsSides.Start),
+        ) { key ->
             val graph = retain(key) { screenGraphFactory.createTimetableItemDetailScreenGraph(key.id) }
             val uriHandler = LocalUriHandler.current
             val addCalendarEvent = rememberCalendarEventAdder()
