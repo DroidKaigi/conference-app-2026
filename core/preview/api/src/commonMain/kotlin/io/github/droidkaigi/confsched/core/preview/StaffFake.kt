@@ -16,6 +16,6 @@ fun Staff.Companion.fake(): Staff = Staff(
 private fun fakeStaffMember(id: Long, username: String) = StaffMember(
     id = StaffId(id),
     username = username,
-    iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
+    iconUrl = PreviewImage.AvatarSample.imageUrl,
     profileUrl = "https://example.com/$username",
 )
