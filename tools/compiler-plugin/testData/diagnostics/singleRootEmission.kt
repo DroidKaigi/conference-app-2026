@@ -252,6 +252,32 @@ private fun String.<!COMPOSABLE_EMITS_FLAT_SIBLINGS!>DecoratedSiblings<!>() {
 private fun SoleEmissionAsExpression(label: String) = Text(label)
 
 @Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsThenContinues<!>(labels: List<String>) {
+    for (label in labels) {
+        Text(label)
+        continue
+    }
+}
+
+@Composable
+private fun DeadCodeAfterContinue(labels: List<String>, label: String) {
+    for (item in labels) {
+        continue
+        Text(label)
+    }
+}
+
+@Composable
+private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>EmitsThenContinuesOuter<!>(rows: List<String>, cells: List<String>) {
+    outer@ for (row in rows) {
+        for (cell in cells) {
+            Text(cell)
+            continue@outer
+        }
+    }
+}
+
+@Composable
 private fun EffectsBesideEmission(label: String) {
     Text(label)
     LaunchedEffect(label) {}

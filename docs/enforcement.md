@@ -42,7 +42,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | Platform-confined common declarations carry a platform prefix | FIR `PlatformOnlyNaming` |
 | A screen-level composable is the only component in its file | FIR `ScreenIsSoleComponentInFile` |
 | Content lambdas nest at most four levels deep | FIR `ComposableNestingDepth` |
-| A composable without a layout scope emits one node at its root | FIR `SingleRootEmission` |
+| A composable without a layout scope emits at most one node at its root | FIR `SingleRootEmission` |
 | A private property exposed by a wider one uses an explicit backing field | FIR `ExplicitBackingFieldRequired` |
 | A private `var` exposed read-only uses `private set` | FIR `PrivateSetRequired` |
 | A feature UI composable carries a preview in its file | FIR `UiComponentRequiresPreview` |

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
 import org.jetbrains.kotlin.fir.expressions.FirCatch
+import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -106,15 +107,23 @@ private fun FirClassSymbol<*>.isLayoutScope(session: FirSession): Boolean {
 // Emissions counted along control flow, each field the largest count its kind of path carries.
 // `fallthrough` continues into whatever follows and is null when no path does; `exited` leaves the
 // checked function; `left` completes the nearest enclosing lambda, which resumes the caller; `broke`
-// leaves the loop it names. Null means no path of that kind ends here.
+// leaves the loop it names, and `continued` returns to that loop's head. Null means no path of that
+// kind ends here.
 private data class Emissions(
     val fallthrough: Int?,
     val exited: Int? = null,
     val left: Int? = null,
     val broke: Map<FirLoop, Int> = emptyMap(),
+    val continued: Map<FirLoop, Int> = emptyMap(),
 ) {
     val worstPath: Int
-        get() = maxOf(fallthrough ?: 0, exited ?: 0, left ?: 0, broke.values.maxOrNull() ?: 0)
+        get() = maxOf(
+            fallthrough ?: 0,
+            exited ?: 0,
+            left ?: 0,
+            broke.values.maxOrNull() ?: 0,
+            continued.values.maxOrNull() ?: 0,
+        )
 }
 
 private val EMITS_NOTHING = Emissions(fallthrough = 0)
@@ -141,8 +150,9 @@ private fun FirStatement.emissions(session: FirSession, root: FirNamedFunction):
 
     is FirThrowExpression -> Emissions(fallthrough = null, exited = 0)
 
-    // `continue` reaches the loop head just as the end of the body does, so it needs no channel.
     is FirBreakExpression -> Emissions(fallthrough = null, broke = mapOf(target.labeledElement to 0))
+
+    is FirContinueExpression -> Emissions(fallthrough = null, continued = mapOf(target.labeledElement to 0))
 
     is FirProperty -> initializer?.emissions(session, root) ?: EMITS_NOTHING
 
@@ -165,17 +175,21 @@ private fun FirFunctionCall.callEmissions(session: FirSession, root: FirNamedFun
         fallthrough = maxOf(inside.fallthrough ?: 0, inside.left ?: 0),
         exited = inside.exited,
         broke = inside.broke,
+        continued = inside.continued,
     )
 }
 
+// A path reaches the loop head by falling off the body's end or by `continue`; either way, what it
+// carries repeats.
 private fun Emissions.loopEmissions(loop: FirLoop): Emissions = Emissions(
     fallthrough = maxOf(
-        if ((fallthrough ?: 0) > 0) SATURATED_EMISSION_COUNT else 0,
+        if (maxOf(fallthrough ?: 0, continued[loop] ?: 0) > 0) SATURATED_EMISSION_COUNT else 0,
         broke[loop] ?: 0,
     ),
     exited = exited,
     left = left,
     broke = broke - loop,
+    continued = continued - loop,
 )
 
 private fun FirWhenExpression.branchEmissions(session: FirSession, root: FirNamedFunction): Emissions {
@@ -193,6 +207,9 @@ private fun List<Emissions>.merge(): Emissions = Emissions(
     broke = flatMap { it.broke.entries }
         .groupBy({ it.key }, { it.value })
         .mapValues { (_, counts) -> counts.max() },
+    continued = flatMap { it.continued.entries }
+        .groupBy({ it.key }, { it.value })
+        .mapValues { (_, counts) -> counts.max() },
 )
 
 // One after another: what the earlier ones carried offsets every way the later ones can end.
@@ -201,16 +218,18 @@ private fun List<Emissions>.sequence(): Emissions {
     var exited: Int? = null
     var left: Int? = null
     val broke = mutableMapOf<FirLoop, Int>()
+    val continued = mutableMapOf<FirLoop, Int>()
 
     for (emissions in this) {
         emissions.exited?.let { exited = max(exited ?: 0, reached + it) }
         emissions.left?.let { left = max(left ?: 0, reached + it) }
         for ((loop, count) in emissions.broke) broke[loop] = max(broke[loop] ?: 0, reached + count)
+        for ((loop, count) in emissions.continued) continued[loop] = max(continued[loop] ?: 0, reached + count)
 
-        val fallthrough = emissions.fallthrough ?: return Emissions(null, exited, left, broke)
+        val fallthrough = emissions.fallthrough ?: return Emissions(null, exited, left, broke, continued)
         reached += fallthrough
     }
-    return Emissions(reached, exited, left, broke)
+    return Emissions(reached, exited, left, broke, continued)
 }
 
 private fun FirFunctionCall.emitsNode(session: FirSession): Boolean {
