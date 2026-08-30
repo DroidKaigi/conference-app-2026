@@ -23,11 +23,19 @@ class FavoritesStore(@FavoritesDataStoreQualifier private val dataStore: DataSto
         .map { it.readFavoriteIds() }
         .distinctUntilChanged()
 
-    suspend fun toggle(id: TimetableItemId) {
+    suspend fun toggle(id: TimetableItemId): Boolean {
+        var added = false
         dataStore.edit { preferences ->
             val current = preferences[FAVORITE_IDS_KEY].orEmpty()
-            preferences[FAVORITE_IDS_KEY] = if (id.value in current) current - id.value else current + id.value
+            if (id.value in current) {
+                preferences[FAVORITE_IDS_KEY] = current - id.value
+                added = false
+            } else {
+                preferences[FAVORITE_IDS_KEY] = current + id.value
+                added = true
+            }
         }
+        return added
     }
 
     suspend fun clear() {

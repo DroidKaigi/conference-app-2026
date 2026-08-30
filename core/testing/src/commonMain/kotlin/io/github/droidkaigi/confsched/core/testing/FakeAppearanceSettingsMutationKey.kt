@@ -14,7 +14,7 @@ import soil.query.buildMutationKey
 @ContributesBinding(TestingScope::class)
 class FakeAppearanceSettingsMutationKey private constructor(
     extraTag: MutationTag,
-    private val state: FakeMutationState<AppearanceSettings>,
+    private val state: FakeMutationState<AppearanceSettings, Unit>,
 ) : AppearanceSettingsMutationKey by buildMutationKey(
     id = MutationId("fake-appearance-settings-${extraTag.value}"),
     mutate = { settings -> state.record(settings) },

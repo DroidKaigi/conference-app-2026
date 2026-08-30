@@ -101,4 +101,33 @@ class FavoritesScreenPresenterTest {
             assertIs<AppError.UnknownException>(result.message.error)
         }
     }
+
+    @Test
+    fun bookmark_addition_emits_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            val result = results.awaitItem()
+            assertEquals(FavoritesScreenActionResult.FavoriteAdded, result)
+        }
+    }
+
+    @Test
+    fun bookmark_removal_does_not_emit_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(false)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
+
+            results.expectNoEvents()
+        }
+    }
 }

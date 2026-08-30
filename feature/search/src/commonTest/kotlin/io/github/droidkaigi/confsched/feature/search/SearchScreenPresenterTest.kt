@@ -204,6 +204,35 @@ class SearchScreenPresenterTest {
     }
 
     @Test
+    fun bookmark_addition_emits_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(SearchScreenAction.ToggleBookmark(TimetableItemId("kmp")))
+
+            val result = results.awaitItem()
+            assertEquals(SearchScreenActionResult.FavoriteAdded, result)
+        }
+    }
+
+    @Test
+    fun bookmark_removal_does_not_emit_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(false)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(SearchScreenAction.ToggleBookmark(TimetableItemId("compose")))
+
+            results.expectNoEvents()
+        }
+    }
+
+    @Test
     fun picking_a_day_narrows_the_result_to_it() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
