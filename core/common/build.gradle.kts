@@ -11,6 +11,7 @@ kotlin {
             api(libs.composeRuntime)
             api(libs.composeFoundation)
             api(libs.composeMaterial3)
+            implementation(libs.composeMaterial3AdaptiveNavigation3)
             api(libs.composeUi)
             api(libs.composeRuntimeRetain)
             api(libs.navigation3Runtime)

@@ -20,18 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Add
 import io.github.droidkaigi.confsched.core.designsystem.icon.Close
@@ -41,7 +34,9 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.ByteArrayImage
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
@@ -71,6 +66,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.re
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.subtitle
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -297,23 +293,15 @@ private object ProfileCardFormViewDefaults {
     val removeButtonOffset = DpOffset(0.5.dp, (-0.5).dp)
 }
 
-/**
- * The photograph the previews stand in for, drawn rather than shipped as a file: the same face the
- * card front falls back to, over the sample skin tone the design file uses for its own mock image.
- */
+@Composable
 internal fun sampleAvatarImage(): AvatarImage {
-    val side = 96
-    val bitmap = ImageBitmap(side, side)
-    CanvasDrawScope().draw(Density(1f), LayoutDirection.Ltr, Canvas(bitmap), Size(side.toFloat(), side.toFloat())) {
-        drawRect(SampleAvatarSkin)
-        drawPlaceholderFace(SampleAvatarInk)
+    // Resolves to the bundled sample drawable only where a PreviewImageResolver is installed, which
+    // is previews and screenshot tests; production installs none.
+    val resource = requireNotNull(LocalPreviewImageResolver.current?.resolve(PreviewImage.AvatarSample.imageUrl)) {
+        "sampleAvatarImage requires a PreviewImageResolver, available only in previews and tests."
     }
-    return AvatarImage(bitmap.encodeToPng())
+    return AvatarImage(imageResource(resource).encodeToPng())
 }
-
-private val SampleAvatarSkin = Color(0xFFE8D8B8)
-
-private val SampleAvatarInk = Color(0xFF3B2F1F)
 
 @LocalePreviews
 @Composable

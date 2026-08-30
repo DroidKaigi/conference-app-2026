@@ -203,7 +203,7 @@ private fun fakePreviewSpeaker(name: String) = TimetableSpeaker(
     id = TimetableSpeakerId(name),
     name = name,
     tagLine = "",
-    iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
+    iconUrl = PreviewImage.AvatarSample.imageUrl,
 )
 
 @LocalePreviews

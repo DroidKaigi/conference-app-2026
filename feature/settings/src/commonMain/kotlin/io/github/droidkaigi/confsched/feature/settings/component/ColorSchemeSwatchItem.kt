@@ -56,18 +56,19 @@ internal fun ColorSchemeSwatchItem(
     ) {
         val palette = colorScheme.toMaterialColorScheme()
         val dotOffset = colorScheme.dotOffset
+        val blobShape = SketchRoundRectShape(
+            seed = combineSketchSeed(seed),
+            roughness = ColorSchemeSwatchDefaults.blobRoughness,
+            tremor = ColorSchemeSwatchDefaults.blobTremor,
+            cornerRadius = ColorSchemeSwatchDefaults.blobSize / 2,
+            borderThickness = ColorSchemeSwatchDefaults.blobBorderThickness,
+        )
         Box(
             modifier = Modifier
                 .size(ColorSchemeSwatchDefaults.blobSize)
-                .clip(
-                    SketchRoundRectShape(
-                        seed = combineSketchSeed(seed),
-                        roughness = ColorSchemeSwatchDefaults.blobRoughness,
-                        tremor = ColorSchemeSwatchDefaults.blobTremor,
-                        cornerRadius = ColorSchemeSwatchDefaults.blobSize / 2,
-                    ),
-                )
-                .background(palette.primary),
+                .clip(blobShape)
+                .background(palette.primary)
+                .sketchBorder(shape = blobShape, color = palette.outline),
         ) {
             Box(
                 modifier = Modifier
@@ -81,7 +82,7 @@ internal fun ColorSchemeSwatchItem(
                             cornerRadius = ColorSchemeSwatchDefaults.dotSize / 2,
                         ),
                     )
-                    .background(palette.onPrimary),
+                    .background(palette.primaryContainer),
             )
         }
     }
@@ -217,6 +218,7 @@ private object ColorSchemeSwatchDefaults {
     val dabHeight = 48.dp
     val blobSize = 44.dp
     val dotSize = 16.dp
+    val blobBorderThickness = 1.5.dp
     val plateBorderThickness = 2.dp
     val shardSize = 13.dp
     val shardRadius = 12.dp
