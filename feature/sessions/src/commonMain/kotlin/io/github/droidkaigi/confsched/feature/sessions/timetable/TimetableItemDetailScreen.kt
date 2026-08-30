@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +68,9 @@ fun TimetableItemDetailScreen(
     var floorForEventMapDialog by rememberSaveable { mutableStateOf<Floor?>(null) }
 
     Scaffold(
+        // Makes room for the keyboard once, for the list and the toolbar alike; the scaffold
+        // reads the inset as consumed and leaves it out of the padding it hands the content.
+        modifier = Modifier.imePadding(),
         topBar = {
             KaigiTopAppBar(
                 title = "",
