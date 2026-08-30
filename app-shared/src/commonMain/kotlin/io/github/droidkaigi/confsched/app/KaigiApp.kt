@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.app
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.retain.retain
@@ -43,6 +44,7 @@ fun KaigiApp() {
                     sketchStrength = appearance.settings.sketchStrength,
                     sketchBaseSeed = appSketchBaseSeed,
                 ) {
+                    AndroidStatusBarIconAppearanceEffect(MaterialTheme.colorScheme.inverseSurface)
                     NavigatorEffect(
                         navigator = uiGraph.appNavigator,
                         backStack = backStack,
