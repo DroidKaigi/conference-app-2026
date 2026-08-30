@@ -28,7 +28,6 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
-import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 
 @Composable
 internal fun TimetableListSection(
@@ -36,7 +35,7 @@ internal fun TimetableListSection(
     contentPadding: PaddingValues,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
-    listState: LazyListState = rememberListDetailSceneAwareLazyListState(),
+    listState: LazyListState,
 ) {
     LazyColumn(
         state = listState,
@@ -139,6 +138,7 @@ private fun TimetableListSectionPreview(
             contentPadding = PaddingValues(),
             onBookmarkClick = {},
             onItemClick = {},
+            listState = rememberLazyListState(),
         )
     }
 }
