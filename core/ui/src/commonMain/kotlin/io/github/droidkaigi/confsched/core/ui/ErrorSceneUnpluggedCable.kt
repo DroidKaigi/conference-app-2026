@@ -8,11 +8,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
-internal fun unpluggedCableSceneVector(
+internal fun unpluggedCableBackgroundVector(
     primary: Color,
     onPrimary: Color,
 ): ImageVector = ImageVector.Builder(
-    name = "ErrorSceneUnpluggedCable",
+    name = "ErrorSceneUnpluggedCableBackground",
     defaultWidth = 412.dp,
     defaultHeight = 892.dp,
     viewportWidth = 412f,
@@ -50,24 +50,6 @@ internal fun unpluggedCableSceneVector(
     addPath(
         pathData = addPathNodes("M335.43 195.75C336.15 195.56 336.06 195.5 336.88 195.81C337.7 196.12 339.37 196.72 340.34 197.62C341.3 198.51 342.47 199.93 342.69 201.2C342.9 202.46 341.76 203.81 341.65 205.22C341.53 206.63 342.03 208.01 341.98 209.63C341.94 211.25 341.27 213.46 341.37 214.94C341.48 216.42 342.72 217.22 342.62 218.53C342.53 219.84 341.81 221.96 340.8 222.81C339.79 223.66 337.26 223.51 336.57 223.66C335.88 223.8 337.37 223.93 336.65 223.7C335.94 223.47 333.28 223.1 332.29 222.26C331.31 221.41 331.02 219.87 330.74 218.63C330.46 217.39 330.59 216.29 330.61 214.8C330.63 213.31 330.69 211.26 330.86 209.7C331.03 208.14 331.65 207.01 331.63 205.46C331.6 203.91 330.55 201.83 330.71 200.41C330.86 198.99 331.76 197.7 332.55 196.93C333.34 196.15 334.7 195.93 335.43 195.75Z"),
         fill = SolidColor(primary),
-    )
-    addPath(
-        pathData = addPathNodes("M228.35 447.16C229.7 447.24 233.85 447.5 236.46 447.63C239.06 447.77 242.74 447.94 244 448"),
-        stroke = SolidColor(onPrimary),
-        strokeLineWidth = 2f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M227.56 458.51C229.05 458.57 233.72 458.79 236.46 458.87C239.2 458.95 242.74 458.98 244 459"),
-        stroke = SolidColor(onPrimary),
-        strokeLineWidth = 2f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M253.3 440.08C255.78 439.46 259.19 439.64 262.05 439.54C264.92 439.43 267.92 439.29 270.47 439.46C273.02 439.64 275.03 440.08 277.35 440.58C279.67 441.09 282.69 440.88 284.4 442.5C286.11 444.12 287.06 447.51 287.61 450.32C288.16 453.13 288.11 456.51 287.71 459.39C287.31 462.26 286.97 465.69 285.21 467.6C283.45 469.51 279.6 470.4 277.16 470.84C274.71 471.28 273.09 470.52 270.52 470.23C267.95 469.94 264.6 469.19 261.74 469.1C258.88 469.01 255.9 470.1 253.37 469.71C250.85 469.32 248.25 468.4 246.61 466.76C244.96 465.12 243.89 462.58 243.51 459.89C243.14 457.2 243.74 453.39 244.34 450.62C244.95 447.86 245.65 445.05 247.14 443.29C248.63 441.54 250.81 440.71 253.3 440.08Z"),
-        fill = SolidColor(onPrimary),
     )
     addPath(
         pathData = addPathNodes("M42.1511 339.664C44.371 337.851 51.5892 331.567 59.9179 324.635C74.8569 312.201 93.4087 309.973 111.076 307.621C121.694 306.207 136.312 309.102 151.301 319.149C171.107 332.426 179.013 352.589 185.076 366.026C187.535 371.475 188.907 377.374 188.2 383.13C186.967 393.16 174.381 408.521 161.83 420.667C146.818 435.193 117.154 445.228 106.33 446.832C89.8969 449.266 77.5109 448.463 73.4139 447.197C69.716 443.497 66.1118 439.434 62.2574 436.538C60.2219 435.173 58.0247 434.019 54.2923 432.486"),
@@ -134,5 +116,34 @@ internal fun unpluggedCableSceneVector(
         stroke = SolidColor(onPrimary),
         strokeLineWidth = 2.6f,
         strokeLineCap = StrokeCap.Round,
+    )
+}.build()
+
+internal fun unpluggedCablePlugVector(
+    onPrimary: Color,
+): ImageVector = ImageVector.Builder(
+    name = "ErrorSceneUnpluggedCablePlug",
+    defaultWidth = 412.dp,
+    defaultHeight = 892.dp,
+    viewportWidth = 412f,
+    viewportHeight = 892f,
+).apply {
+    addPath(
+        pathData = addPathNodes("M228.35 447.16C229.7 447.24 233.85 447.5 236.46 447.63C239.06 447.77 242.74 447.94 244 448"),
+        stroke = SolidColor(onPrimary),
+        strokeLineWidth = 2f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M227.56 458.51C229.05 458.57 233.72 458.79 236.46 458.87C239.2 458.95 242.74 458.98 244 459"),
+        stroke = SolidColor(onPrimary),
+        strokeLineWidth = 2f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M253.3 440.08C255.78 439.46 259.19 439.64 262.05 439.54C264.92 439.43 267.92 439.29 270.47 439.46C273.02 439.64 275.03 440.08 277.35 440.58C279.67 441.09 282.69 440.88 284.4 442.5C286.11 444.12 287.06 447.51 287.61 450.32C288.16 453.13 288.11 456.51 287.71 459.39C287.31 462.26 286.97 465.69 285.21 467.6C283.45 469.51 279.6 470.4 277.16 470.84C274.71 471.28 273.09 470.52 270.52 470.23C267.95 469.94 264.6 469.19 261.74 469.1C258.88 469.01 255.9 470.1 253.37 469.71C250.85 469.32 248.25 468.4 246.61 466.76C244.96 465.12 243.89 462.58 243.51 459.89C243.14 457.2 243.74 453.39 244.34 450.62C244.95 447.86 245.65 445.05 247.14 443.29C248.63 441.54 250.81 440.71 253.3 440.08Z"),
+        fill = SolidColor(onPrimary),
     )
 }.build()

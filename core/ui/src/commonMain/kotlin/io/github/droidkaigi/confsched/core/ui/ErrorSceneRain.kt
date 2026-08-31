@@ -8,12 +8,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 
-internal fun rainSceneVector(
+internal fun rainBackgroundVector(
     primary: Color,
     onSurface: Color,
     primaryContainer: Color,
 ): ImageVector = ImageVector.Builder(
-    name = "ErrorSceneRain",
+    name = "ErrorSceneRainBackground",
     defaultWidth = 412.dp,
     defaultHeight = 892.dp,
     viewportWidth = 412f,
@@ -22,104 +22,6 @@ internal fun rainSceneVector(
     addPath(
         pathData = addPathNodes("M-8 224.21C-6.67 224.08 -2.15 222.27 0 223.38C2.15 224.49 3.27 228.28 4.9 230.87C6.54 233.45 8.17 236.56 9.81 238.9C11.44 241.23 13.08 243.18 14.71 244.87C16.35 246.56 17.98 247.64 19.62 249.04C21.25 250.45 22.89 252.04 24.52 253.3C26.16 254.56 27.79 255.91 29.43 256.6C31.06 257.28 32.7 257.47 34.33 257.4C35.97 257.33 37.6 256.89 39.24 256.19C40.87 255.48 42.51 254.31 44.14 253.17C45.78 252.03 47.41 250.78 49.05 249.34C50.68 247.9 52.32 246.48 53.95 244.52C55.59 242.56 57.22 239.89 58.86 237.6C60.49 235.31 62.13 232.91 63.76 230.8C65.4 228.7 67.03 224.89 68.67 224.98C70.3 225.06 71.94 229.11 73.57 231.3C75.21 233.5 76.84 236.16 78.48 238.15C80.11 240.14 81.75 241.74 83.38 243.23C85.02 244.72 86.65 245.81 88.29 247.07C89.92 248.33 91.56 249.7 93.19 250.79C94.83 251.87 96.46 252.88 98.1 253.58C99.73 254.28 101.37 255.05 103 254.98C104.63 254.92 106.27 253.89 107.9 253.18C109.54 252.47 111.17 251.49 112.81 250.72C114.44 249.95 116.08 249.67 117.71 248.56C119.35 247.44 120.98 246.03 122.62 244.03C124.25 242.02 125.89 238.87 127.52 236.52C129.16 234.18 130.79 232.16 132.43 229.94C134.06 227.72 135.7 223.07 137.33 223.21C138.97 223.34 140.6 228.6 142.24 230.74C143.87 232.89 145.51 234.26 147.14 236.05C148.78 237.84 150.41 239.95 152.05 241.49C153.68 243.04 155.32 244.05 156.95 245.3C158.59 246.56 160.22 248.13 161.86 249.03C163.49 249.94 165.13 250.55 166.76 250.74C168.4 250.93 170.03 250.22 171.67 250.18C173.3 250.14 174.94 250.98 176.57 250.51C178.21 250.04 179.84 248.29 181.48 247.36C183.11 246.43 184.75 246.17 186.38 244.93C188.02 243.68 189.65 241.34 191.29 239.9C192.92 238.45 194.56 237.86 196.19 236.25C197.83 234.64 199.46 232.24 201.1 230.23C202.73 228.22 204.37 224.17 206 224.19C207.63 224.21 209.27 228.36 210.9 230.35C212.54 232.34 214.17 234.13 215.81 236.14C217.44 238.14 219.08 240.78 220.71 242.39C222.35 243.99 223.98 244.47 225.62 245.77C227.25 247.06 228.89 249.16 230.52 250.17C232.16 251.19 233.79 251.56 235.43 251.87C237.06 252.17 238.7 252.2 240.33 252C241.97 251.79 243.6 250.92 245.24 250.64C246.87 250.35 248.51 251.13 250.14 250.29C251.78 249.45 253.41 247.04 255.05 245.58C256.68 244.12 258.32 243.01 259.95 241.55C261.59 240.09 263.22 238.72 264.86 236.81C266.49 234.9 268.13 232.36 269.76 230.07C271.4 227.79 273.03 222.72 274.67 223.09C276.3 223.45 277.94 229.88 279.57 232.28C281.21 234.68 282.84 235.59 284.48 237.5C286.11 239.41 287.75 241.54 289.38 243.74C291.02 245.95 292.65 249.1 294.29 250.74C295.92 252.39 297.56 252.74 299.19 253.63C300.83 254.52 302.46 255.41 304.1 256.09C305.73 256.77 307.37 257.59 309 257.72C310.63 257.84 312.27 257.35 313.9 256.84C315.54 256.32 317.17 255.94 318.81 254.62C320.44 253.29 322.08 250.67 323.71 248.89C325.35 247.12 326.98 245.65 328.62 243.95C330.25 242.25 331.89 240.89 333.52 238.68C335.16 236.47 336.79 233.16 338.43 230.71C340.06 228.26 341.7 223.96 343.33 223.98C344.97 224.01 346.6 228.88 348.24 230.86C349.87 232.84 351.51 234.15 353.14 235.87C354.78 237.59 356.41 239.52 358.05 241.18C359.68 242.84 361.32 244.43 362.95 245.84C364.59 247.25 366.22 248.95 367.86 249.66C369.49 250.37 371.13 249.92 372.76 250.09C374.4 250.25 376.03 250.36 377.67 250.65C379.3 250.94 380.94 252.13 382.57 251.84C384.21 251.55 385.84 249.93 387.48 248.92C389.11 247.91 390.75 247.1 392.38 245.78C394.02 244.45 395.65 242.58 397.29 240.98C398.92 239.39 400.56 237.95 402.19 236.23C403.83 234.5 405.46 232.61 407.1 230.62C408.73 228.62 409.85 225.22 412 224.27C414.15 223.32 418.67 224.8 420 224.9V-8H-8V224.21Z"),
         fill = SolidColor(primary),
-    )
-    addPath(
-        pathData = addPathNodes("M40.6702 383.6C40.1802 385.54 38.7802 391.29 37.7402 395.24C36.7102 399.19 35.0002 405.29 34.4502 407.3"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M77.4604 413.05C76.9504 415.12 75.4204 421.47 74.4204 425.49C73.4204 429.51 71.9404 435.23 71.4404 437.18"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M19.9 445.96C19.5 448.08 18.47 454.63 17.49 458.69C16.5 462.74 14.58 468.36 14 470.3"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M69.7904 491.9C69.2604 493.91 67.6804 500.03 66.6504 503.97C65.6204 507.92 64.1104 513.64 63.6104 515.57"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M115.72 520.49C115.19 522.48 113.57 528.4 112.54 532.43C111.51 536.46 110.03 542.62 109.53 544.66"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M65.0098 562.17C64.3698 564.21 62.2498 570.42 61.1798 574.39C60.1098 578.35 59.0298 584.03 58.5898 585.96"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M110 588.42C109.38 590.42 107.34 596.37 106.27 600.44C105.21 604.51 104.05 610.79 103.6 612.86"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M335.11 377.53C334.59 379.54 333.09 385.58 332.03 389.6C330.96 393.62 329.25 399.62 328.7 401.63"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M363.15 413.85C362.72 415.83 361.58 421.73 360.58 425.75C359.58 429.76 357.72 435.9 357.14 437.93"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M301.37 449.5C300.8 451.47 298.92 457.27 297.92 461.28C296.93 465.3 295.81 471.55 295.39 473.6"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M361.57 483.8C361.05 485.81 359.52 491.78 358.46 495.82C357.41 499.85 355.79 505.98 355.26 508.02"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M299.87 518.8C299.29 520.78 297.43 526.64 296.38 530.68C295.34 534.73 294.05 541.01 293.58 543.08"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M321.41 560.49C320.99 562.55 319.82 568.84 318.87 572.82C317.91 576.8 316.21 582.46 315.68 584.39"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
-    )
-    addPath(
-        pathData = addPathNodes("M390 591.95C389.4 594.04 387.42 600.47 386.37 604.51C385.31 608.54 384.11 614.21 383.66 616.15"),
-        stroke = SolidColor(primary),
-        strokeLineWidth = 2.6f,
-        strokeLineCap = StrokeCap.Round,
-        strokeLineJoin = StrokeJoin.Round,
     )
     addPath(
         pathData = addPathNodes("M202.384 411C202.094 413.23 201.034 420 200.664 424.38C200.294 428.76 199.724 431.81 200.154 437.26C200.584 442.71 202.734 453.77 203.254 457.07"),
@@ -255,5 +157,136 @@ internal fun rainSceneVector(
         stroke = SolidColor(onSurface),
         strokeLineWidth = 2.6f,
         strokeLineCap = StrokeCap.Round,
+    )
+}.build()
+
+internal fun rainDropsVector1(
+    primary: Color,
+): ImageVector = ImageVector.Builder(
+    name = "ErrorSceneRainDrops1",
+    defaultWidth = 412.dp,
+    defaultHeight = 892.dp,
+    viewportWidth = 412f,
+    viewportHeight = 892f,
+).apply {
+    addPath(
+        pathData = addPathNodes("M40.6702 383.6C40.1802 385.54 38.7802 391.29 37.7402 395.24C36.7102 399.19 35.0002 405.29 34.4502 407.3"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M69.7904 491.9C69.2604 493.91 67.6804 500.03 66.6504 503.97C65.6204 507.92 64.1104 513.64 63.6104 515.57"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M110 588.42C109.38 590.42 107.34 596.37 106.27 600.44C105.21 604.51 104.05 610.79 103.6 612.86"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M301.37 449.5C300.8 451.47 298.92 457.27 297.92 461.28C296.93 465.3 295.81 471.55 295.39 473.6"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M321.41 560.49C320.99 562.55 319.82 568.84 318.87 572.82C317.91 576.8 316.21 582.46 315.68 584.39"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+}.build()
+
+internal fun rainDropsVector2(
+    primary: Color,
+): ImageVector = ImageVector.Builder(
+    name = "ErrorSceneRainDrops2",
+    defaultWidth = 412.dp,
+    defaultHeight = 892.dp,
+    viewportWidth = 412f,
+    viewportHeight = 892f,
+).apply {
+    addPath(
+        pathData = addPathNodes("M77.4604 413.05C76.9504 415.12 75.4204 421.47 74.4204 425.49C73.4204 429.51 71.9404 435.23 71.4404 437.18"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M115.72 520.49C115.19 522.48 113.57 528.4 112.54 532.43C111.51 536.46 110.03 542.62 109.53 544.66"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M335.11 377.53C334.59 379.54 333.09 385.58 332.03 389.6C330.96 393.62 329.25 399.62 328.7 401.63"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M361.57 483.8C361.05 485.81 359.52 491.78 358.46 495.82C357.41 499.85 355.79 505.98 355.26 508.02"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M390 591.95C389.4 594.04 387.42 600.47 386.37 604.51C385.31 608.54 384.11 614.21 383.66 616.15"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+}.build()
+
+internal fun rainDropsVector3(
+    primary: Color,
+): ImageVector = ImageVector.Builder(
+    name = "ErrorSceneRainDrops3",
+    defaultWidth = 412.dp,
+    defaultHeight = 892.dp,
+    viewportWidth = 412f,
+    viewportHeight = 892f,
+).apply {
+    addPath(
+        pathData = addPathNodes("M19.9 445.96C19.5 448.08 18.47 454.63 17.49 458.69C16.5 462.74 14.58 468.36 14 470.3"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M65.0098 562.17C64.3698 564.21 62.2498 570.42 61.1798 574.39C60.1098 578.35 59.0298 584.03 58.5898 585.96"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M363.15 413.85C362.72 415.83 361.58 421.73 360.58 425.75C359.58 429.76 357.72 435.9 357.14 437.93"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
+    )
+    addPath(
+        pathData = addPathNodes("M299.87 518.8C299.29 520.78 297.43 526.64 296.38 530.68C295.34 534.73 294.05 541.01 293.58 543.08"),
+        stroke = SolidColor(primary),
+        strokeLineWidth = 2.6f,
+        strokeLineCap = StrokeCap.Round,
+        strokeLineJoin = StrokeJoin.Round,
     )
 }.build()
