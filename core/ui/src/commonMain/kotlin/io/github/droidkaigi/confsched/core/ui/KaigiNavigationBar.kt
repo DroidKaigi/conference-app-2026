@@ -144,8 +144,8 @@ fun KaigiNavigationRail(
     Box(
         modifier = modifier
             .fillMaxHeight()
-                        .width(KaigiNavigationRailDefaults.columnWidthWithInset)
-                        .windowInsetsPadding(KaigiNavigationRailDefaults.railInsets)
+            .width(KaigiNavigationRailDefaults.columnWidthWithInset)
+            .windowInsetsPadding(KaigiNavigationRailDefaults.railInsets)
             .padding(vertical = KaigiNavigationRailDefaults.verticalMargin),
         contentAlignment = Alignment.Center,
     ) {
