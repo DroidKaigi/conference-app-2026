@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,7 +30,6 @@ import kotlin.math.max
 /**
  * Defines the unique style of a lantern.
  */
-@Immutable
 internal enum class LanternStyle(
     val hangingCord: Dp,
     val size: DpSize,
