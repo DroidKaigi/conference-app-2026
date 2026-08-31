@@ -60,6 +60,7 @@ fun DoodleScreen(
             DoodleCanvasView(
                 doodle = Doodle(strokes = strokes.toList()),
                 referenceSize = uiState.target.referenceSize,
+                maxScale = DoodleCanvasMaxScale,
                 origin = uiState.target.doodleOrigin,
                 inkColor = uiState.target.inkColor,
                 haloColor = uiState.target.haloColor,

@@ -18,6 +18,9 @@ internal val DoodleTarget.referenceSize: DpSize
         DoodleTarget.ProfileCardFront, DoodleTarget.ProfileCardBack -> ProfileCardFaceDefaults.size
     }
 
+// The card face stops enlarging at its own cap, and the canvas must never outgrow its underlay.
+internal val DoodleCanvasMaxScale = ProfileCardFaceDefaults.maxScale
+
 internal val DoodleTarget.doodleOrigin: DoodleOrigin
     get() = when (this) {
         DoodleTarget.AboutWall -> DoodleOrigin.TopCenter

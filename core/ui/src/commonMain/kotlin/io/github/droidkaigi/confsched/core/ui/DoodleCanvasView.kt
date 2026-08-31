@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -32,14 +33,15 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 /**
  * A drawing surface standing in for the surface a doodle ends up on: [doodle] is what the user has
  * drawn so far, and each finished drag arrives at [onStrokeAdd] in [referenceSize]'s dp space,
- * anchored at [origin]. The surface is laid out at [referenceSize] scaled to fit, never enlarged,
- * so a stroke is stored at the size the target will draw it. [background] renders the underlay the
+ * anchored at [origin]. The surface is laid out at [referenceSize] scaled to fit, up to [maxScale],
+ * and a stroke is stored back in the target's own dp space. [background] renders the underlay the
  * user draws over and [overlay] whatever must stay above the strokes; both receive that scale.
  */
 @Composable
 fun DoodleCanvasView(
     doodle: Doodle,
     referenceSize: DpSize,
+    maxScale: Float,
     origin: DoodleOrigin,
     inkColor: Color,
     haloColor: Color?,
@@ -48,8 +50,8 @@ fun DoodleCanvasView(
     background: @Composable BoxScope.(scale: Float) -> Unit = {},
     overlay: @Composable BoxScope.(scale: Float) -> Unit = {},
 ) {
-    BoxWithConstraints(modifier = modifier) {
-        val scale = minOf(maxWidth / referenceSize.width, maxHeight / referenceSize.height).coerceAtMost(1f)
+    BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
+        val scale = minOf(maxWidth / referenceSize.width, maxHeight / referenceSize.height).coerceAtMost(maxScale)
         val points = remember { mutableStateListOf<DoodlePoint>() }
         val currentOnStrokeAdd by rememberUpdatedState(onStrokeAdd)
         val commitStroke: () -> Unit = {
@@ -115,6 +117,7 @@ private fun DoodleCanvasViewPreview(
         DoodleCanvasView(
             doodle = Doodle.fake(),
             referenceSize = AboutHeroSize,
+            maxScale = 1f,
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
             haloColor = null,
