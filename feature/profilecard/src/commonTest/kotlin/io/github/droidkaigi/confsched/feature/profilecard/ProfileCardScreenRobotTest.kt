@@ -41,21 +41,20 @@ class ProfileCardScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("show the empty form") {
-                checkTextDisplayed("Nickname")
-                checkTextDisplayed("Add image")
-                checkTextDisplayed("Create Card")
+                checkFormDisplayed()
+                checkAddImageButtonDisplayed()
             }
             describe("and Create is tapped with every field but the image filled") {
                 doIt {
                     inputNickName("Speaker B")
                     inputOccupation("Designer")
                     inputLink("https://example.com/b")
-                    clickMascot("Mascot E")
-                    clickSketchiness("Playful")
+                    clickMascot(Mascot.E)
+                    clickSketchiness(Sketchiness.Playful)
                     clickCreate()
                 }
                 itShould("report the image the card still needs and write nothing") {
-                    checkTextDisplayed("Please add an image")
+                    checkAvatarImageErrorDisplayed()
                     checkNoCardWritten()
                 }
             }
@@ -66,23 +65,22 @@ class ProfileCardScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("show the card rather than the form") {
-                checkTextDisplayed("Share")
-                checkTextDisplayed("Edit")
-                checkTextDoesNotExist("Create Card")
+                checkCardDisplayed()
+                checkFormDoesNotExist()
             }
             describe("and Edit is tapped") {
                 doIt { clickEdit() }
                 itShould("open the form on the stored card") {
-                    checkTextDisplayed("Speaker A")
-                    checkTextDisplayed("Create Card")
+                    checkFormDisplayed()
+                    checkNickNameShows("Speaker A")
                 }
                 describe("and every field is filled again before Create is tapped") {
                     doIt {
                         inputNickName("Speaker B")
                         inputOccupation("Designer")
                         inputLink("https://example.com/b")
-                        clickMascot("Mascot E")
-                        clickSketchiness("Playful")
+                        clickMascot(Mascot.E)
+                        clickSketchiness(Sketchiness.Playful)
                         clickCreate()
                     }
                     itShould("write the edited card and show a card again") {
@@ -96,8 +94,8 @@ class ProfileCardScreenRobotTest : RobotTest() {
                                 avatarImage = storedCard.avatarImage,
                             ),
                         )
-                        checkTextDoesNotExist("Create Card")
-                        checkTextDisplayed("Share")
+                        checkFormDoesNotExist()
+                        checkCardDisplayed()
                     }
                 }
             }
