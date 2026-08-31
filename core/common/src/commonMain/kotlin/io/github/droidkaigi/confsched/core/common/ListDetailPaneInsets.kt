@@ -43,9 +43,7 @@ fun <T : Any> rememberListDetailPaneInsetsNavEntryDecorator(): NavEntryDecorator
         if (sides == null) {
             entry.Content()
         } else {
-            // The branch must turn on the entry's own metadata rather than the scene it currently
-            // sits in: moving the Content() call to another call site discards everything the entry
-            // remembers or retains.
+            // Branching on the scene instead would move Content() and drop the entry's retained state.
             val consumed = if (LocalListDetailSceneScope.current != null) {
                 WindowInsets.systemBars.union(WindowInsets.displayCutout).only(sides)
             } else {
