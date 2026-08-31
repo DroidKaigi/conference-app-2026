@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +29,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.doodle_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.draw_on_the_card
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.edit_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
@@ -230,12 +232,26 @@ private fun ProfileCardActionsSection(
                     // the padding is what the row is spaced by.
                     .padding(vertical = ProfileCardViewDefaults.actionSpacing),
             )
-            IconButton(onClick = onDoodleClick, modifier = Modifier.size(ProfileCardViewDefaults.doodleButtonSize)) {
+            val doodleLabel = stringResource(Res.string.draw_on_the_card)
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(role = Role.Button, onClick = onDoodleClick)
+                    .semantics { contentDescription = doodleLabel }
+                    .padding(vertical = ProfileCardViewDefaults.actionSpacing),
+                horizontalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.doodleIconSpacing, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Icon(
                     imageVector = KaigiIcons.Default.Edit,
-                    contentDescription = stringResource(Res.string.draw_on_the_card),
-                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ProfileCardViewDefaults.doodleButtonAlpha),
-                    modifier = Modifier.size(ProfileCardViewDefaults.doodleButtonIconSize),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(ProfileCardViewDefaults.doodleIconSize),
+                )
+                Text(
+                    text = stringResource(Res.string.doodle_button),
+                    style = ProfileCardTextStyles.accent,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }
@@ -252,9 +268,8 @@ private object ProfileCardViewDefaults {
     val actionSpacing = 12.dp
 
     /** The doodle affordance stays discreet: a small, low-contrast mark beside the edit label. */
-    val doodleButtonSize = 36.dp
-    val doodleButtonIconSize = 16.dp
-    val doodleButtonAlpha = 0.4f
+    val doodleIconSize = 16.dp
+    val doodleIconSpacing = 4.dp
 }
 
 @LocalePreviews

@@ -28,4 +28,5 @@
     <string name="link_malformed_error">Please enter a link starting with http:// or https://</string>
     <string name="profile_image_error">Please add an image</string>
     <string name="draw_on_the_card">Draw on the card</string>
+    <string name="doodle_button">Doodle</string>
 </resources>

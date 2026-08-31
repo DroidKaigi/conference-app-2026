@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.about.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,11 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Edit
@@ -31,12 +35,15 @@ import io.github.droidkaigi.confsched.core.ui.AboutHeroStageTopInset
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
+import io.github.droidkaigi.confsched.core.ui.KaigiChip
+import io.github.droidkaigi.confsched.core.ui.KaigiChipDefaults
 import io.github.droidkaigi.confsched.core.ui.SketchBottomEdgeShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.core.ui.sketchBottomEdge
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_doodle
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_draw_on_the_wall
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_logo_description
 import org.jetbrains.compose.resources.stringResource
@@ -95,22 +102,32 @@ internal fun AboutHero(
             scale = 1f,
             modifier = Modifier.matchParentSize(),
         )
-        DoodleEditButton(
+        DoodleSignChip(
             onClick = onEditDoodleClick,
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = SignChipInset, top = SignChipTopInset),
         )
     }
 }
 
 @Composable
-private fun DoodleEditButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    IconButton(onClick = onClick, modifier = modifier.size(EditButtonSize)) {
+private fun DoodleSignChip(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val label = stringResource(Res.string.about_draw_on_the_wall)
+    KaigiChip(
+        seed = SIGN_CHIP_SEED,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        modifier = modifier
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics { contentDescription = label },
+    ) {
         Icon(
             imageVector = KaigiIcons.Default.Edit,
-            contentDescription = stringResource(Res.string.about_draw_on_the_wall),
-            tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = EDIT_BUTTON_ALPHA),
-            modifier = Modifier.size(EditButtonIconSize),
+            contentDescription = null,
+            modifier = Modifier.size(SignChipIconSize),
         )
+        Text(text = stringResource(Res.string.about_doodle), style = KaigiChipDefaults.labelStyle)
     }
 }
 
@@ -125,10 +142,11 @@ private fun BattenEdge() {
 }
 
 private const val WALL_EDGE_SEED = 5573
-private const val EDIT_BUTTON_ALPHA = 0.4f
+private const val SIGN_CHIP_SEED = 5574
 private val WallHeight = 241.dp
-private val EditButtonSize = 36.dp
-private val EditButtonIconSize = 16.dp
+private val SignChipIconSize = 14.dp
+private val SignChipInset = 12.dp
+private val SignChipTopInset = 16.dp
 
 @LocalePreviews
 @Composable
