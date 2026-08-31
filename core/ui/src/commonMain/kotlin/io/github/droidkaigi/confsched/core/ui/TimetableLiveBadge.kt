@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,8 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.live_badge
 import org.jetbrains.compose.resources.stringResource
+
+const val TIMETABLE_LIVE_BADGE_TEST_TAG = "TimetableLiveBadgeTestTag"
 
 @Composable
 internal fun TimetableLiveBadge(
@@ -68,6 +71,7 @@ internal fun TimetableLiveBadge(
     val primary = MaterialTheme.colorScheme.primary
     Row(
         modifier = modifier
+            .testTag(TIMETABLE_LIVE_BADGE_TEST_TAG)
             .size(TimetableLiveBadgeDefaults.width, TimetableLiveBadgeDefaults.height)
             .background(primary, shape)
             .sketchBorder(shape, primary)

@@ -18,6 +18,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
@@ -41,6 +42,11 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_no_match_title
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
+const val SEARCH_STATE_VIEW_INITIAL_TEST_TAG = "SearchStateViewInitialTestTag"
+const val SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG = "SearchStateViewNoMatchTestTag"
+const val SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG = "SearchStateViewNoMatchDescriptionTestTag"
+const val SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG = "SearchStateViewClearFiltersButtonTestTag"
 
 @Composable
 internal fun SearchStateView(
@@ -82,6 +88,12 @@ internal fun SearchStateView(
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.testTag(
+                        when (uiState) {
+                            SearchResultUiState.Empty.Initial -> SEARCH_STATE_VIEW_INITIAL_TEST_TAG
+                            SearchResultUiState.Empty.NoMatch -> SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG
+                        },
+                    ),
                 )
                 Text(
                     text = when (uiState) {
@@ -91,6 +103,10 @@ internal fun SearchStateView(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
+                    modifier = when (uiState) {
+                        SearchResultUiState.Empty.NoMatch -> Modifier.testTag(SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG)
+                        else -> Modifier
+                    },
                 )
                 if (uiState == SearchResultUiState.Empty.NoMatch && clearFiltersVisible) {
                     Text(
@@ -102,6 +118,7 @@ internal fun SearchStateView(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
+                            .testTag(SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG)
                             .clickable(role = Role.Button, onClick = onClearFiltersClick),
                     )
                 }

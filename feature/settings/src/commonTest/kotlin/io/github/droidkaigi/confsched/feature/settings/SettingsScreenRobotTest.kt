@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.settings
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.AppearanceSettings
 import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
+import io.github.droidkaigi.confsched.core.model.SketchStrength
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
 import kotlin.test.Test
@@ -20,15 +21,15 @@ class SettingsScreenRobotTest : RobotTest() {
                 setupContent()
             }
             itShould("show each group with the stored option marked") {
-                checkOptionDisplayed("Default")
-                checkOptionDisplayed("Courier Prime")
-                checkOptionDisplayed("Normal")
-                checkOptionSelected("Default")
-                checkOptionNotSelected("Courier Prime")
+                checkOptionDisplayed(KaigiFontFamily.Default)
+                checkOptionDisplayed(KaigiFontFamily.CourierPrime)
+                checkOptionDisplayed(SketchStrength.Normal)
+                checkOptionSelected(KaigiFontFamily.Default)
+                checkOptionNotSelected(KaigiFontFamily.CourierPrime)
             }
             describe("and another font is tapped") {
                 doIt {
-                    clickOption("Noto Sans")
+                    clickOption(KaigiFontFamily.NotoSans)
                 }
                 itShould("write that font alongside the settings already stored") {
                     checkSettingsWritten(

@@ -23,12 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchDefaults
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
+
+fun fontFamilyOptionItemTestTag(fontFamily: KaigiFontFamily) = "FontFamilyOptionItem:${fontFamily.name}"
 
 @Composable
 internal fun FontFamilyOptionItem(

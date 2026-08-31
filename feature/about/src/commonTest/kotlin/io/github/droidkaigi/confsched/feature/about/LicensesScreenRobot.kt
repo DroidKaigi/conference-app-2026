@@ -5,13 +5,15 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasProgressBarRangeInfo
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mikepenz.aboutlibraries.Libs
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
@@ -52,7 +54,7 @@ class LicensesScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription("Back").performClick()
+        composeUiTest.onNodeWithTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -73,6 +75,6 @@ class LicensesScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkErrorDisplayed() {
-        composeUiTest.onNodeWithText("Failed to load").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG).assertIsDisplayed()
     }
 }

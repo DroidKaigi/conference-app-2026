@@ -4,7 +4,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -18,6 +18,10 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.TIMETABLE_LIVE_BADGE_TEST_TAG
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TIMETABLE_HEADER_GRID_VIEW_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TIMETABLE_HEADER_LIST_VIEW_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TIMETABLE_HEADER_SEARCH_BUTTON_TEST_TAG
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -45,8 +49,12 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     }
 
     fun clickSearch() {
-        composeUiTest.onNodeWithContentDescription("Search").performClick()
+        composeUiTest.onNodeWithTag(TIMETABLE_HEADER_SEARCH_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
+    }
+
+    fun checkSearchOpened() {
+        assertTrue(searchOpened)
     }
 
     fun clickDayTab(day: DroidKaigi2026Day) {
@@ -68,25 +76,25 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     }
 
     fun checkLiveBadgeDisplayed() {
-        composeUiTest.onNodeWithText("LIVE").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(TIMETABLE_LIVE_BADGE_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkLiveBadgeDoesNotExist() {
-        composeUiTest.onNodeWithText("LIVE").assertDoesNotExist()
+        composeUiTest.onNodeWithTag(TIMETABLE_LIVE_BADGE_TEST_TAG).assertDoesNotExist()
     }
 
     fun checkTopBarActionsDisplayed() {
-        composeUiTest.onNodeWithContentDescription("Search").assertIsDisplayed()
-        composeUiTest.onNodeWithContentDescription("Switch to grid view").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(TIMETABLE_HEADER_SEARCH_BUTTON_TEST_TAG).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(TIMETABLE_HEADER_GRID_VIEW_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
     fun clickSwitchToGridView() {
-        composeUiTest.onNodeWithContentDescription("Switch to grid view").performClick()
+        composeUiTest.onNodeWithTag(TIMETABLE_HEADER_GRID_VIEW_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun checkSwitchToListViewActionDisplayed() {
-        composeUiTest.onNodeWithContentDescription("Switch to list view").assertIsDisplayed()
+        composeUiTest.onNodeWithTag(TIMETABLE_HEADER_LIST_VIEW_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
     fun recordDayTabsPosition() {
@@ -106,17 +114,21 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     }
 
     fun checkDayTabsFoldedAway() {
-        assertTrue(dayTabsBounds().bottom <= restingDayTabsTop)
+        val currentBounds = dayTabsBounds()
+        assertTrue(
+            actual = currentBounds.bottom <= restingDayTabsTop,
+            message = "Day tabs did not scroll away; still visible at $currentBounds against initial top $restingDayTabsTop",
+        )
     }
 
     fun checkDayTabsAtFullHeight() {
-        assertEquals(restingDayTabsTop, dayTabsBounds().top)
+        assertEquals(
+            expected = restingDayTabsTop,
+            actual = dayTabsBounds().top,
+            message = "Day tabs did not return to initial top position after scroll up",
+        )
     }
 
     private fun dayTabsBounds(): DpRect =
         composeUiTest.onNodeWithText(DroidKaigi2026Day.Day1.label).getUnclippedBoundsInRoot()
-
-    fun checkSearchOpened() {
-        assertTrue(searchOpened)
-    }
 }

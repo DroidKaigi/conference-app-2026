@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ internal fun FontFamilyGroupSection(
                     selected = entry == fontFamily,
                     seed = FontFamilyGroupDefaults.FIRST_OPTION_SEED + index,
                     onClick = { onFontFamilyClick(entry) },
+                    modifier = Modifier.testTag(fontFamilyOptionItemTestTag(entry)),
                 )
             }
         }

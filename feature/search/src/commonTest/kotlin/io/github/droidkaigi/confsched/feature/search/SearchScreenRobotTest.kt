@@ -100,7 +100,7 @@ class SearchScreenRobotTest : RobotTest() {
                 doIt {
                     typeQuery("Day1")
                     openDayFilter()
-                    pickFilterOption(DroidKaigi2026Day.Day2.label)
+                    pickDayFilterOption(DroidKaigi2026Day.Day2)
                 }
                 itShould("show the no-match state") {
                     checkNoMatchStateDisplayed()
@@ -121,7 +121,7 @@ class SearchScreenRobotTest : RobotTest() {
             describe("and a day is picked with nothing typed") {
                 doIt {
                     openDayFilter()
-                    pickFilterOption(DroidKaigi2026Day.Day2.label)
+                    pickDayFilterOption(DroidKaigi2026Day.Day2)
                 }
                 itShould("narrow the list to that day") {
                     checkSessionDisplayed("Day2 A")
@@ -136,14 +136,14 @@ class SearchScreenRobotTest : RobotTest() {
                     openDayFilter()
                 }
                 itShould("open its menu") {
-                    checkFilterOptionDisplayed(DroidKaigi2026Day.Day1.label)
+                    checkFilterOptionDisplayed(DroidKaigi2026Day.Day1)
                 }
                 describe("and the chip is tapped again") {
                     doIt {
                         openDayFilter()
                     }
                     itShould("close its menu") {
-                        checkFilterOptionDoesNotExist(DroidKaigi2026Day.Day1.label)
+                        checkFilterOptionDoesNotExist(DroidKaigi2026Day.Day1)
                     }
                 }
             }
@@ -172,7 +172,7 @@ class SearchScreenRobotTest : RobotTest() {
             describe("and a category is picked") {
                 doIt {
                     openCategoryFilter()
-                    pickFilterOption("Category B")
+                    pickCategoryFilterOption(categoryB.id)
                 }
                 itShould("filter by that category") {
                     checkSessionDisplayed("Day2 A")
@@ -194,7 +194,7 @@ class SearchScreenRobotTest : RobotTest() {
             describe("and a session type is picked") {
                 doIt {
                     openSessionTypeFilter()
-                    pickFilterOption("Codelabs")
+                    pickSessionTypeFilterOption(SessionType.CODELABS)
                 }
                 itShould("filter by that session type") {
                     checkSessionDisplayed("Day2 A")
@@ -216,7 +216,7 @@ class SearchScreenRobotTest : RobotTest() {
             describe("and a language is picked") {
                 doIt {
                     openLanguageFilter()
-                    pickFilterOption("Japanese")
+                    pickLanguageFilterOption(Language.JAPANESE)
                 }
                 itShould("filter by that language") {
                     checkSessionDisplayed("Day2 A")

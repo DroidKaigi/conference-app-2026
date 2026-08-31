@@ -3,13 +3,14 @@ package io.github.droidkaigi.confsched.feature.staff
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Staff
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
@@ -48,7 +49,7 @@ class StaffScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription("Back").performClick()
+        composeUiTest.onNodeWithTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 

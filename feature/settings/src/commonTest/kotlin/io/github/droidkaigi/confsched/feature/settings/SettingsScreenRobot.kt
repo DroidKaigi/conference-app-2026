@@ -5,15 +5,19 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Appearance
 import io.github.droidkaigi.confsched.core.model.AppearanceSettings
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
+import io.github.droidkaigi.confsched.core.model.SketchStrength
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.settings.component.fontFamilyOptionItemTestTag
+import io.github.droidkaigi.confsched.feature.settings.component.sketchStrengthOptionItemTestTag
 import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
@@ -34,25 +38,42 @@ class SettingsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         }
     }
 
-    fun clickOption(label: String) {
-        composeUiTest.onNodeWithText(label).performClick()
+    fun clickOption(fontFamily: KaigiFontFamily) {
+        composeUiTest.onNodeWithTag(fontFamilyOptionItemTestTag(fontFamily)).performClick()
         composeUiTest.waitForIdle()
     }
 
-    fun checkOptionDisplayed(label: String) {
-        composeUiTest.onNodeWithText(label).assertIsDisplayed()
+    fun clickOption(sketchStrength: SketchStrength) {
+        composeUiTest.onNodeWithTag(sketchStrengthOptionItemTestTag(sketchStrength)).performClick()
+        composeUiTest.waitForIdle()
     }
 
-    fun checkOptionSelected(label: String) {
-        composeUiTest.onNodeWithText(label).assertIsSelected()
+    fun checkOptionDisplayed(fontFamily: KaigiFontFamily) {
+        composeUiTest.onNodeWithTag(fontFamilyOptionItemTestTag(fontFamily)).assertIsDisplayed()
     }
 
-    fun checkOptionNotSelected(label: String) {
-        composeUiTest.onNodeWithText(label).assertIsNotSelected()
+    fun checkOptionDisplayed(sketchStrength: SketchStrength) {
+        composeUiTest.onNodeWithTag(sketchStrengthOptionItemTestTag(sketchStrength)).assertIsDisplayed()
+    }
+
+    fun checkOptionSelected(fontFamily: KaigiFontFamily) {
+        composeUiTest.onNodeWithTag(fontFamilyOptionItemTestTag(fontFamily)).assertIsSelected()
+    }
+
+    fun checkOptionSelected(sketchStrength: SketchStrength) {
+        composeUiTest.onNodeWithTag(sketchStrengthOptionItemTestTag(sketchStrength)).assertIsSelected()
+    }
+
+    fun checkOptionNotSelected(fontFamily: KaigiFontFamily) {
+        composeUiTest.onNodeWithTag(fontFamilyOptionItemTestTag(fontFamily)).assertIsNotSelected()
+    }
+
+    fun checkOptionNotSelected(sketchStrength: SketchStrength) {
+        composeUiTest.onNodeWithTag(sketchStrengthOptionItemTestTag(sketchStrength)).assertIsNotSelected()
     }
 
     fun clickBack() {
-        composeUiTest.onNodeWithContentDescription("Back").performClick()
+        composeUiTest.onNodeWithTag(KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 

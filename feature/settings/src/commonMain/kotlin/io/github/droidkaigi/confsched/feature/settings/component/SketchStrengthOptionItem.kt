@@ -33,6 +33,8 @@ import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
+fun sketchStrengthOptionItemTestTag(sketchStrength: SketchStrength) = "SketchStrengthOptionItem:${sketchStrength.name}"
+
 @Composable
 internal fun SketchStrengthOptionItem(
     sketchStrength: SketchStrength,
