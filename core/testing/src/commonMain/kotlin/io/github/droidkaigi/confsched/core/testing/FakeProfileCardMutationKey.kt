@@ -14,13 +14,13 @@ import soil.query.buildMutationKey
 @ContributesBinding(TestingScope::class)
 class FakeProfileCardMutationKey private constructor(
     extraTag: MutationTag,
-    private val state: FakeMutationState<ProfileCard>,
+    private val state: FakeMutationState<ProfileCard, Unit>,
 ) : ProfileCardMutationKey by buildMutationKey(
     id = MutationId("fake-profile-card-${extraTag.value}"),
     mutate = { card -> state.record(card) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState(Unit))
 
     val invocations: Channel<ProfileCard> get() = state.invocations
 

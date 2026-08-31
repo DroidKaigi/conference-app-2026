@@ -173,6 +173,35 @@ class TimetableScreenPresenterTest {
     }
 
     @Test
+    fun bookmark_addition_emits_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            val result = results.awaitItem()
+            assertEquals(TimetableScreenActionResult.FavoriteAdded, result)
+        }
+    }
+
+    @Test
+    fun bookmark_removal_does_not_emit_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(false)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableScreenAction.Bookmark(TimetableItemId("d1a")))
+
+            results.expectNoEvents()
+        }
+    }
+
+    @Test
     fun soil_rememberQuery_goes_loading_to_content_under_molecule() = runTest {
         val client = SwrCachePlus(backgroundScope)
 

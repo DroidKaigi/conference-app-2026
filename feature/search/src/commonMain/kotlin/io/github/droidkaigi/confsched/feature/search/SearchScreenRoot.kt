@@ -1,6 +1,8 @@
 package io.github.droidkaigi.confsched.feature.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
@@ -24,10 +26,12 @@ fun SearchScreenRoot(
         val screenChannel = retainScreenChannel<SearchScreenAction, SearchScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
+        val hapticFeedback = LocalHapticFeedback.current
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is SearchScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
+                SearchScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
             }
         }
 
