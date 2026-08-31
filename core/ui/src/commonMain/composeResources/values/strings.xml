@@ -21,4 +21,7 @@
     <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
     <string name="card_dates">2026.09.01 - 09.03</string>
     <string name="card_scan_me">SCAN ME</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="reset_zoom">Reset zoom</string>
 </resources>

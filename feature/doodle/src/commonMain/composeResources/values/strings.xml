@@ -3,4 +3,6 @@
     <string name="doodle_undo">Undo</string>
     <string name="doodle_clear">Clear</string>
     <string name="doodle_save">Save</string>
+    <string name="doodle_face_front">Front</string>
+    <string name="doodle_face_back">Back</string>
 </resources>

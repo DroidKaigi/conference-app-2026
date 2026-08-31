@@ -5,7 +5,6 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
-import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberSubscription
@@ -16,12 +15,9 @@ fun DoodleScreenRoot(
     onNavigateBack: () -> Unit,
 ) {
     SoilDataBoundary(
-        state1 = rememberSubscription(
-            key = screenContext.doodlesSubscriptionKey,
-            select = { doodles -> doodles[screenContext.target] ?: Doodle.Empty },
-        ),
+        state1 = rememberSubscription(screenContext.doodlesSubscriptionKey),
         state2 = rememberSubscription(screenContext.profileCardSubscriptionKey),
-    ) { savedDoodle, card ->
+    ) { savedDoodles, card ->
         val screenChannel = retainScreenChannel<DoodleScreenAction, DoodleScreenActionResult>()
         val snackbarHostState = LocalSnackbarHostState.current
 
@@ -35,13 +31,14 @@ fun DoodleScreenRoot(
         val uiState = context(screenContext.presenterContext) {
             doodleScreenPresenter(
                 screenChannel = screenChannel,
-                savedDoodle = savedDoodle,
+                savedDoodles = savedDoodles,
                 card = card,
             )
         }
         DoodleScreen(
             uiState = uiState,
-            onSaveClick = { screenChannel.send(DoodleScreenAction.Save(it)) },
+            onSaveWallClick = { screenChannel.send(DoodleScreenAction.SaveWall(it)) },
+            onSaveCardClick = { front, back -> screenChannel.send(DoodleScreenAction.SaveCard(front, back)) },
             onBackClick = onNavigateBack,
         )
     }

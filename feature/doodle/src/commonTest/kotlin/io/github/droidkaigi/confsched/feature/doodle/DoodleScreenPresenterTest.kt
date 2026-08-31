@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
+import kotlinx.collections.immutable.persistentMapOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -17,18 +18,19 @@ class DoodleScreenPresenterTest {
         createGraphFactory<DoodleScreenTestGraph.Factory>().create(target)
 
     @Test
-    fun saving_hands_the_drawn_doodle_to_the_mutation() {
+    fun saving_the_wall_hands_the_drawn_doodle_to_the_mutation() {
         val graph = graphFor(DoodleTarget.AboutWall)
         val drawn = Doodle.fake()
 
         runPresenterTest<DoodlePresenterContext, DoodleScreenAction, DoodleScreenActionResult, DoodleScreenUiState>(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> doodleScreenPresenter(channel, Doodle.Empty, card = null) },
+            presenter = { channel -> doodleScreenPresenter(channel, persistentMapOf(), card = null) },
         ) {
-            assertEquals(Doodle.Empty, uiStates.awaitItem().savedDoodle)
-            send(DoodleScreenAction.Save(drawn))
+            val uiState = assertIs<DoodleScreenUiState.Wall>(uiStates.awaitItem())
+            assertEquals(Doodle.Empty, uiState.savedDoodle)
+            send(DoodleScreenAction.SaveWall(drawn))
             assertEquals(
-                DoodleEdit(target = DoodleTarget.AboutWall, doodle = drawn),
+                listOf(DoodleEdit(target = DoodleTarget.AboutWall, doodle = drawn)),
                 graph.doodleMutationKey.invocations.receive(),
             )
             assertEquals(DoodleScreenActionResult.Saved, results.awaitItem())
@@ -36,20 +38,46 @@ class DoodleScreenPresenterTest {
     }
 
     @Test
-    fun saving_a_card_face_carries_that_face_as_the_target() {
+    fun a_card_target_exposes_both_faces_and_opens_on_the_one_it_was_given() {
         val graph = graphFor(DoodleTarget.ProfileCardBack)
-        val drawn = Doodle.fakeOnCardFace()
+        val front = Doodle.fakeOnCardFace()
 
         runPresenterTest<DoodlePresenterContext, DoodleScreenAction, DoodleScreenActionResult, DoodleScreenUiState>(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> doodleScreenPresenter(channel, Doodle.Empty, card = null) },
+            presenter = { channel ->
+                doodleScreenPresenter(
+                    channel,
+                    persistentMapOf(DoodleTarget.ProfileCardFront to front),
+                    card = null,
+                )
+            },
         ) {
-            assertEquals(DoodleTarget.ProfileCardBack, uiStates.awaitItem().target)
-            send(DoodleScreenAction.Save(drawn))
+            val uiState = assertIs<DoodleScreenUiState.Card>(uiStates.awaitItem())
+            assertEquals(front, uiState.frontDoodle)
+            assertEquals(Doodle.Empty, uiState.backDoodle)
+            assertEquals(DoodleCardFace.Back, uiState.initialFace)
+        }
+    }
+
+    @Test
+    fun saving_a_card_writes_both_faces_as_one_mutation() {
+        val graph = graphFor(DoodleTarget.ProfileCardFront)
+        val front = Doodle.fakeOnCardFace()
+
+        runPresenterTest<DoodlePresenterContext, DoodleScreenAction, DoodleScreenActionResult, DoodleScreenUiState>(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> doodleScreenPresenter(channel, persistentMapOf(), card = null) },
+        ) {
+            uiStates.awaitItem()
+            send(DoodleScreenAction.SaveCard(frontDoodle = front, backDoodle = Doodle.Empty))
             assertEquals(
-                DoodleEdit(target = DoodleTarget.ProfileCardBack, doodle = drawn),
+                listOf(
+                    DoodleEdit(target = DoodleTarget.ProfileCardFront, doodle = front),
+                    DoodleEdit(target = DoodleTarget.ProfileCardBack, doodle = Doodle.Empty),
+                ),
                 graph.doodleMutationKey.invocations.receive(),
             )
+            assertEquals(DoodleScreenActionResult.Saved, results.awaitItem())
         }
     }
 
@@ -60,10 +88,10 @@ class DoodleScreenPresenterTest {
 
         runPresenterTest<DoodlePresenterContext, DoodleScreenAction, DoodleScreenActionResult, DoodleScreenUiState>(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> doodleScreenPresenter(channel, Doodle.Empty, card = null) },
+            presenter = { channel -> doodleScreenPresenter(channel, persistentMapOf(), card = null) },
         ) {
             uiStates.awaitItem()
-            send(DoodleScreenAction.Save(Doodle.fake()))
+            send(DoodleScreenAction.SaveWall(Doodle.fake()))
             assertIs<DoodleScreenActionResult.ShowMessage>(results.awaitItem())
         }
     }
