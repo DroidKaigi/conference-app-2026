@@ -42,6 +42,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | Platform-confined common declarations carry a platform prefix | FIR `PlatformOnlyNaming` |
 | A screen-level composable is the only component in its file | FIR `ScreenIsSoleComponentInFile` |
 | Content lambdas nest at most four levels deep | FIR `ComposableNestingDepth` |
+| A composable without a layout scope emits at most one node at its root | FIR `SingleRootEmission` |
 | A private property exposed by a wider one uses an explicit backing field | FIR `ExplicitBackingFieldRequired` |
 | A private `var` exposed read-only uses `private set` | FIR `PrivateSetRequired` |
 | A feature UI composable carries a preview in its file | FIR `UiComponentRequiresPreview` |
@@ -290,6 +291,40 @@ fun TimetableScreen(uiState: TimetableScreenUiState) {
 Why: a deeply nested tree hides the structure of the screen. A `@Composable` function may nest content lambdas at most **four** levels deep; the fifth level must move into its own `@Composable` function (`TimetableCard` above). In a screen file, [`ScreenIsSoleComponentInFile`](#screenissolecomponentinfile) then gives that component its own file.
 
 A lambda counts towards the depth only when its body emits UI, so `onClick`, `remember`, and coroutine bodies are free. Builder lambdas that wrap content — `forEach`, `LazyListScope` — do count, because they add a level of braces the reader has to follow. The error is reported on the call that owns the offending lambda.
+
+### `SingleRootEmission`
+
+```kotlin
+@Composable
+fun ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // ERROR
+    if (selected) {
+        Box(Modifier.background(indicatorColor))
+    }
+    icon()
+}
+
+@Composable
+fun BoxScope.ItemIcon(selected: Boolean, icon: @Composable () -> Unit) {  // OK
+    if (selected) {
+        Box(Modifier.background(indicatorColor))
+    }
+    icon()
+}
+```
+
+Why: a composable with no root container leaves placement to whoever calls it. A centered `Box` stacks the two nodes in emission order, a `Row` or `Column` sets them side by side, so the component renders as intended at the call site it was written for and differently at the next one. A layout scope names the caller as the owner of placement, and is the sanctioned way to write a multi-emission component. It counts whether it is declared as a receiver or as a context parameter, and any subtype of one — `KaigiNavigationBarScope` extends `RowScope` — counts too. The scopes are those of the layouts that place their children: `BoxScope`, `RowScope`, `ColumnScope`, `FlowRowScope`, `FlowColumnScope`, `LazyItemScope`, `LazyGridItemScope`, `LazyStaggeredGridItemScope`, and `PagerScope`.
+
+Emission counting follows a single control-flow path: branches of `if` and `when` contribute the largest of their paths, a branch that returns takes the statements after it off its own path, and an emitter inside a `for` or `while` body counts as two — the rule asks only whether a path carries more than one. A `@Composable` call emits when its own result type is `Unit`, which admits a generic composable substituted to `Unit` at the call site, such as `key`. Calls whose result is bound to a value, `remember` among them, produce no node, and an emission inside an inline non-composable lambda such as `run` counts at the call holding it. The rule reaches named functions; a `@Composable` lambda literal is left to the layout it is passed to, and an emitter repeated by `forEach` or `repeat` counts once, since the repetition lives in the callee.
+
+An effect is named `…Effect`, and a composable carrying that name is read as running work rather than emitting. The name is the whole test, so a composable that emits must not be named that way. The name is taken from the declaration that owns it, so a `fun interface` effect is recognised by the interface name at its `invoke` site:
+
+```kotlin
+fun interface HistorySyncEffect {
+    @Composable operator fun invoke(backStack: NavBackStack<NavKey>)
+}
+
+uiGraph.historySyncEffect(backStack)  // reads as HistorySyncEffect, so it emits nothing
+```
 
 ### `ExplicitBackingFieldRequired`
 

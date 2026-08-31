@@ -61,3 +61,20 @@ infix fun <T> CompositionLocal<T>.provides(value: T): ProvidedValue<T> = Provide
 @Composable
 fun CompositionLocalProvider(vararg values: ProvidedValue<*>, content: @Composable () -> Unit) {
 }
+
+@Composable
+fun SideEffect(effect: () -> Unit) {
+}
+
+class DisposableEffectResult
+
+class DisposableEffectScope {
+    fun onDispose(onDisposeEffect: () -> Unit): DisposableEffectResult = DisposableEffectResult()
+}
+
+@Composable
+fun DisposableEffect(key1: Any?, effect: DisposableEffectScope.() -> DisposableEffectResult) {
+}
+
+@Composable
+fun <T> key(vararg keys: Any?, block: @Composable () -> T): T = throw UnsupportedOperationException()

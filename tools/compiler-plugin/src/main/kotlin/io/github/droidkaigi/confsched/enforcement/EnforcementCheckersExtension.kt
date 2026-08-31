@@ -49,6 +49,7 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             ComposableNestingDepthChecker,
             UiComponentTakesWhatItReadsChecker,
             NoCallerSuppliedCallbackArgumentChecker,
+            SingleRootEmissionChecker,
         )
         override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(
             LambdaCanBeCallableReferenceChecker,

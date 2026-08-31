@@ -9,11 +9,9 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -23,15 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.customAnnotations
-import org.jetbrains.kotlin.fir.types.functionTypeKind
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-
-private val COMPOSABLE_ANNOTATION_ID = ClassId(FqName("androidx.compose.runtime"), Name.identifier("Composable"))
 
 // Named-argument form is the only option for every parameter but the last, so the rule reaches only
 // the last one. Its source order among the other arguments does not matter: named arguments may be
@@ -64,13 +54,6 @@ internal object ComposableLambdaMustBeTrailingChecker : FirFunctionCallChecker(M
             )
         }
     }
-}
-
-// A registered @Composable function-type kind carries the annotation on the type's `invoke`; without
-// that kind the type stays a kotlin.FunctionN holding @Composable as a type annotation.
-private fun ConeKotlinType.isComposableFunctionType(session: FirSession): Boolean {
-    if (functionTypeKind(session)?.annotationOnInvokeClassId == COMPOSABLE_ANNOTATION_ID) return true
-    return customAnnotations.any { it.toAnnotationClassId(session) == COMPOSABLE_ANNOTATION_ID }
 }
 
 object ComposableTrailingLambdaErrors : KtDiagnosticsContainer() {
