@@ -219,7 +219,7 @@ private fun RootTabRailLayout(
     content: @Composable () -> Unit,
 ) {
     val columnWidthPx = with(LocalDensity.current) {
-        KaigiNavigationRailDefaults.columnWidth.toPx()
+        KaigiNavigationRailDefaults.columnWidthWithInset.toPx()
     }
     // Saves a plain Boolean rather than using the library Saver, which restores the state
     // without anchors and leaves its offset unusable until they are set again.

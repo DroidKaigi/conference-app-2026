@@ -8,14 +8,19 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -32,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -45,6 +51,8 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.Timetable
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.KaigiNavigationBarDefaults.occupiedHeight
+import io.github.droidkaigi.confsched.core.ui.KaigiNavigationRailDefaults.columnWidth
 
 /**
  * The destinations of the app, gathered into one hand-drawn pill floating over the content.
@@ -67,7 +75,7 @@ fun KaigiNavigationBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .windowInsetsPadding(WindowInsets.navigationBars)
+            .windowInsetsPadding(KaigiNavigationBarDefaults.barInsets)
             .padding(
                 start = 32.dp,
                 end = 32.dp,
@@ -136,7 +144,8 @@ fun KaigiNavigationRail(
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .width(KaigiNavigationRailDefaults.columnWidth)
+            .width(KaigiNavigationRailDefaults.columnWidthWithInset)
+            .windowInsetsPadding(KaigiNavigationRailDefaults.railInsets)
             .padding(vertical = KaigiNavigationRailDefaults.verticalMargin),
         contentAlignment = Alignment.Center,
     ) {
@@ -284,6 +293,16 @@ object KaigiNavigationBarDefaults {
     val topMargin = 12.dp
 
     /**
+     * The insets the bar keeps clear of: the system bars and, on the horizontal and bottom
+     * edges the bar touches, the display cutout. `safeDrawing` is avoided here since it
+     * includes the IME, which would push the bar above the keyboard.
+     */
+    val barInsets: WindowInsets
+        @Composable get() = WindowInsets.systemBars
+            .union(WindowInsets.displayCutout)
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+
+    /**
      * What the design leaves between the bar and the platform's own navigation area, which
      * sits below it and is not the bar's to draw. The bar is padded by that area's inset on
      * top of this margin, so the two never overlap.
@@ -304,7 +323,7 @@ object KaigiNavigationBarDefaults {
      */
     val occupiedHeightWithInset: Dp
         @Composable get() = occupiedHeight +
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            barInsets.asPaddingValues().calculateBottomPadding()
 
     val cornerRadius = 28.dp
     val indicatorSize = 40.dp
@@ -322,6 +341,24 @@ object KaigiNavigationRailDefaults {
 
     /** Keeps the pill off the window edges where the window is shorter than the pill. */
     val verticalMargin = 12.dp
+
+    /**
+     * The insets the rail keeps clear of: the system bars and, on the leading and vertical
+     * edges the rail touches, the display cutout. `safeDrawing` is avoided here since it
+     * includes the IME, which is not relevant to a rail anchored to the leading edge.
+     */
+    val railInsets: WindowInsets
+        @Composable get() = WindowInsets.systemBars
+            .union(WindowInsets.displayCutout)
+            .only(WindowInsetsSides.Start + WindowInsetsSides.Vertical)
+
+    /**
+     * [columnWidth] plus the leading inset the rail is padded by, so the column always covers
+     * the full width the rail actually draws into — including under a cutout.
+     */
+    val columnWidthWithInset: Dp
+        @Composable get() = columnWidth +
+            railInsets.asPaddingValues().calculateStartPadding(LocalLayoutDirection.current)
 }
 
 /**
