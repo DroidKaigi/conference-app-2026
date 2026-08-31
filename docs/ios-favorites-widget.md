@@ -54,6 +54,6 @@ Each state sets a `widgetURL`, and a live session row sets its own `Link`. The U
 
 The frame is `SketchFrame`, a port of `SketchRoundRectShape` carrying the seeds, reference sizes and wobble parameters `app-android/.../widget/SketchBorderBitmap.kt` pins. Its noise is specified so a second implementation reproduces it exactly, so both platforms draw the same outline; a change to either side must be mirrored.
 
-The symbol mark and the mascots are `WidgetArtworks`, the stroke outlines of the Android vector drawables under `app-android/src/main/res/drawable`, tinted at each call site. They are transcribed from those files and must be retranscribed when the drawables change.
+The symbol mark and the mascots are `WidgetArtworks`, outlines of the Android vector drawables under `app-android/src/main/res/drawable`, tinted at each call site — stroked line art for most characters, filled outlines for mascot F. They are transcribed from those files and must be retranscribed when the drawables change. The widget picks one of the six mascots pseudo-randomly per render, seeded by the render instant.
 
 Related: [iOS overview](./ios.md) · [Deep links](./navigation-deep-links.md) · [Swift ↔ Kotlin interop](./ios-interop.md)

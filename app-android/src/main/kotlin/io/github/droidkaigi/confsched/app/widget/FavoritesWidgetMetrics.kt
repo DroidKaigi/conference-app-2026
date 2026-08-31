@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.app.widget
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,4 +26,6 @@ internal const val PREVIEW_SMALL_WIDTH_DP = 158
 internal const val PREVIEW_MEDIUM_WIDTH_DP = 338
 internal const val PREVIEW_HEIGHT_DP = 158
 
-internal fun mascotClearance(medium: Boolean): Dp = if (medium) 37.dp + GapArt else 0.dp
+@Composable
+internal fun mascotClearance(medium: Boolean): Dp =
+    if (medium) LocalWidgetMascot.current.width(34.dp) + GapArt else 0.dp

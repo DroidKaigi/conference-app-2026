@@ -105,7 +105,8 @@ private fun FarewellMediumBody(message: String, secondary: String?, colors: Favo
             }
         }
         Spacer(modifier = GlanceModifier.width(GapArt))
-        Mascot(R.drawable.widget_mascot_b, 37.dp, 34.dp, colors)
+        val mascot = LocalWidgetMascot.current
+        Mascot(mascot.resId, mascot.width(34.dp), 34.dp, colors)
     }
 }
 
@@ -114,7 +115,7 @@ private fun FarewellMediumBody(message: String, secondary: String?, colors: Favo
 @Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Composable
 private fun PostConferencePreview() {
-    FavoritesWidgetContent(FavoritesWidgetState.PostConference, KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
+    FavoritesWidgetContent(FavoritesWidgetState.PostConference, KaigiColorScheme.MorningMist.toFavoritesWidgetColors(), previewWidgetMascot())
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
@@ -125,5 +126,6 @@ private fun DayWrapUpPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.DayWrapUp(tomorrowFavorites = 3),
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }

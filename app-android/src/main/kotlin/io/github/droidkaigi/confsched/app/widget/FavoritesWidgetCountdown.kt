@@ -48,7 +48,8 @@ private fun CountdownBody(
         CountdownFigures(state, colors, medium)
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
+            val mascot = LocalWidgetMascot.current
+            Mascot(mascot.resId, mascot.width(30.dp), 30.dp, colors)
         }
     }
 }
@@ -131,7 +132,8 @@ private fun EventDayBody(colors: FavoritesWidgetColors, medium: Boolean) {
         }
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
+            val mascot = LocalWidgetMascot.current
+            Mascot(mascot.resId, mascot.width(30.dp), 30.dp, colors)
         }
     }
 }
@@ -144,6 +146,7 @@ private fun CountdownPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.Countdown(daysUntilStart = 12),
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }
 
@@ -155,5 +158,6 @@ private fun EventDayPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.EventDay,
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }

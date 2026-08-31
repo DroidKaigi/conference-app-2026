@@ -22,7 +22,7 @@ class FavoritesWidget : GlanceAppWidget() {
         scheduleFavoritesWidgetRefresh(context, context.widgetDependencies.kaigiClock.now())
         provideContent {
             val render by renders.collectAsState(initial)
-            FavoritesWidgetContent(render.state, render.colors)
+            FavoritesWidgetContent(render.state, render.colors, render.mascot)
         }
     }
 }
