@@ -77,13 +77,15 @@ fun TimetableItemCard(
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
     )
-    Box(modifier = modifier.fillMaxWidth()) {
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .clip(shape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
-        )
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            // clip precedes clickable so the ripple follows the sketched round rect
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .clickable(onClick = onClick)
+            .sketchBorder(shape, MaterialTheme.colorScheme.outline),
+    ) {
         CardBody(
             title = title,
             titleMark = titleMark,
@@ -93,8 +95,6 @@ fun TimetableItemCard(
             isCancelled = isCancelled,
             seed = seed,
             titleMarkSeed = titleMarkSeed,
-            // clip precedes clickable so the ripple follows the sketched round rect
-            modifier = Modifier.clip(shape).clickable(onClick = onClick),
         )
         if (isFavorite) {
             room.mascot?.let { mascot ->
@@ -115,11 +115,6 @@ fun TimetableItemCard(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(TimetableItemCardDefaults.favoritePadding),
-        )
-        Box(
-            Modifier
-                .matchParentSize()
-                .sketchBorder(shape, MaterialTheme.colorScheme.outline),
         )
     }
 }
