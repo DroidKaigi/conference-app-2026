@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1.0</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>1</string>
 	<key>FavoritesWidgetAppGroup</key>
 	<string>group.io.github.droidkaigi.confsched.kaigiapp</string>
 	<key>FavoritesWidgetSnapshotSchemaVersion</key>

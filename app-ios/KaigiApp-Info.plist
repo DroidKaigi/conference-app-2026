@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>1</string>
 	<key>FavoritesWidgetAppGroup</key>
 	<string>group.io.github.droidkaigi.confsched.kaigiapp</string>
 	<key>FavoritesWidgetSnapshotSchemaVersion</key>
