@@ -27,16 +27,18 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiIllustrationColors
 import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchGroundLine
+import io.github.droidkaigi.confsched.core.ui.mascotFArt
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_hall
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_jellyfish
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_koala
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_ladybug
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_meerkat
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_a
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_b
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_c
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_d
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_e
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
@@ -49,19 +51,11 @@ internal enum class SearchSceneDirection {
     EmptyBox,
 }
 
-internal enum class SearchMascot {
-    Hall,
-    Jellyfish,
-    Koala,
-    Ladybug,
-    Meerkat,
-}
-
 @Immutable
 internal data class SearchSceneSelection(
     val initialDirection: SearchSceneDirection,
     val noMatchDirection: SearchSceneDirection,
-    val mascot: SearchMascot,
+    val mascot: Mascot,
 )
 
 internal fun searchSceneSelection(appSeed: Int): SearchSceneSelection {
@@ -78,7 +72,7 @@ internal fun searchSceneSelection(appSeed: Int): SearchSceneSelection {
     return SearchSceneSelection(
         initialDirection = initialDirections[random.nextInt(initialDirections.size)],
         noMatchDirection = noMatchDirections[random.nextInt(noMatchDirections.size)],
-        mascot = SearchMascot.entries[random.nextInt(SearchMascot.entries.size)],
+        mascot = Mascot.entries[random.nextInt(Mascot.entries.size)],
     )
 }
 
@@ -91,7 +85,7 @@ internal fun rememberSearchSceneSelection(): SearchSceneSelection {
 @Composable
 internal fun SearchScene(
     direction: SearchSceneDirection,
-    mascot: SearchMascot,
+    mascot: Mascot,
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -244,22 +238,24 @@ private val SearchSceneDirection.spec: SearchSceneSpec
         )
     }
 
-private val SearchMascot.resource: DrawableResource
+private val Mascot.resource: DrawableResource
     get() = when (this) {
-        SearchMascot.Hall -> Res.drawable.search_mascot_hall
-        SearchMascot.Jellyfish -> Res.drawable.search_mascot_jellyfish
-        SearchMascot.Koala -> Res.drawable.search_mascot_koala
-        SearchMascot.Ladybug -> Res.drawable.search_mascot_ladybug
-        SearchMascot.Meerkat -> Res.drawable.search_mascot_meerkat
+        Mascot.A -> Res.drawable.search_mascot_a
+        Mascot.B -> Res.drawable.search_mascot_b
+        Mascot.C -> Res.drawable.search_mascot_c
+        Mascot.D -> Res.drawable.search_mascot_d
+        Mascot.E -> Res.drawable.search_mascot_e
+        Mascot.F -> mascotFArt
     }
 
-private val SearchMascot.size: DpSize
+private val Mascot.size: DpSize
     get() = when (this) {
-        SearchMascot.Hall -> DpSize(57.dp, 52.dp)
-        SearchMascot.Jellyfish -> DpSize(54.dp, 52.dp)
-        SearchMascot.Koala -> DpSize(47.dp, 54.dp)
-        SearchMascot.Ladybug -> DpSize(55.dp, 52.dp)
-        SearchMascot.Meerkat -> DpSize(44.dp, 52.dp)
+        Mascot.A -> DpSize(57.dp, 52.dp)
+        Mascot.B -> DpSize(54.dp, 52.dp)
+        Mascot.C -> DpSize(47.dp, 54.dp)
+        Mascot.D -> DpSize(55.dp, 52.dp)
+        Mascot.E -> DpSize(44.dp, 52.dp)
+        Mascot.F -> DpSize(49.dp, 52.dp)
     }
 
 @Preview
@@ -274,7 +270,7 @@ private fun SearchScenePreview(
                 .padding(8.dp),
         ) {
             SearchSceneDirection.entries
-                .zip(SearchMascot.entries)
+                .zip(Mascot.entries)
                 .chunked(2)
                 .forEach { scenes ->
                     Row {

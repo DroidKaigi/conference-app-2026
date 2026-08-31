@@ -56,7 +56,7 @@ class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: Dat
             occupation = this[OCCUPATION_KEY].orEmpty(),
             link = this[LINK_KEY].orEmpty(),
             mascot = this[MASCOT_KEY]
-                ?.let { name -> Mascot.entries.firstOrNull { it.name == name } }
+                ?.let(::storedMascot)
                 ?: ProfileCard.DefaultMascot,
             sketchiness = this[SKETCHINESS_KEY]
                 ?.let { name -> Sketchiness.entries.firstOrNull { it.name == name } }
@@ -66,6 +66,16 @@ class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: Dat
     }
 
     private companion object {
+        /** Cards saved before the mascots were renamed to letters carry the old names. */
+        fun storedMascot(name: String): Mascot? = when (name) {
+            "Hall" -> Mascot.A
+            "Jellyfish" -> Mascot.B
+            "Koala" -> Mascot.C
+            "Ladybug" -> Mascot.D
+            "Meerkat" -> Mascot.E
+            else -> Mascot.entries.firstOrNull { it.name == name }
+        }
+
         val NICK_NAME_KEY = stringPreferencesKey("profileCard.nickName")
         val OCCUPATION_KEY = stringPreferencesKey("profileCard.occupation")
         val LINK_KEY = stringPreferencesKey("profileCard.link")

@@ -39,7 +39,7 @@ class ProfileCardShareImageCaptureTest {
                         nickName = "Speaker A",
                         occupation = "Software Engineer",
                         link = "https://example.com",
-                        mascot = Mascot.Koala,
+                        mascot = Mascot.C,
                         sketchiness = Sketchiness.Normal,
                         avatarImage = null,
                     ),

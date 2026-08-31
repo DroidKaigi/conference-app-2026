@@ -2,11 +2,13 @@ package io.github.droidkaigi.confsched.feature.profilecard.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -28,18 +30,15 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
+import io.github.droidkaigi.confsched.core.ui.mascotFArt
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.hall
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.jellyfish
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.koala
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ladybug
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_hall
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_jellyfish
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_koala
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_ladybug
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_meerkat
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.meerkat
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_a
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_b
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_c
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_d
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_e
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_f
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -47,11 +46,12 @@ import org.jetbrains.compose.resources.stringResource
 
 private val Mascot.drawableResource: DrawableResource
     get() = when (this) {
-        Mascot.Hall -> Res.drawable.hall
-        Mascot.Jellyfish -> Res.drawable.jellyfish
-        Mascot.Koala -> Res.drawable.koala
-        Mascot.Ladybug -> Res.drawable.ladybug
-        Mascot.Meerkat -> Res.drawable.meerkat
+        Mascot.A -> Res.drawable.mascot_a
+        Mascot.B -> Res.drawable.mascot_b
+        Mascot.C -> Res.drawable.mascot_c
+        Mascot.D -> Res.drawable.mascot_d
+        Mascot.E -> Res.drawable.mascot_e
+        Mascot.F -> mascotFArt
     }
 
 /**
@@ -80,7 +80,10 @@ fun MascotPicker(
     onMascotClick: (Mascot) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(MascotOptionDefaults.gap)) {
+    Row(
+        modifier = modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(MascotOptionDefaults.gap),
+    ) {
         Mascot.entries.forEach { mascot ->
             MascotOption(
                 mascot = mascot,
@@ -169,15 +172,16 @@ private fun MascotPickerPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        MascotPicker(selectedMascot = Mascot.Koala, onMascotClick = {}, modifier = Modifier.padding(16.dp))
+        MascotPicker(selectedMascot = Mascot.C, onMascotClick = {}, modifier = Modifier.padding(16.dp))
     }
 }
 
 private val Mascot.nameResource: StringResource
     get() = when (this) {
-        Mascot.Hall -> Res.string.mascot_hall
-        Mascot.Jellyfish -> Res.string.mascot_jellyfish
-        Mascot.Koala -> Res.string.mascot_koala
-        Mascot.Ladybug -> Res.string.mascot_ladybug
-        Mascot.Meerkat -> Res.string.mascot_meerkat
+        Mascot.A -> Res.string.mascot_a
+        Mascot.B -> Res.string.mascot_b
+        Mascot.C -> Res.string.mascot_c
+        Mascot.D -> Res.string.mascot_d
+        Mascot.E -> Res.string.mascot_e
+        Mascot.F -> Res.string.mascot_f
     }

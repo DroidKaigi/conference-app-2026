@@ -13,14 +13,14 @@ private let rowHeight: CGFloat = 22
 private let timeCellWidth: CGFloat = 40
 private let maxMediumRows = 3
 
-private let koalaSize = CGSize(width: 28, height: 30)
-private let jellyfishSize = CGSize(width: 37, height: 34)
-private func ladybugSize(medium: Bool) -> CGSize {
+private let mascotCSize = CGSize(width: 28, height: 30)
+private let mascotBSize = CGSize(width: 37, height: 34)
+private func mascotDSize(medium: Bool) -> CGSize {
     medium ? CGSize(width: 37, height: 34) : CGSize(width: 33, height: 30)
 }
 
 private func mascotClearance(medium: Bool) -> CGFloat {
-    medium ? ladybugSize(medium: true).width + gapArt : 0
+    medium ? mascotDSize(medium: true).width + gapArt : 0
 }
 
 struct FavoritesWidgetView: View {
@@ -209,8 +209,8 @@ private struct CountdownFrame<Figures: View>: View {
                 if medium {
                     Spacer(minLength: 0)
                     Mascot(
-                        artwork: WidgetArtworks.koala,
-                        size: koalaSize,
+                        artwork: WidgetArtworks.mascotC,
+                        size: mascotCSize,
                         color: Color(argbHex: colors.onSurfaceVariant)
                     )
                 }
@@ -314,8 +314,8 @@ private struct DayPromptContent: View {
                 .padding(.trailing, mascotClearance(medium: medium))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Mascot(
-                    artwork: WidgetArtworks.ladybug,
-                    size: ladybugSize(medium: medium),
+                    artwork: WidgetArtworks.mascotD,
+                    size: mascotDSize(medium: medium),
                     color: Color(argbHex: colors.onSurfaceVariant)
                 )
             }
@@ -352,8 +352,8 @@ private struct FarewellContent: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Mascot(
-                        artwork: WidgetArtworks.jellyfish,
-                        size: jellyfishSize,
+                        artwork: WidgetArtworks.mascotB,
+                        size: mascotBSize,
                         color: Color(argbHex: colors.onSurfaceVariant)
                     )
                 }

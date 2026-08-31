@@ -7,6 +7,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
+import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
@@ -42,6 +43,13 @@ fun timetableItemDetailScreenPresenter(
 
     MutationErrorEffect(favoriteMutation) { error ->
         screenChannel.emit(TimetableItemDetailScreenActionResult.ShowMessage(error.toUserMessage()))
+        favoriteMutation.reset()
+    }
+
+    MutationSuccessEffect(favoriteMutation) { added ->
+        if (added) {
+            screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded)
+        }
         favoriteMutation.reset()
     }
 

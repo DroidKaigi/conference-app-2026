@@ -16,7 +16,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
         nickName = "Speaker A",
         occupation = "Software Engineer",
         link = "https://example.com/a",
-        mascot = Mascot.Koala,
+        mascot = Mascot.C,
         sketchiness = Sketchiness.Normal,
         // A 1x1 PNG: the screen only needs a decodable avatar present, not the sample picture.
         avatarImage = AvatarImage(
@@ -50,7 +50,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                     inputNickName("Speaker B")
                     inputOccupation("Designer")
                     inputLink("https://example.com/b")
-                    clickMascot("Meerkat")
+                    clickMascot("Mascot E")
                     clickSketchiness("Playful")
                     clickCreate()
                 }
@@ -81,7 +81,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                         inputNickName("Speaker B")
                         inputOccupation("Designer")
                         inputLink("https://example.com/b")
-                        clickMascot("Meerkat")
+                        clickMascot("Mascot E")
                         clickSketchiness("Playful")
                         clickCreate()
                     }
@@ -91,7 +91,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                                 nickName = "Speaker B",
                                 occupation = "Designer",
                                 link = "https://example.com/b",
-                                mascot = Mascot.Meerkat,
+                                mascot = Mascot.E,
                                 sketchiness = Sketchiness.Playful,
                                 avatarImage = storedCard.avatarImage,
                             ),
