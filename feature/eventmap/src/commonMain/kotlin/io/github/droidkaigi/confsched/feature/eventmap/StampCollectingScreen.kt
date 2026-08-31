@@ -23,6 +23,7 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
+import io.github.droidkaigi.confsched.core.ui.paneStartInset
 import io.github.droidkaigi.confsched.feature.eventmap.component.ExhibitionAreaMapView
 import io.github.droidkaigi.confsched.feature.eventmap.component.PrizeGroupSection
 import io.github.droidkaigi.confsched.feature.eventmap.component.StampCollectingSectionHeader
@@ -63,7 +64,8 @@ fun StampCollectingScreen(
         },
     ) { innerPadding ->
         LazyColumn(
-            contentPadding = PaddingValues(16.dp).plus(PaddingValues(bottom = 122.dp)),
+            contentPadding = PaddingValues(16.dp)
+                .plus(PaddingValues(start = paneStartInset(), bottom = 122.dp)),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .fillMaxSize()
