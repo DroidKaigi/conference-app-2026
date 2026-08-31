@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -47,6 +48,8 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.open_
 import kotlinx.datetime.number
 import org.jetbrains.compose.resources.stringResource
 import io.github.droidkaigi.confsched.core.model.Language as SessionLanguage
+
+internal const val SESSION_INFO_CARD_OPEN_EVENT_MAP_TEST_TAG = "SessionInfoCardOpenEventMapTestTag"
 
 @Composable
 internal fun SessionInfoCard(
@@ -83,6 +86,7 @@ internal fun SessionInfoCard(
                 action = onOpenEventMapDialog?.let {
                     InfoRowAction(
                         actionLabel = stringResource(Res.string.open_event_map),
+                        testTag = SESSION_INFO_CARD_OPEN_EVENT_MAP_TEST_TAG,
                         onClick = it,
                     )
                 },
@@ -126,6 +130,7 @@ private fun InfoRow(
         if (action != null) {
             Row(
                 modifier = Modifier
+                    .testTag(action.testTag)
                     .clickable(
                         onClickLabel = action.actionLabel,
                         role = Role.Button,
@@ -184,6 +189,7 @@ private object SessionInfoCardDefaults {
 
 private data class InfoRowAction(
     val actionLabel: String,
+    val testTag: String,
     val onClick: () -> Unit,
 )
 

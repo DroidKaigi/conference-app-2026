@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,8 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.close_event_map
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.event_map_content_description
 import org.jetbrains.compose.resources.stringResource
+
+internal fun sessionEventMapImageTestTag(floor: Floor): String = "SessionEventMapImageTestTag:${floor.name}"
 
 @Composable
 internal fun SessionEventMapDialog(floor: Floor, onDismiss: () -> Unit) {
@@ -70,7 +73,8 @@ private fun FloorMapCard(floor: Floor, onDismiss: () -> Unit) {
                 contentDescription = stringResource(Res.string.event_map_content_description, floor.label),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag(sessionEventMapImageTestTag(floor)),
             )
         }
     }
