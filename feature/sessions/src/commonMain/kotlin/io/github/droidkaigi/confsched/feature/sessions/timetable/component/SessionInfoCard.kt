@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Category
@@ -127,7 +128,15 @@ private fun InfoRow(
             )
         }
         if (action != null) {
-            Row(modifier = Modifier.clickable(onClick = action.onClick).padding(4.dp)) {
+            Row(
+                modifier = Modifier
+                    .clickable(
+                        onClickLabel = action.actionLabel,
+                        role = Role.Button,
+                        onClick = action.onClick,
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            ) {
                 Text(
                     text = action.actionLabel,
                     style = MaterialTheme.typography.bodySmall,
