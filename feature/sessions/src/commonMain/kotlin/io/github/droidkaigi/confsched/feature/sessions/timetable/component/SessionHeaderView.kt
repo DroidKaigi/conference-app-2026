@@ -20,15 +20,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
+import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiAvatar
-import io.github.droidkaigi.confsched.core.ui.KaigiFaceAvatar
+import io.github.droidkaigi.confsched.core.ui.KaigiSpeakerAvatar
 import io.github.droidkaigi.confsched.core.ui.LanguageChip
 import io.github.droidkaigi.confsched.core.ui.RoomChip
 import io.github.droidkaigi.confsched.core.ui.current
@@ -89,6 +90,7 @@ internal fun SessionHeaderView(
                     name = speaker.name,
                     tagLine = speaker.tagLine,
                     iconUrl = speaker.iconUrl,
+                    mascot = room.mascot,
                 )
             }
         }
@@ -96,24 +98,18 @@ internal fun SessionHeaderView(
 }
 
 @Composable
-private fun SpeakerRow(name: String, tagLine: String, iconUrl: String?) {
+private fun SpeakerRow(name: String, tagLine: String, iconUrl: String?, mascot: Mascot) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (iconUrl != null) {
-            KaigiAvatar(
-                imageUrl = iconUrl,
-                contentDescription = null,
-                size = SessionHeaderViewDefaults.avatarSize,
-                borderColor = MaterialTheme.colorScheme.inverseOnSurface,
-            )
-        } else {
-            KaigiFaceAvatar(
-                size = SessionHeaderViewDefaults.avatarSize,
-                borderColor = MaterialTheme.colorScheme.inverseOnSurface,
-            )
-        }
+        KaigiSpeakerAvatar(
+            iconUrl = iconUrl,
+            mascot = mascot,
+            contentDescription = null,
+            size = SessionHeaderViewDefaults.avatarSize,
+            borderColor = MaterialTheme.colorScheme.inverseOnSurface,
+        )
         Column {
             Text(
                 text = name,

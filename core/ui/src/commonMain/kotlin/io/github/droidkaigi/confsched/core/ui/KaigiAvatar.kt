@@ -1,12 +1,13 @@
 package io.github.droidkaigi.confsched.core.ui
 
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,17 +20,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import org.jetbrains.compose.resources.painterResource
 
 /**
  * The square a person's own picture is shown in.
@@ -118,58 +120,78 @@ fun KaigiPlaceholderAvatar(
 }
 
 /**
- * The square standing in for a speaker the app has no picture of, holding a drawn face.
+ * The square a speaker is shown in: their own picture, and the mascot of the room they speak in
+ * whenever that picture is not there — while it loads, once it fails, and when there is none.
  *
- * The outline is even rather than sketched, unlike [KaigiPlaceholderAvatar]: a wobbling one
- * reads as the face itself being misshapen, and at the smallest size it degrades into corners.
+ * The frame stays the even one of [KaigiAvatar] rather than the sketched one of
+ * [KaigiPlaceholderAvatar], even though the mascot is the app's own drawing: the two states swap
+ * as a load resolves, so a frame that changed with them would twitch through every row of a list.
  *
+ * @param iconUrl where the speaker's picture is loaded from, or null when they have none.
+ * @param mascot the character standing in for the picture.
+ * @param contentDescription what the picture is, for a screen reader.
  * @param size the side of the square.
  * @param modifier the [Modifier] applied to the avatar.
- * @param containerColor the color filling the square behind the face.
- * @param contentColor the color the face is drawn in.
+ * @param containerColor the color filling the square behind the mascot.
+ * @param contentColor the color the mascot is drawn in.
  * @param borderColor the color of the line around the square.
  */
 @Composable
-fun KaigiFaceAvatar(
+fun KaigiSpeakerAvatar(
+    iconUrl: String?,
+    mascot: Mascot,
+    contentDescription: String?,
     size: Dp,
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     borderColor: Color = MaterialTheme.colorScheme.outline,
 ) {
-    val featureThickness = (size * KaigiAvatarDefaults.FACE_FEATURE_RATIO)
-        .coerceAtLeast(KaigiAvatarDefaults.minFaceFeatureThickness)
-    Canvas(
-        modifier = modifier
-            .size(size)
-            .clip(KaigiAvatarDefaults.shape)
-            .background(containerColor)
-            .border(
-                width = size * KaigiAvatarDefaults.FACE_OUTLINE_RATIO,
-                color = borderColor,
-                shape = KaigiAvatarDefaults.shape,
-            ),
+    val frame = modifier
+        .size(size)
+        .clip(KaigiAvatarDefaults.shape)
+        .border(
+            width = KaigiAvatarDefaults.borderThickness,
+            color = borderColor,
+            shape = KaigiAvatarDefaults.shape,
+        )
+    val mascotFace: @Composable () -> Unit = {
+        SpeakerMascot(
+            mascot = mascot,
+            size = size,
+            containerColor = containerColor,
+            contentColor = contentColor,
+        )
+    }
+    if (iconUrl == null) {
+        Box(modifier = frame) { mascotFace() }
+    } else {
+        RemoteImageWithPlaceholder(
+            imageUrl = iconUrl,
+            contentDescription = contentDescription,
+            modifier = frame,
+            placeholder = mascotFace,
+        )
+    }
+}
+
+@Composable
+private fun SpeakerMascot(
+    mascot: Mascot,
+    size: Dp,
+    containerColor: Color,
+    contentColor: Color,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize().background(containerColor),
+        contentAlignment = Alignment.Center,
     ) {
-        val stroke = Stroke(width = featureThickness.toPx(), cap = StrokeCap.Round)
-        val width = this.size.width
-        val height = this.size.height
-        listOf(0.34f, 0.66f).forEach { eyeX ->
-            drawPath(
-                path = Path().apply {
-                    moveTo(width * eyeX, height * 0.38f)
-                    quadraticTo(width * (eyeX + 0.04f), height * 0.43f, width * eyeX, height * 0.48f)
-                },
-                color = contentColor,
-                style = stroke,
-            )
-        }
-        drawPath(
-            path = Path().apply {
-                moveTo(width * 0.33f, height * 0.61f)
-                quadraticTo(width * 0.5f, height * 0.75f, width * 0.67f, height * 0.61f)
-            },
-            color = contentColor,
-            style = stroke,
+        Image(
+            painter = painterResource(mascot.cardArt ?: mascotFArt),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize().padding(size * KaigiAvatarDefaults.MASCOT_INSET_RATIO),
+            contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(contentColor),
         )
     }
 }
@@ -182,13 +204,9 @@ object KaigiAvatarDefaults {
 
     val borderThickness = 1.5.dp
 
-    /** The share of the side the drawn face's eyes and mouth are stroked at. */
-    const val FACE_FEATURE_RATIO = 0.0375f
+    /** The share of the side kept clear around the mascot, the same at every size. */
+    const val MASCOT_INSET_RATIO = 0.15f
 
-    /** The share of the side the line around a drawn face is stroked at. */
-    const val FACE_OUTLINE_RATIO = 0.0125f
-
-    val minFaceFeatureThickness = 0.9.dp
     val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
     val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
@@ -217,9 +235,30 @@ private fun KaigiAvatarPreview(
             KaigiPlaceholderAvatar(seed = 851, size = 100.dp) {
                 Text("C01", style = KaigiAvatarDefaults.initialsStyle)
             }
-            KaigiFaceAvatar(size = 100.dp)
-            KaigiFaceAvatar(size = 48.dp)
-            KaigiFaceAvatar(size = 24.dp)
+            KaigiSpeakerAvatar(
+                iconUrl = null,
+                mascot = Mascot.A,
+                contentDescription = null,
+                size = 100.dp,
+            )
+            KaigiSpeakerAvatar(
+                iconUrl = null,
+                mascot = Mascot.B,
+                contentDescription = null,
+                size = 48.dp,
+            )
+            KaigiSpeakerAvatar(
+                iconUrl = null,
+                mascot = Mascot.C,
+                contentDescription = null,
+                size = 32.dp,
+            )
+            KaigiSpeakerAvatar(
+                iconUrl = null,
+                mascot = Mascot.E,
+                contentDescription = null,
+                size = 24.dp,
+            )
         }
     }
 }
