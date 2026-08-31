@@ -83,8 +83,7 @@ fun TimetableItemCard(
             // clip precedes clickable so the ripple follows the sketched round rect
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .clickable(onClick = onClick)
-            .sketchBorder(shape, MaterialTheme.colorScheme.outline),
+            .clickable(onClick = onClick),
     ) {
         // Drawn before the body so a long title or speaker list stays legible over the mascot
         if (isFavorite) {
@@ -117,6 +116,8 @@ fun TimetableItemCard(
                 .align(Alignment.TopEnd)
                 .padding(TimetableItemCardDefaults.favoritePadding),
         )
+        // A separate layer keeps the stroke outside the clip; inside it, half the thickness is cut off
+        Box(Modifier.matchParentSize().sketchBorder(shape, MaterialTheme.colorScheme.outline))
     }
 }
 
