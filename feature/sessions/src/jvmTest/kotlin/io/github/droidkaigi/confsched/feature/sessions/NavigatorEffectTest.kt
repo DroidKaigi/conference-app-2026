@@ -54,14 +54,35 @@ class NavigatorEffectTest {
     }
 
     @Test
-    fun skipsAPopFromAnEntryNotOnTop() {
+    fun popsAnEntryBelowTheTopTogetherWithEverythingAboveIt() {
         val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
         val topDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
         val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail, topDetail)
 
         runEffect(backStack) { navigator -> navigator.back(origin = firstDetail) }
 
-        assertEquals(listOf(TimetableNavKey, firstDetail, topDetail), backStack.toList())
+        assertEquals(listOf(TimetableNavKey), backStack.toList())
+    }
+
+    @Test
+    fun keepsTheRootOnAPopFromIt() {
+        val detail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, detail)
+
+        runEffect(backStack) { navigator -> navigator.back(origin = TimetableNavKey) }
+
+        assertEquals(listOf(TimetableNavKey, detail), backStack.toList())
+    }
+
+    @Test
+    fun replacesADetailPushedOverAnotherDetail() {
+        val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val nextDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail)
+
+        runEffect(backStack) { navigator -> navigator.goTo(nextDetail) }
+
+        assertEquals(listOf(TimetableNavKey, nextDetail), backStack.toList())
     }
 
     @Test

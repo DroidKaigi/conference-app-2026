@@ -1,7 +1,7 @@
 package io.github.droidkaigi.confsched.feature.settings
 
-import androidx.navigation3.runtime.NavKey
+import io.github.droidkaigi.confsched.core.common.DetailPaneNavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object SettingsNavKey : NavKey
+data object SettingsNavKey : DetailPaneNavKey
