@@ -11,6 +11,8 @@ import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleEdit
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import soil.query.compose.rememberMutation
 
@@ -24,9 +26,11 @@ fun profileCardScreenPresenter(
 ): ProfileCardScreenUiState {
     val profileCardMutation = rememberMutation(presenterContext.profileCardMutationKey)
     val shareMutation = rememberMutation(presenterContext.shareProfileCardMutationKey)
+    val doodleMutation = rememberMutation(presenterContext.doodleMutationKey)
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
+    var isDoodling by retain { mutableStateOf(false) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -65,6 +69,17 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.Share -> shareMutation.mutateAsync(action.image)
 
+            ProfileCardScreenAction.StartDoodling -> isDoodling = true
+
+            ProfileCardScreenAction.CancelDoodling -> isDoodling = false
+
+            is ProfileCardScreenAction.SaveDoodles -> doodleMutation.mutateAsync(
+                listOf(
+                    DoodleEdit(target = DoodleTarget.ProfileCardFront, doodle = action.front),
+                    DoodleEdit(target = DoodleTarget.ProfileCardBack, doodle = action.back),
+                ),
+            )
+
             ProfileCardScreenAction.EditCard -> {
                 form = storedCard.toForm()
                 isEditing = true
@@ -80,6 +95,15 @@ fun profileCardScreenPresenter(
     MutationErrorEffect(profileCardMutation) { error ->
         screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
         profileCardMutation.reset()
+    }
+
+    MutationSuccessEffect(doodleMutation) {
+        isDoodling = false
+        doodleMutation.reset()
+    }
+    MutationErrorEffect(doodleMutation) { error ->
+        screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
+        doodleMutation.reset()
     }
 
     MutationSuccessEffect(shareMutation) { image ->
@@ -105,6 +129,7 @@ fun profileCardScreenPresenter(
             backDoodle = backDoodle,
             isShowingBack = isShowingBack,
             isSharing = shareMutation.isPending,
+            isDoodling = isDoodling,
         )
     }
 }

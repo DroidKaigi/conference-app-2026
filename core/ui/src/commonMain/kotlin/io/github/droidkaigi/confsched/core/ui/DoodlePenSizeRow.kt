@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.doodle.component
+package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -10,18 +10,16 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiSegmentedButton
-import io.github.droidkaigi.confsched.core.ui.KaigiSingleChoiceSegmentedButtonRow
-import io.github.droidkaigi.confsched.feature.doodle.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_pen_normal
-import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_pen_thick
-import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_pen_thin
+import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_pen_normal
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_pen_thick
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_pen_thin
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 /** Picks the pen the next stroke is drawn with, whichever canvas it is drawn on. */
 @Composable
-internal fun DoodlePenSizeRow(
+fun DoodlePenSizeRow(
     selectedPenSize: DoodlePenSize,
     onPenSizeClick: (DoodlePenSize) -> Unit,
     modifier: Modifier = Modifier,

@@ -52,7 +52,8 @@ class ProfileCardShareImageCaptureTest {
                     onCardClick = {},
                     onEditClick = {},
                     onShareClick = { captured = it },
-                    onDoodleClick = {},
+                    onStartDoodlingClick = {},
+                    onDoodlesDoneClick = { _, _ -> },
                 )
             }
         }

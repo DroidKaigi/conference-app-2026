@@ -32,6 +32,7 @@ sealed interface ProfileCardScreenUiState {
         val backDoodle: Doodle,
         val isShowingBack: Boolean = false,
         val isSharing: Boolean = false,
+        val isDoodling: Boolean = false,
     ) : ProfileCardScreenUiState
 }
 

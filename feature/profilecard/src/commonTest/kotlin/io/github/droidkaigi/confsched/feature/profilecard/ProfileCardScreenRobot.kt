@@ -1,19 +1,22 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Doodle
@@ -22,12 +25,14 @@ import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.core.ui.DOODLE_CANVAS_FRAME_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_DOODLE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.mascotOptionTestTag
@@ -35,12 +40,12 @@ import io.github.droidkaigi.confsched.feature.profilecard.component.sketchinessO
 import kotlinx.collections.immutable.PersistentMap
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     private val graph = createGraph<ProfileCardScreenTestGraph>()
-    private val doodleTargets = mutableListOf<DoodleTarget>()
 
     fun setupStoredCard(card: ProfileCard?) {
         graph.profileCardSubscriptionKey.set(card)
@@ -50,27 +55,35 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         graph.doodlesSubscriptionKey.set(doodles)
     }
 
+    fun setupFailingDoodleSave() {
+        graph.doodleMutationKey.failWith(IllegalStateException("boom"))
+    }
+
     fun setupContent() {
         setScreenContent {
             context(graph.screenContext) {
-                ProfileCardScreenRoot(onNavigateToDoodle = doodleTargets::add)
+                ProfileCardScreenRoot()
             }
         }
     }
 
-    // The card itself carries no label; it is the first clickable the finished card view lays out.
-    fun clickCard() {
-        composeUiTest.onAllNodes(hasClickAction())[0].performClick()
-        composeUiTest.waitForIdle()
-    }
+    fun clickDoodle() = clickTag(PROFILE_CARD_VIEW_DOODLE_BUTTON_TEST_TAG)
 
-    fun clickDoodle() {
-        composeUiTest.onNodeWithContentDescription("Draw on the card").performClick()
-        composeUiTest.waitForIdle()
-    }
+    fun clickDone() = clickText("Done")
 
-    fun checkDoodleTargets(vararg targets: DoodleTarget) {
-        assertEquals(targets.toList(), doodleTargets.toList())
+    fun clickFlipToBack() = clickDescription("Switch to the back")
+
+    fun clickFlipToFront() = clickDescription("Switch to the front")
+
+    /** Draws a horizontal stroke through the centre of the canvas the visible face is drawn on. */
+    fun drawStroke() {
+        composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0].performTouchInput {
+            down(Offset(centerX - width * STROKE_HALF_SPAN_FRACTION, centerY))
+            moveTo(Offset(centerX, centerY))
+            moveTo(Offset(centerX + width * STROKE_HALF_SPAN_FRACTION, centerY))
+            up()
+        }
+        composeUiTest.waitForIdle()
     }
 
     fun inputNickName(text: String) = inputField(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG, text)
@@ -113,12 +126,31 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         composeUiTest.onNodeWithTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
+    fun checkCardDoesNotExist() {
+        composeUiTest.onNodeWithTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG).assertDoesNotExist()
+    }
+
+    fun checkTextDisplayed(text: String) {
+        composeUiTest.onNodeWithText(text).assertIsDisplayed()
+    }
+
     fun checkCardWritten(card: ProfileCard) {
         assertEquals(card, graph.profileCardMutationKey.invocations.tryReceive().getOrNull())
     }
 
     fun checkNoCardWritten() {
         assertNull(graph.profileCardMutationKey.invocations.tryReceive().getOrNull())
+    }
+
+    /** Asserts one save carried both faces, each with the given number of strokes. */
+    fun checkSavedFaceStrokeCounts(front: Int, back: Int) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(front, edits.single { it.target == DoodleTarget.ProfileCardFront }.doodle.strokes.size)
+        assertEquals(back, edits.single { it.target == DoodleTarget.ProfileCardBack }.doodle.strokes.size)
+    }
+
+    fun checkNoDoodleSaved() {
+        assertTrue(graph.doodleMutationKey.invocations.tryReceive().isFailure, "a doodle save reached the data layer")
     }
 
     private fun inputField(testTag: String, text: String) {
@@ -137,4 +169,16 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         composeUiTest.onNodeWithTag(testTag).performClick()
         composeUiTest.waitForIdle()
     }
+
+    private fun clickText(text: String) {
+        composeUiTest.onNodeWithText(text).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    private fun clickDescription(description: String) {
+        composeUiTest.onNodeWithContentDescription(description).performClick()
+        composeUiTest.waitForIdle()
+    }
 }
+
+private const val STROKE_HALF_SPAN_FRACTION = 0.2f

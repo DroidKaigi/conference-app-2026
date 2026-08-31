@@ -27,7 +27,7 @@ A three-way split that keeps preview image binaries off production classpaths �
 
 ## `:feature:*` — one module per feature
 
-`:feature:sessions` / `:feature:contributors` / `:feature:sponsors` / `:feature:eventmap` / `:feature:about` / `:feature:doodle` / `:feature:favorites` / `:feature:profilecard` / `:feature:staff` / `:feature:settings` / `:feature:search`, plus the dev-only `:feature:debug`. Each holds one feature's screens and NavKeys; features never import each other, the one exception being `:feature:debug`, which reaches into `:feature:sessions` and never ships.
+`:feature:sessions` / `:feature:contributors` / `:feature:sponsors` / `:feature:eventmap` / `:feature:about` / `:feature:favorites` / `:feature:profilecard` / `:feature:staff` / `:feature:settings` / `:feature:search`, plus the dev-only `:feature:debug`. Each holds one feature's screens and NavKeys; features never import each other, the one exception being `:feature:debug`, which reaches into `:feature:sessions` and never ships.
 
 ## `:app-*` — aggregation and platform entries
 

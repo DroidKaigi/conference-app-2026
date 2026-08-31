@@ -6,12 +6,14 @@ import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.AboutScreenScope
+import io.github.droidkaigi.confsched.core.model.DoodleMutationKey
 import io.github.droidkaigi.confsched.core.model.DoodlesSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.buildconfig.BuildConfigProvider
 
 @Inject
 class AboutPresenterContext(
     val buildConfig: BuildConfigProvider,
+    val doodleMutationKey: DoodleMutationKey,
     override val logger: KaigiLogger,
 ) : PresenterContext
 

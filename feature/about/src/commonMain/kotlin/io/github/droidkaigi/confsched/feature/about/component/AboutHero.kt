@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,14 +35,12 @@ import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.KaigiChip
-import io.github.droidkaigi.confsched.core.ui.KaigiChipDefaults
 import io.github.droidkaigi.confsched.core.ui.SketchBottomEdgeShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.core.ui.sketchBottomEdge
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.about.generated.resources.about_doodle
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_draw_on_the_wall
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_logo_description
 import org.jetbrains.compose.resources.stringResource
@@ -51,7 +48,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun AboutHero(
     doodle: Doodle,
-    onEditDoodleClick: () -> Unit,
+    onStartDoodlingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxWidth().height(AboutHeroHeight)) {
@@ -103,7 +100,7 @@ internal fun AboutHero(
             modifier = Modifier.matchParentSize(),
         )
         DoodleSignChip(
-            onClick = onEditDoodleClick,
+            onClick = onStartDoodlingClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(end = SignChipInset, top = SignChipTopInset),
@@ -111,23 +108,28 @@ internal fun AboutHero(
     }
 }
 
+/** The mark inviting a drawing on the wall, kept to the pencil alone so it does not read as chrome. */
 @Composable
 private fun DoodleSignChip(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val label = stringResource(Res.string.about_draw_on_the_wall)
-    KaigiChip(
-        seed = SIGN_CHIP_SEED,
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+    Box(
         modifier = modifier
+            .size(SignChipTouchTarget)
             .clickable(role = Role.Button, onClick = onClick)
             .semantics { contentDescription = label },
+        contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            imageVector = KaigiIcons.Default.Edit,
-            contentDescription = null,
-            modifier = Modifier.size(SignChipIconSize),
-        )
-        Text(text = stringResource(Res.string.about_doodle), style = KaigiChipDefaults.labelStyle)
+        KaigiChip(
+            seed = SIGN_CHIP_SEED,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ) {
+            Icon(
+                imageVector = KaigiIcons.Default.Edit,
+                contentDescription = null,
+                modifier = Modifier.size(SignChipIconSize),
+            )
+        }
     }
 }
 
@@ -144,9 +146,12 @@ private fun BattenEdge() {
 private const val WALL_EDGE_SEED = 5573
 private const val SIGN_CHIP_SEED = 5574
 private val WallHeight = 241.dp
-private val SignChipIconSize = 14.dp
-private val SignChipInset = 12.dp
-private val SignChipTopInset = 16.dp
+private val SignChipIconSize = 16.dp
+
+/** The chip's own frame is smaller than a comfortable target, so the press area is spread around it. */
+private val SignChipTouchTarget = 44.dp
+private val SignChipInset = 2.dp
+private val SignChipTopInset = 4.dp
 
 @LocalePreviews
 @Composable
@@ -154,7 +159,7 @@ private fun AboutHeroPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        AboutHero(doodle = Doodle.Empty, onEditDoodleClick = {})
+        AboutHero(doodle = Doodle.Empty, onStartDoodlingClick = {})
     }
 }
 
@@ -164,6 +169,6 @@ private fun AboutHeroWithDoodlePreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        AboutHero(doodle = Doodle.fake(), onEditDoodleClick = {})
+        AboutHero(doodle = Doodle.fake(), onStartDoodlingClick = {})
     }
 }

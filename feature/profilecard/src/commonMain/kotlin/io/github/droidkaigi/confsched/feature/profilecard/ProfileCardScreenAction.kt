@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.ui.graphics.ImageBitmap
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 
@@ -27,4 +28,10 @@ sealed interface ProfileCardScreenAction {
     data object EditCard : ProfileCardScreenAction
 
     data class Share(val image: ImageBitmap) : ProfileCardScreenAction
+
+    data object StartDoodling : ProfileCardScreenAction
+
+    data object CancelDoodling : ProfileCardScreenAction
+
+    data class SaveDoodles(val front: Doodle, val back: Doodle) : ProfileCardScreenAction
 }

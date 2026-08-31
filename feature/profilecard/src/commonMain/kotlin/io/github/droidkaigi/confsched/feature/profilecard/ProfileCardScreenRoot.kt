@@ -19,9 +19,7 @@ import soil.query.compose.rememberSubscription
 
 @Composable
 context(screenContext: ProfileCardScreenContext)
-fun ProfileCardScreenRoot(
-    onNavigateToDoodle: (DoodleTarget) -> Unit,
-) {
+fun ProfileCardScreenRoot() {
     SoilDataBoundary(
         state1 = rememberSubscription(screenContext.profileCardSubscriptionKey),
         state2 = rememberSubscription(screenContext.appearanceSubscriptionKey),
@@ -64,7 +62,9 @@ fun ProfileCardScreenRoot(
             onCardClick = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
             onEditClick = { screenChannel.send(ProfileCardScreenAction.EditCard) },
             onShareClick = { screenChannel.send(ProfileCardScreenAction.Share(it)) },
-            onDoodleClick = onNavigateToDoodle,
+            onStartDoodlingClick = { screenChannel.send(ProfileCardScreenAction.StartDoodling) },
+            onCancelDoodlingClick = { screenChannel.send(ProfileCardScreenAction.CancelDoodling) },
+            onDoodlesDoneClick = { front, back -> screenChannel.send(ProfileCardScreenAction.SaveDoodles(front, back)) },
         )
     }
 }

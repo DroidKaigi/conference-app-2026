@@ -13,8 +13,6 @@ interface AboutScreenNavigator : Navigator {
 
     fun openLicenses()
 
-    fun openDoodle()
-
     /** False when the build does not include the debug feature. */
     val isDebugMenuAvailable: Boolean
 

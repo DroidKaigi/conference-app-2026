@@ -73,19 +73,44 @@ class ProfileCardScreenRobotTest : RobotTest() {
                 checkCardDisplayed()
                 checkFormDoesNotExist()
             }
-            describe("and the pencil is tapped") {
+            describe("and the doodle button is tapped") {
                 doIt { clickDoodle() }
-                itShould("open the doodle for the face turned up") {
-                    checkDoodleTargets(DoodleTarget.ProfileCardFront)
+                itShould("swap the card actions for the doodle controls") {
+                    checkTextDisplayed("Done")
+                    checkCardDoesNotExist()
                 }
-            }
-            describe("and the card is turned over before the pencil is tapped") {
-                doIt {
-                    clickCard()
-                    clickDoodle()
+                describe("and a stroke is drawn on each face before Done is tapped") {
+                    doIt {
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep both faces' strokes and save them together") {
+                        checkSavedFaceStrokeCounts(front = 4, back = 1)
+                        checkCardDisplayed()
+                    }
                 }
-                itShould("open the doodle for the back face") {
-                    checkDoodleTargets(DoodleTarget.ProfileCardBack)
+                describe("and back is pressed after a stroke is drawn") {
+                    doIt {
+                        drawStroke()
+                        pressSystemBack()
+                    }
+                    itShould("discard the stroke and show the card actions again") {
+                        checkNoDoodleSaved()
+                        checkCardDisplayed()
+                    }
+                }
+                describe("and the save fails") {
+                    doIt {
+                        setupFailingDoodleSave()
+                        drawStroke()
+                        clickDone()
+                    }
+                    itShould("stay in the doodle controls") {
+                        checkTextDisplayed("Done")
+                    }
                 }
             }
             describe("and Edit is tapped") {

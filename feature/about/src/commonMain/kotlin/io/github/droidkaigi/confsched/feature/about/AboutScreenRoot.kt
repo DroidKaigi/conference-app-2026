@@ -1,10 +1,14 @@
 package io.github.droidkaigi.confsched.feature.about
 
 import androidx.compose.runtime.Composable
+import io.github.droidkaigi.confsched.core.common.ActionResultEffect
+import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberSubscription
 
 @Composable
@@ -18,7 +22,6 @@ fun AboutScreenRoot(
     onOpenCodeOfConduct: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToDoodle: () -> Unit,
     onOpenYoutube: () -> Unit,
     onOpenX: () -> Unit,
     onOpenMedium: () -> Unit,
@@ -31,8 +34,17 @@ fun AboutScreenRoot(
             select = { doodles -> doodles[DoodleTarget.AboutWall] ?: Doodle.Empty },
         ),
     ) { doodle ->
+        val screenChannel = retainScreenChannel<AboutScreenAction, AboutScreenActionResult>()
+        val snackbarHostState = LocalSnackbarHostState.current
+
+        ActionResultEffect(screenChannel) { result ->
+            when (result) {
+                is AboutScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
+            }
+        }
+
         val uiState = context(screenContext.presenterContext) {
-            aboutScreenPresenter(doodle)
+            aboutScreenPresenter(screenChannel = screenChannel, doodle = doodle)
         }
         AboutScreen(
             uiState = uiState,
@@ -44,12 +56,14 @@ fun AboutScreenRoot(
             onOpenCodeOfConduct = onOpenCodeOfConduct,
             onOpenPrivacyPolicy = onOpenPrivacyPolicy,
             onOpenSettings = onNavigateToSettings,
-            onOpenDoodle = onNavigateToDoodle,
             onOpenYoutube = onOpenYoutube,
             onOpenX = onOpenX,
             onOpenMedium = onOpenMedium,
             isDebugMenuAvailable = isDebugMenuAvailable,
             onOpenDebug = onNavigateToDebug,
+            onStartDoodlingClick = { screenChannel.send(AboutScreenAction.StartDoodling) },
+            onCancelDoodlingClick = { screenChannel.send(AboutScreenAction.CancelDoodling) },
+            onDoodleDoneClick = { screenChannel.send(AboutScreenAction.SaveWallDoodle(it)) },
         )
     }
 }

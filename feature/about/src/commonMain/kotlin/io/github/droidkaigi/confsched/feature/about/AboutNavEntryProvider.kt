@@ -30,7 +30,6 @@ class AboutNavEntryProvider(
                     onOpenCodeOfConduct = { uriHandler.openUri(CODE_OF_CONDUCT_URL) },
                     onOpenPrivacyPolicy = { uriHandler.openUri(PRIVACY_POLICY_URL) },
                     onNavigateToSettings = graph.screenNavigator::openSettings,
-                    onNavigateToDoodle = graph.screenNavigator::openDoodle,
                     onOpenYoutube = { uriHandler.openUri(YOUTUBE_URL) },
                     onOpenX = { uriHandler.openUri(X_URL) },
                     onOpenMedium = { uriHandler.openUri(MEDIUM_URL) },

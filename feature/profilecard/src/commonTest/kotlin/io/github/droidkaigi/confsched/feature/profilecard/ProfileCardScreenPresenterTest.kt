@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleEdit
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -242,6 +244,60 @@ class ProfileCardScreenPresenterTest {
             send(ProfileCardScreenAction.Share(ImageBitmap(width = 1, height = 1)))
             val result = assertIs<ProfileCardScreenActionResult.ShareImage>(results.awaitItem())
             assertTrue(result.image.pngBytes.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun finishing_a_doodle_writes_both_faces_and_leaves_the_mode() {
+        val drawnFront = Doodle.fakeOnCardFace()
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = storedCard, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
+        ) {
+            assertFalse(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+            send(ProfileCardScreenAction.StartDoodling)
+            assertTrue(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+            send(ProfileCardScreenAction.SaveDoodles(front = drawnFront, back = Doodle.Empty))
+            assertEquals(
+                listOf(
+                    DoodleEdit(target = DoodleTarget.ProfileCardFront, doodle = drawnFront),
+                    DoodleEdit(target = DoodleTarget.ProfileCardBack, doodle = Doodle.Empty),
+                ),
+                graph.doodleMutationKey.invocations.receive(),
+            )
+            assertFalse(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+        }
+    }
+
+    @Test
+    fun a_doodle_save_that_fails_reports_the_error_and_stays_in_the_mode() {
+        graph.doodleMutationKey.failWith(RuntimeException("the doodle could not be written"))
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = storedCard, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.StartDoodling)
+            assertTrue(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+            send(ProfileCardScreenAction.SaveDoodles(front = Doodle.fakeOnCardFace(), back = Doodle.Empty))
+            assertIs<ProfileCardScreenActionResult.ShowMessage>(results.awaitItem())
+            // The mode is unchanged, so the presenter emits no further state.
+            uiStates.expectNoEvents()
+        }
+    }
+
+    @Test
+    fun cancelling_a_doodle_leaves_the_mode_without_writing_anything() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = storedCard, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.StartDoodling)
+            assertTrue(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+            send(ProfileCardScreenAction.CancelDoodling)
+            assertFalse(assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem()).isDoodling)
+            assertTrue(graph.doodleMutationKey.invocations.isEmpty)
         }
     }
 }

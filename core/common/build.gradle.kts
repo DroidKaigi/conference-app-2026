@@ -16,6 +16,7 @@ kotlin {
             api(libs.composeRuntimeRetain)
             api(libs.navigation3Runtime)
             api(libs.navigation3Ui)
+            api(libs.navigationEventCompose)
             api(libs.kotlinxCoroutinesCore)
             api(libs.kotlinxSerializationJson)
             api(libs.soilQueryCompose)

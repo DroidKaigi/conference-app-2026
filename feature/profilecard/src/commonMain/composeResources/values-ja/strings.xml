@@ -27,6 +27,6 @@
     <string name="link_error">リンクを入力してください</string>
     <string name="link_malformed_error">http:// または https:// で始まるリンクを入力してください</string>
     <string name="profile_image_error">画像を追加してください</string>
-    <string name="draw_on_the_card">カードに落書きする</string>
     <string name="doodle_button">落書きする</string>
+    <string name="doodle_done">完了</string>
 </resources>
