@@ -5,6 +5,14 @@ struct WidgetArtwork {
     let viewport: CGSize
     let strokeWidth: CGFloat
     let strokes: [String]
+    let fills: [String]
+
+    init(viewport: CGSize, strokeWidth: CGFloat, strokes: [String], fills: [String] = []) {
+        self.viewport = viewport
+        self.strokeWidth = strokeWidth
+        self.strokes = strokes
+        self.fills = fills
+    }
 }
 
 struct WidgetArtworkView: View {
@@ -25,6 +33,15 @@ struct WidgetArtworkView: View {
                         lineJoin: .miter,
                         miterLimit: 4
                     )
+                )
+            }
+            for data in artwork.fills {
+                let path = Path(vectorPathData: data).applying(CGAffineTransform(scaleX: scale, y: scale))
+                context.fill(path, with: .color(color))
+                context.stroke(
+                    path,
+                    with: .color(color),
+                    style: StrokeStyle(lineWidth: artwork.strokeWidth * scale, lineCap: .round, lineJoin: .round)
                 )
             }
         }
@@ -56,7 +73,7 @@ struct Mascot: View {
 }
 
 private extension Path {
-    /// Reads the `M`/`L`/`C` subset of path data the widget artwork is drawn with.
+    /// Reads the `M`/`L`/`C`/`Z` subset of path data the widget artwork is drawn with.
     init(vectorPathData data: String) {
         self.init()
         var numbers: [CGFloat] = []
@@ -67,6 +84,7 @@ private extension Path {
             } else {
                 command = token.first
                 numbers.removeAll()
+                if command == "Z" { closeSubpath() }
                 continue
             }
             switch command {

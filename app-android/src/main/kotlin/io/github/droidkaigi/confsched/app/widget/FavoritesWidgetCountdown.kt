@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
@@ -48,7 +47,9 @@ private fun CountdownBody(
         CountdownFigures(state, colors, medium)
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
+            val mascot = LocalWidgetMascot.current
+            val mascotHeight = mascotHeight()
+            Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }
 }
@@ -131,7 +132,9 @@ private fun EventDayBody(colors: FavoritesWidgetColors, medium: Boolean) {
         }
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
+            val mascot = LocalWidgetMascot.current
+            val mascotHeight = mascotHeight()
+            Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }
 }
@@ -144,6 +147,7 @@ private fun CountdownPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.Countdown(daysUntilStart = 12),
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }
 
@@ -155,5 +159,6 @@ private fun EventDayPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.EventDay,
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }

@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
@@ -95,7 +94,9 @@ private fun DayPromptBody(
             modifier = GlanceModifier.fillMaxSize(),
             contentAlignment = Alignment.BottomEnd,
         ) {
-            Mascot(R.drawable.widget_mascot_d, if (medium) 37.dp else 33.dp, if (medium) 34.dp else 30.dp, colors)
+            val mascot = LocalWidgetMascot.current
+            val mascotHeight = mascotHeight()
+            Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }
 }
@@ -112,6 +113,7 @@ private fun EmptyPreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.Empty(day = DroidKaigi2026Day.Day1, otherDayFavorites = 2),
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }
 
@@ -123,5 +125,6 @@ private fun TodayDonePreview() {
     FavoritesWidgetContent(
         FavoritesWidgetState.TodayDone(day = DroidKaigi2026Day.Day1, otherDayFavorites = 1),
         KaigiColorScheme.MorningMist.toFavoritesWidgetColors(),
+        previewWidgetMascot(),
     )
 }

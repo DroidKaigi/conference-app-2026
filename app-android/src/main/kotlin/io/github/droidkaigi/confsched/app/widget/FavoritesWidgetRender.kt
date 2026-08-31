@@ -19,6 +19,7 @@ import kotlin.time.Instant
 internal data class FavoritesWidgetRender(
     val state: FavoritesWidgetState,
     val colors: FavoritesWidgetColors,
+    val mascot: WidgetMascot,
 )
 
 /**
@@ -38,7 +39,7 @@ internal fun favoritesWidgetRenders(
     val colors = scheme.toFavoritesWidgetColors()
     while (true) {
         val current = now()
-        emit(FavoritesWidgetRender(computeFavoritesWidgetState(current, timetable, ids), colors))
+        emit(FavoritesWidgetRender(computeFavoritesWidgetState(current, timetable, ids), colors, randomWidgetMascot(current)))
         val boundary = nextFavoritesWidgetBoundary(current, timetable, ids) ?: break
         delay(boundary - current)
     }

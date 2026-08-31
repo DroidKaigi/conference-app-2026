@@ -258,14 +258,14 @@ private fun List<FavoritesWidgetRow>.toBandGroups(): List<RowGroup> {
 @Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Composable
 private fun SchedulePreview() {
-    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.MorningMist.toFavoritesWidgetColors())
+    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.MorningMist.toFavoritesWidgetColors(), previewWidgetMascot())
 }
 
 @OptIn(ExperimentalGlancePreviewApi::class)
 @Preview(widthDp = PREVIEW_MEDIUM_WIDTH_DP, heightDp = PREVIEW_HEIGHT_DP)
 @Composable
 private fun ScheduleDarkPreview() {
-    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.CampfireNight.toFavoritesWidgetColors())
+    FavoritesWidgetContent(previewScheduleState(), KaigiColorScheme.CampfireNight.toFavoritesWidgetColors(), previewWidgetMascot())
 }
 
 /** Day 1 shortly after the first favorite starts, so the live band and a later row both show. */

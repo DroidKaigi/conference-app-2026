@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,7 @@ import io.github.droidkaigi.confsched.core.model.FavoritesWidgetState
 import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityIntent
 
 @Composable
-internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors) {
+internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: FavoritesWidgetColors, mascot: WidgetMascot) {
     val context = LocalContext.current
     // Session rows carry their own favorites/session/{id} action.
     val backgroundAction = when (state) {
@@ -52,7 +53,9 @@ internal fun FavoritesWidgetContent(state: FavoritesWidgetState, colors: Favorit
     ) {
         SketchBorder(colors)
         Box(modifier = GlanceModifier.fillMaxSize().padding(InsetBleed + InsetFrame)) {
-            StateContent(state, colors)
+            CompositionLocalProvider(LocalWidgetMascot provides mascot) {
+                StateContent(state, colors)
+            }
         }
     }
 }
