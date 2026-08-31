@@ -62,12 +62,12 @@ fun KaigiAvatar(
         modifier = modifier
             .size(size)
             .border(
-                width = KaigiAvatarDefaults.borderThickness,
+                width = KaigiAvatarDefaults.borderThickness(size),
                 color = borderColor,
                 shape = KaigiAvatarDefaults.shape,
             )
             // The line sits around the picture, not over its edge.
-            .padding(KaigiAvatarDefaults.borderThickness)
+            .padding(KaigiAvatarDefaults.borderThickness(size))
             .clip(KaigiAvatarDefaults.shape),
     )
 }
@@ -103,7 +103,7 @@ fun KaigiPlaceholderAvatar(
         roughness = KaigiAvatarDefaults.roughness,
         tremor = KaigiAvatarDefaults.tremor,
         cornerRadius = size * KaigiAvatarDefaults.CORNER_RADIUS_RATIO,
-        borderThickness = KaigiAvatarDefaults.borderThickness,
+        borderThickness = KaigiAvatarDefaults.borderThickness(size),
     )
     Box(modifier = modifier.size(size)) {
         Box(
@@ -152,11 +152,11 @@ fun KaigiSpeakerAvatar(
     val frame = modifier
         .size(size)
         .border(
-            width = KaigiAvatarDefaults.borderThickness,
+            width = KaigiAvatarDefaults.borderThickness(size),
             color = borderColor,
             shape = KaigiAvatarDefaults.shape,
         )
-        .padding(KaigiAvatarDefaults.borderThickness)
+        .padding(KaigiAvatarDefaults.borderThickness(size))
         .clip(KaigiAvatarDefaults.shape)
     val mascotFace: @Composable () -> Unit = {
         SpeakerMascot(
@@ -205,7 +205,8 @@ object KaigiAvatarDefaults {
 
     val shape = RoundedCornerShape(percent = (CORNER_RADIUS_RATIO * 100).toInt())
 
-    val borderThickness = 1.5.dp
+    /** The design strokes avatars at one twenty-fourth of the side, so the ring scales with the square. */
+    fun borderThickness(size: Dp): Dp = size / 24
 
     /** The share of the side kept clear around the mascot, the same at every size. */
     const val MASCOT_INSET_RATIO = 0.15f
