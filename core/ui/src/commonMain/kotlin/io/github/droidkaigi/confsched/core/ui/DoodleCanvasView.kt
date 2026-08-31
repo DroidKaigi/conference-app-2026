@@ -57,7 +57,7 @@ import kotlin.math.pow
  * lifted without travelling; a second finger arriving before the first has travelled the touch slop
  * turns the gesture into a pinch and records no stroke, as does a wheel turned with Ctrl or Meta
  * held. Every stroke carries the width [penSize] gives it and the ink [selectedInk] names, drawn as
- * [palette] resolves that ink.
+ * [palette] resolves that ink and rimmed while [outlined].
  */
 @Composable
 fun DoodleCanvasView(
@@ -68,6 +68,7 @@ fun DoodleCanvasView(
     palette: DoodleInkPalette,
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
+    outlined: Boolean,
     onStrokeAdd: (DoodleStroke) -> Unit,
     modifier: Modifier = Modifier,
     transform: DoodleCanvasTransform = rememberDoodleCanvasTransform(),
@@ -81,10 +82,16 @@ fun DoodleCanvasView(
         // The gesture detector outlives a pen change, so the pen is read when the stroke lands.
         val currentPenSize by rememberUpdatedState(penSize)
         val currentInk by rememberUpdatedState(selectedInk)
+        val currentOutlined by rememberUpdatedState(outlined)
         val commitStroke: () -> Unit = {
             if (points.isNotEmpty()) {
                 currentOnStrokeAdd(
-                    DoodleStroke(points = points.toList(), width = currentPenSize.width, ink = currentInk),
+                    DoodleStroke(
+                        points = points.toList(),
+                        width = currentPenSize.width,
+                        ink = currentInk,
+                        outlined = currentOutlined,
+                    ),
                 )
                 points.clear()
             }
@@ -134,6 +141,7 @@ fun DoodleCanvasView(
                         points = points.toList(),
                         width = penSize.width,
                         ink = selectedInk,
+                        outlined = outlined,
                     )
                     DoodleLayerView(
                         doodle = Doodle(strokes = listOf(inProgress)),
@@ -146,7 +154,7 @@ fun DoodleCanvasView(
                 }
                 // Above the content: magnified content reaches the frame's edges, and the border
                 // marks where the drawing surface ends whatever is showing inside it.
-                Box(Modifier.matchParentSize().sketchBorder(shape, palette.default.color))
+                Box(Modifier.matchParentSize().sketchBorder(shape, palette.ink.color))
             }
             DoodleZoomControlsView(
                 zoom = transform.zoom,
@@ -283,7 +291,8 @@ private fun DoodleCanvasViewPreview(
             origin = DoodleOrigin.TopCenter,
             palette = aboutWallDoodleInkPalette(),
             penSize = DoodlePenSize.Normal,
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             background = { Box(modifier = Modifier.matchParentSize().background(MaterialTheme.colorScheme.primary)) },
@@ -304,7 +313,8 @@ private fun DoodleCanvasViewMagnifiedPreview(
             origin = DoodleOrigin.TopCenter,
             palette = aboutWallDoodleInkPalette(),
             penSize = DoodlePenSize.Normal,
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             transform = rememberDoodleCanvasTransform(initialZoom = 2f, initialOffset = Offset(x = 0.2f, y = -0.3f)),

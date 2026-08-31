@@ -128,24 +128,43 @@ class AboutScreenRobotTest : RobotTest() {
                         checkTextDoesNotExist(Res.string.doodle_done)
                     }
                 }
-                describe("and a stroke is drawn in the accent ink before Done is tapped") {
+                describe("and a stroke is drawn in the band ink before Done is tapped") {
                     doIt {
-                        clickAccentInk()
+                        clickBandInk()
                         drawStroke()
                         clickButton(Res.string.doodle_done)
                     }
-                    itShould("save the stroke in the accent ink") {
-                        checkSavedWallStrokeInks(listOf(DoodleInk.Accent))
+                    itShould("save the stroke in the band ink") {
+                        checkSavedWallStrokeInks(listOf(DoodleInk.Band))
                     }
                 }
-                describe("and a stroke is drawn in the pink ink before Done is tapped") {
+                describe("and a stroke is drawn in the paper ink before Done is tapped") {
                     doIt {
-                        clickPinkInk()
+                        clickPaperInk()
                         drawStroke()
                         clickButton(Res.string.doodle_done)
                     }
-                    itShould("save the stroke in the pink ink") {
-                        checkSavedWallStrokeInks(listOf(DoodleInk.Pink))
+                    itShould("save the stroke in the paper ink") {
+                        checkSavedWallStrokeInks(listOf(DoodleInk.Paper))
+                    }
+                }
+                describe("and a stroke is drawn with the outline turned off") {
+                    doIt {
+                        clickOutlineToggle()
+                        drawStroke()
+                        clickButton(Res.string.doodle_done)
+                    }
+                    itShould("save the stroke with no outline") {
+                        checkSavedWallStrokeOutlines(listOf(false))
+                    }
+                }
+                describe("and a stroke is drawn with the outline left on") {
+                    doIt {
+                        drawStroke()
+                        clickButton(Res.string.doodle_done)
+                    }
+                    itShould("save the stroke outlined") {
+                        checkSavedWallStrokeOutlines(listOf(true))
                     }
                 }
                 describe("and a stroke is drawn before back is pressed") {

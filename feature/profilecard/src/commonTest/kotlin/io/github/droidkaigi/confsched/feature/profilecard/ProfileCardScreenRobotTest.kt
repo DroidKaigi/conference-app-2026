@@ -93,30 +93,43 @@ class ProfileCardScreenRobotTest : RobotTest() {
                         checkCardDisplayed()
                     }
                 }
-                describe("and the accent ink is picked before a stroke is drawn on each face") {
+                describe("and the band ink is picked before a stroke is drawn on each face") {
                     doIt {
-                        clickAccentInk()
+                        clickBandInk()
                         drawStroke()
                         clickFlipToBack()
                         drawStroke()
                         clickFlipToFront()
                         clickDone()
                     }
-                    itShould("keep the accent ink across the flip and save both faces in it") {
-                        checkLastSavedStrokeInks(front = DoodleInk.Accent, back = DoodleInk.Accent)
+                    itShould("keep the band ink across the flip and save both faces in it") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Band, back = DoodleInk.Band)
                     }
                 }
-                describe("and the chalk ink is picked on the back face") {
+                describe("and the banner ink is picked on the back face") {
                     doIt {
                         drawStroke()
                         clickFlipToBack()
-                        clickChalkInk()
+                        clickBannerInk()
                         drawStroke()
                         clickFlipToFront()
                         clickDone()
                     }
-                    itShould("save the back face's stroke in the chalk ink") {
-                        checkLastSavedStrokeInks(front = DoodleInk.Default, back = DoodleInk.Chalk)
+                    itShould("save the back face's stroke in the banner ink") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Ink, back = DoodleInk.Banner)
+                    }
+                }
+                describe("and the outline is turned off before a stroke is drawn on each face") {
+                    doIt {
+                        clickOutlineToggle()
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep the outline off across the flip and save both faces without one") {
+                        checkLastSavedStrokeOutlines(front = false, back = false)
                     }
                 }
                 describe("and back is pressed after a stroke is drawn") {

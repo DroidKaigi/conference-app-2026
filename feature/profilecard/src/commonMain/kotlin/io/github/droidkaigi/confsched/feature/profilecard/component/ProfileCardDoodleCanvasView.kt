@@ -41,6 +41,7 @@ internal fun ProfileCardDoodleCanvasView(
     doodle: Doodle,
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
+    outlined: Boolean,
     onStrokeAdd: (DoodleStroke) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,6 +53,7 @@ internal fun ProfileCardDoodleCanvasView(
         palette = profileCardDoodleInkPalette(),
         penSize = penSize,
         selectedInk = selectedInk,
+        outlined = outlined,
         onStrokeAdd = onStrokeAdd,
         modifier = modifier,
         background = {
@@ -107,7 +109,8 @@ private fun ProfileCardDoodleCanvasViewPreview(
             showsBack = false,
             doodle = Doodle.fakeOnCardFace(),
             penSize = DoodlePenSize.Normal,
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
             onStrokeAdd = {},
             modifier = Modifier.fillMaxSize(),
         )
@@ -130,7 +133,8 @@ private fun ProfileCardDoodleCanvasViewBackPreview(
             showsBack = true,
             doodle = Doodle.fakeOnCardFace(),
             penSize = DoodlePenSize.Normal,
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
             onStrokeAdd = {},
             modifier = Modifier.fillMaxSize(),
         )

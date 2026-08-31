@@ -15,20 +15,39 @@ data class Doodle(val strokes: List<DoodleStroke>) {
     }
 }
 
-/** One drawn line, [width] dp wide in the same space [points] are measured in, laid down in [ink]. */
+/**
+ * One drawn line, [width] dp wide in the same space [points] are measured in, laid down in [ink].
+ * An [outlined] stroke is drawn with a rim around it, which is what carries it over a surface its
+ * own ink matches.
+ */
 @Serializable
-data class DoodleStroke(val points: List<DoodlePoint>, val width: Float, val ink: DoodleInk)
+data class DoodleStroke(
+    val points: List<DoodlePoint>,
+    val width: Float,
+    val ink: DoodleInk,
+    val outlined: Boolean,
+)
 
 @Serializable
 data class DoodlePoint(val x: Float, val y: Float)
 
-/** The colors a stroke can be drawn in, each resolved against the surface it lands on. */
+/**
+ * The colors a stroke can be drawn in: the four a profile card's own design is painted with, each
+ * resolved against the surface the stroke lands on.
+ */
 @Serializable
 enum class DoodleInk {
-    Default,
-    Accent,
-    Pink,
-    Chalk,
+    /** The surface's own default ink. */
+    Ink,
+
+    /** The card's dusk band. */
+    Band,
+
+    /** The card's plate. */
+    Paper,
+
+    /** The gold of the card's scan banner. */
+    Banner,
 }
 
 /** The widths a stroke can be drawn at, offered as the pens a doodle is drawn with. */

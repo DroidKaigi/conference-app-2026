@@ -81,13 +81,18 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         composeUiTest.waitForIdle()
     }
 
-    // The ink labels are :core:ui strings, whose generated resources that module keeps internal.
-    fun clickAccentInk() = clickInk(ACCENT_INK_DESCRIPTION)
+    // The ink and outline labels are :core:ui strings, whose generated resources that module keeps internal.
+    fun clickBandInk() = clickInk(BAND_INK_DESCRIPTION)
 
-    fun clickPinkInk() = clickInk(PINK_INK_DESCRIPTION)
+    fun clickPaperInk() = clickInk(PAPER_INK_DESCRIPTION)
 
     private fun clickInk(description: String) {
         composeUiTest.onNodeWithContentDescription(description).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun clickOutlineToggle() {
+        composeUiTest.onNodeWithText(OUTLINE_TOGGLE_LABEL).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -144,6 +149,11 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         assertEquals(inks, edits.single().doodle.strokes.map(DoodleStroke::ink))
     }
 
+    fun checkSavedWallStrokeOutlines(outlines: List<Boolean>) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(outlines, edits.single().doodle.strokes.map(DoodleStroke::outlined))
+    }
+
     fun checkNothingSaved() {
         assertTrue(graph.doodleMutationKey.invocations.tryReceive().isFailure, "a save reached the data layer")
     }
@@ -170,6 +180,8 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
 private const val STROKE_HALF_SPAN_FRACTION = 0.2f
 
-private const val ACCENT_INK_DESCRIPTION = "Orange ink"
+private const val BAND_INK_DESCRIPTION = "Band color"
 
-private const val PINK_INK_DESCRIPTION = "Pink ink"
+private const val PAPER_INK_DESCRIPTION = "Paper color"
+
+private const val OUTLINE_TOGGLE_LABEL = "Outline"

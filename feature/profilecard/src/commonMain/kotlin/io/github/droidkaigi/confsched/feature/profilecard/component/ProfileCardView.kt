@@ -69,7 +69,8 @@ fun ProfileCardView(
     val shareImageLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
     var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
-    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Default) }
+    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Ink) }
+    var outlined by rememberSerializable { mutableStateOf(true) }
     // A doodle session starts from what is saved and reaches the data layer only on Done, so the
     // drafts are keyed on the session rather than kept for the life of the screen.
     var frontDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.frontDoodle) }
@@ -122,6 +123,7 @@ fun ProfileCardView(
                         doodle = frontDraft,
                         penSize = penSize,
                         selectedInk = selectedInk,
+                        outlined = outlined,
                         onStrokeAdd = { frontDraft = frontDraft.withStroke(it) },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
@@ -136,6 +138,7 @@ fun ProfileCardView(
                         doodle = backDraft,
                         penSize = penSize,
                         selectedInk = selectedInk,
+                        outlined = outlined,
                         onStrokeAdd = { backDraft = backDraft.withStroke(it) },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
@@ -152,6 +155,7 @@ fun ProfileCardView(
                     doodle = if (uiState.isShowingBack) backDraft else frontDraft,
                     penSize = penSize,
                     selectedInk = selectedInk,
+                    outlined = outlined,
                     onStrokeAdd = { stroke ->
                         if (uiState.isShowingBack) {
                             backDraft = backDraft.withStroke(stroke)
@@ -177,12 +181,14 @@ fun ProfileCardView(
                     ProfileCardDoodleControlsSection(
                         penSize = penSize,
                         selectedInk = selectedInk,
+                        outlined = outlined,
                         isShowingBack = uiState.isShowingBack,
                         sideBySide = sideBySide,
                         canEditFront = frontDraft.strokes.isNotEmpty(),
                         canEditBack = backDraft.strokes.isNotEmpty(),
                         onPenSizeClick = { penSize = it },
                         onInkClick = { selectedInk = it },
+                        onOutlinedChange = { outlined = it },
                         onFlipClick = onCardClick,
                         onFrontUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
                         onFrontClearClick = { frontDraft = Doodle.Empty },

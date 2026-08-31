@@ -25,10 +25,11 @@
     <string name="reset_zoom">等倍に戻す</string>
     <string name="doodle_undo">元に戻す</string>
     <string name="doodle_clear">全部消す</string>
-    <string name="doodle_ink_default">基本の色</string>
-    <string name="doodle_ink_accent">オレンジ</string>
-    <string name="doodle_ink_pink">桃色</string>
-    <string name="doodle_ink_chalk">チョーク</string>
+    <string name="doodle_ink_ink">インク</string>
+    <string name="doodle_ink_band">帯の色</string>
+    <string name="doodle_ink_paper">紙の色</string>
+    <string name="doodle_ink_banner">金色</string>
+    <string name="doodle_outline">輪郭</string>
     <string name="doodle_pen_thin">細い</string>
     <string name="doodle_pen_normal">ふつう</string>
     <string name="doodle_pen_thick">太い</string>

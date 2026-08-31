@@ -25,22 +25,26 @@ class DoodleStorePersistenceTest {
             DoodleStroke(
                 points = listOf(DoodlePoint(x = -12.5f, y = 30f), DoodlePoint(x = 8f, y = 44.25f)),
                 width = DoodlePenSize.Thin.width,
-                ink = DoodleInk.Default,
+                ink = DoodleInk.Ink,
+                outlined = true,
             ),
             DoodleStroke(
                 points = listOf(DoodlePoint(x = 2f, y = 18f), DoodlePoint(x = 21.5f, y = 36f)),
                 width = DoodlePenSize.Normal.width,
-                ink = DoodleInk.Accent,
+                ink = DoodleInk.Band,
+                outlined = false,
             ),
             DoodleStroke(
                 points = listOf(DoodlePoint(x = -4f, y = 52f), DoodlePoint(x = 16f, y = 60.5f)),
                 width = DoodlePenSize.Normal.width,
-                ink = DoodleInk.Pink,
+                ink = DoodleInk.Paper,
+                outlined = true,
             ),
             DoodleStroke(
                 points = listOf(DoodlePoint(x = 6f, y = 70f), DoodlePoint(x = 24f, y = 82f)),
                 width = DoodlePenSize.Thick.width,
-                ink = DoodleInk.Chalk,
+                ink = DoodleInk.Banner,
+                outlined = false,
             ),
         ),
     )
@@ -50,7 +54,8 @@ class DoodleStorePersistenceTest {
             DoodleStroke(
                 points = listOf(DoodlePoint(x = 40f, y = 250f)),
                 width = DoodlePenSize.Thick.width,
-                ink = DoodleInk.Chalk,
+                ink = DoodleInk.Banner,
+                outlined = false,
             ),
         ),
     )

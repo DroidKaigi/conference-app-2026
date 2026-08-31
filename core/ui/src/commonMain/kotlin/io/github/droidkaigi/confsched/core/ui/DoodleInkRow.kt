@@ -24,15 +24,19 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
-import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_accent
-import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_chalk
-import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_default
-import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_pink
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_band
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_banner
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_ink
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_paper
 import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-/** Picks the ink the next stroke is drawn in, each option shown in the color [palette] gives it. */
+/**
+ * Picks the ink the next stroke is drawn in, each option shown in the color [palette] gives it.
+ * Only the inks [palette] tells apart are offered, so a scheme painting two of them alike offers
+ * one swatch for the pair.
+ */
 @Composable
 fun DoodleInkRow(
     selectedInk: DoodleInk,
@@ -45,7 +49,7 @@ fun DoodleInkRow(
         horizontalArrangement = Arrangement.spacedBy(DoodleInkRowDefaults.gap),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DoodleInk.entries.forEach { ink ->
+        palette.distinctInks().forEach { ink ->
             DoodleInkSwatch(
                 ink = ink,
                 color = palette.style(ink).color,
@@ -116,10 +120,10 @@ private object DoodleInkRowDefaults {
 
 private val DoodleInk.label: StringResource
     get() = when (this) {
-        DoodleInk.Default -> Res.string.doodle_ink_default
-        DoodleInk.Accent -> Res.string.doodle_ink_accent
-        DoodleInk.Pink -> Res.string.doodle_ink_pink
-        DoodleInk.Chalk -> Res.string.doodle_ink_chalk
+        DoodleInk.Ink -> Res.string.doodle_ink_ink
+        DoodleInk.Band -> Res.string.doodle_ink_band
+        DoodleInk.Paper -> Res.string.doodle_ink_paper
+        DoodleInk.Banner -> Res.string.doodle_ink_banner
     }
 
 private const val INK_SWATCH_SEED = 4371
@@ -133,7 +137,7 @@ private fun DoodleInkRowPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         DoodleInkRow(
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
             palette = profileCardDoodleInkPalette(),
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),
@@ -143,12 +147,12 @@ private fun DoodleInkRowPreview(
 
 @LocalePreviews
 @Composable
-private fun DoodleInkRowAccentSelectedPreview(
+private fun DoodleInkRowBandSelectedPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
         DoodleInkRow(
-            selectedInk = DoodleInk.Accent,
+            selectedInk = DoodleInk.Band,
             palette = aboutWallDoodleInkPalette(),
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),

@@ -4,24 +4,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 /**
- * The inks as the About wall draws them, over the wall's own `primary` fill. The default ink is the
- * one color the wall never sits close to, so it alone is drawn bare; the crayons take a `surface`
- * rim that lifts a fixed pigment off whichever wall the scheme paints, and the chalk crayon, light
- * enough to vanish into that rim, is outlined in `scrim` instead.
+ * The inks as the About wall draws them, over the wall's own `primary` fill. Each rim is the
+ * Material pair of the color the ink is drawn in, so it contrasts the stroke in every scheme. The
+ * default ink is `onPrimary`, whose pair is the wall itself, so it takes `onSurface` instead.
  */
 @Composable
 fun aboutWallDoodleInkPalette(): DoodleInkPalette = DoodleInkPalette(
-    default = DoodleInkStyle(color = MaterialTheme.colorScheme.onPrimary, haloColor = null),
-    accent = DoodleInkStyle(
-        color = DoodleCrayonColors.Orange,
-        haloColor = MaterialTheme.colorScheme.surface,
+    ink = DoodleInkStyle(
+        color = MaterialTheme.colorScheme.onPrimary,
+        rimColor = MaterialTheme.colorScheme.onSurface,
     ),
-    pink = DoodleInkStyle(
-        color = DoodleCrayonColors.Pink,
-        haloColor = MaterialTheme.colorScheme.surface,
+    band = DoodleInkStyle(
+        color = MaterialTheme.colorScheme.primary,
+        rimColor = MaterialTheme.colorScheme.onPrimary,
     ),
-    chalk = DoodleInkStyle(
-        color = DoodleCrayonColors.Chalk,
-        haloColor = MaterialTheme.colorScheme.scrim,
+    paper = DoodleInkStyle(
+        color = MaterialTheme.colorScheme.surface,
+        rimColor = MaterialTheme.colorScheme.onSurface,
+    ),
+    banner = DoodleInkStyle(
+        color = MaterialTheme.colorScheme.secondaryContainer,
+        rimColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ),
 )

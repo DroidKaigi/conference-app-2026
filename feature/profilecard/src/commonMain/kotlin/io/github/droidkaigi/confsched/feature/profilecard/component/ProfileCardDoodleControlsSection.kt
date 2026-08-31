@@ -24,6 +24,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.DoodleFlipButton
 import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
+import io.github.droidkaigi.confsched.core.ui.DoodleOutlineToggle
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsSpacing
@@ -44,12 +45,14 @@ import org.jetbrains.compose.resources.stringResource
 internal fun ProfileCardDoodleControlsSection(
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
+    outlined: Boolean,
     isShowingBack: Boolean,
     sideBySide: Boolean,
     canEditFront: Boolean,
     canEditBack: Boolean,
     onPenSizeClick: (DoodlePenSize) -> Unit,
     onInkClick: (DoodleInk) -> Unit,
+    onOutlinedChange: (Boolean) -> Unit,
     onFlipClick: () -> Unit,
     onFrontUndoClick: () -> Unit,
     onFrontClearClick: () -> Unit,
@@ -71,6 +74,7 @@ internal fun ProfileCardDoodleControlsSection(
             palette = profileCardDoodleInkPalette(),
             onInkClick = onInkClick,
         )
+        DoodleOutlineToggle(outlined = outlined, onOutlinedChange = onOutlinedChange)
         DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -132,13 +136,15 @@ private fun ProfileCardDoodleControlsSectionPreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardDoodleControlsSection(
             penSize = DoodlePenSize.Normal,
-            selectedInk = DoodleInk.Default,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
             isShowingBack = false,
             sideBySide = false,
             canEditFront = true,
             canEditBack = false,
             onPenSizeClick = {},
             onInkClick = {},
+            onOutlinedChange = {},
             onFlipClick = {},
             onFrontUndoClick = {},
             onFrontClearClick = {},
@@ -157,13 +163,15 @@ private fun ProfileCardDoodleControlsSectionSideBySidePreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardDoodleControlsSection(
             penSize = DoodlePenSize.Thick,
-            selectedInk = DoodleInk.Accent,
+            selectedInk = DoodleInk.Band,
+            outlined = false,
             isShowingBack = false,
             sideBySide = true,
             canEditFront = true,
             canEditBack = true,
             onPenSizeClick = {},
             onInkClick = {},
+            onOutlinedChange = {},
             onFlipClick = {},
             onFrontUndoClick = {},
             onFrontClearClick = {},

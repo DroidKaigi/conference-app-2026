@@ -3,7 +3,6 @@ package io.github.droidkaigi.confsched.core.ui.profilecard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import io.github.droidkaigi.confsched.core.ui.DoodleCrayonColors
 import io.github.droidkaigi.confsched.core.ui.DoodleInkPalette
 import io.github.droidkaigi.confsched.core.ui.DoodleInkStyle
 
@@ -54,14 +53,13 @@ object ProfileCardColors {
 }
 
 /**
- * The inks as a card face draws them. A face spans the light [ProfileCardColors.plate] and the dark
- * [ProfileCardColors.duskBand], so every ink takes a rim: the darker inks are rimmed in the plate's
- * own color, and the chalk crayon, as light as that plate, is outlined in the card's ink instead.
+ * The inks as a card face draws them: the card's own four colors, each rimmed in the color the
+ * design reads it against, so an outlined stroke carries over both the plate and the dusk band.
  */
 @Composable
 fun profileCardDoodleInkPalette(): DoodleInkPalette = DoodleInkPalette(
-    default = DoodleInkStyle(color = ProfileCardColors.ink, haloColor = ProfileCardColors.plate),
-    accent = DoodleInkStyle(color = DoodleCrayonColors.Orange, haloColor = ProfileCardColors.plate),
-    pink = DoodleInkStyle(color = DoodleCrayonColors.Pink, haloColor = ProfileCardColors.plate),
-    chalk = DoodleInkStyle(color = DoodleCrayonColors.Chalk, haloColor = ProfileCardColors.ink),
+    ink = DoodleInkStyle(color = ProfileCardColors.ink, rimColor = ProfileCardColors.plate),
+    band = DoodleInkStyle(color = ProfileCardColors.duskBand, rimColor = ProfileCardColors.onDuskBand),
+    paper = DoodleInkStyle(color = ProfileCardColors.plate, rimColor = ProfileCardColors.ink),
+    banner = DoodleInkStyle(color = ProfileCardColors.banner, rimColor = ProfileCardColors.onBanner),
 )

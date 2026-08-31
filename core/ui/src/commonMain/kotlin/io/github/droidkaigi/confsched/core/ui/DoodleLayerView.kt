@@ -35,7 +35,7 @@ enum class DoodleOrigin {
  * Draws [doodle] in the space its points are stored in: the y axis runs down from this layer's
  * top edge and the x axis out from [origin], both in dp multiplied by [scale], so the same doodle
  * keeps its size wherever it is drawn. Each stroke is laid down in the [palette] style its own
- * [DoodleStroke.ink] names.
+ * [DoodleStroke.ink] names, rimmed where the stroke is outlined.
  */
 @Composable
 fun DoodleLayerView(
@@ -54,15 +54,15 @@ fun DoodleLayerView(
                 path = stroke.toPath(originX, unit),
                 width = stroke.width * unit,
                 color = style.color,
-                haloColor = style.haloColor,
+                rimColor = style.rimColor.takeIf { stroke.outlined },
             )
         }
-        // Every halo is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
-        val rim = DoodleHaloWidth.toPx() * scale * 2
+        // Every rim is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
+        val rimWidth = DoodleRimWidth.toPx() * scale * 2
         drawn.forEach { stroke ->
-            val halo = stroke.haloColor ?: return@forEach
-            val style = Stroke(width = stroke.width + rim, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            drawPath(path = stroke.path, color = halo, style = style)
+            val rim = stroke.rimColor ?: return@forEach
+            val style = Stroke(width = stroke.width + rimWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawPath(path = stroke.path, color = rim, style = style)
         }
         drawn.forEach { stroke ->
             val ink = Stroke(width = stroke.width, cap = StrokeCap.Round, join = StrokeJoin.Round)
@@ -71,14 +71,14 @@ fun DoodleLayerView(
     }
 }
 
-private class DrawnStroke(val path: Path, val width: Float, val color: Color, val haloColor: Color?)
+private class DrawnStroke(val path: Path, val width: Float, val color: Color, val rimColor: Color?)
 
 internal fun DoodleOrigin.originX(width: Float): Float = when (this) {
     DoodleOrigin.TopStart -> 0f
     DoodleOrigin.TopCenter -> width / 2f
 }
 
-private val DoodleHaloWidth = 1.dp
+private val DoodleRimWidth = 1.dp
 
 // Each sampled point becomes the control point of a quadratic through its neighbours' midpoints,
 // which rounds off the corners a finger's sampling rate leaves in a curve.

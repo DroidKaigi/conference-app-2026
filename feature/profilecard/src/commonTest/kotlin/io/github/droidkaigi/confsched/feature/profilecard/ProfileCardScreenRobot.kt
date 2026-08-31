@@ -72,9 +72,11 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun clickDone() = clickText("Done")
 
-    fun clickAccentInk() = clickDescription("Orange ink")
+    fun clickBandInk() = clickDescription("Band color")
 
-    fun clickChalkInk() = clickDescription("Chalk ink")
+    fun clickBannerInk() = clickDescription("Banner gold")
+
+    fun clickOutlineToggle() = clickText("Outline")
 
     fun clickFlipToBack() = clickDescription("Switch to the back")
 
@@ -159,6 +161,13 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
         assertEquals(front, edits.single { it.target == DoodleTarget.ProfileCardFront }.doodle.strokes.last().ink)
         assertEquals(back, edits.single { it.target == DoodleTarget.ProfileCardBack }.doodle.strokes.last().ink)
+    }
+
+    /** Asserts one save carried the given outline on the stroke drawn last on each face. */
+    fun checkLastSavedStrokeOutlines(front: Boolean, back: Boolean) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(front, edits.single { it.target == DoodleTarget.ProfileCardFront }.doodle.strokes.last().outlined)
+        assertEquals(back, edits.single { it.target == DoodleTarget.ProfileCardBack }.doodle.strokes.last().outlined)
     }
 
     fun checkNoDoodleSaved() {

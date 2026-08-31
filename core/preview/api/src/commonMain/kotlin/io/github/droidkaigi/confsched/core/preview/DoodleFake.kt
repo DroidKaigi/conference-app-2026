@@ -12,22 +12,26 @@ fun Doodle.Companion.fake(): Doodle = Doodle(
         DoodleStroke(
             points = wave(startX = -70f, y = 150f, amplitude = 14f),
             width = NormalWidth,
-            ink = DoodleInk.Default,
+            ink = DoodleInk.Ink,
+            outlined = false,
         ),
         DoodleStroke(
             points = wave(startX = 10f, y = 190f, amplitude = -8f),
             width = NormalWidth,
-            ink = DoodleInk.Accent,
+            ink = DoodleInk.Band,
+            outlined = true,
         ),
         DoodleStroke(
             points = wave(startX = -70f, y = 120f, amplitude = 10f),
             width = NormalWidth,
-            ink = DoodleInk.Pink,
+            ink = DoodleInk.Paper,
+            outlined = true,
         ),
         DoodleStroke(
             points = wave(startX = 10f, y = 160f, amplitude = -10f),
             width = NormalWidth,
-            ink = DoodleInk.Chalk,
+            ink = DoodleInk.Banner,
+            outlined = true,
         ),
     ),
 )
@@ -38,22 +42,26 @@ fun Doodle.Companion.fakeOnCardFace(): Doodle = Doodle(
         DoodleStroke(
             points = wave(startX = 236f, y = 62f, amplitude = 16f),
             width = NormalWidth,
-            ink = DoodleInk.Default,
+            ink = DoodleInk.Ink,
+            outlined = false,
         ),
         DoodleStroke(
             points = wave(startX = 40f, y = 250f, amplitude = 18f),
             width = NormalWidth,
-            ink = DoodleInk.Accent,
+            ink = DoodleInk.Band,
+            outlined = true,
         ),
         DoodleStroke(
             points = wave(startX = 170f, y = 430f, amplitude = -12f),
             width = NormalWidth,
-            ink = DoodleInk.Pink,
+            ink = DoodleInk.Paper,
+            outlined = true,
         ),
         DoodleStroke(
             points = wave(startX = 25f, y = 440f, amplitude = 12f),
             width = NormalWidth,
-            ink = DoodleInk.Chalk,
+            ink = DoodleInk.Banner,
+            outlined = true,
         ),
     ),
 )

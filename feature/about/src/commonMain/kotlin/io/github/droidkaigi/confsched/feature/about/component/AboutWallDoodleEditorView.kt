@@ -39,6 +39,7 @@ import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleCanvasView
 import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
+import io.github.droidkaigi.confsched.core.ui.DoodleOutlineToggle
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
@@ -61,7 +62,8 @@ internal fun AboutWallDoodleEditorView(
     modifier: Modifier = Modifier,
 ) {
     var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
-    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Default) }
+    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Ink) }
+    var outlined by rememberSerializable { mutableStateOf(true) }
     var draft by rememberSerializable(savedDoodle) { mutableStateOf(savedDoodle) }
     val palette = aboutWallDoodleInkPalette()
     Column(
@@ -77,6 +79,7 @@ internal fun AboutWallDoodleEditorView(
             palette = palette,
             penSize = penSize,
             selectedInk = selectedInk,
+            outlined = outlined,
             onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
             modifier = Modifier.fillMaxWidth().height(AboutHeroHeight),
             background = { scale -> AboutWallHintView(scale = scale, modifier = Modifier.matchParentSize()) },
@@ -93,6 +96,7 @@ internal fun AboutWallDoodleEditorView(
                 palette = palette,
                 onInkClick = { selectedInk = it },
             )
+            DoodleOutlineToggle(outlined = outlined, onOutlinedChange = { outlined = it })
             DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = { penSize = it })
             DoodleStrokeControlsRow(
                 canEdit = draft.strokes.isNotEmpty(),
