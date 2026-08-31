@@ -59,12 +59,13 @@ internal fun PrizeGroupSection(
                 ) {
                     for ((index, prize) in rowPrizes) {
                         PrizeCardItem(
-                            id = prize.id,
                             name = prize.name.current(),
                             imageUrl = prize.imageUrl,
                             seed = seed + index,
                             onClick = { onPrizeClick(prize) },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag(prizeCardItemTestTag(prize.id)),
                         )
                     }
                     repeat(columns - rowPrizes.size) {

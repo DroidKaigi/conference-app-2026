@@ -41,6 +41,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.eventmap.component.PrizePageCard
 import io.github.droidkaigi.confsched.feature.eventmap.component.PrizePageCardWidth
+import io.github.droidkaigi.confsched.feature.eventmap.component.prizePageCardTestTag
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.prize_overlay_close
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.stamp_collecting_prize_overlay_close
@@ -89,14 +90,15 @@ fun PrizeOverlayScreen(
                 ) { page ->
                     val prize = uiState.prizes[page]
                     PrizePageCard(
-                        id = prize.id,
                         name = prize.name.current(),
                         imageUrl = prize.imageUrl,
                         group = prize.group,
                         seed = PRIZE_PAGE_SEED_BASE + page,
                         // The scrim behind closes the overlay; a tap that lands on the card is not
                         // a tap outside it.
-                        modifier = Modifier.pointerInput(Unit) { detectTapGestures {} },
+                        modifier = Modifier
+                            .testTag(prizePageCardTestTag(prize.id))
+                            .pointerInput(Unit) { detectTapGestures {} },
                     )
                 }
             }

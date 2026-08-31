@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -48,7 +47,6 @@ fun prizePageCardTestTag(prizeId: PrizeId) = "PrizePageCard:${prizeId.value}"
 
 @Composable
 internal fun PrizePageCard(
-    id: PrizeId,
     name: String,
     imageUrl: String,
     group: PrizeGroup,
@@ -57,7 +55,7 @@ internal fun PrizePageCard(
 ) {
     SketchCard(
         shape = SketchRoundRectShape(seed = seed, cornerRadius = 20.dp, borderThickness = 2.dp),
-        modifier = modifier.testTag(prizePageCardTestTag(id)),
+        modifier = modifier,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +113,6 @@ private fun PrizePageCardPreview(
     KaigiPreviewTheme(colorScheme) {
         val prize = Prizes.fake().items[1]
         PrizePageCard(
-            id = prize.id,
             name = prize.name.current(),
             imageUrl = prize.imageUrl,
             group = PrizeGroup.A,
