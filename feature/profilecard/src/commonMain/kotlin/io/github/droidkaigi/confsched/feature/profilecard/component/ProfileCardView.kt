@@ -267,9 +267,13 @@ private fun FlippableProfileCard(
         animationSpec = tween(durationMillis = ProfileCardViewDefaults.flipDurationMillis, easing = FastOutSlowInEasing),
     )
     val showsBack = rotation > 90f
+    val lean = rememberProfileCardLean()
     Box(
         modifier = modifier.graphicsLayer {
-            rotationY = rotation
+            // A graphics layer turns about Y before X, so the lean about the screen's horizontal
+            // axis lands outside the flip and the back face leans the same way the front does.
+            rotationX = lean.value.pitchDegrees
+            rotationY = rotation + lean.value.rollDegrees
             cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
         },
     ) {
