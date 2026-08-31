@@ -27,7 +27,7 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_accent
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_chalk
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_default
-import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_gold
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_pink
 import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -118,7 +118,7 @@ private val DoodleInk.label: StringResource
     get() = when (this) {
         DoodleInk.Default -> Res.string.doodle_ink_default
         DoodleInk.Accent -> Res.string.doodle_ink_accent
-        DoodleInk.Gold -> Res.string.doodle_ink_gold
+        DoodleInk.Pink -> Res.string.doodle_ink_pink
         DoodleInk.Chalk -> Res.string.doodle_ink_chalk
     }
 

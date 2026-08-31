@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.core.ui.profilecard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import io.github.droidkaigi.confsched.core.ui.DoodleCrayonColors
 import io.github.droidkaigi.confsched.core.ui.DoodleInkPalette
 import io.github.droidkaigi.confsched.core.ui.DoodleInkStyle
 
@@ -35,14 +36,6 @@ object ProfileCardColors {
     val ink: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface
 
-    /** The call-to-action orange every scheme shares, one of the inks a doodle can be drawn in. */
-    val accentInk: Color
-        @Composable get() = MaterialTheme.colorScheme.tertiary
-
-    /** The gold ink a doodle can be drawn in, which each scheme sets to its own gold or brown. */
-    val goldInk: Color
-        @Composable get() = MaterialTheme.colorScheme.secondary
-
     /** The secondary text colour the occupation and date lines are set in (`md3/onSurfaceVariant`). */
     val mutedInk: Color
         @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant
@@ -62,13 +55,13 @@ object ProfileCardColors {
 
 /**
  * The inks as a card face draws them. A face spans the light [ProfileCardColors.plate] and the dark
- * [ProfileCardColors.duskBand], so every ink takes a rim: the three dark inks are rimmed in the
- * plate's own color, and the chalk ink, which is that color, is outlined in the card's ink instead.
+ * [ProfileCardColors.duskBand], so every ink takes a rim: the darker inks are rimmed in the plate's
+ * own color, and the chalk crayon, as light as that plate, is outlined in the card's ink instead.
  */
 @Composable
 fun profileCardDoodleInkPalette(): DoodleInkPalette = DoodleInkPalette(
     default = DoodleInkStyle(color = ProfileCardColors.ink, haloColor = ProfileCardColors.plate),
-    accent = DoodleInkStyle(color = ProfileCardColors.accentInk, haloColor = ProfileCardColors.plate),
-    gold = DoodleInkStyle(color = ProfileCardColors.goldInk, haloColor = ProfileCardColors.plate),
-    chalk = DoodleInkStyle(color = ProfileCardColors.plate, haloColor = ProfileCardColors.ink),
+    accent = DoodleInkStyle(color = DoodleCrayonColors.Orange, haloColor = ProfileCardColors.plate),
+    pink = DoodleInkStyle(color = DoodleCrayonColors.Pink, haloColor = ProfileCardColors.plate),
+    chalk = DoodleInkStyle(color = DoodleCrayonColors.Chalk, haloColor = ProfileCardColors.ink),
 )

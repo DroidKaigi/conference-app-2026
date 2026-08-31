@@ -16,13 +16,20 @@ data class DoodleInkStyle(val color: Color, val haloColor: Color?)
 data class DoodleInkPalette(
     val default: DoodleInkStyle,
     val accent: DoodleInkStyle,
-    val gold: DoodleInkStyle,
+    val pink: DoodleInkStyle,
     val chalk: DoodleInkStyle,
 ) {
     fun style(ink: DoodleInk): DoodleInkStyle = when (ink) {
         DoodleInk.Default -> default
         DoodleInk.Accent -> accent
-        DoodleInk.Gold -> gold
+        DoodleInk.Pink -> pink
         DoodleInk.Chalk -> chalk
     }
+}
+
+/** Physical crayons: the same pigment in every theme, so only the surface under them changes. */
+object DoodleCrayonColors {
+    val Orange = Color(0xFFE04A1E)
+    val Pink = Color(0xFFE88AB0)
+    val Chalk = Color(0xFFFAF6EE)
 }

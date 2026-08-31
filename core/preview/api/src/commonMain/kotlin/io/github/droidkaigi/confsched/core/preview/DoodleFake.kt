@@ -22,7 +22,7 @@ fun Doodle.Companion.fake(): Doodle = Doodle(
         DoodleStroke(
             points = wave(startX = -70f, y = 120f, amplitude = 10f),
             width = NormalWidth,
-            ink = DoodleInk.Gold,
+            ink = DoodleInk.Pink,
         ),
         DoodleStroke(
             points = wave(startX = 10f, y = 160f, amplitude = -10f),
@@ -48,7 +48,7 @@ fun Doodle.Companion.fakeOnCardFace(): Doodle = Doodle(
         DoodleStroke(
             points = wave(startX = 170f, y = 430f, amplitude = -12f),
             width = NormalWidth,
-            ink = DoodleInk.Gold,
+            ink = DoodleInk.Pink,
         ),
         DoodleStroke(
             points = wave(startX = 25f, y = 440f, amplitude = 12f),

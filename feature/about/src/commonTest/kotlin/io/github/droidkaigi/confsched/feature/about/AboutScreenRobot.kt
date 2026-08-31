@@ -84,7 +84,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     // The ink labels are :core:ui strings, whose generated resources that module keeps internal.
     fun clickAccentInk() = clickInk(ACCENT_INK_DESCRIPTION)
 
-    fun clickGoldInk() = clickInk(GOLD_INK_DESCRIPTION)
+    fun clickPinkInk() = clickInk(PINK_INK_DESCRIPTION)
 
     private fun clickInk(description: String) {
         composeUiTest.onNodeWithContentDescription(description).performClick()
@@ -172,4 +172,4 @@ private const val STROKE_HALF_SPAN_FRACTION = 0.2f
 
 private const val ACCENT_INK_DESCRIPTION = "Orange ink"
 
-private const val GOLD_INK_DESCRIPTION = "Gold ink"
+private const val PINK_INK_DESCRIPTION = "Pink ink"

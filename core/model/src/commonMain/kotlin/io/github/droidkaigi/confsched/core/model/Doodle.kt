@@ -27,7 +27,7 @@ data class DoodlePoint(val x: Float, val y: Float)
 enum class DoodleInk {
     Default,
     Accent,
-    Gold,
+    Pink,
     Chalk,
 }
 

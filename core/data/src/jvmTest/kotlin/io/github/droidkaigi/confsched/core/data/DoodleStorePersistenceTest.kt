@@ -35,7 +35,7 @@ class DoodleStorePersistenceTest {
             DoodleStroke(
                 points = listOf(DoodlePoint(x = -4f, y = 52f), DoodlePoint(x = 16f, y = 60.5f)),
                 width = DoodlePenSize.Normal.width,
-                ink = DoodleInk.Gold,
+                ink = DoodleInk.Pink,
             ),
             DoodleStroke(
                 points = listOf(DoodlePoint(x = 6f, y = 70f), DoodlePoint(x = 24f, y = 82f)),
