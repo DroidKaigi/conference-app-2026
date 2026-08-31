@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.about
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -16,6 +17,8 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
+import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.plus
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import org.jetbrains.compose.resources.stringResource
@@ -35,7 +38,7 @@ fun LicensesScreen(
         LibrariesContainer(
             libraries = uiState.libs,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = innerPadding,
+            contentPadding = innerPadding + PaddingValues(start = paneStartInset()),
             colors = LicensesScreenDefaults.libraryColors(),
             variantColors = LicensesScreenDefaults.variantColors(),
         )

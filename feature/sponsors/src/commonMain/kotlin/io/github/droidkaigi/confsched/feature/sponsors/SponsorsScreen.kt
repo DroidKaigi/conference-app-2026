@@ -16,6 +16,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
+import io.github.droidkaigi.confsched.core.ui.paneStartInset
 import io.github.droidkaigi.confsched.feature.sponsors.component.SPONSOR_GRID_COLUMNS
 import io.github.droidkaigi.confsched.feature.sponsors.component.SponsorsEmptyView
 import io.github.droidkaigi.confsched.feature.sponsors.component.sponsorPlanSection
@@ -29,18 +30,24 @@ fun SponsorsScreen(
     onSponsorClick: (String) -> Unit,
     onBackClick: () -> Unit,
 ) {
+    val paneSpacerInset = paneStartInset()
     Scaffold(
         topBar = {
             KaigiLargeTopAppBar(title = stringResource(Res.string.sponsors), onBackClick = onBackClick)
         },
     ) { innerPadding ->
         if (uiState.groups.isEmpty()) {
-            SponsorsEmptyView(modifier = Modifier.padding(innerPadding))
+            SponsorsEmptyView(modifier = Modifier.padding(innerPadding).padding(start = paneSpacerInset))
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(SPONSOR_GRID_COLUMNS),
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
-                contentPadding = PaddingValues(start = 24.dp, top = 20.dp, end = 24.dp, bottom = 72.dp),
+                contentPadding = PaddingValues(
+                    start = 24.dp + paneSpacerInset,
+                    top = 20.dp,
+                    end = 24.dp,
+                    bottom = 72.dp,
+                ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
