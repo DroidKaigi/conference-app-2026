@@ -15,6 +15,7 @@ import io.github.droidkaigi.confsched.core.ui.LocalErrorSceneOfLaunch
 import io.github.droidkaigi.confsched.core.ui.RemoteImageLoaderEffect
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberDeviceTiltSource
+import io.github.droidkaigi.confsched.feature.favorites.FirstFavoriteNotificationNavKey
 import soil.query.compose.SwrClientProvider
 import soil.query.compose.rememberSubscription
 import kotlin.random.Random
@@ -62,6 +63,11 @@ fun KaigiApp() {
                         backStack = backStack,
                         logger = uiGraph.logger,
                         onNavigate = uiGraph.appNavigator::moveToTop,
+                    )
+                    FirstFavoriteGuidanceEffect(
+                        favoritesStore = uiGraph.favoritesStore,
+                        firstFavoriteGuidanceStore = uiGraph.firstFavoriteGuidanceStore,
+                        onOfferGuidance = { uiGraph.appNavigator.goTo(FirstFavoriteNotificationNavKey) },
                     )
                     IosTabBarSyncEffect(
                         backStack = backStack,
