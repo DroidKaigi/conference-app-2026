@@ -14,6 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -47,10 +50,25 @@ internal fun SessionHeaderView(
     contentInsets: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val headerColor = MaterialTheme.colorScheme.inverseSurface
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.inverseSurface)
+            .then(
+                if (!isCancelled) {
+                    Modifier.drawBehind {
+                        val extent = size.height * 4
+                        drawRect(
+                            color = headerColor,
+                            topLeft = Offset(0f, -extent),
+                            size = Size(size.width, size.height + extent),
+                        )
+                    }
+                } else {
+                    Modifier
+                },
+            )
+            .background(headerColor)
             .padding(contentInsets)
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
