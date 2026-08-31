@@ -43,7 +43,10 @@ internal data class ProfileCardLean(
 @Composable
 internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVector2D> {
     val lean = remember { Animatable(ProfileCardLean.Level, ProfileCardLean.VectorConverter) }
-    if (rememberReducedMotion()) return lean
+    if (rememberReducedMotion()) {
+        LaunchedEffect(lean) { lean.snapTo(ProfileCardLean.Level) }
+        return lean
+    }
 
     val tilt = LocalDeviceTiltSource.current.tiltAsState()
     LaunchedEffect(lean, tilt) {
