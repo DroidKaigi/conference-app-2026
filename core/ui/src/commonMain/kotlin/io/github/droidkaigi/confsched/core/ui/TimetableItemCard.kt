@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpSize
@@ -77,14 +78,17 @@ fun TimetableItemCard(
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
     )
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            // clip precedes clickable so the ripple follows the sketched round rect
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .clickable(onClick = onClick),
-    ) {
+    // The card itself stays unclipped: sketchBorder strokes the clip outline down its center, so
+    // clipping the whole card would cut the stroke in half. Only the background layer is clipped,
+    // and it carries the click so the ripple and tap target cover the whole card.
+    Box(modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clip(shape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .clickable(onClick = onClick),
+        )
         // Drawn before the body so a long title or speaker list stays legible over the mascot
         if (isFavorite) {
             room.mascot?.let { mascot ->
@@ -116,7 +120,6 @@ fun TimetableItemCard(
                 .align(Alignment.TopEnd)
                 .padding(TimetableItemCardDefaults.favoritePadding),
         )
-        // A separate layer keeps the stroke outside the clip; inside it, half the thickness is cut off
         Box(Modifier.matchParentSize().sketchBorder(shape, MaterialTheme.colorScheme.outline))
     }
 }
