@@ -53,6 +53,7 @@ import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_na
 import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
+import io.github.droidkaigi.confsched.core.common.paneEntries
 import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteBorder
 import io.github.droidkaigi.confsched.core.designsystem.icon.Info
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -108,9 +109,9 @@ private val rootTabsByKey: Map<NavKey, RootTab> = RootTab.entries.associateBy(Ro
 private fun List<NavKey>.rootTabInTopPanes(paneCount: Int): RootTab? =
     takeLast(paneCount).asReversed().firstNotNullOfOrNull(rootTabsByKey::get)
 
-/** Whether this scene draws two or more panes, one entry per pane. */
+/** Whether this scene draws two or more panes. */
 private val Scene<NavKey>.isMultiPane: Boolean
-    get() = entries.size > 1
+    get() = paneEntries().size > 1
 
 private class RootTabSceneDecorator(
     private val backStack: List<NavKey>,
@@ -118,7 +119,7 @@ private class RootTabSceneDecorator(
 ) : SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(scene: Scene<NavKey>): Scene<NavKey> {
-        val currentTab = backStack.rootTabInTopPanes(scene.entries.size)
+        val currentTab = backStack.rootTabInTopPanes(scene.paneEntries().size)
             ?: return scene
         return RootTabScene(scene, currentTab, onSelectTab)
     }
