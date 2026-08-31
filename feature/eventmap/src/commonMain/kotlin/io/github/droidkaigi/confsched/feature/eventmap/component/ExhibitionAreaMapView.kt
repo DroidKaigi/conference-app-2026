@@ -21,6 +21,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.SketchCard
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_b1f
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.stamp_collecting_map_content_description

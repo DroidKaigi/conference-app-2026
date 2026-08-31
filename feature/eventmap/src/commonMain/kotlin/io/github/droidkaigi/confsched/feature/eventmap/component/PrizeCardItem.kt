@@ -27,6 +27,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.RemoteImage
+import io.github.droidkaigi.confsched.core.ui.SketchCard
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 
 @Composable

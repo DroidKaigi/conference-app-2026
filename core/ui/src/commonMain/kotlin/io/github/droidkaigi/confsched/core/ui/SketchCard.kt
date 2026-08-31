@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.eventmap.component
+package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -14,13 +14,9 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.SketchDefaults
-import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
-import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
-import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 @Composable
-internal fun SketchCard(
+fun SketchCard(
     modifier: Modifier = Modifier,
     shape: SketchRoundRectShape = SketchRoundRectShape(
         seed = 40,

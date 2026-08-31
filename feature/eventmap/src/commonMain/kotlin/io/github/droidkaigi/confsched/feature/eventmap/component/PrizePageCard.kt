@@ -31,6 +31,7 @@ import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiChip
 import io.github.droidkaigi.confsched.core.ui.RemoteImage
+import io.github.droidkaigi.confsched.core.ui.SketchCard
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
