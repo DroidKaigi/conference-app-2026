@@ -36,13 +36,13 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 
 /**
- * A filled action in a hand-sketched pill, for the one action a section leads with.
+ * A filled action in a hand-sketched rounded rectangle, for the one action a section leads with.
  *
  * @param onClick called when the button is clicked.
- * @param seed the value the pill is drawn from. The same seed always produces the same pill,
- *   so give neighbouring buttons different ones or a row of them reads as a repeat.
+ * @param seed the value the outline is drawn from. The same seed always produces the same
+ *   outline, so give neighbouring buttons different ones or a row of them reads as a repeat.
  * @param modifier the [Modifier] applied to the button.
- * @param containerColor the colour filling the pill.
+ * @param containerColor the colour filling the button.
  * @param contentColor the colour [content] draws in, provided as [LocalContentColor].
  * @param content the label, and an icon leading it where the action takes one.
  */
@@ -70,12 +70,12 @@ fun KaigiButton(
 }
 
 /**
- * An action in a hand-sketched pill drawn in outline, for the actions a section offers
+ * An action in a hand-sketched rounded rectangle drawn in outline, for the actions a section offers
  * alongside the one it leads with.
  *
  * @param onClick called when the button is clicked.
- * @param seed the value the pill is drawn from. The same seed always produces the same pill,
- *   so give neighbouring buttons different ones or a row of them reads as a repeat.
+ * @param seed the value the outline is drawn from. The same seed always produces the same
+ *   outline, so give neighbouring buttons different ones or a row of them reads as a repeat.
  * @param modifier the [Modifier] applied to the button.
  * @param contentColor the colour the outline and [content] take.
  * @param content the label, and an icon leading it where the action takes one.
@@ -119,7 +119,7 @@ private fun SketchButton(
         seed = combinedSeed,
         roughness = KaigiButtonDefaults.roughness,
         tremor = KaigiButtonDefaults.tremor,
-        cornerRadius = KaigiButtonDefaults.height / 2,
+        cornerRadius = KaigiButtonDefaults.cornerRadius,
         borderThickness = KaigiButtonDefaults.borderThickness,
     )
     // Drawn at the height the design gives it, while the press claims Material's minimum
@@ -155,6 +155,7 @@ private fun SketchButton(
 
 object KaigiButtonDefaults {
     val height = 44.dp
+    val cornerRadius = 14.dp
     val iconSize = 16.dp
     val iconSpacing = 8.dp
     val borderThickness = 1.5.dp
