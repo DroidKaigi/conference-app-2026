@@ -21,9 +21,9 @@ import io.github.droidkaigi.confsched.core.ui.DoodleCanvasView
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBackQrPlateView
-import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardColors
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 
 /**
  * One card face turned into a drawing surface: the face itself is the hint of where the strokes
@@ -49,10 +49,7 @@ internal fun ProfileCardDoodleCanvasView(
         referenceSize = ProfileCardFaceDefaults.size,
         maxScale = ProfileCardFaceDefaults.maxScale,
         origin = DoodleOrigin.TopStart,
-        inkColor = ProfileCardColors.ink,
-        accentColor = ProfileCardColors.accentInk,
-        haloColor = ProfileCardColors.plate,
-        accentHaloColor = ProfileCardColors.plate,
+        palette = profileCardDoodleInkPalette(),
         penSize = penSize,
         selectedInk = selectedInk,
         onStrokeAdd = onStrokeAdd,

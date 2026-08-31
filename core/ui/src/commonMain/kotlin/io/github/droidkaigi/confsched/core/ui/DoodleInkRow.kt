@@ -25,19 +25,18 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_accent
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_chalk
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_default
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_gold
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-/**
- * Picks the ink the next stroke is drawn in, shown as the two colors the surface itself draws them
- * in: [inkColor] for [DoodleInk.Default] and [accentColor] for [DoodleInk.Accent].
- */
+/** Picks the ink the next stroke is drawn in, each option shown in the color [palette] gives it. */
 @Composable
 fun DoodleInkRow(
     selectedInk: DoodleInk,
-    inkColor: Color,
-    accentColor: Color,
+    palette: DoodleInkPalette,
     onInkClick: (DoodleInk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -49,10 +48,7 @@ fun DoodleInkRow(
         DoodleInk.entries.forEach { ink ->
             DoodleInkSwatch(
                 ink = ink,
-                color = when (ink) {
-                    DoodleInk.Default -> inkColor
-                    DoodleInk.Accent -> accentColor
-                },
+                color = palette.style(ink).color,
                 selected = ink == selectedInk,
                 onClick = { onInkClick(ink) },
             )
@@ -122,6 +118,8 @@ private val DoodleInk.label: StringResource
     get() = when (this) {
         DoodleInk.Default -> Res.string.doodle_ink_default
         DoodleInk.Accent -> Res.string.doodle_ink_accent
+        DoodleInk.Gold -> Res.string.doodle_ink_gold
+        DoodleInk.Chalk -> Res.string.doodle_ink_chalk
     }
 
 private const val INK_SWATCH_SEED = 4371
@@ -136,8 +134,7 @@ private fun DoodleInkRowPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleInkRow(
             selectedInk = DoodleInk.Default,
-            inkColor = MaterialTheme.colorScheme.onSurface,
-            accentColor = MaterialTheme.colorScheme.tertiary,
+            palette = profileCardDoodleInkPalette(),
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),
         )
@@ -152,8 +149,7 @@ private fun DoodleInkRowAccentSelectedPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleInkRow(
             selectedInk = DoodleInk.Accent,
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
+            palette = aboutWallDoodleInkPalette(),
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),
         )

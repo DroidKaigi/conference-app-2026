@@ -29,9 +29,9 @@ import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsSpacing
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
-import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardColors
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.doodle_done
 import org.jetbrains.compose.resources.stringResource
@@ -68,8 +68,7 @@ internal fun ProfileCardDoodleControlsSection(
     ) {
         DoodleInkRow(
             selectedInk = selectedInk,
-            inkColor = ProfileCardColors.ink,
-            accentColor = ProfileCardColors.accentInk,
+            palette = profileCardDoodleInkPalette(),
             onInkClick = onInkClick,
         )
         DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)

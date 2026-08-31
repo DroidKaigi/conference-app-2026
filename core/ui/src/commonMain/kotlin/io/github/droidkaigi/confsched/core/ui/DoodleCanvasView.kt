@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputChange
@@ -57,8 +56,8 @@ import kotlin.math.pow
  * sketched border stay where they were laid out. One finger draws, or leaves a dot where it is
  * lifted without travelling; a second finger arriving before the first has travelled the touch slop
  * turns the gesture into a pinch and records no stroke, as does a wheel turned with Ctrl or Meta
- * held. Every stroke carries the width [penSize] gives it and the ink [selectedInk] names, drawn
- * in [inkColor] or [accentColor] and rimmed by [haloColor] or [accentHaloColor] accordingly.
+ * held. Every stroke carries the width [penSize] gives it and the ink [selectedInk] names, drawn as
+ * [palette] resolves that ink.
  */
 @Composable
 fun DoodleCanvasView(
@@ -66,10 +65,7 @@ fun DoodleCanvasView(
     referenceSize: DpSize,
     maxScale: Float,
     origin: DoodleOrigin,
-    inkColor: Color,
-    accentColor: Color,
-    haloColor: Color?,
-    accentHaloColor: Color?,
+    palette: DoodleInkPalette,
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
     onStrokeAdd: (DoodleStroke) -> Unit,
@@ -129,10 +125,7 @@ fun DoodleCanvasView(
                     background(scale)
                     DoodleLayerView(
                         doodle = doodle,
-                        inkColor = inkColor,
-                        accentColor = accentColor,
-                        haloColor = haloColor,
-                        accentHaloColor = accentHaloColor,
+                        palette = palette,
                         origin = origin,
                         scale = scale,
                         modifier = Modifier.matchParentSize(),
@@ -144,10 +137,7 @@ fun DoodleCanvasView(
                     )
                     DoodleLayerView(
                         doodle = Doodle(strokes = listOf(inProgress)),
-                        inkColor = inkColor,
-                        accentColor = accentColor,
-                        haloColor = haloColor,
-                        accentHaloColor = accentHaloColor,
+                        palette = palette,
                         origin = origin,
                         scale = scale,
                         modifier = Modifier.matchParentSize(),
@@ -156,7 +146,7 @@ fun DoodleCanvasView(
                 }
                 // Above the content: magnified content reaches the frame's edges, and the border
                 // marks where the drawing surface ends whatever is showing inside it.
-                Box(Modifier.matchParentSize().sketchBorder(shape, inkColor))
+                Box(Modifier.matchParentSize().sketchBorder(shape, palette.default.color))
             }
             DoodleZoomControlsView(
                 zoom = transform.zoom,
@@ -291,10 +281,7 @@ private fun DoodleCanvasViewPreview(
             referenceSize = AboutHeroSize,
             maxScale = 1f,
             origin = DoodleOrigin.TopCenter,
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            haloColor = null,
-            accentHaloColor = MaterialTheme.colorScheme.surface,
+            palette = aboutWallDoodleInkPalette(),
             penSize = DoodlePenSize.Normal,
             selectedInk = DoodleInk.Default,
             onStrokeAdd = {},
@@ -315,10 +302,7 @@ private fun DoodleCanvasViewMagnifiedPreview(
             referenceSize = AboutHeroSize,
             maxScale = 1f,
             origin = DoodleOrigin.TopCenter,
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            haloColor = null,
-            accentHaloColor = MaterialTheme.colorScheme.surface,
+            palette = aboutWallDoodleInkPalette(),
             penSize = DoodlePenSize.Normal,
             selectedInk = DoodleInk.Default,
             onStrokeAdd = {},

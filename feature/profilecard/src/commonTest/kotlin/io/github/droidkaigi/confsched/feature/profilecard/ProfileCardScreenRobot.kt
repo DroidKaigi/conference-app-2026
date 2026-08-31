@@ -74,6 +74,8 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun clickAccentInk() = clickDescription("Orange ink")
 
+    fun clickChalkInk() = clickDescription("Chalk ink")
+
     fun clickFlipToBack() = clickDescription("Switch to the back")
 
     fun clickFlipToFront() = clickDescription("Switch to the front")

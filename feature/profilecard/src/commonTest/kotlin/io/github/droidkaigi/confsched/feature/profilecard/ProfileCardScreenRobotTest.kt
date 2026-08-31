@@ -89,7 +89,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                         clickDone()
                     }
                     itShould("keep both faces' strokes and save them together") {
-                        checkSavedFaceStrokeCounts(front = 4, back = 1)
+                        checkSavedFaceStrokeCounts(front = 5, back = 1)
                         checkCardDisplayed()
                     }
                 }
@@ -104,6 +104,19 @@ class ProfileCardScreenRobotTest : RobotTest() {
                     }
                     itShould("keep the accent ink across the flip and save both faces in it") {
                         checkLastSavedStrokeInks(front = DoodleInk.Accent, back = DoodleInk.Accent)
+                    }
+                }
+                describe("and the chalk ink is picked on the back face") {
+                    doIt {
+                        drawStroke()
+                        clickFlipToBack()
+                        clickChalkInk()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("save the back face's stroke in the chalk ink") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Default, back = DoodleInk.Chalk)
                     }
                 }
                 describe("and back is pressed after a stroke is drawn") {

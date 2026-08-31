@@ -28,6 +28,8 @@
     <string name="doodle_clear">Clear</string>
     <string name="doodle_ink_default">Default ink</string>
     <string name="doodle_ink_accent">Orange ink</string>
+    <string name="doodle_ink_gold">Gold ink</string>
+    <string name="doodle_ink_chalk">Chalk ink</string>
     <string name="doodle_pen_thin">Thin</string>
     <string name="doodle_pen_normal">Normal</string>
     <string name="doodle_pen_thick">Thick</string>

@@ -43,6 +43,7 @@ import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.aboutWallDoodleInkPalette
 import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.doodle_done
@@ -62,6 +63,7 @@ internal fun AboutWallDoodleEditorView(
     var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
     var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Default) }
     var draft by rememberSerializable(savedDoodle) { mutableStateOf(savedDoodle) }
+    val palette = aboutWallDoodleInkPalette()
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(AboutWallDoodleEditorDefaults.spacing),
@@ -72,10 +74,7 @@ internal fun AboutWallDoodleEditorView(
             referenceSize = AboutHeroSize,
             maxScale = AboutWallDoodleEditorDefaults.maxScale,
             origin = DoodleOrigin.TopCenter,
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            haloColor = null,
-            accentHaloColor = MaterialTheme.colorScheme.surface,
+            palette = palette,
             penSize = penSize,
             selectedInk = selectedInk,
             onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
@@ -91,8 +90,7 @@ internal fun AboutWallDoodleEditorView(
         ) {
             DoodleInkRow(
                 selectedInk = selectedInk,
-                inkColor = MaterialTheme.colorScheme.onPrimary,
-                accentColor = MaterialTheme.colorScheme.tertiary,
+                palette = palette,
                 onInkClick = { selectedInk = it },
             )
             DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = { penSize = it })

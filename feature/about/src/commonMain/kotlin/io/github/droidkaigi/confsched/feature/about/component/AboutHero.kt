@@ -36,6 +36,7 @@ import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.KaigiChip
 import io.github.droidkaigi.confsched.core.ui.SketchBottomEdgeShape
+import io.github.droidkaigi.confsched.core.ui.aboutWallDoodleInkPalette
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
@@ -93,10 +94,7 @@ internal fun AboutHero(
         )
         DoodleLayerView(
             doodle = doodle,
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            haloColor = null,
-            accentHaloColor = MaterialTheme.colorScheme.surface,
+            palette = aboutWallDoodleInkPalette(),
             origin = DoodleOrigin.TopCenter,
             scale = 1f,
             modifier = Modifier.matchParentSize(),

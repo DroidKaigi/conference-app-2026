@@ -27,6 +27,8 @@
     <string name="doodle_clear">全部消す</string>
     <string name="doodle_ink_default">基本の色</string>
     <string name="doodle_ink_accent">オレンジ</string>
+    <string name="doodle_ink_gold">金色</string>
+    <string name="doodle_ink_chalk">チョーク</string>
     <string name="doodle_pen_thin">細い</string>
     <string name="doodle_pen_normal">ふつう</string>
     <string name="doodle_pen_thick">太い</string>

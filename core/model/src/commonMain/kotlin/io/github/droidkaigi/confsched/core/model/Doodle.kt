@@ -27,6 +27,8 @@ data class DoodlePoint(val x: Float, val y: Float)
 enum class DoodleInk {
     Default,
     Accent,
+    Gold,
+    Chalk,
 }
 
 /** The widths a stroke can be drawn at, offered as the pens a doodle is drawn with. */

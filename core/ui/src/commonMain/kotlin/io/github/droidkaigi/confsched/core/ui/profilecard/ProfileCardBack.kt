@@ -103,10 +103,7 @@ fun ProfileCardBack(
         )
         DoodleLayerView(
             doodle = doodle,
-            inkColor = ProfileCardColors.ink,
-            accentColor = ProfileCardColors.accentInk,
-            haloColor = ProfileCardColors.plate,
-            accentHaloColor = ProfileCardColors.plate,
+            palette = profileCardDoodleInkPalette(),
             origin = DoodleOrigin.TopStart,
             scale = 1f,
             modifier = Modifier.matchParentSize(),

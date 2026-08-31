@@ -138,6 +138,16 @@ class AboutScreenRobotTest : RobotTest() {
                         checkSavedWallStrokeInks(listOf(DoodleInk.Accent))
                     }
                 }
+                describe("and a stroke is drawn in the gold ink before Done is tapped") {
+                    doIt {
+                        clickGoldInk()
+                        drawStroke()
+                        clickButton(Res.string.doodle_done)
+                    }
+                    itShould("save the stroke in the gold ink") {
+                        checkSavedWallStrokeInks(listOf(DoodleInk.Gold))
+                    }
+                }
                 describe("and a stroke is drawn before back is pressed") {
                     doIt {
                         drawStroke()

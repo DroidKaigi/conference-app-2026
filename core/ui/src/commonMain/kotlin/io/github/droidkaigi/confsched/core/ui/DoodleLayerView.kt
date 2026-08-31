@@ -16,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
-import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -35,18 +34,13 @@ enum class DoodleOrigin {
 /**
  * Draws [doodle] in the space its points are stored in: the y axis runs down from this layer's
  * top edge and the x axis out from [origin], both in dp multiplied by [scale], so the same doodle
- * keeps its size wherever it is drawn. Each stroke is laid down in [inkColor] or [accentColor]
- * according to its own [DoodleStroke.ink]. [haloColor] and [accentHaloColor] rim the strokes of
- * the matching ink, which keeps an ink readable on a surface that is close to it in tone; null
- * draws that ink bare.
+ * keeps its size wherever it is drawn. Each stroke is laid down in the [palette] style its own
+ * [DoodleStroke.ink] names.
  */
 @Composable
 fun DoodleLayerView(
     doodle: Doodle,
-    inkColor: Color,
-    accentColor: Color,
-    haloColor: Color?,
-    accentHaloColor: Color?,
+    palette: DoodleInkPalette,
     origin: DoodleOrigin,
     scale: Float,
     modifier: Modifier = Modifier,
@@ -55,17 +49,12 @@ fun DoodleLayerView(
         val unit = density * scale
         val originX = origin.originX(size.width)
         val drawn = doodle.strokes.map { stroke ->
+            val style = palette.style(stroke.ink)
             DrawnStroke(
                 path = stroke.toPath(originX, unit),
                 width = stroke.width * unit,
-                color = when (stroke.ink) {
-                    DoodleInk.Default -> inkColor
-                    DoodleInk.Accent -> accentColor
-                },
-                haloColor = when (stroke.ink) {
-                    DoodleInk.Default -> haloColor
-                    DoodleInk.Accent -> accentHaloColor
-                },
+                color = style.color,
+                haloColor = style.haloColor,
             )
         }
         // Every halo is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
@@ -121,10 +110,7 @@ private fun DoodleLayerViewPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleLayerView(
             doodle = Doodle.fake(),
-            inkColor = MaterialTheme.colorScheme.onPrimary,
-            accentColor = MaterialTheme.colorScheme.tertiary,
-            haloColor = null,
-            accentHaloColor = MaterialTheme.colorScheme.surface,
+            palette = aboutWallDoodleInkPalette(),
             origin = DoodleOrigin.TopCenter,
             scale = 1f,
             modifier = Modifier
