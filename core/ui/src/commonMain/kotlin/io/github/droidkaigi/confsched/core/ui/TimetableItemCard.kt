@@ -86,16 +86,7 @@ fun TimetableItemCard(
             .clickable(onClick = onClick)
             .sketchBorder(shape, MaterialTheme.colorScheme.outline),
     ) {
-        CardBody(
-            title = title,
-            titleMark = titleMark,
-            room = room,
-            speakers = speakers,
-            language = language,
-            isCancelled = isCancelled,
-            seed = seed,
-            titleMarkSeed = titleMarkSeed,
-        )
+        // Drawn before the body so a long title or speaker list stays legible over the mascot
         if (isFavorite) {
             room.mascot?.let { mascot ->
                 Icon(
@@ -108,6 +99,16 @@ fun TimetableItemCard(
                 )
             }
         }
+        CardBody(
+            title = title,
+            titleMark = titleMark,
+            room = room,
+            speakers = speakers,
+            language = language,
+            isCancelled = isCancelled,
+            seed = seed,
+            titleMarkSeed = titleMarkSeed,
+        )
         FavoriteMark(
             room = room,
             isFavorite = isFavorite,
