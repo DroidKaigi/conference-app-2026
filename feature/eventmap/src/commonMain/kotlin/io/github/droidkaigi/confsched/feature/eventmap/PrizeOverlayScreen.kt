@@ -53,7 +53,7 @@ private const val PRIZE_PAGE_SEED_BASE = 310
 
 private val PrizePageSpacing = 16.dp
 
-const val PRIZE_OVERLAY_SCREEN_CLOSE_BUTTON_TEST_TAG = "PrizeOverlayScreenCloseButtonTestTag"
+internal const val PRIZE_OVERLAY_SCREEN_CLOSE_BUTTON_TEST_TAG = "PrizeOverlayScreenCloseButtonTestTag"
 
 @Composable
 fun PrizeOverlayScreen(

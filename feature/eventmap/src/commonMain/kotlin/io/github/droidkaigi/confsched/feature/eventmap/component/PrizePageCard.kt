@@ -43,7 +43,7 @@ internal val PrizePageCardWidth = 300.dp
 private val PrizePlateWidth = 268.dp
 private val PrizePlateHeight = 206.dp
 
-fun prizePageCardTestTag(prizeId: PrizeId) = "PrizePageCard:${prizeId.value}"
+internal fun prizePageCardTestTag(prizeId: PrizeId) = "PrizePageCard:${prizeId.value}"
 
 @Composable
 internal fun PrizePageCard(

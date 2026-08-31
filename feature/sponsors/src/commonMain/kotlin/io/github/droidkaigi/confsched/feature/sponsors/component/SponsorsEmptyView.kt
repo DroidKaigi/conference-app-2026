@@ -19,7 +19,7 @@ import io.github.droidkaigi.confsched.feature.sponsors.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sponsors.generated.resources.sponsors_empty
 import org.jetbrains.compose.resources.stringResource
 
-const val SPONSORS_EMPTY_VIEW_TEST_TAG = "SponsorsEmptyViewTestTag"
+internal const val SPONSORS_EMPTY_VIEW_TEST_TAG = "SponsorsEmptyViewTestTag"
 
 @Composable
 internal fun SponsorsEmptyView(modifier: Modifier = Modifier) {

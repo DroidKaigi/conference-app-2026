@@ -31,7 +31,7 @@ import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
-fun fontFamilyOptionItemTestTag(fontFamily: KaigiFontFamily) = "FontFamilyOptionItem:${fontFamily.name}"
+internal fun fontFamilyOptionItemTestTag(fontFamily: KaigiFontFamily) = "FontFamilyOptionItem:${fontFamily.name}"
 
 @Composable
 internal fun FontFamilyOptionItem(

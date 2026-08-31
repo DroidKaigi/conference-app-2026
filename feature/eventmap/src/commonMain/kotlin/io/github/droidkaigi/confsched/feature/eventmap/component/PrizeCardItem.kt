@@ -30,7 +30,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.RemoteImage
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
 
-fun prizeCardItemTestTag(prizeId: PrizeId) = "PrizeCardItem:${prizeId.value}"
+internal fun prizeCardItemTestTag(prizeId: PrizeId) = "PrizeCardItem:${prizeId.value}"
 
 @Composable
 internal fun PrizeCardItem(

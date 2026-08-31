@@ -23,9 +23,9 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.timet
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableViewMode
 import org.jetbrains.compose.resources.stringResource
 
-const val TIMETABLE_HEADER_SEARCH_BUTTON_TEST_TAG = "TimetableHeaderSearchButtonTestTag"
-const val TIMETABLE_HEADER_GRID_VIEW_BUTTON_TEST_TAG = "TimetableHeaderGridViewButtonTestTag"
-const val TIMETABLE_HEADER_LIST_VIEW_BUTTON_TEST_TAG = "TimetableHeaderListViewButtonTestTag"
+internal const val TIMETABLE_HEADER_SEARCH_BUTTON_TEST_TAG = "TimetableHeaderSearchButtonTestTag"
+internal const val TIMETABLE_HEADER_GRID_VIEW_BUTTON_TEST_TAG = "TimetableHeaderGridViewButtonTestTag"
+internal const val TIMETABLE_HEADER_LIST_VIEW_BUTTON_TEST_TAG = "TimetableHeaderListViewButtonTestTag"
 
 /** The title and the two actions, on the dark band the day picker continues below them. */
 @Composable

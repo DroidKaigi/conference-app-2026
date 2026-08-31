@@ -45,9 +45,9 @@ import io.github.droidkaigi.confsched.feature.contributors.generated.resources.c
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
-const val CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG = "ContributorsCountTextLabelTestTag"
-const val CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG = "ContributorsCountTextCountTestTag"
-const val CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG = "ContributorsCountTextUnitTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG = "ContributorsCountTextLabelTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG = "ContributorsCountTextCountTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG = "ContributorsCountTextUnitTestTag"
 
 @Composable
 internal fun ContributorsCountText(

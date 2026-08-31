@@ -32,7 +32,7 @@ private const val PRIZE_MIN_COLUMNS = 2
 private val PrizeColumnMinWidth = 158.dp
 private val PrizeSpacing = 12.dp
 
-fun prizeGroupSectionTestTag(group: PrizeGroup) = "PrizeGroupSection:${group.name}"
+internal fun prizeGroupSectionTestTag(group: PrizeGroup) = "PrizeGroupSection:${group.name}"
 
 @Composable
 internal fun PrizeGroupSection(
