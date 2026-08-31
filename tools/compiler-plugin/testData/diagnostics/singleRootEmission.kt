@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.ui.UiComposable
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasurePolicy
 
@@ -111,11 +112,23 @@ private fun EitherBranch(expanded: Boolean, label: String) {
 
 private fun interface LabelSlot {
     @Composable
+    @UiComposable
     operator fun invoke(label: String)
 }
 
 @Composable
 private fun <!COMPOSABLE_EMITS_FLAT_SIBLINGS!>SlotInterfaceBesideEmission<!>(slot: LabelSlot, label: String) {
+    slot(label)
+    Text(label)
+}
+
+private fun interface UnannotatedLabelSlot {
+    @Composable
+    operator fun invoke(label: String)
+}
+
+@Composable
+private fun UnannotatedSlotBesideEmission(slot: UnannotatedLabelSlot, label: String) {
     slot(label)
     Text(label)
 }

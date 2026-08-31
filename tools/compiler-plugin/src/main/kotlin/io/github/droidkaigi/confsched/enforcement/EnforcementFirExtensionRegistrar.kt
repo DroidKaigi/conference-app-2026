@@ -33,6 +33,7 @@ class EnforcementFirExtensionRegistrar : FirExtensionRegistrar() {
             RememberBindingErrors,
             StateDelegationErrors,
             RootEmissionErrors,
+            DeclaredApplierErrors,
         )
     }
 }

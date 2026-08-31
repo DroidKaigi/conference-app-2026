@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -22,13 +23,11 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val COMPOSE_RUNTIME_PACKAGE = FqName("androidx.compose.runtime")
 
@@ -69,6 +68,14 @@ internal class ComposableEmissionKinds(session: FirSession) : FirExtensionSessio
 
     private val underComputation = ThreadLocal.withInitial { mutableSetOf<FirCallableSymbol<*>>() }
 
+    fun kindOf(body: FirBlock): EmissionKind {
+        val scan = EmissionKindScan(this, session)
+        body.accept(scan)
+        return scan.kind
+    }
+
+    fun declaredKindOf(symbol: FirCallableSymbol<*>): EmissionKind? = symbol.declaredKind()
+
     fun kindOf(call: FirFunctionCall): EmissionKind {
         val symbol = call.calleeReference.toResolvedCallableSymbol() ?: return EmissionKind.None
         val active = underComputation.get()
@@ -87,17 +94,8 @@ internal class ComposableEmissionKinds(session: FirSession) : FirExtensionSessio
         if (!hasAnnotation(COMPOSABLE_ANNOTATION_ID, session)) return EmissionKind.None
         if (!origin.fromSource) return EmissionKind.None
         lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-        val body = (fir as? FirFunction)?.body
-            ?: return if (resolvedReturnType.isUnit) kindByName(namedAsEffect()) else EmissionKind.None
-        val scan = EmissionKindScan(this@ComposableEmissionKinds, session)
-        body.accept(scan)
-        return scan.kind
-    }
-
-    // An `invoke` carries no name of its own, so the type that declares it is read instead.
-    private fun FirCallableSymbol<*>.namedAsEffect(): Boolean {
-        if (name != OperatorNameConventions.INVOKE) return name.endsWithEffect()
-        return callableId?.classId?.shortClassName?.endsWithEffect() == true
+        val body = (fir as? FirFunction)?.body ?: return EmissionKind.None
+        return kindOf(body)
     }
 
     private fun FirCallableSymbol<*>.declaredKind(): EmissionKind? {
@@ -173,11 +171,8 @@ private fun FirFunctionCall.hasLambdaArgument(): Boolean =
 internal fun FirFunctionCall.invokesComposableValue(session: FirSession): Boolean =
     invokedValue?.resolvedType?.isComposableFunctionType(session) == true
 
-// Where neither an annotation nor a body is available, the name is what states that a composable
-// places nothing: the `Effect` suffix, on the declaration or on the value that is invoked.
-internal fun kindByName(namedAsEffect: Boolean): EmissionKind =
-    if (namedAsEffect) EmissionKind.None else EmissionKind.Node
-
+// A composable parameter has no declaration to annotate, so its name is what states that it places
+// nothing: the `Effect` suffix on the value that is invoked.
 internal fun FirFunctionCall.invokesValueNamedAsEffect(): Boolean {
     val valueName = (invokedValue as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedCallableSymbol()?.name
     return valueName?.endsWithEffect() == true

@@ -43,6 +43,7 @@ Violating any rule below fails compilation. Type/boundary rules need no plugin; 
 | A screen-level composable is the only component in its file | FIR `ScreenIsSoleComponentInFile` |
 | Content lambdas nest at most four levels deep | FIR `ComposableNestingDepth` |
 | A composable without a layout scope emits at most one node at its root | FIR `SingleRootEmission` |
+| An implementation that emits declares the applier on the member it implements | FIR `AbstractComposableEmitsWithoutApplier` |
 | A private property exposed by a wider one uses an explicit backing field | FIR `ExplicitBackingFieldRequired` |
 | A private `var` exposed read-only uses `private set` | FIR `PrivateSetRequired` |
 | A feature UI composable carries a preview in its file | FIR `UiComponentRequiresPreview` |
@@ -318,7 +319,7 @@ Emissions are counted along control flow, and the count runs on into the lambdas
 
 Whether a call emits is read from the applier its callee is bound to, which the Compose compiler records on every composable it compiles: `@ComposableTarget`, an annotation itself marked `@ComposableTargetMarker` such as `@UiComposable`, or a `@ComposableInferredTarget` whose scheme names an applier. Such a call counts as one node and owns whatever its content lambdas emit. A composable left open — `CompositionLocalProvider`, `key`, `ReusableContent`, `MaterialTheme` — places nothing itself, so what its content lambdas emit counts for the caller, the way an emission inside an inline non-composable lambda such as `run` does. Everything else, `LaunchedEffect` and `remember` among them, contributes nothing.
 
-A callee in the module being compiled carries no annotation yet, since the Compose compiler infers it in the backend, so its body is read with the same rules. Where neither is available — an abstract member, an `expect` declaration, a `@Composable` parameter — the name decides: one that ends in `Effect` places nothing, and any other `Unit` composable counts as the one node it may place. A composable that returns a value places nothing.
+A callee in the module being compiled carries no annotation yet, since the Compose compiler infers it in the backend, so its body is read with the same rules. A declaration with no body — an abstract member, an `expect` declaration — is read from its annotation alone: one carrying `@UiComposable` counts as the one node it places, and an unannotated one places nothing. [`AbstractComposableEmitsWithoutApplier`](#abstractcomposableemitswithoutapplier) requires the annotation wherever an implementation places a node, so that reading holds. A `@Composable` parameter has no declaration to annotate, so its name decides: one that ends in `Effect` places nothing, and any other counts as one node.
 
 ```kotlin
 @Composable
@@ -331,6 +332,32 @@ fun StyledLabel(content: @Composable () -> Unit) {   // emits whatever the calle
     CompositionLocalProvider(LocalTextStyle provides labelStyle) { content() }
 }
 ```
+
+### `AbstractComposableEmitsWithoutApplier`
+
+```kotlin
+interface ClockOverlay {
+    @Composable
+    fun Overlay()                  // no applier: callers count nothing
+}
+
+class DebugClockOverlay : ClockOverlay {
+    @Composable
+    override fun Overlay() {       // ERROR
+        ShiftedClockBadge(now)
+    }
+}
+```
+
+```kotlin
+interface ClockOverlay {
+    @Composable
+    @UiComposable                  // OK: every caller counts one node
+    fun Overlay()
+}
+```
+
+Why: a caller reads what a call emits from the declaration it can see, and a body-less declaration carries only its annotation. Leaving the applier off an abstract member or an `expect` declaration whose implementation places a node hides that node from [`SingleRootEmission`](#singlerootemission) at every call site. `@UiComposable` on the declaration states the node once, for every implementation. The rule reaches an `actual fun`, an override, and a lambda converted to a `fun interface`; a declaration that carries a default body states its own emission and is left alone.
 
 ### `ExplicitBackingFieldRequired`
 

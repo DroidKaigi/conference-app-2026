@@ -38,7 +38,7 @@ Two corrections satisfy the rule; the difference is whether the entity already e
 
 ## Effect naming
 
-The `Effect` suffix divides composables by what they do to the tree: one that runs work — collecting a flow, registering a callback, syncing external state — and emits no node takes the suffix, and one that emits any node must not. The `SingleRootEmission` checker ([Enforcement](./enforcement.md#singlerootemission)) reads the applier a composable is bound to, and falls back to the suffix only where no applier and no body is available — an abstract member, an `expect` declaration, a `@Composable` parameter — so both directions are held by review. The name is what a reader has at the call site, where the body is out of view.
+The `Effect` suffix divides composables by what they do to the tree: one that runs work — collecting a flow, registering a callback, syncing external state — and emits no node takes the suffix, and one that emits any node must not. The `SingleRootEmission` checker ([Enforcement](./enforcement.md#singlerootemission)) reads the applier a composable is bound to, and falls back to the suffix only for a `@Composable` parameter, which has no declaration to annotate, so both directions are held by review. The name is what a reader has at the call site, where the body is out of view.
 
 ```kotlin
 @Composable

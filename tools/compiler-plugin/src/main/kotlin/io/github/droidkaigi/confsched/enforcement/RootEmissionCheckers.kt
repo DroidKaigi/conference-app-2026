@@ -182,7 +182,7 @@ private fun CFGNode<*>.emitsNode(session: FirSession): Boolean =
 
 private fun FirFunctionCall.emissionKind(session: FirSession): EmissionKind =
     if (invokesComposableValue(session)) {
-        kindByName(invokesValueNamedAsEffect())
+        if (invokesValueNamedAsEffect()) EmissionKind.None else EmissionKind.Node
     } else {
         session.composableEmissionKinds.kindOf(this)
     }
