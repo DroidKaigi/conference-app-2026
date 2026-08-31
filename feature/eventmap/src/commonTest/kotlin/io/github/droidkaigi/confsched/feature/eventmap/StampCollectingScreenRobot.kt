@@ -2,15 +2,22 @@ package io.github.droidkaigi.confsched.feature.eventmap
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.text.intl.Locale
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.DisplayLanguage
+import io.github.droidkaigi.confsched.core.model.MultiLangText
+import io.github.droidkaigi.confsched.core.model.Prize
 import io.github.droidkaigi.confsched.core.model.PrizeGroup
 import io.github.droidkaigi.confsched.core.model.PrizeId
 import io.github.droidkaigi.confsched.core.model.Prizes
@@ -90,15 +97,16 @@ class StampCollectingScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUi
     }
 
     fun checkPrizeGroupDisplayed(group: PrizeGroup) {
-        composeUiTest.onNodeWithTag(prizeGroupSectionTestTag(group)).assertIsDisplayed()
+        textIn(prizeGroupSectionTestTag(group), group.name, substring = true).assertIsDisplayed()
     }
 
-    fun checkPrizeDisplayed(id: PrizeId) {
-        composeUiTest.onNodeWithTag(prizeCardItemTestTag(id)).assertIsDisplayed()
+    fun checkPrizeDisplayed(prize: Prize) {
+        textIn(prizeCardItemTestTag(prize.id), prize.name.displayed(), substring = false).assertIsDisplayed()
     }
 
-    fun checkPrizePageDisplayed(id: PrizeId) {
-        composeUiTest.onNodeWithTag(prizePageCardTestTag(id), useUnmergedTree = true).assertIsDisplayed()
+    fun checkPrizePageDisplayed(prize: Prize) {
+        textIn(prizePageCardTestTag(prize.id), prize.name.displayed(), substring = false).assertIsDisplayed()
+        textIn(prizePageCardTestTag(prize.id), prize.group.name, substring = true).assertIsDisplayed()
     }
 
     fun checkTextDisplayed(text: String) {
@@ -115,5 +123,19 @@ class StampCollectingScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUi
 
     fun checkOverlayCloseInvoked(times: Int) {
         assertEquals(times, overlayCloseCount)
+    }
+
+    // The text a tagged element carries sits on the nodes below it rather than on the tagged node
+    // itself, which the unmerged tree keeps reachable whether or not the tagged node merges them.
+    private fun textIn(testTag: String, text: String, substring: Boolean): SemanticsNodeInteraction {
+        return composeUiTest.onNode(
+            hasText(text, substring = substring) and hasAnyAncestor(hasTestTag(testTag)),
+            useUnmergedTree = true,
+        )
+    }
+
+    // The screen picks the side of a [MultiLangText] from the same locale the test runs under.
+    private fun MultiLangText.displayed(): String {
+        return of(if (Locale.current.language == "ja") DisplayLanguage.Japanese else DisplayLanguage.English)
     }
 }
