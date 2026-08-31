@@ -31,6 +31,7 @@ import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchGroundLine
+import io.github.droidkaigi.confsched.core.ui.mascotFArt
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_a
@@ -38,7 +39,6 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_c
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_d
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_e
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_f
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
@@ -245,7 +245,7 @@ private val Mascot.resource: DrawableResource
         Mascot.C -> Res.drawable.search_mascot_c
         Mascot.D -> Res.drawable.search_mascot_d
         Mascot.E -> Res.drawable.search_mascot_e
-        Mascot.F -> Res.drawable.search_mascot_f
+        Mascot.F -> mascotFArt
     }
 
 private val Mascot.size: DpSize

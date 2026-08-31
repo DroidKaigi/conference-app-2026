@@ -28,6 +28,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
+import io.github.droidkaigi.confsched.core.ui.mascotFArt
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_a
@@ -48,7 +49,7 @@ private val Mascot.drawableResource: DrawableResource
         Mascot.C -> Res.drawable.mascot_c
         Mascot.D -> Res.drawable.mascot_d
         Mascot.E -> Res.drawable.mascot_e
-        Mascot.F -> Res.drawable.mascot_f
+        Mascot.F -> mascotFArt
     }
 
 /**

@@ -27,24 +27,24 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteFilled
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Language
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.SessionRoom
-import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
+import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
-import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_a
 import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_b
 import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_c
 import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_e
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_f
+import io.github.droidkaigi.confsched.core.ui.generated.resources.mascot_f
+import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -245,7 +245,7 @@ private val Mascot.cardArt: DrawableResource?
         Mascot.C -> Res.drawable.card_mascot_c
         Mascot.D -> null
         Mascot.E -> Res.drawable.card_mascot_e
-        Mascot.F -> Res.drawable.card_mascot_f
+        Mascot.F -> Res.drawable.mascot_f
     }
 
 private object TimetableItemCardDefaults {
