@@ -27,8 +27,10 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteFilled
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.SessionRoom
+import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -38,11 +40,11 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
 import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_meerkat
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_narwhal
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_otter
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_panda
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_quail
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_a
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_b
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_c
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_e
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_f
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -97,7 +99,7 @@ fun TimetableItemCard(
             modifier = Modifier.clip(shape).clickable(onClick = onClick),
         )
         if (isFavorite) {
-            room.mascot?.let { mascot ->
+            room.mascot.cardArt?.let { mascot ->
                 Icon(
                     painter = painterResource(mascot),
                     contentDescription = null,
@@ -235,15 +237,15 @@ private fun FavoriteMark(
     )
 }
 
-/** The mascot drawn on a saved session's card, or null for a room the design gives none. */
-private val SessionRoom.mascot: DrawableResource?
+/** The card render of a [Mascot], or null for a character the design never draws on cards. */
+private val Mascot.cardArt: DrawableResource?
     get() = when (this) {
-        SessionRoom.NARWHAL -> Res.drawable.room_mascot_narwhal
-        SessionRoom.OTTER -> Res.drawable.room_mascot_otter
-        SessionRoom.PANDA -> Res.drawable.room_mascot_panda
-        SessionRoom.QUAIL -> Res.drawable.room_mascot_quail
-        SessionRoom.MEERKAT -> Res.drawable.room_mascot_meerkat
-        SessionRoom.UNKNOWN -> null
+        Mascot.A -> Res.drawable.card_mascot_a
+        Mascot.B -> Res.drawable.card_mascot_b
+        Mascot.C -> Res.drawable.card_mascot_c
+        Mascot.D -> null
+        Mascot.E -> Res.drawable.card_mascot_e
+        Mascot.F -> Res.drawable.card_mascot_f
     }
 
 private object TimetableItemCardDefaults {

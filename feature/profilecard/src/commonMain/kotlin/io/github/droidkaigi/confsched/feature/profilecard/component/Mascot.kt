@@ -35,6 +35,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ma
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_c
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_d
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_e
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_f
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -47,6 +48,7 @@ private val Mascot.drawableResource: DrawableResource
         Mascot.C -> Res.drawable.mascot_c
         Mascot.D -> Res.drawable.mascot_d
         Mascot.E -> Res.drawable.mascot_e
+        Mascot.F -> Res.drawable.mascot_f
     }
 
 /**
@@ -175,4 +177,5 @@ private val Mascot.nameResource: StringResource
         Mascot.C -> Res.string.mascot_c
         Mascot.D -> Res.string.mascot_d
         Mascot.E -> Res.string.mascot_e
+        Mascot.F -> Res.string.mascot_f
     }
