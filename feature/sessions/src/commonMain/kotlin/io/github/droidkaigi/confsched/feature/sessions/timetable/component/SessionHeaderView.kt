@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +18,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
-import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.SessionRoom
@@ -32,7 +28,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiAvatar
-import io.github.droidkaigi.confsched.core.ui.KaigiPlaceholderAvatar
+import io.github.droidkaigi.confsched.core.ui.KaigiFaceAvatar
 import io.github.droidkaigi.confsched.core.ui.LanguageChip
 import io.github.droidkaigi.confsched.core.ui.RoomChip
 import io.github.droidkaigi.confsched.core.ui.current
@@ -89,19 +85,22 @@ internal fun SessionHeaderView(
         )
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             for (speaker in speakers) {
-                SpeakerRow(speaker = speaker)
+                SpeakerRow(
+                    name = speaker.name,
+                    tagLine = speaker.tagLine,
+                    iconUrl = speaker.iconUrl,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SpeakerRow(speaker: TimetableSpeaker) {
+private fun SpeakerRow(name: String, tagLine: String, iconUrl: String?) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val iconUrl = speaker.iconUrl
         if (iconUrl != null) {
             KaigiAvatar(
                 imageUrl = iconUrl,
@@ -110,27 +109,20 @@ private fun SpeakerRow(speaker: TimetableSpeaker) {
                 borderColor = MaterialTheme.colorScheme.inverseOnSurface,
             )
         } else {
-            KaigiPlaceholderAvatar(
-                seed = speaker.id.value.hashCode(),
+            KaigiFaceAvatar(
                 size = SessionHeaderViewDefaults.avatarSize,
                 borderColor = MaterialTheme.colorScheme.inverseOnSurface,
-            ) {
-                Icon(
-                    imageVector = KaigiIcons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(SessionHeaderViewDefaults.avatarIconSize),
-                )
-            }
+            )
         }
         Column {
             Text(
-                text = speaker.name,
+                text = name,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.inverseOnSurface,
             )
-            if (speaker.tagLine.isNotEmpty()) {
+            if (tagLine.isNotEmpty()) {
                 Text(
-                    text = speaker.tagLine,
+                    text = tagLine,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface,
                 )
@@ -147,7 +139,6 @@ internal fun Language.interpretedInto(): Language? = when (this) {
 
 private object SessionHeaderViewDefaults {
     val avatarSize = 48.dp
-    val avatarIconSize = 24.dp
 }
 
 @LocalePreviews
