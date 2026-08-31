@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.testing.Robot
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.StringResource
@@ -25,7 +26,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     fun setupContent(isDebugMenuAvailable: Boolean = true) {
         setScreenContent {
             AboutScreen(
-                uiState = AboutScreenUiState(versionName = "1.0.0"),
+                uiState = AboutScreenUiState(versionName = "1.0.0", doodle = Doodle.Empty),
                 onOpenVenueWithMap = record(VENUE),
                 onOpenSponsors = record(SPONSORS),
                 onOpenContributors = record(CONTRIBUTORS),
@@ -34,6 +35,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
                 onOpenCodeOfConduct = record(CODE_OF_CONDUCT),
                 onOpenPrivacyPolicy = record(PRIVACY),
                 onOpenSettings = record(SETTINGS),
+                onOpenDoodle = record(DOODLE),
                 onOpenYoutube = record(YOUTUBE),
                 onOpenX = record(X),
                 onOpenMedium = record(MEDIUM),
@@ -45,6 +47,11 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     fun clickRow(label: StringResource) {
         composeUiTest.onNodeWithText(text(label)).performScrollTo().performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun clickDoodle(description: StringResource) {
+        composeUiTest.onNodeWithContentDescription(text(description)).performScrollTo().performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -78,6 +85,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         const val CODE_OF_CONDUCT = "codeOfConduct"
         const val PRIVACY = "privacy"
         const val SETTINGS = "settings"
+        const val DOODLE = "doodle"
         const val YOUTUBE = "youtube"
         const val X = "x"
         const val MEDIUM = "medium"

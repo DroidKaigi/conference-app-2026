@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.about.generated.resources.about_draw_on_the_wall
 import io.github.droidkaigi.confsched.feature.about.generated.resources.about_view_map
 import io.github.droidkaigi.confsched.feature.about.generated.resources.code_of_conduct
 import io.github.droidkaigi.confsched.feature.about.generated.resources.contributors
@@ -68,6 +69,12 @@ class AboutScreenRobotTest : RobotTest() {
                     checkInvokedOnce(AboutScreenRobot.PRIVACY)
                     checkInvokedOnce(AboutScreenRobot.SETTINGS)
                     checkInvokedOnce(AboutScreenRobot.DEBUG)
+                }
+            }
+            describe("and the doodle button on the hero is tapped") {
+                doIt { clickDoodle(Res.string.about_draw_on_the_wall) }
+                itShould("open the doodle screen once") {
+                    checkInvokedOnce(AboutScreenRobot.DOODLE)
                 }
             }
             describe("and each social mark is tapped") {

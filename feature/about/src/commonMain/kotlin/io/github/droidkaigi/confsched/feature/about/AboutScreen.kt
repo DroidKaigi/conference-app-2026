@@ -24,9 +24,11 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.designsystem.icon.PrivacyTip
 import io.github.droidkaigi.confsched.core.designsystem.icon.Settings
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
+import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
@@ -67,6 +69,7 @@ fun AboutScreen(
     onOpenCodeOfConduct: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenDoodle: () -> Unit,
     onOpenYoutube: () -> Unit,
     onOpenX: () -> Unit,
     onOpenMedium: () -> Unit,
@@ -84,7 +87,7 @@ fun AboutScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            AboutHero()
+            AboutHero(doodle = uiState.doodle, onEditDoodleClick = onOpenDoodle)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(Res.string.about_description),
@@ -182,7 +185,7 @@ private fun AboutScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(versionName = "1.0.0"),
+            uiState = AboutScreenUiState(versionName = "1.0.0", doodle = Doodle.Empty),
             onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
@@ -191,6 +194,7 @@ private fun AboutScreenPreview(
             onOpenCodeOfConduct = {},
             onOpenPrivacyPolicy = {},
             onOpenSettings = {},
+            onOpenDoodle = {},
             onOpenYoutube = {},
             onOpenX = {},
             onOpenMedium = {},
@@ -207,7 +211,7 @@ private fun AboutScreenWithoutDebugMenuPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         AboutScreen(
-            uiState = AboutScreenUiState(versionName = "1.0.0"),
+            uiState = AboutScreenUiState(versionName = "1.0.0", doodle = Doodle.Empty),
             onOpenVenueWithMap = {},
             onOpenSponsors = {},
             onOpenContributors = {},
@@ -216,10 +220,37 @@ private fun AboutScreenWithoutDebugMenuPreview(
             onOpenCodeOfConduct = {},
             onOpenPrivacyPolicy = {},
             onOpenSettings = {},
+            onOpenDoodle = {},
             onOpenYoutube = {},
             onOpenX = {},
             onOpenMedium = {},
             isDebugMenuAvailable = false,
+            onOpenDebug = {},
+        )
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun AboutScreenWithDoodlePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        AboutScreen(
+            uiState = AboutScreenUiState(versionName = "1.0.0", doodle = Doodle.fake()),
+            onOpenVenueWithMap = {},
+            onOpenSponsors = {},
+            onOpenContributors = {},
+            onOpenStaff = {},
+            onOpenLicenses = {},
+            onOpenCodeOfConduct = {},
+            onOpenPrivacyPolicy = {},
+            onOpenSettings = {},
+            onOpenDoodle = {},
+            onOpenYoutube = {},
+            onOpenX = {},
+            onOpenMedium = {},
+            isDebugMenuAvailable = true,
             onOpenDebug = {},
         )
     }

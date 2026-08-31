@@ -1,31 +1,39 @@
 package io.github.droidkaigi.confsched.feature.about
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.retain.retain
-import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
+import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
+import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.common.toUserMessage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import soil.query.compose.rememberMutation
 
 @Composable
-context(_: DoodlePresenterContext)
+context(presenterContext: DoodlePresenterContext)
 fun doodleScreenPresenter(
     screenChannel: ScreenChannel<DoodleScreenAction, DoodleScreenActionResult>,
+    savedDoodle: Doodle,
 ): DoodleScreenUiState {
-    var reloadCount by retain { mutableStateOf(0) }
+    val doodleMutation = rememberMutation(presenterContext.doodleMutationKey)
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            DoodleScreenAction.Reload -> {
-                reloadCount++
-                screenChannel.emit(DoodleScreenActionResult.Reloaded)
-            }
+            is DoodleScreenAction.Save -> doodleMutation.mutateAsync(action.doodle)
         }
     }
 
+    MutationSuccessEffect(doodleMutation) {
+        screenChannel.emit(DoodleScreenActionResult.Saved)
+        doodleMutation.reset()
+    }
+    MutationErrorEffect(doodleMutation) { error ->
+        screenChannel.emit(DoodleScreenActionResult.ShowMessage(error.toUserMessage()))
+        doodleMutation.reset()
+    }
+
     return DoodleScreenUiState(
-        title = "Doodle",
-        reloadCount = reloadCount,
+        savedDoodle = savedDoodle,
+        isSaving = doodleMutation.isPending,
     )
 }

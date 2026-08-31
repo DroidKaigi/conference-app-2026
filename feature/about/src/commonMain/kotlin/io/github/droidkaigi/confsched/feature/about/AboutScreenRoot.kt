@@ -2,6 +2,8 @@ package io.github.droidkaigi.confsched.feature.about
 
 import androidx.compose.runtime.Composable
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
+import soil.query.compose.rememberSubscription
 
 @Composable
 context(screenContext: AboutScreenContext)
@@ -14,29 +16,35 @@ fun AboutScreenRoot(
     onOpenCodeOfConduct: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToDoodle: () -> Unit,
     onOpenYoutube: () -> Unit,
     onOpenX: () -> Unit,
     onOpenMedium: () -> Unit,
     isDebugMenuAvailable: Boolean,
     onNavigateToDebug: () -> Unit,
 ) {
-    val uiState = context(screenContext.presenterContext) {
-        aboutScreenPresenter()
+    SoilDataBoundary(
+        state = rememberSubscription(screenContext.doodleSubscriptionKey),
+    ) { doodle ->
+        val uiState = context(screenContext.presenterContext) {
+            aboutScreenPresenter(doodle)
+        }
+        AboutScreen(
+            uiState = uiState,
+            onOpenVenueWithMap = onOpenVenueWithMap,
+            onOpenSponsors = onNavigateToSponsors,
+            onOpenContributors = onNavigateToContributors,
+            onOpenStaff = onNavigateToStaff,
+            onOpenLicenses = onNavigateToLicenses,
+            onOpenCodeOfConduct = onOpenCodeOfConduct,
+            onOpenPrivacyPolicy = onOpenPrivacyPolicy,
+            onOpenSettings = onNavigateToSettings,
+            onOpenDoodle = onNavigateToDoodle,
+            onOpenYoutube = onOpenYoutube,
+            onOpenX = onOpenX,
+            onOpenMedium = onOpenMedium,
+            isDebugMenuAvailable = isDebugMenuAvailable,
+            onOpenDebug = onNavigateToDebug,
+        )
     }
-    AboutScreen(
-        uiState = uiState,
-        onOpenVenueWithMap = onOpenVenueWithMap,
-        onOpenSponsors = onNavigateToSponsors,
-        onOpenContributors = onNavigateToContributors,
-        onOpenStaff = onNavigateToStaff,
-        onOpenLicenses = onNavigateToLicenses,
-        onOpenCodeOfConduct = onOpenCodeOfConduct,
-        onOpenPrivacyPolicy = onOpenPrivacyPolicy,
-        onOpenSettings = onNavigateToSettings,
-        onOpenYoutube = onOpenYoutube,
-        onOpenX = onOpenX,
-        onOpenMedium = onOpenMedium,
-        isDebugMenuAvailable = isDebugMenuAvailable,
-        onOpenDebug = onNavigateToDebug,
-    )
 }

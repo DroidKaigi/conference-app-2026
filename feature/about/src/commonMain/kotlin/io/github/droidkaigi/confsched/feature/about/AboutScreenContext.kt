@@ -6,6 +6,7 @@ import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.AboutScreenScope
+import io.github.droidkaigi.confsched.core.model.DoodleSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.buildconfig.BuildConfigProvider
 
 @Inject
@@ -17,6 +18,7 @@ class AboutPresenterContext(
 @Inject
 @SingleIn(AboutScreenScope::class)
 class AboutScreenContext(
+    val doodleSubscriptionKey: DoodleSubscriptionKey,
     override val logger: KaigiLogger,
     val presenterContext: AboutPresenterContext,
 ) : ScreenContext

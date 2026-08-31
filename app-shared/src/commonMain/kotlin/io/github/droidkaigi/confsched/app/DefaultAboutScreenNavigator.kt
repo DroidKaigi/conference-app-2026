@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.common.DebugNavKeyProvider
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.AboutScreenScope
 import io.github.droidkaigi.confsched.feature.about.AboutScreenNavigator
+import io.github.droidkaigi.confsched.feature.about.DoodleNavKey
 import io.github.droidkaigi.confsched.feature.about.LicensesNavKey
 import io.github.droidkaigi.confsched.feature.contributors.ContributorsNavKey
 import io.github.droidkaigi.confsched.feature.settings.SettingsNavKey
@@ -44,6 +45,10 @@ class DefaultAboutScreenNavigator(
 
     override fun openLicenses() {
         appNavigator.goTo(LicensesNavKey)
+    }
+
+    override fun openDoodle() {
+        appNavigator.goTo(DoodleNavKey)
     }
 
     override val isDebugMenuAvailable: Boolean get() = debugNavKeyProvider.debugNavKey != null
