@@ -37,6 +37,7 @@ import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.TimetableDayHeader
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
+import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
@@ -130,26 +131,24 @@ private fun SearchResultRow(
             timeRangeState = timeRangeState,
             seed = startsAt.hashCode(),
         )
-        Column(
+        TimetableItemCardsFlowRow(
+            items = items,
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            for (item in items) {
-                key(item.id) {
-                    TimetableItemCard(
-                        title = item.title.current(),
-                        room = item.room,
-                        speakers = item.speakers,
-                        language = item.language,
-                        isFavorite = item.id in bookmarks,
-                        isCancelled = item.isCancelled,
-                        seed = item.id.value.hashCode(),
-                        onBookmarkClick = { onBookmarkClick(item.id) },
-                        onClick = { onItemClick(item.id) },
-                        titleMark = titleMark,
-                        titleMarkSeed = stableSketchSeed(item.id.value),
-                    )
-                }
+        ) { item ->
+            key(item.id) {
+                TimetableItemCard(
+                    title = item.title.current(),
+                    room = item.room,
+                    speakers = item.speakers,
+                    language = item.language,
+                    isFavorite = item.id in bookmarks,
+                    isCancelled = item.isCancelled,
+                    seed = item.id.value.hashCode(),
+                    onBookmarkClick = { onBookmarkClick(item.id) },
+                    onClick = { onItemClick(item.id) },
+                    titleMark = titleMark,
+                    titleMarkSeed = stableSketchSeed(item.id.value),
+                )
             }
         }
     }
