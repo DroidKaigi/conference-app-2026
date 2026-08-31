@@ -28,7 +28,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import kotlin.math.max
 
 private const val CAP_PATH_DATA = "M1.09961 1.1001H13.2796"
-private val CAP_VIEW_BOX = Size(15f, 3f)
+private const val CAP_WIDTH = 15f
 
 /**
  * Defines the unique style of a lantern.
@@ -220,7 +220,7 @@ internal fun Lantern(
             val scaleX = lanternWidthPx / style.viewBox.width
 
             // Lantern Cap
-            val capOffsetX = (style.viewBox.width - CAP_VIEW_BOX.width) / 2f
+            val capOffsetX = (style.viewBox.width - CAP_WIDTH) / 2f
             withTransform({ translate(capOffsetX, -2.2f) }) {
                 drawPath(
                     path = capPath,
