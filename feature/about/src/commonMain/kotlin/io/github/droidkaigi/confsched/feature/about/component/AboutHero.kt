@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Edit
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -96,7 +98,7 @@ internal fun AboutHero(
 private fun DoodleEditButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(onClick = onClick, modifier = modifier.size(EditButtonSize)) {
         Icon(
-            imageVector = rememberDoodlePencil(),
+            imageVector = KaigiIcons.Default.Edit,
             contentDescription = stringResource(Res.string.about_draw_on_the_wall),
             tint = MaterialTheme.colorScheme.onPrimary.copy(alpha = EDIT_BUTTON_ALPHA),
             modifier = Modifier.size(EditButtonIconSize),
