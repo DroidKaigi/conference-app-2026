@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.memory.MemoryCache
 import coil3.network.ktor3.KtorNetworkFetcherFactory
@@ -39,6 +40,42 @@ fun RemoteImage(
             contentDescription = contentDescription,
             modifier = modifier,
             contentScale = contentScale,
+        )
+    }
+}
+
+/**
+ * A [RemoteImage] with [placeholder] filling its place until the picture is there: while the
+ * request is in flight, and for good once it fails.
+ *
+ * @param imageUrl where the picture is loaded from.
+ * @param contentDescription what the picture is, for a screen reader.
+ * @param modifier the [Modifier] applied to the image and to [placeholder] alike.
+ * @param placeholder what stands in for the picture.
+ */
+@Composable
+fun RemoteImageWithPlaceholder(
+    imageUrl: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    placeholder: @Composable () -> Unit,
+) {
+    val resource = LocalPreviewImageResolver.current?.resolve(imageUrl)
+    if (resource != null) {
+        Image(
+            painter = painterResource(resource),
+            contentDescription = contentDescription,
+            modifier = modifier,
+            contentScale = ContentScale.Crop,
+        )
+    } else {
+        SubcomposeAsyncImage(
+            model = imageUrl,
+            contentDescription = contentDescription,
+            modifier = modifier,
+            loading = { placeholder() },
+            error = { placeholder() },
+            contentScale = ContentScale.Crop,
         )
     }
 }

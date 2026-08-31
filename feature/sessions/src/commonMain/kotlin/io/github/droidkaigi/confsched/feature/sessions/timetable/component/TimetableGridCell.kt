@@ -26,18 +26,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
+import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiAvatar
-import io.github.droidkaigi.confsched.core.ui.KaigiFaceAvatar
+import io.github.droidkaigi.confsched.core.ui.KaigiSpeakerAvatar
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.speaker_overflow
@@ -84,7 +85,7 @@ internal fun TimetableGridCell(
                 overflow = TextOverflow.Ellipsis,
             )
             if (bucket == TimetableGridBlockBucket.Short) {
-                SpeakerRow(speakers = speakers, color = detailColor) {
+                SpeakerRow(speakers = speakers, mascot = room.mascot, color = detailColor) {
                     CellDetail(text = startsAt, color = detailColor)
                 }
             } else {
@@ -93,9 +94,11 @@ internal fun TimetableGridCell(
                     // Only the tallest block has the room to name everyone; the others
                     // name the first and count the rest.
                     if (bucket == TimetableGridBlockBucket.Tall) {
-                        speakers.forEach { SpeakerRow(speakers = persistentListOf(it), color = detailColor) }
+                        speakers.forEach {
+                            SpeakerRow(speakers = persistentListOf(it), mascot = room.mascot, color = detailColor)
+                        }
                     } else {
-                        SpeakerRow(speakers = speakers, color = detailColor)
+                        SpeakerRow(speakers = speakers, mascot = room.mascot, color = detailColor)
                     }
                 }
             }
@@ -106,6 +109,7 @@ internal fun TimetableGridCell(
 @Composable
 private fun SpeakerRow(
     speakers: PersistentList<TimetableSpeaker>,
+    mascot: Mascot,
     color: Color,
     modifier: Modifier = Modifier,
     leading: @Composable () -> Unit = {},
@@ -117,7 +121,7 @@ private fun SpeakerRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         leading()
-        SpeakerFace(iconUrl = speaker.iconUrl)
+        SpeakerFace(iconUrl = speaker.iconUrl, mascot = mascot)
         CellDetail(text = speaker.name, color = color, modifier = Modifier.weight(1f))
         if (speakers.size > 1) {
             CellDetail(text = stringResource(Res.string.speaker_overflow, speakers.size - 1), color = color)
@@ -126,17 +130,11 @@ private fun SpeakerRow(
 }
 
 @Composable
-private fun SpeakerFace(iconUrl: String?, modifier: Modifier = Modifier) {
-    if (iconUrl != null) {
-        KaigiAvatar(
-            imageUrl = iconUrl,
-            contentDescription = null,
-            size = SpeakerFaceSize,
-            modifier = modifier,
-        )
-        return
-    }
-    KaigiFaceAvatar(
+private fun SpeakerFace(iconUrl: String?, mascot: Mascot, modifier: Modifier = Modifier) {
+    KaigiSpeakerAvatar(
+        iconUrl = iconUrl,
+        mascot = mascot,
+        contentDescription = null,
         size = SpeakerFaceSize,
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.secondaryContainer,

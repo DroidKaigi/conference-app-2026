@@ -40,13 +40,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_a
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_b
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_c
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_e
-import io.github.droidkaigi.confsched.core.ui.generated.resources.mascot_f
 import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -155,7 +149,7 @@ private fun CardBody(
             textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
         )
         if (speakers.isNotEmpty()) {
-            SpeakerColumn(speakers = speakers)
+            SpeakerColumn(speakers = speakers, mascot = room.mascot)
         }
     }
 }
@@ -183,30 +177,26 @@ private fun ChipRow(room: SessionRoom, language: Language, seed: Int) {
 }
 
 @Composable
-private fun SpeakerColumn(speakers: List<TimetableSpeaker>) {
+private fun SpeakerColumn(speakers: List<TimetableSpeaker>, mascot: Mascot) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         for (speaker in speakers) {
-            SpeakerRow(speaker = speaker)
+            SpeakerRow(speaker = speaker, mascot = mascot)
         }
     }
 }
 
 @Composable
-private fun SpeakerRow(speaker: TimetableSpeaker) {
+private fun SpeakerRow(speaker: TimetableSpeaker, mascot: Mascot) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val iconUrl = speaker.iconUrl
-        if (iconUrl != null) {
-            KaigiAvatar(
-                imageUrl = iconUrl,
-                contentDescription = null,
-                size = TimetableItemCardDefaults.avatarSize,
-            )
-        } else {
-            KaigiFaceAvatar(size = TimetableItemCardDefaults.avatarSize)
-        }
+        KaigiSpeakerAvatar(
+            iconUrl = speaker.iconUrl,
+            mascot = mascot,
+            contentDescription = null,
+            size = TimetableItemCardDefaults.avatarSize,
+        )
         Text(
             text = speaker.name,
             style = MaterialTheme.typography.bodySmall,
@@ -231,17 +221,6 @@ private fun FavoriteMark(
             .clickable(onClick = onBookmarkClick),
     )
 }
-
-/** The card render of a [Mascot], or null for a character the design never draws on cards. */
-private val Mascot.cardArt: DrawableResource?
-    get() = when (this) {
-        Mascot.A -> Res.drawable.card_mascot_a
-        Mascot.B -> Res.drawable.card_mascot_b
-        Mascot.C -> Res.drawable.card_mascot_c
-        Mascot.D -> null
-        Mascot.E -> Res.drawable.card_mascot_e
-        Mascot.F -> Res.drawable.mascot_f
-    }
 
 private object TimetableItemCardDefaults {
     val cornerRadius = 24.dp
