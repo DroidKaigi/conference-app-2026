@@ -17,18 +17,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchCard
+import io.github.droidkaigi.confsched.core.ui.mapPainter
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_b1f
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.stamp_collecting_map_content_description
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-// The enclosure is expressed in event_map_b1f's own viewport units, so it scales with the map.
+// The enclosure is expressed in the basement map's own viewport units, so it scales with the map.
 private const val MAP_VIEWPORT_WIDTH = 380f
 private const val MAP_VIEWPORT_HEIGHT = 304f
 private const val EXHIBITION_AREA_LEFT = 158.94f
@@ -48,7 +48,7 @@ internal fun ExhibitionAreaMapView(modifier: Modifier = Modifier) {
             val scale = maxWidth / MAP_VIEWPORT_WIDTH
 
             Image(
-                painter = painterResource(Res.drawable.event_map_b1f),
+                painter = Floor.Basement.mapPainter(),
                 contentDescription = stringResource(Res.string.stamp_collecting_map_content_description),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier

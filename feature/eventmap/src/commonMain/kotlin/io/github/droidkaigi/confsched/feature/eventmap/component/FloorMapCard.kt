@@ -20,12 +20,9 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchCard
+import io.github.droidkaigi.confsched.core.ui.mapPainter
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_1f
-import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_b1f
 import io.github.droidkaigi.confsched.feature.eventmap.generated.resources.event_map_content_description
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
@@ -57,7 +54,7 @@ internal fun FloorMapCard(
             color = Color.White,
         ) {
             Image(
-                painter = painterResource(targetFloor.mapImage()),
+                painter = targetFloor.mapPainter(),
                 contentDescription = stringResource(Res.string.event_map_content_description, targetFloor.label),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
@@ -66,11 +63,6 @@ internal fun FloorMapCard(
             )
         }
     }
-}
-
-private fun Floor.mapImage(): DrawableResource = when (this) {
-    Floor.Ground -> Res.drawable.event_map_1f
-    Floor.Basement -> Res.drawable.event_map_b1f
 }
 
 @LocalePreviews
