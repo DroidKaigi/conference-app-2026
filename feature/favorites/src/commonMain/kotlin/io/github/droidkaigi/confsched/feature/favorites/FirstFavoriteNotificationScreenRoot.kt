@@ -5,6 +5,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.ui.rememberNotificationPermissionGranted
 import io.github.droidkaigi.confsched.core.ui.rememberNotificationPermissionRequester
 
 @Composable
@@ -15,6 +16,7 @@ fun FirstFavoriteNotificationScreenRoot(
 ) {
     val screenChannel = retainScreenChannel<FirstFavoriteNotificationScreenAction, FirstFavoriteNotificationScreenActionResult>()
     val requestNotificationPermission = rememberNotificationPermissionRequester()
+    val areNotificationsOn = rememberNotificationPermissionGranted() == true
 
     ActionResultEffect(screenChannel) { result ->
         when (result) {
@@ -26,12 +28,13 @@ fun FirstFavoriteNotificationScreenRoot(
         firstFavoriteNotificationScreenPresenter(
             screenChannel = screenChannel,
             requestNotificationPermission = requestNotificationPermission,
+            areNotificationsOn = areNotificationsOn,
             mascot = mascot,
         )
     }
     FirstFavoriteNotificationScreen(
         uiState = uiState,
         onTurnOnNotificationsClick = { screenChannel.send(FirstFavoriteNotificationScreenAction.TurnOnNotifications) },
-        onLaterClick = { screenChannel.send(FirstFavoriteNotificationScreenAction.Later) },
+        onContinueClick = { screenChannel.send(FirstFavoriteNotificationScreenAction.Continue) },
     )
 }

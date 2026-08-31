@@ -19,6 +19,7 @@ class FirstFavoriteNotificationScreenPresenterTest {
                 firstFavoriteNotificationScreenPresenter(
                     screenChannel = channel,
                     requestNotificationPermission = { requested++ },
+                    areNotificationsOn = false,
                     mascot = Mascot.E,
                 )
             },
@@ -32,7 +33,7 @@ class FirstFavoriteNotificationScreenPresenterTest {
     }
 
     @Test
-    fun answering_later_records_the_answer_without_asking_the_platform() {
+    fun moving_on_records_the_answer_without_asking_the_platform() {
         var requested = 0
         runPresenterTest(
             presenterContext = graph.presenterContext,
@@ -40,12 +41,35 @@ class FirstFavoriteNotificationScreenPresenterTest {
                 firstFavoriteNotificationScreenPresenter(
                     screenChannel = channel,
                     requestNotificationPermission = { requested++ },
+                    areNotificationsOn = false,
                     mascot = Mascot.E,
                 )
             },
         ) {
             uiStates.awaitItem()
-            send(FirstFavoriteNotificationScreenAction.Later)
+            send(FirstFavoriteNotificationScreenAction.Continue)
+            assertEquals(FirstFavoriteNotificationScreenActionResult.Answered, results.awaitItem())
+            assertEquals(0, requested)
+            graph.guidanceMutationKey.invocations.receive()
+        }
+    }
+
+    @Test
+    fun the_step_moves_on_without_asking_when_notifications_are_already_on() {
+        var requested = 0
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                firstFavoriteNotificationScreenPresenter(
+                    screenChannel = channel,
+                    requestNotificationPermission = { requested++ },
+                    areNotificationsOn = true,
+                    mascot = Mascot.E,
+                )
+            },
+        ) {
+            assertEquals(true, uiStates.awaitItem().areNotificationsOn)
+            send(FirstFavoriteNotificationScreenAction.Continue)
             assertEquals(FirstFavoriteNotificationScreenActionResult.Answered, results.awaitItem())
             assertEquals(0, requested)
             graph.guidanceMutationKey.invocations.receive()

@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CompletableDeferred
 
@@ -48,4 +49,11 @@ actual fun rememberNotificationPermissionRequester(): suspend () -> Unit {
             }
         }
     }
+}
+
+@Composable
+actual fun rememberNotificationPermissionGranted(): Boolean? {
+    val context = LocalContext.current
+    // Covers the runtime permission and a channel the reader turned off in system settings alike.
+    return remember(context) { NotificationManagerCompat.from(context).areNotificationsEnabled() }
 }

@@ -5,3 +5,6 @@ import androidx.compose.runtime.remember
 
 @Composable
 actual fun rememberNotificationPermissionRequester(): suspend () -> Unit = remember { suspend {} }
+
+@Composable
+actual fun rememberNotificationPermissionGranted(): Boolean? = false

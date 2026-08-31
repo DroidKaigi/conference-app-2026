@@ -9,3 +9,10 @@ import androidx.compose.runtime.Composable
  */
 @Composable
 expect fun rememberNotificationPermissionRequester(): suspend () -> Unit
+
+/**
+ * Whether the platform already lets the app post notifications, or null while the platform has
+ * not answered yet.
+ */
+@Composable
+expect fun rememberNotificationPermissionGranted(): Boolean?

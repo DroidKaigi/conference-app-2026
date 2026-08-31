@@ -6,8 +6,11 @@
     <string name="first_favorite_eyebrow">NICE CHOICE</string>
     <string name="first_favorite_title">Added to your favorites</string>
     <string name="first_favorite_description">We will nudge you shortly before it starts.</string>
+    <string name="first_favorite_description_notifications_on">We will nudge you shortly before it starts. Notifications are already on.</string>
     <string name="first_favorite_turn_on_notifications">Turn on notifications</string>
+    <string name="first_favorite_next">Next</string>
     <string name="first_favorite_not_now">Not now</string>
+    <string name="first_favorite_close">Close</string>
     <string name="first_favorite_widget_eyebrow">ONE MORE THING</string>
     <string name="first_favorite_widget_title">One more thing</string>
     <string name="first_favorite_widget_description">Put it on your home screen to follow the day without opening the app.</string>

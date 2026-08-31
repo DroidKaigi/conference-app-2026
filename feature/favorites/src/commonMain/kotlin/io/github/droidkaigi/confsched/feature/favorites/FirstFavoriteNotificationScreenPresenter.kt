@@ -16,6 +16,7 @@ context(presenterContext: FirstFavoriteNotificationPresenterContext)
 fun firstFavoriteNotificationScreenPresenter(
     screenChannel: ScreenChannel<FirstFavoriteNotificationScreenAction, FirstFavoriteNotificationScreenActionResult>,
     requestNotificationPermission: suspend () -> Unit,
+    areNotificationsOn: Boolean,
     mascot: Mascot,
 ): FirstFavoriteNotificationScreenUiState {
     val guidanceMutation = rememberMutation(presenterContext.firstFavoriteGuidanceMutationKey)
@@ -40,5 +41,9 @@ fun firstFavoriteNotificationScreenPresenter(
         guidanceMutation.reset()
     }
 
-    return FirstFavoriteNotificationScreenUiState(isAnswering = isAnswering, mascot = mascot)
+    return FirstFavoriteNotificationScreenUiState(
+        isAnswering = isAnswering,
+        areNotificationsOn = areNotificationsOn,
+        mascot = mascot,
+    )
 }

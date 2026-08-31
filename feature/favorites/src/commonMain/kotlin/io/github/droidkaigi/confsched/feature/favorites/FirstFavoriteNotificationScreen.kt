@@ -19,8 +19,11 @@ import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteD
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteDialogDefaults
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteHeroView
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_close
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_description
+import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_description_notifications_on
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_eyebrow
+import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_next
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_not_now
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_title
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_turn_on_notifications
@@ -33,7 +36,7 @@ private const val FIRST_FAVORITE_PRIMARY_BUTTON_SEED = 778
 fun FirstFavoriteNotificationScreen(
     uiState: FirstFavoriteNotificationScreenUiState,
     onTurnOnNotificationsClick: () -> Unit,
-    onLaterClick: () -> Unit,
+    onContinueClick: () -> Unit,
 ) {
     FirstFavoriteDialogCard(seed = FIRST_FAVORITE_DIALOG_SEED) {
         FirstFavoriteHeroView(mascot = uiState.mascot)
@@ -49,25 +52,37 @@ fun FirstFavoriteNotificationScreen(
             textAlign = TextAlign.Center,
         )
         Text(
-            text = stringResource(Res.string.first_favorite_description),
+            text = if (uiState.areNotificationsOn) {
+                stringResource(Res.string.first_favorite_description_notifications_on)
+            } else {
+                stringResource(Res.string.first_favorite_description)
+            },
             style = FirstFavoriteDialogDefaults.descriptionStyle,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
         KaigiButton(
-            onClick = onTurnOnNotificationsClick,
+            onClick = if (uiState.areNotificationsOn) onContinueClick else onTurnOnNotificationsClick,
             seed = FIRST_FAVORITE_PRIMARY_BUTTON_SEED,
             modifier = Modifier.fillMaxWidth(),
             enabled = !uiState.isAnswering,
         ) {
             Text(
-                text = stringResource(Res.string.first_favorite_turn_on_notifications),
+                text = if (uiState.areNotificationsOn) {
+                    stringResource(Res.string.first_favorite_next)
+                } else {
+                    stringResource(Res.string.first_favorite_turn_on_notifications)
+                },
                 style = KaigiButtonDefaults.labelStyle,
             )
         }
-        TextButton(onClick = onLaterClick, enabled = !uiState.isAnswering) {
+        TextButton(onClick = onContinueClick, enabled = !uiState.isAnswering) {
             Text(
-                text = stringResource(Res.string.first_favorite_not_now),
+                text = if (uiState.areNotificationsOn) {
+                    stringResource(Res.string.first_favorite_close)
+                } else {
+                    stringResource(Res.string.first_favorite_not_now)
+                },
                 style = FirstFavoriteDialogDefaults.descriptionStyle,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -82,9 +97,31 @@ private fun FirstFavoriteNotificationScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         FirstFavoriteNotificationScreen(
-            uiState = FirstFavoriteNotificationScreenUiState(isAnswering = false, mascot = Mascot.E),
+            uiState = FirstFavoriteNotificationScreenUiState(
+                isAnswering = false,
+                areNotificationsOn = false,
+                mascot = Mascot.E,
+            ),
             onTurnOnNotificationsClick = {},
-            onLaterClick = {},
+            onContinueClick = {},
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun FirstFavoriteNotificationScreenNotificationsOnPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        FirstFavoriteNotificationScreen(
+            uiState = FirstFavoriteNotificationScreenUiState(
+                isAnswering = false,
+                areNotificationsOn = true,
+                mascot = Mascot.E,
+            ),
+            onTurnOnNotificationsClick = {},
+            onContinueClick = {},
         )
     }
 }
