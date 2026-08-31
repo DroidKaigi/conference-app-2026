@@ -125,9 +125,9 @@ fun KaigiPlaceholderAvatar(
  *
  * @param size the side of the square.
  * @param modifier the [Modifier] applied to the avatar.
- * @param containerColor the colour filling the square behind the face.
- * @param contentColor the colour the face is drawn in.
- * @param borderColor the colour of the line around the square.
+ * @param containerColor the color filling the square behind the face.
+ * @param contentColor the color the face is drawn in.
+ * @param borderColor the color of the line around the square.
  */
 @Composable
 fun KaigiFaceAvatar(

@@ -205,12 +205,7 @@ private fun SpeakerRow(speaker: TimetableSpeaker) {
                 size = TimetableItemCardDefaults.avatarSize,
             )
         } else {
-            KaigiFaceAvatar(
-                size = TimetableItemCardDefaults.avatarSize,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                contentColor = MaterialTheme.colorScheme.primaryContainer,
-                borderColor = MaterialTheme.colorScheme.primaryContainer,
-            )
+            KaigiFaceAvatar(size = TimetableItemCardDefaults.avatarSize)
         }
         Text(
             text = speaker.name,
