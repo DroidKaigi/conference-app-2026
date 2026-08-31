@@ -98,7 +98,9 @@ entry<TimetableItemDetailNavKey>(
 ) { ... }
 ```
 
-`rememberListDetailPaneInsetsNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps the entry in `Modifier.consumeWindowInsets` for the named edge behind the same `LocalListDetailSceneScope` gate as the pane separation: it applies only while the two-pane scaffold is live, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
+`rememberListDetailPaneInsetsNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps every entry that carries the metadata in `Modifier.consumeWindowInsets`, and consumes the named edge only while `LocalListDetailSceneScope` is non-null, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
+
+The wrapper is unconditional because the decision of whether to wrap must not change over an entry's life: see [the single call site rule](./navigation-retain-entry-decorator.md#one-call-site-per-entry).
 
 ## Resizing the split
 
