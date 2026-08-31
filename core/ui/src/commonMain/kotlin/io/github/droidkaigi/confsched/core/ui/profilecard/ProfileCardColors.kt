@@ -33,6 +33,10 @@ object ProfileCardColors {
     val ink: Color
         @Composable get() = MaterialTheme.colorScheme.onSurface
 
+    /** The second ink a doodle can be drawn in, the call-to-action orange every scheme shares. */
+    val accentInk: Color
+        @Composable get() = MaterialTheme.colorScheme.tertiary
+
     /** The secondary text colour the occupation and date lines are set in (`md3/onSurfaceVariant`). */
     val mutedInk: Color
         @Composable get() = MaterialTheme.colorScheme.onSurfaceVariant

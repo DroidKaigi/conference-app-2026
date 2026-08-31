@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -39,6 +40,7 @@ internal fun ProfileCardDoodleCanvasView(
     showsBack: Boolean,
     doodle: Doodle,
     penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
     onStrokeAdd: (DoodleStroke) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -48,8 +50,11 @@ internal fun ProfileCardDoodleCanvasView(
         maxScale = ProfileCardFaceDefaults.maxScale,
         origin = DoodleOrigin.TopStart,
         inkColor = ProfileCardColors.ink,
+        accentColor = ProfileCardColors.accentInk,
         haloColor = ProfileCardColors.plate,
+        accentHaloColor = ProfileCardColors.plate,
         penSize = penSize,
+        selectedInk = selectedInk,
         onStrokeAdd = onStrokeAdd,
         modifier = modifier,
         background = {
@@ -105,6 +110,7 @@ private fun ProfileCardDoodleCanvasViewPreview(
             showsBack = false,
             doodle = Doodle.fakeOnCardFace(),
             penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Default,
             onStrokeAdd = {},
             modifier = Modifier.fillMaxSize(),
         )
@@ -127,6 +133,7 @@ private fun ProfileCardDoodleCanvasViewBackPreview(
             showsBack = true,
             doodle = Doodle.fakeOnCardFace(),
             penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Default,
             onStrokeAdd = {},
             modifier = Modifier.fillMaxSize(),
         )

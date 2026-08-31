@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodlePoint
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
@@ -56,7 +57,8 @@ import kotlin.math.pow
  * sketched border stay where they were laid out. One finger draws, or leaves a dot where it is
  * lifted without travelling; a second finger arriving before the first has travelled the touch slop
  * turns the gesture into a pinch and records no stroke, as does a wheel turned with Ctrl or Meta
- * held. Every stroke carries the width [penSize] gives it.
+ * held. Every stroke carries the width [penSize] gives it and the ink [selectedInk] names, drawn
+ * in [inkColor] or [accentColor] and rimmed by [haloColor] or [accentHaloColor] accordingly.
  */
 @Composable
 fun DoodleCanvasView(
@@ -65,8 +67,11 @@ fun DoodleCanvasView(
     maxScale: Float,
     origin: DoodleOrigin,
     inkColor: Color,
+    accentColor: Color,
     haloColor: Color?,
+    accentHaloColor: Color?,
     penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
     onStrokeAdd: (DoodleStroke) -> Unit,
     modifier: Modifier = Modifier,
     transform: DoodleCanvasTransform = rememberDoodleCanvasTransform(),
@@ -77,11 +82,14 @@ fun DoodleCanvasView(
         val scale = minOf(maxWidth / referenceSize.width, maxHeight / referenceSize.height).coerceAtMost(maxScale)
         val points = remember { mutableStateListOf<DoodlePoint>() }
         val currentOnStrokeAdd by rememberUpdatedState(onStrokeAdd)
-        // The gesture detector outlives a pen change, so the width is read when the stroke lands.
+        // The gesture detector outlives a pen change, so the pen is read when the stroke lands.
         val currentPenSize by rememberUpdatedState(penSize)
+        val currentInk by rememberUpdatedState(selectedInk)
         val commitStroke: () -> Unit = {
             if (points.isNotEmpty()) {
-                currentOnStrokeAdd(DoodleStroke(points = points.toList(), width = currentPenSize.width))
+                currentOnStrokeAdd(
+                    DoodleStroke(points = points.toList(), width = currentPenSize.width, ink = currentInk),
+                )
                 points.clear()
             }
         }
@@ -121,17 +129,25 @@ fun DoodleCanvasView(
                     background(scale)
                     DoodleLayerView(
                         doodle = doodle,
-                        color = inkColor,
+                        inkColor = inkColor,
+                        accentColor = accentColor,
                         haloColor = haloColor,
+                        accentHaloColor = accentHaloColor,
                         origin = origin,
                         scale = scale,
                         modifier = Modifier.matchParentSize(),
                     )
-                    val inProgress = DoodleStroke(points = points.toList(), width = penSize.width)
+                    val inProgress = DoodleStroke(
+                        points = points.toList(),
+                        width = penSize.width,
+                        ink = selectedInk,
+                    )
                     DoodleLayerView(
                         doodle = Doodle(strokes = listOf(inProgress)),
-                        color = inkColor,
+                        inkColor = inkColor,
+                        accentColor = accentColor,
                         haloColor = haloColor,
+                        accentHaloColor = accentHaloColor,
                         origin = origin,
                         scale = scale,
                         modifier = Modifier.matchParentSize(),
@@ -276,8 +292,11 @@ private fun DoodleCanvasViewPreview(
             maxScale = 1f,
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
+            accentColor = MaterialTheme.colorScheme.tertiary,
             haloColor = null,
+            accentHaloColor = MaterialTheme.colorScheme.surface,
             penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Default,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             background = { Box(modifier = Modifier.matchParentSize().background(MaterialTheme.colorScheme.primary)) },
@@ -297,8 +316,11 @@ private fun DoodleCanvasViewMagnifiedPreview(
             maxScale = 1f,
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
+            accentColor = MaterialTheme.colorScheme.tertiary,
             haloColor = null,
+            accentHaloColor = MaterialTheme.colorScheme.surface,
             penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Default,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             transform = rememberDoodleCanvasTransform(initialZoom = 2f, initialOffset = Offset(x = 0.2f, y = -0.3f)),

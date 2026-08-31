@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -34,14 +35,18 @@ enum class DoodleOrigin {
 /**
  * Draws [doodle] in the space its points are stored in: the y axis runs down from this layer's
  * top edge and the x axis out from [origin], both in dp multiplied by [scale], so the same doodle
- * keeps its size wherever it is drawn. A [haloColor] rims every stroke, which keeps one ink
- * readable on a surface whose bands are darker and lighter than that ink; null draws bare ink.
+ * keeps its size wherever it is drawn. Each stroke is laid down in [inkColor] or [accentColor]
+ * according to its own [DoodleStroke.ink]. [haloColor] and [accentHaloColor] rim the strokes of
+ * the matching ink, which keeps an ink readable on a surface that is close to it in tone; null
+ * draws that ink bare.
  */
 @Composable
 fun DoodleLayerView(
     doodle: Doodle,
-    color: Color,
+    inkColor: Color,
+    accentColor: Color,
     haloColor: Color?,
+    accentHaloColor: Color?,
     origin: DoodleOrigin,
     scale: Float,
     modifier: Modifier = Modifier,
@@ -49,21 +54,35 @@ fun DoodleLayerView(
     Canvas(modifier = modifier) {
         val unit = density * scale
         val originX = origin.originX(size.width)
-        val drawn = doodle.strokes.map { it.toPath(originX, unit) to it.width * unit }
-        // Every halo is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
-        if (haloColor != null) {
-            val rim = DoodleHaloWidth.toPx() * scale * 2
-            drawn.forEach { (path, width) ->
-                val halo = Stroke(width = width + rim, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                drawPath(path = path, color = haloColor, style = halo)
-            }
+        val drawn = doodle.strokes.map { stroke ->
+            DrawnStroke(
+                path = stroke.toPath(originX, unit),
+                width = stroke.width * unit,
+                color = when (stroke.ink) {
+                    DoodleInk.Default -> inkColor
+                    DoodleInk.Accent -> accentColor
+                },
+                haloColor = when (stroke.ink) {
+                    DoodleInk.Default -> haloColor
+                    DoodleInk.Accent -> accentHaloColor
+                },
+            )
         }
-        drawn.forEach { (path, width) ->
-            val stroke = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            drawPath(path = path, color = color, style = stroke)
+        // Every halo is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
+        val rim = DoodleHaloWidth.toPx() * scale * 2
+        drawn.forEach { stroke ->
+            val halo = stroke.haloColor ?: return@forEach
+            val style = Stroke(width = stroke.width + rim, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawPath(path = stroke.path, color = halo, style = style)
+        }
+        drawn.forEach { stroke ->
+            val ink = Stroke(width = stroke.width, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawPath(path = stroke.path, color = stroke.color, style = ink)
         }
     }
 }
+
+private class DrawnStroke(val path: Path, val width: Float, val color: Color, val haloColor: Color?)
 
 internal fun DoodleOrigin.originX(width: Float): Float = when (this) {
     DoodleOrigin.TopStart -> 0f
@@ -102,8 +121,10 @@ private fun DoodleLayerViewPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleLayerView(
             doodle = Doodle.fake(),
-            color = MaterialTheme.colorScheme.onPrimary,
+            inkColor = MaterialTheme.colorScheme.onPrimary,
+            accentColor = MaterialTheme.colorScheme.tertiary,
             haloColor = null,
+            accentHaloColor = MaterialTheme.colorScheme.surface,
             origin = DoodleOrigin.TopCenter,
             scale = 1f,
             modifier = Modifier

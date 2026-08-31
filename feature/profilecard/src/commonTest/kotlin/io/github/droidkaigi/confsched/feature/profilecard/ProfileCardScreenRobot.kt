@@ -20,6 +20,7 @@ import androidx.compose.ui.test.performTouchInput
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
@@ -70,6 +71,8 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
     fun clickDoodle() = clickTag(PROFILE_CARD_VIEW_DOODLE_BUTTON_TEST_TAG)
 
     fun clickDone() = clickText("Done")
+
+    fun clickAccentInk() = clickDescription("Orange ink")
 
     fun clickFlipToBack() = clickDescription("Switch to the back")
 
@@ -147,6 +150,13 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
         assertEquals(front, edits.single { it.target == DoodleTarget.ProfileCardFront }.doodle.strokes.size)
         assertEquals(back, edits.single { it.target == DoodleTarget.ProfileCardBack }.doodle.strokes.size)
+    }
+
+    /** Asserts one save carried the given ink on the stroke drawn last on each face. */
+    fun checkLastSavedStrokeInks(front: DoodleInk, back: DoodleInk) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(front, edits.single { it.target == DoodleTarget.ProfileCardFront }.doodle.strokes.last().ink)
+        assertEquals(back, edits.single { it.target == DoodleTarget.ProfileCardBack }.doodle.strokes.last().ink)
     }
 
     fun checkNoDoodleSaved() {

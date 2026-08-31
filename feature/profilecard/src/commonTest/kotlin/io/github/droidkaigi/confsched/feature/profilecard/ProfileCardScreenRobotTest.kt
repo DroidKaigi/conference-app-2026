@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.profilecard
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
@@ -90,6 +91,19 @@ class ProfileCardScreenRobotTest : RobotTest() {
                     itShould("keep both faces' strokes and save them together") {
                         checkSavedFaceStrokeCounts(front = 4, back = 1)
                         checkCardDisplayed()
+                    }
+                }
+                describe("and the accent ink is picked before a stroke is drawn on each face") {
+                    doIt {
+                        clickAccentInk()
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep the accent ink across the flip and save both faces in it") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Accent, back = DoodleInk.Accent)
                     }
                 }
                 describe("and back is pressed after a stroke is drawn") {

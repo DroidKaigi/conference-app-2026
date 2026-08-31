@@ -93,8 +93,10 @@ internal fun AboutHero(
         )
         DoodleLayerView(
             doodle = doodle,
-            color = MaterialTheme.colorScheme.onPrimary,
+            inkColor = MaterialTheme.colorScheme.onPrimary,
+            accentColor = MaterialTheme.colorScheme.tertiary,
             haloColor = null,
+            accentHaloColor = MaterialTheme.colorScheme.surface,
             origin = DoodleOrigin.TopCenter,
             scale = 1f,
             modifier = Modifier.matchParentSize(),

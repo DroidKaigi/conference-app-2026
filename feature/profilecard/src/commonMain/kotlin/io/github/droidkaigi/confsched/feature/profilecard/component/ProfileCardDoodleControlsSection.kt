@@ -16,17 +16,20 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.DoodleFlipButton
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsSpacing
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardColors
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
@@ -40,11 +43,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun ProfileCardDoodleControlsSection(
     penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
     isShowingBack: Boolean,
     sideBySide: Boolean,
     canEditFront: Boolean,
     canEditBack: Boolean,
     onPenSizeClick: (DoodlePenSize) -> Unit,
+    onInkClick: (DoodleInk) -> Unit,
     onFlipClick: () -> Unit,
     onFrontUndoClick: () -> Unit,
     onFrontClearClick: () -> Unit,
@@ -61,6 +66,12 @@ internal fun ProfileCardDoodleControlsSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(ProfileCardDoodleControlsDefaults.spacing),
     ) {
+        DoodleInkRow(
+            selectedInk = selectedInk,
+            inkColor = ProfileCardColors.ink,
+            accentColor = ProfileCardColors.accentInk,
+            onInkClick = onInkClick,
+        )
         DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -122,11 +133,13 @@ private fun ProfileCardDoodleControlsSectionPreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardDoodleControlsSection(
             penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Default,
             isShowingBack = false,
             sideBySide = false,
             canEditFront = true,
             canEditBack = false,
             onPenSizeClick = {},
+            onInkClick = {},
             onFlipClick = {},
             onFrontUndoClick = {},
             onFrontClearClick = {},
@@ -145,11 +158,13 @@ private fun ProfileCardDoodleControlsSectionSideBySidePreview(
     KaigiPreviewTheme(colorScheme) {
         ProfileCardDoodleControlsSection(
             penSize = DoodlePenSize.Thick,
+            selectedInk = DoodleInk.Accent,
             isShowingBack = false,
             sideBySide = true,
             canEditFront = true,
             canEditBack = true,
             onPenSizeClick = {},
+            onInkClick = {},
             onFlipClick = {},
             onFrontUndoClick = {},
             onFrontClearClick = {},

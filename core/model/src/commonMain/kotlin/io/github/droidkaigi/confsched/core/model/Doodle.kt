@@ -15,12 +15,19 @@ data class Doodle(val strokes: List<DoodleStroke>) {
     }
 }
 
-/** One drawn line, [width] dp wide in the same space [points] are measured in. */
+/** One drawn line, [width] dp wide in the same space [points] are measured in, laid down in [ink]. */
 @Serializable
-data class DoodleStroke(val points: List<DoodlePoint>, val width: Float)
+data class DoodleStroke(val points: List<DoodlePoint>, val width: Float, val ink: DoodleInk)
 
 @Serializable
 data class DoodlePoint(val x: Float, val y: Float)
+
+/** The colors a stroke can be drawn in, each resolved against the surface it lands on. */
+@Serializable
+enum class DoodleInk {
+    Default,
+    Accent,
+}
 
 /** The widths a stroke can be drawn at, offered as the pens a doodle is drawn with. */
 enum class DoodlePenSize(val width: Float) {

@@ -14,6 +14,8 @@ import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodleEdit
+import io.github.droidkaigi.confsched.core.model.DoodleInk
+import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.testing.Robot
 import io.github.droidkaigi.confsched.core.ui.DOODLE_CANVAS_FRAME_TEST_TAG
@@ -79,6 +81,12 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         composeUiTest.waitForIdle()
     }
 
+    // The ink labels are :core:ui strings, whose generated resources that module keeps internal.
+    fun clickAccentInk() {
+        composeUiTest.onNodeWithContentDescription(ACCENT_INK_DESCRIPTION).performClick()
+        composeUiTest.waitForIdle()
+    }
+
     /** Draws a horizontal stroke through the centre of the wall canvas. */
     fun drawStroke() {
         composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0].performTouchInput {
@@ -127,6 +135,11 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         assertEquals(count, edits.single().doodle.strokes.size)
     }
 
+    fun checkSavedWallStrokeInks(inks: List<DoodleInk>) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(inks, edits.single().doodle.strokes.map(DoodleStroke::ink))
+    }
+
     fun checkNothingSaved() {
         assertTrue(graph.doodleMutationKey.invocations.tryReceive().isFailure, "a save reached the data layer")
     }
@@ -152,3 +165,5 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 }
 
 private const val STROKE_HALF_SPAN_FRACTION = 0.2f
+
+private const val ACCENT_INK_DESCRIPTION = "Orange ink"

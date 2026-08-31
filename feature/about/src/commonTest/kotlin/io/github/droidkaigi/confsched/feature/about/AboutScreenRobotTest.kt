@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.about
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
@@ -125,6 +126,16 @@ class AboutScreenRobotTest : RobotTest() {
                     itShould("save the stroke that was drawn") {
                         checkSavedWallStrokeCount(count = 1)
                         checkTextDoesNotExist(Res.string.doodle_done)
+                    }
+                }
+                describe("and a stroke is drawn in the accent ink before Done is tapped") {
+                    doIt {
+                        clickAccentInk()
+                        drawStroke()
+                        clickButton(Res.string.doodle_done)
+                    }
+                    itShould("save the stroke in the accent ink") {
+                        checkSavedWallStrokeInks(listOf(DoodleInk.Accent))
                     }
                 }
                 describe("and a stroke is drawn before back is pressed") {

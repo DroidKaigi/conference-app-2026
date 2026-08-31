@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -36,6 +37,7 @@ import io.github.droidkaigi.confsched.core.ui.AboutHeroSize
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageTopInset
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleCanvasView
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
@@ -58,6 +60,7 @@ internal fun AboutWallDoodleEditorView(
     modifier: Modifier = Modifier,
 ) {
     var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
+    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Default) }
     var draft by rememberSerializable(savedDoodle) { mutableStateOf(savedDoodle) }
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -70,8 +73,11 @@ internal fun AboutWallDoodleEditorView(
             maxScale = AboutWallDoodleEditorDefaults.maxScale,
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
+            accentColor = MaterialTheme.colorScheme.tertiary,
             haloColor = null,
+            accentHaloColor = MaterialTheme.colorScheme.surface,
             penSize = penSize,
+            selectedInk = selectedInk,
             onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
             modifier = Modifier.fillMaxWidth().height(AboutHeroHeight),
             background = { scale -> AboutWallHintView(scale = scale, modifier = Modifier.matchParentSize()) },
@@ -83,6 +89,12 @@ internal fun AboutWallDoodleEditorView(
             verticalArrangement = Arrangement.spacedBy(AboutWallDoodleEditorDefaults.spacing),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            DoodleInkRow(
+                selectedInk = selectedInk,
+                inkColor = MaterialTheme.colorScheme.onPrimary,
+                accentColor = MaterialTheme.colorScheme.tertiary,
+                onInkClick = { selectedInk = it },
+            )
             DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = { penSize = it })
             DoodleStrokeControlsRow(
                 canEdit = draft.strokes.isNotEmpty(),

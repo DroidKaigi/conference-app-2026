@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -68,6 +69,7 @@ fun ProfileCardView(
     val shareImageLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
     var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
+    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Default) }
     // A doodle session starts from what is saved and reaches the data layer only on Done, so the
     // drafts are keyed on the session rather than kept for the life of the screen.
     var frontDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.frontDoodle) }
@@ -119,6 +121,7 @@ fun ProfileCardView(
                         showsBack = false,
                         doodle = frontDraft,
                         penSize = penSize,
+                        selectedInk = selectedInk,
                         onStrokeAdd = { frontDraft = frontDraft.withStroke(it) },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
@@ -132,6 +135,7 @@ fun ProfileCardView(
                         showsBack = true,
                         doodle = backDraft,
                         penSize = penSize,
+                        selectedInk = selectedInk,
                         onStrokeAdd = { backDraft = backDraft.withStroke(it) },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
@@ -147,6 +151,7 @@ fun ProfileCardView(
                     showsBack = uiState.isShowingBack,
                     doodle = if (uiState.isShowingBack) backDraft else frontDraft,
                     penSize = penSize,
+                    selectedInk = selectedInk,
                     onStrokeAdd = { stroke ->
                         if (uiState.isShowingBack) {
                             backDraft = backDraft.withStroke(stroke)
@@ -171,11 +176,13 @@ fun ProfileCardView(
                 if (doodling) {
                     ProfileCardDoodleControlsSection(
                         penSize = penSize,
+                        selectedInk = selectedInk,
                         isShowingBack = uiState.isShowingBack,
                         sideBySide = sideBySide,
                         canEditFront = frontDraft.strokes.isNotEmpty(),
                         canEditBack = backDraft.strokes.isNotEmpty(),
                         onPenSizeClick = { penSize = it },
+                        onInkClick = { selectedInk = it },
                         onFlipClick = onCardClick,
                         onFrontUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
                         onFrontClearClick = { frontDraft = Doodle.Empty },
