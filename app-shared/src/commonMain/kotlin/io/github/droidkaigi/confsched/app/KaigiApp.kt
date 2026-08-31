@@ -67,7 +67,8 @@ fun KaigiApp() {
                     FirstFavoriteGuidanceEffect(
                         favoritesStore = uiGraph.favoritesStore,
                         firstFavoriteGuidanceStore = uiGraph.firstFavoriteGuidanceStore,
-                        onOfferGuidance = { uiGraph.appNavigator.goTo(FirstFavoriteNotificationNavKey) },
+                        persistedTimetableReader = uiGraph.persistedTimetableReader,
+                        onOfferGuidance = { mascot -> uiGraph.appNavigator.goTo(FirstFavoriteNotificationNavKey(mascot)) },
                     )
                     IosTabBarSyncEffect(
                         backStack = backStack,

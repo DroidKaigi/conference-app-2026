@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
+import io.github.droidkaigi.confsched.core.model.Mascot
 import soil.query.compose.rememberMutation
 
 @Composable
@@ -15,6 +16,7 @@ context(presenterContext: FirstFavoriteNotificationPresenterContext)
 fun firstFavoriteNotificationScreenPresenter(
     screenChannel: ScreenChannel<FirstFavoriteNotificationScreenAction, FirstFavoriteNotificationScreenActionResult>,
     requestNotificationPermission: suspend () -> Unit,
+    mascot: Mascot,
 ): FirstFavoriteNotificationScreenUiState {
     val guidanceMutation = rememberMutation(presenterContext.firstFavoriteGuidanceMutationKey)
     var isAnswering by retain { mutableStateOf(false) }
@@ -38,5 +40,5 @@ fun firstFavoriteNotificationScreenPresenter(
         guidanceMutation.reset()
     }
 
-    return FirstFavoriteNotificationScreenUiState(isAnswering = isAnswering)
+    return FirstFavoriteNotificationScreenUiState(isAnswering = isAnswering, mascot = mascot)
 }

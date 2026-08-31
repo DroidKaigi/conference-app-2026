@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -35,7 +36,7 @@ fun FirstFavoriteNotificationScreen(
     onLaterClick: () -> Unit,
 ) {
     FirstFavoriteDialogCard(seed = FIRST_FAVORITE_DIALOG_SEED) {
-        FirstFavoriteHeroView()
+        FirstFavoriteHeroView(mascot = uiState.mascot)
         Text(
             text = stringResource(Res.string.first_favorite_eyebrow),
             style = FirstFavoriteDialogDefaults.eyebrowStyle,
@@ -81,7 +82,7 @@ private fun FirstFavoriteNotificationScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         FirstFavoriteNotificationScreen(
-            uiState = FirstFavoriteNotificationScreenUiState(isAnswering = false),
+            uiState = FirstFavoriteNotificationScreenUiState(isAnswering = false, mascot = Mascot.E),
             onTurnOnNotificationsClick = {},
             onLaterClick = {},
         )

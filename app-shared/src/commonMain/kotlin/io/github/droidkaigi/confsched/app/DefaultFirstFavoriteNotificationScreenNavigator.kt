@@ -7,6 +7,7 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.FirstFavoriteNotificationScreenScope
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.feature.favorites.FirstFavoriteNotificationScreenNavigator
 import io.github.droidkaigi.confsched.feature.favorites.FirstFavoriteWidgetNavKey
 
@@ -20,7 +21,7 @@ class DefaultFirstFavoriteNotificationScreenNavigator(
     private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
     FirstFavoriteNotificationScreenNavigator {
-    override fun openWidgetStep() {
-        appNavigator.replaceTop(FirstFavoriteWidgetNavKey)
+    override fun openWidgetStep(mascot: Mascot) {
+        appNavigator.replaceTop(FirstFavoriteWidgetNavKey(mascot))
     }
 }

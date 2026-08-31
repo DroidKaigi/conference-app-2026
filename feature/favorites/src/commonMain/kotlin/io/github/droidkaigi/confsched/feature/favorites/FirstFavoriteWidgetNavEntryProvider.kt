@@ -25,6 +25,7 @@ class FirstFavoriteWidgetNavEntryProvider(
             val graph = retain(screenGraphFactory::createFirstFavoriteWidgetScreenGraph)
             context(graph.screenContext) {
                 FirstFavoriteWidgetScreenRoot(
+                    mascot = key.mascot,
                     onNavigateBack = { graph.screenNavigator.back(origin = key) },
                 )
             }

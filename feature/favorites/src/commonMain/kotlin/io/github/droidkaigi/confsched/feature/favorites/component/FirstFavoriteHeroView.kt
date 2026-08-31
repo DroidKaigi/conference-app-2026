@@ -20,26 +20,33 @@ import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiIllustrationCo
 import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteFilled
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_hand_bell
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_hand_bell_body
-import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_mascot_d
 import org.jetbrains.compose.resources.painterResource
+
+private val MascotHeight = 95.dp
+
+/** Where the mascot's middle sits, so a wider character grows to both sides instead of into the bell. */
+private val MascotCenterX = 128.dp
 
 /** The mascot ringing a hand bell, over the hearts a first favorite scatters. */
 @Composable
-internal fun FirstFavoriteHeroView(modifier: Modifier = Modifier) {
+internal fun FirstFavoriteHeroView(mascot: Mascot, modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxWidth().height(104.dp)) {
         HeartMark(sizeDp = 15, xDp = 32, yDp = 4, rotationDegrees = 14f)
         HeartMark(sizeDp = 12, xDp = 248, yDp = 7, rotationDegrees = -16f)
         HeartMark(sizeDp = 10, xDp = 7, yDp = 44, rotationDegrees = 8f)
-        Image(
-            painter = painterResource(Res.drawable.first_favorite_mascot_d),
-            contentDescription = null,
-            modifier = Modifier.offset(x = 76.dp, y = 9.dp).size(width = 104.dp, height = 95.dp),
-            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+        FirstFavoriteMascotImage(
+            mascot = mascot,
+            height = MascotHeight,
+            modifier = Modifier.offset(
+                x = MascotCenterX - mascot.firstFavoriteWidthAt(MascotHeight) / 2,
+                y = 9.dp,
+            ),
         )
         Box(modifier = Modifier.offset(x = 162.dp, y = 30.dp).size(width = 60.dp, height = 51.dp)) {
             Image(
@@ -52,7 +59,7 @@ internal fun FirstFavoriteHeroView(modifier: Modifier = Modifier) {
                 painter = painterResource(Res.drawable.first_favorite_hand_bell),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                colorFilter = ColorFilter.tint(LocalKaigiIllustrationColors.current.skyPanel),
             )
         }
     }
@@ -77,6 +84,6 @@ private fun FirstFavoriteHeroViewPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        FirstFavoriteHeroView()
+        FirstFavoriteHeroView(mascot = Mascot.E)
     }
 }

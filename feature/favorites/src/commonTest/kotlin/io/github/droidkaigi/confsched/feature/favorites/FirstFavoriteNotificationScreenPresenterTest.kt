@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.favorites
 
 import dev.zacsweers.metro.createGraph
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,6 +19,7 @@ class FirstFavoriteNotificationScreenPresenterTest {
                 firstFavoriteNotificationScreenPresenter(
                     screenChannel = channel,
                     requestNotificationPermission = { requested++ },
+                    mascot = Mascot.E,
                 )
             },
         ) {
@@ -38,6 +40,7 @@ class FirstFavoriteNotificationScreenPresenterTest {
                 firstFavoriteNotificationScreenPresenter(
                     screenChannel = channel,
                     requestNotificationPermission = { requested++ },
+                    mascot = Mascot.E,
                 )
             },
         ) {

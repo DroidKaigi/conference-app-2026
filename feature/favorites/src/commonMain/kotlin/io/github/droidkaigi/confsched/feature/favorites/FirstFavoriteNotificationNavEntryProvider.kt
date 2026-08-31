@@ -22,11 +22,12 @@ class FirstFavoriteNotificationNavEntryProvider(
             metadata = DialogSceneStrategy.dialog(
                 DialogProperties(dismissOnClickOutside = false, usePlatformDefaultWidth = false),
             ),
-        ) {
+        ) { key ->
             val graph = retain(screenGraphFactory::createFirstFavoriteNotificationScreenGraph)
             context(graph.screenContext) {
                 FirstFavoriteNotificationScreenRoot(
-                    onNavigateToWidgetStep = graph.screenNavigator::openWidgetStep,
+                    mascot = key.mascot,
+                    onNavigateToWidgetStep = { graph.screenNavigator.openWidgetStep(mascot = key.mascot) },
                 )
             }
         }
