@@ -16,4 +16,9 @@
     <string name="retry">Retry</string>
     <string name="loading_headline">Loading</string>
     <string name="loading_description">Just a moment</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
 </resources>

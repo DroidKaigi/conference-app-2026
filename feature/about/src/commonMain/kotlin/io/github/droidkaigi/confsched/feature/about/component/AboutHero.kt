@@ -26,8 +26,14 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.AboutHeroHeight
+import io.github.droidkaigi.confsched.core.ui.AboutHeroStageTopInset
+import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
+import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
+import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.SketchBottomEdgeShape
 import io.github.droidkaigi.confsched.core.ui.combineSketchSeed
+import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.core.ui.sketchBottomEdge
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
@@ -84,6 +90,8 @@ internal fun AboutHero(
         DoodleLayerView(
             doodle = doodle,
             color = MaterialTheme.colorScheme.onPrimary,
+            haloColor = null,
+            origin = DoodleOrigin.TopCenter,
             scale = 1f,
             modifier = Modifier.matchParentSize(),
         )
@@ -121,12 +129,6 @@ private const val EDIT_BUTTON_ALPHA = 0.4f
 private val WallHeight = 241.dp
 private val EditButtonSize = 36.dp
 private val EditButtonIconSize = 16.dp
-
-internal val AboutHeroStageWidth = 331.dp
-internal val AboutHeroStageTopInset = 15.dp
-
-/** Tall enough for the mascots standing at the foot of the stage to clear the wall's lower edge. */
-internal val AboutHeroHeight = 246.dp
 
 @LocalePreviews
 @Composable

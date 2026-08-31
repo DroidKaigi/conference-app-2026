@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,21 +33,30 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Edit
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Share
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.draw_on_the_card
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.edit_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
 import kotlinx.coroutines.launch
@@ -61,6 +72,7 @@ fun ProfileCardView(
     onCardClick: () -> Unit,
     onEditClick: () -> Unit,
     onShareClick: (ImageBitmap) -> Unit,
+    onDoodleClick: (DoodleTarget) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shareImageLayer = rememberGraphicsLayer()
@@ -85,6 +97,8 @@ fun ProfileCardView(
                 mascot = uiState.mascot,
                 sketchiness = uiState.sketchiness,
                 avatarImage = uiState.avatarImage,
+                frontDoodle = uiState.frontDoodle,
+                backDoodle = uiState.backDoodle,
                 isShowingBack = uiState.isShowingBack,
                 modifier = Modifier
                     .weight(1f, fill = false)
@@ -94,6 +108,9 @@ fun ProfileCardView(
                 isSharing = uiState.isSharing,
                 onShareClick = { coroutineScope.launch { onShareClick(shareImageLayer.toImageBitmap()) } },
                 onEditClick = onEditClick,
+                onDoodleClick = {
+                    onDoodleClick(if (uiState.isShowingBack) DoodleTarget.ProfileCardBack else DoodleTarget.ProfileCardFront)
+                },
             )
         }
         // Recorded regardless of which face is turned up, so the share image always carries both.
@@ -105,6 +122,8 @@ fun ProfileCardView(
                 mascot = uiState.mascot,
                 sketchiness = uiState.sketchiness,
                 avatarImage = uiState.avatarImage,
+                frontDoodle = uiState.frontDoodle,
+                backDoodle = uiState.backDoodle,
                 colorScheme = colorScheme,
                 modifier = recordingModifier,
             )
@@ -125,6 +144,8 @@ private fun FlippableProfileCard(
     mascot: Mascot,
     sketchiness: Sketchiness,
     avatarImage: AvatarImage?,
+    frontDoodle: Doodle,
+    backDoodle: Doodle,
     isShowingBack: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -145,6 +166,7 @@ private fun FlippableProfileCard(
                 link = link,
                 mascot = mascot,
                 sketchiness = sketchiness,
+                doodle = backDoodle,
                 taped = false,
                 modifier = Modifier.graphicsLayer { rotationY = 180f },
             )
@@ -156,6 +178,7 @@ private fun FlippableProfileCard(
                 sketchiness = sketchiness,
                 taped = false,
                 avatarImage = avatarImage,
+                doodle = frontDoodle,
             )
         }
     }
@@ -166,6 +189,7 @@ private fun ProfileCardActionsSection(
     isSharing: Boolean,
     onShareClick: () -> Unit,
     onEditClick: () -> Unit,
+    onDoodleClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -192,19 +216,29 @@ private fun ProfileCardActionsSection(
             // spacer of the icon's width lands the label on the button's center.
             Spacer(modifier = Modifier.width(KaigiButtonDefaults.iconSize))
         }
-        Text(
-            text = stringResource(Res.string.edit_button),
-            style = ProfileCardTextStyles.accent,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
-                .clickable(role = Role.Button, onClick = onEditClick)
-                // The design sets the label straight under the button with no chrome of its own;
-                // the padding is what the row is spaced by.
-                .padding(vertical = ProfileCardViewDefaults.actionSpacing),
-        )
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(Res.string.edit_button),
+                style = ProfileCardTextStyles.accent,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
+                    .clickable(role = Role.Button, onClick = onEditClick)
+                    // The design sets the label straight under the button with no chrome of its own;
+                    // the padding is what the row is spaced by.
+                    .padding(vertical = ProfileCardViewDefaults.actionSpacing),
+            )
+            IconButton(onClick = onDoodleClick, modifier = Modifier.size(ProfileCardViewDefaults.doodleButtonSize)) {
+                Icon(
+                    imageVector = KaigiIcons.Default.Edit,
+                    contentDescription = stringResource(Res.string.draw_on_the_card),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = ProfileCardViewDefaults.doodleButtonAlpha),
+                    modifier = Modifier.size(ProfileCardViewDefaults.doodleButtonIconSize),
+                )
+            }
+        }
     }
 }
 
@@ -216,6 +250,11 @@ private object ProfileCardViewDefaults {
     val cardSpacing = 24.dp
     val actionsInset = 24.dp
     val actionSpacing = 12.dp
+
+    /** The doodle affordance stays discreet: a small, low-contrast mark beside the edit label. */
+    val doodleButtonSize = 36.dp
+    val doodleButtonIconSize = 16.dp
+    val doodleButtonAlpha = 0.4f
 }
 
 @LocalePreviews
@@ -232,11 +271,14 @@ private fun ProfileCardViewPreview(
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
+                frontDoodle = Doodle.fakeOnCardFace(),
+                backDoodle = Doodle.Empty,
             ),
             colorScheme = colorScheme,
             onCardClick = {},
             onEditClick = {},
             onShareClick = {},
+            onDoodleClick = {},
         )
     }
 }
@@ -247,6 +289,6 @@ private fun ProfileCardActionsSectionPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardActionsSection(isSharing = false, onShareClick = {}, onEditClick = {})
+        ProfileCardActionsSection(isSharing = false, onShareClick = {}, onEditClick = {}, onDoodleClick = {})
     }
 }

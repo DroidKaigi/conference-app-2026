@@ -7,7 +7,7 @@ import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.DoodleScreenScope
-import io.github.droidkaigi.confsched.feature.about.DoodleScreenNavigator
+import io.github.droidkaigi.confsched.feature.doodle.DoodleScreenNavigator
 
 @Inject
 @SingleIn(DoodleScreenScope::class)

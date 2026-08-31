@@ -6,7 +6,9 @@ import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.ProfileCardScreenScope
+import io.github.droidkaigi.confsched.feature.doodle.DoodleNavKey
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenNavigator
 
 @Inject
@@ -16,6 +18,10 @@ import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenNavig
     binding = binding<ProfileCardScreenNavigator>(),
 )
 class DefaultProfileCardScreenNavigator(
-    appNavigator: AppNavigator,
+    private val appNavigator: AppNavigator,
 ) : DefaultScreenNavigator(appNavigator),
-    ProfileCardScreenNavigator
+    ProfileCardScreenNavigator {
+    override fun openDoodle(target: DoodleTarget) {
+        appNavigator.goTo(DoodleNavKey(target))
+    }
+}

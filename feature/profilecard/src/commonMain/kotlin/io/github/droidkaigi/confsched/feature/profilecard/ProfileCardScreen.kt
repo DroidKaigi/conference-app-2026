@@ -8,11 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardFormView
@@ -37,6 +40,7 @@ fun ProfileCardScreen(
     onCardClick: () -> Unit,
     onEditClick: () -> Unit,
     onShareClick: (ImageBitmap) -> Unit,
+    onDoodleClick: (DoodleTarget) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.imePadding(),
@@ -63,6 +67,7 @@ fun ProfileCardScreen(
                 onCardClick = onCardClick,
                 onEditClick = onEditClick,
                 onShareClick = onShareClick,
+                onDoodleClick = onDoodleClick,
                 modifier = Modifier.padding(innerPadding),
             )
         }
@@ -93,6 +98,7 @@ private fun ProfileCardScreenFormPreview(
             onSubmitClick = {},
             onCardClick = {},
             onEditClick = {},
+            onDoodleClick = {},
         )
     }
 }
@@ -121,6 +127,7 @@ private fun ProfileCardScreenFormErrorPreview(
             onSubmitClick = {},
             onCardClick = {},
             onEditClick = {},
+            onDoodleClick = {},
             onShareClick = {},
         )
     }
@@ -140,6 +147,8 @@ private fun ProfileCardScreenCardPreview(
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
+                frontDoodle = Doodle.fakeOnCardFace(),
+                backDoodle = Doodle.Empty,
             ),
             colorScheme = colorScheme,
             onNickNameChange = {},
@@ -152,6 +161,7 @@ private fun ProfileCardScreenCardPreview(
             onSubmitClick = {},
             onCardClick = {},
             onEditClick = {},
+            onDoodleClick = {},
             onShareClick = {},
         )
     }
@@ -173,6 +183,8 @@ private fun ProfileCardScreenCardBackPreview(
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
+                frontDoodle = Doodle.Empty,
+                backDoodle = Doodle.fakeOnCardFace(),
                 isShowingBack = true,
             ),
             onNickNameChange = {},
@@ -185,6 +197,7 @@ private fun ProfileCardScreenCardBackPreview(
             onSubmitClick = {},
             onCardClick = {},
             onEditClick = {},
+            onDoodleClick = {},
         )
     }
 }
@@ -214,6 +227,7 @@ private fun ProfileCardScreenFormWithImagePreview(
             onSubmitClick = {},
             onCardClick = {},
             onEditClick = {},
+            onDoodleClick = {},
         )
     }
 }

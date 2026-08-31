@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -27,6 +28,8 @@ sealed interface ProfileCardScreenUiState {
         val mascot: Mascot,
         val sketchiness: Sketchiness,
         val avatarImage: AvatarImage?,
+        val frontDoodle: Doodle,
+        val backDoodle: Doodle,
         val isShowingBack: Boolean = false,
         val isSharing: Boolean = false,
     ) : ProfileCardScreenUiState

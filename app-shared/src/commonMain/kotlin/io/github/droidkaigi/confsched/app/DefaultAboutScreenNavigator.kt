@@ -8,10 +8,11 @@ import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.DebugNavKeyProvider
 import io.github.droidkaigi.confsched.core.common.DefaultScreenNavigator
 import io.github.droidkaigi.confsched.core.model.AboutScreenScope
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.feature.about.AboutScreenNavigator
-import io.github.droidkaigi.confsched.feature.about.DoodleNavKey
 import io.github.droidkaigi.confsched.feature.about.LicensesNavKey
 import io.github.droidkaigi.confsched.feature.contributors.ContributorsNavKey
+import io.github.droidkaigi.confsched.feature.doodle.DoodleNavKey
 import io.github.droidkaigi.confsched.feature.settings.SettingsNavKey
 import io.github.droidkaigi.confsched.feature.sponsors.SponsorsNavKey
 import io.github.droidkaigi.confsched.feature.staff.StaffNavKey
@@ -48,7 +49,7 @@ class DefaultAboutScreenNavigator(
     }
 
     override fun openDoodle() {
-        appNavigator.goTo(DoodleNavKey)
+        appNavigator.goTo(DoodleNavKey(DoodleTarget.AboutWall))
     }
 
     override val isDebugMenuAvailable: Boolean get() = debugNavKeyProvider.debugNavKey != null

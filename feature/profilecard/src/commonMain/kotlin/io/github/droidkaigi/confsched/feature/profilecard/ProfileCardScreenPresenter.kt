@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import soil.query.compose.rememberMutation
 
@@ -18,6 +19,8 @@ context(presenterContext: ProfileCardPresenterContext)
 fun profileCardScreenPresenter(
     screenChannel: ScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>,
     storedCard: ProfileCard?,
+    frontDoodle: Doodle,
+    backDoodle: Doodle,
 ): ProfileCardScreenUiState {
     val profileCardMutation = rememberMutation(presenterContext.profileCardMutationKey)
     val shareMutation = rememberMutation(presenterContext.shareProfileCardMutationKey)
@@ -98,6 +101,8 @@ fun profileCardScreenPresenter(
             mascot = storedCard.mascot,
             sketchiness = storedCard.sketchiness,
             avatarImage = storedCard.avatarImage,
+            frontDoodle = frontDoodle,
+            backDoodle = backDoodle,
             isShowingBack = isShowingBack,
             isSharing = shareMutation.isPending,
         )

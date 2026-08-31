@@ -3,9 +3,10 @@ package io.github.droidkaigi.confsched.core.model
 import kotlinx.serialization.Serializable
 
 /**
- * A freehand drawing over the About screen's hero, in the hero's own dp space: [DoodlePoint.y]
- * runs down from the hero's top edge and [DoodlePoint.x] out from its horizontal center, so a
- * wider hero widens the margins around the drawing rather than stretching it.
+ * A freehand drawing over one [DoodleTarget], in that target's own dp space, so a wider surface
+ * widens the margins around the drawing rather than stretching it. [DoodlePoint.y] always runs
+ * down from the surface's top edge; [DoodlePoint.x] runs out from the origin the target anchors
+ * its drawing to.
  */
 @Serializable
 data class Doodle(val strokes: List<DoodleStroke>) {

@@ -2,6 +2,8 @@ package io.github.droidkaigi.confsched.feature.about
 
 import androidx.compose.runtime.Composable
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import soil.query.compose.rememberSubscription
 
@@ -24,7 +26,10 @@ fun AboutScreenRoot(
     onNavigateToDebug: () -> Unit,
 ) {
     SoilDataBoundary(
-        state = rememberSubscription(screenContext.doodleSubscriptionKey),
+        state = rememberSubscription(
+            key = screenContext.doodlesSubscriptionKey,
+            select = { doodles -> doodles[DoodleTarget.AboutWall] ?: Doodle.Empty },
+        ),
     ) { doodle ->
         val uiState = context(screenContext.presenterContext) {
             aboutScreenPresenter(doodle)

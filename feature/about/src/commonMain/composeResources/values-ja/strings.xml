@@ -20,8 +20,4 @@
     <string name="about_social_x">X</string>
     <string name="about_social_medium">Medium</string>
     <string name="about_draw_on_the_wall">壁に落書きする</string>
-    <string name="doodle_title">落書き</string>
-    <string name="doodle_undo">元に戻す</string>
-    <string name="doodle_clear">全部消す</string>
-    <string name="doodle_save">保存</string>
 </resources>

@@ -2,11 +2,15 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
+import kotlinx.collections.immutable.persistentMapOf
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -62,11 +66,27 @@ class ProfileCardScreenRobotTest : RobotTest() {
         describe("when a card is stored") {
             doIt {
                 setupStoredCard(storedCard)
+                setupDoodles(persistentMapOf(DoodleTarget.ProfileCardFront to Doodle.fakeOnCardFace()))
                 setupContent()
             }
             itShould("show the card rather than the form") {
                 checkCardDisplayed()
                 checkFormDoesNotExist()
+            }
+            describe("and the pencil is tapped") {
+                doIt { clickDoodle() }
+                itShould("open the doodle for the face turned up") {
+                    checkDoodleTargets(DoodleTarget.ProfileCardFront)
+                }
+            }
+            describe("and the card is turned over before the pencil is tapped") {
+                doIt {
+                    clickCard()
+                    clickDoodle()
+                }
+                itShould("open the doodle for the back face") {
+                    checkDoodleTargets(DoodleTarget.ProfileCardBack)
+                }
             }
             describe("and Edit is tapped") {
                 doIt { clickEdit() }

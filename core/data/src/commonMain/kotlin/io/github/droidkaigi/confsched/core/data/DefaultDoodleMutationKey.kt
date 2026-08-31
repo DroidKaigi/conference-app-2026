@@ -15,5 +15,5 @@ class DefaultDoodleMutationKey(
     private val store: DoodleStore,
 ) : DoodleMutationKey by buildMutationKey(
     id = SoilIds.doodleMutation(extraTag),
-    mutate = { doodle -> store.save(doodle) },
+    mutate = { edit -> store.save(edit.target, edit.doodle) },
 )

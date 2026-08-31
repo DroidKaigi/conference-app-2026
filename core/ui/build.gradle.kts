@@ -23,6 +23,7 @@ kotlin {
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
             implementation(libs.kotlinxDatetime)
+            implementation(libs.qrcodeKotlin)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

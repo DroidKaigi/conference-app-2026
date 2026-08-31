@@ -4,10 +4,20 @@ import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodlePoint
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 
+/** A drawing in the About hero's space, where x runs out from the hero's horizontal center. */
 fun Doodle.Companion.fake(): Doodle = Doodle(
     strokes = listOf(
         DoodleStroke(points = wave(startX = -70f, y = 150f, amplitude = 14f)),
         DoodleStroke(points = wave(startX = 10f, y = 190f, amplitude = -8f)),
+    ),
+)
+
+/** A drawing in a profile card face's space, where the origin is the face's top-start corner. */
+fun Doodle.Companion.fakeOnCardFace(): Doodle = Doodle(
+    strokes = listOf(
+        DoodleStroke(points = wave(startX = 236f, y = 62f, amplitude = 16f)),
+        DoodleStroke(points = wave(startX = 40f, y = 250f, amplitude = 18f)),
+        DoodleStroke(points = wave(startX = 170f, y = 430f, amplitude = -12f)),
     ),
 )
 

@@ -19,7 +19,7 @@ class ProfileCardNavEntryProvider(
         entry<ProfileCardNavKey>(metadata = instantNavTransition()) {
             val graph = retain(screenGraphFactory::createProfileCardScreenGraph)
             context(graph.screenContext) {
-                ProfileCardScreenRoot()
+                ProfileCardScreenRoot(onNavigateToDoodle = graph.screenNavigator::openDoodle)
             }
         }
     }

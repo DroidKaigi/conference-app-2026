@@ -6,14 +6,18 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
@@ -28,6 +32,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.mascotOptionTestTag
 import io.github.droidkaigi.confsched.feature.profilecard.component.sketchinessOptionTestTag
+import kotlinx.collections.immutable.PersistentMap
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -35,17 +40,37 @@ import kotlin.test.assertNull
 class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     private val graph = createGraph<ProfileCardScreenTestGraph>()
+    private val doodleTargets = mutableListOf<DoodleTarget>()
 
     fun setupStoredCard(card: ProfileCard?) {
         graph.profileCardSubscriptionKey.set(card)
     }
 
+    fun setupDoodles(doodles: PersistentMap<DoodleTarget, Doodle>) {
+        graph.doodlesSubscriptionKey.set(doodles)
+    }
+
     fun setupContent() {
         setScreenContent {
             context(graph.screenContext) {
-                ProfileCardScreenRoot()
+                ProfileCardScreenRoot(onNavigateToDoodle = doodleTargets::add)
             }
         }
+    }
+
+    // The card itself carries no label; it is the first clickable the finished card view lays out.
+    fun clickCard() {
+        composeUiTest.onAllNodes(hasClickAction())[0].performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun clickDoodle() {
+        composeUiTest.onNodeWithContentDescription("Draw on the card").performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun checkDoodleTargets(vararg targets: DoodleTarget) {
+        assertEquals(targets.toList(), doodleTargets.toList())
     }
 
     fun inputNickName(text: String) = inputField(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG, text)
