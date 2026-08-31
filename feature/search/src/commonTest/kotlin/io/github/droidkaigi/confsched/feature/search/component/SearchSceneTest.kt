@@ -14,7 +14,7 @@ class SearchSceneTest {
             expected = SearchSceneSelection(
                 initialDirection = SearchSceneDirection.Magnifier,
                 noMatchDirection = SearchSceneDirection.EmptyBox,
-                mascot = SearchMascot.Ladybug,
+                mascot = SearchMascot.D,
             ),
             actual = searchSceneSelection(2026),
         )

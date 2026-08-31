@@ -34,7 +34,7 @@ enum WidgetArtworks {
         ]
     )
 
-    static let koala = WidgetArtwork(
+    static let mascotC = WidgetArtwork(
         viewport: CGSize(width: 48.14, height: 54.23),
         strokeWidth: 2,
         strokes: [
@@ -87,7 +87,7 @@ enum WidgetArtworks {
         ]
     )
 
-    static let ladybug = WidgetArtwork(
+    static let mascotD = WidgetArtwork(
         viewport: CGSize(width: 55.31, height: 53.19),
         strokeWidth: 2,
         strokes: [
@@ -132,7 +132,7 @@ enum WidgetArtworks {
         ]
     )
 
-    static let jellyfish = WidgetArtwork(
+    static let mascotB = WidgetArtwork(
         viewport: CGSize(width: 54.85, height: 53.03),
         strokeWidth: 2,
         strokes: [

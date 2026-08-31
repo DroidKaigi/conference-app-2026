@@ -217,7 +217,7 @@ private fun ProfileCardViewPreview(
                 nickName = "Speaker A",
                 occupation = "Software Engineer",
                 link = "https://example.com/user",
-                mascot = Mascot.Koala,
+                mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
             ),

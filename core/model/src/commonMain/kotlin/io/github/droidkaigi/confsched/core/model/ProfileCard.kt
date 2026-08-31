@@ -9,7 +9,7 @@ data class ProfileCard(
     val avatarImage: AvatarImage?,
 ) {
     companion object {
-        val DefaultMascot = Mascot.Koala
+        val DefaultMascot = Mascot.C
         val DefaultSketchiness = Sketchiness.Normal
     }
 }

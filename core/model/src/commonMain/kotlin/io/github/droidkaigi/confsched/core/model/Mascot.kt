@@ -1,9 +1,9 @@
 package io.github.droidkaigi.confsched.core.model
 
 enum class Mascot {
-    Hall,
-    Jellyfish,
-    Koala,
-    Ladybug,
-    Meerkat,
+    A,
+    B,
+    C,
+    D,
+    E,
 }

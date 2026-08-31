@@ -32,11 +32,11 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchGroundLine
 import io.github.droidkaigi.confsched.core.ui.scaleSketchAmplitude
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_hall
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_jellyfish
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_koala
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_ladybug
-import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_meerkat
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_a
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_b
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_c
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_d
+import io.github.droidkaigi.confsched.feature.search.generated.resources.search_mascot_e
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
@@ -50,11 +50,11 @@ internal enum class SearchSceneDirection {
 }
 
 internal enum class SearchMascot {
-    Hall,
-    Jellyfish,
-    Koala,
-    Ladybug,
-    Meerkat,
+    A,
+    B,
+    C,
+    D,
+    E,
 }
 
 @Immutable
@@ -246,20 +246,20 @@ private val SearchSceneDirection.spec: SearchSceneSpec
 
 private val SearchMascot.resource: DrawableResource
     get() = when (this) {
-        SearchMascot.Hall -> Res.drawable.search_mascot_hall
-        SearchMascot.Jellyfish -> Res.drawable.search_mascot_jellyfish
-        SearchMascot.Koala -> Res.drawable.search_mascot_koala
-        SearchMascot.Ladybug -> Res.drawable.search_mascot_ladybug
-        SearchMascot.Meerkat -> Res.drawable.search_mascot_meerkat
+        SearchMascot.A -> Res.drawable.search_mascot_a
+        SearchMascot.B -> Res.drawable.search_mascot_b
+        SearchMascot.C -> Res.drawable.search_mascot_c
+        SearchMascot.D -> Res.drawable.search_mascot_d
+        SearchMascot.E -> Res.drawable.search_mascot_e
     }
 
 private val SearchMascot.size: DpSize
     get() = when (this) {
-        SearchMascot.Hall -> DpSize(57.dp, 52.dp)
-        SearchMascot.Jellyfish -> DpSize(54.dp, 52.dp)
-        SearchMascot.Koala -> DpSize(47.dp, 54.dp)
-        SearchMascot.Ladybug -> DpSize(55.dp, 52.dp)
-        SearchMascot.Meerkat -> DpSize(44.dp, 52.dp)
+        SearchMascot.A -> DpSize(57.dp, 52.dp)
+        SearchMascot.B -> DpSize(54.dp, 52.dp)
+        SearchMascot.C -> DpSize(47.dp, 54.dp)
+        SearchMascot.D -> DpSize(55.dp, 52.dp)
+        SearchMascot.E -> DpSize(44.dp, 52.dp)
     }
 
 @Preview
