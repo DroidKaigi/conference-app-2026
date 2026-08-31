@@ -1,5 +1,6 @@
 package droidkaigi.primitive
 
+import com.github.takahirom.roborazzi.AnnotationFilter
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import io.github.takahirom.roborazzi.RoborazziExtension
 import org.gradle.accessors.dm.LibrariesForLibs
@@ -22,6 +23,9 @@ configure<RoborazziExtension> {
         packages.set(listOf(screenshotPackage))
         // Previews are private: nothing but the tooling and this scan ever calls one.
         includePrivatePreviews.set(true)
+        annotationFilter.set(
+            AnnotationFilter.Exclude("io.github.droidkaigi.confsched.core.preview.ScreenshotTestExclude"),
+        )
     }
 }
 

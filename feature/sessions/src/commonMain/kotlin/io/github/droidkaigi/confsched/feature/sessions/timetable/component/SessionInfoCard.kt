@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Category
+import io.github.droidkaigi.confsched.core.designsystem.icon.ChevronRight
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.icon.Language
 import io.github.droidkaigi.confsched.core.designsystem.icon.LocationOn
@@ -39,9 +44,12 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.langu
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_japanese
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_mixed
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.language_with_interpretation
+import io.github.droidkaigi.confsched.feature.sessions.generated.resources.open_event_map
 import kotlinx.datetime.number
 import org.jetbrains.compose.resources.stringResource
 import io.github.droidkaigi.confsched.core.model.Language as SessionLanguage
+
+internal const val SESSION_INFO_CARD_OPEN_EVENT_MAP_TEST_TAG = "SessionInfoCardOpenEventMapTestTag"
 
 @Composable
 internal fun SessionInfoCard(
@@ -53,6 +61,7 @@ internal fun SessionInfoCard(
     hasInterpretation: Boolean,
     category: String?,
     seed: Int,
+    onOpenEventMapDialog: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     val shape = SketchRoundRectShape(
@@ -71,7 +80,17 @@ internal fun SessionInfoCard(
                 imageVector = KaigiIcons.Default.Schedule,
                 text = scheduleText(day = day, startsAt = startsAt, endsAt = endsAt),
             )
-            InfoRow(imageVector = KaigiIcons.Default.LocationOn, text = room.locationText())
+            InfoRow(
+                imageVector = KaigiIcons.Default.LocationOn,
+                text = room.locationText(),
+                action = onOpenEventMapDialog?.let {
+                    InfoRowAction(
+                        actionLabel = stringResource(Res.string.open_event_map),
+                        testTag = SESSION_INFO_CARD_OPEN_EVENT_MAP_TEST_TAG,
+                        onClick = it,
+                    )
+                },
+            )
             InfoRow(
                 imageVector = KaigiIcons.Default.Language,
                 text = languageText(language = language, hasInterpretation = hasInterpretation),
@@ -85,7 +104,11 @@ internal fun SessionInfoCard(
 }
 
 @Composable
-private fun InfoRow(imageVector: ImageVector, text: String) {
+private fun InfoRow(
+    imageVector: ImageVector,
+    text: String,
+    action: InfoRowAction? = null,
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -97,10 +120,37 @@ private fun InfoRow(imageVector: ImageVector, text: String) {
             modifier = Modifier.size(SessionInfoCardDefaults.iconSize),
         )
         Text(
+            modifier = Modifier.weight(1f),
             text = text,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
+        if (action != null) {
+            Row(
+                modifier = Modifier
+                    .testTag(action.testTag)
+                    .clickable(
+                        onClickLabel = action.actionLabel,
+                        role = Role.Button,
+                        onClick = action.onClick,
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            ) {
+                Text(
+                    text = action.actionLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Icon(
+                    imageVector = KaigiIcons.Default.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
     }
 }
 
@@ -131,10 +181,17 @@ private fun SessionLanguage.labelResource() = when (this) {
 }
 
 private object SessionInfoCardDefaults {
+
     val cornerRadius = 20.dp
     val borderThickness = 2.dp
     val iconSize = 20.dp
 }
+
+private data class InfoRowAction(
+    val actionLabel: String,
+    val testTag: String,
+    val onClick: () -> Unit,
+)
 
 @LocalePreviews
 @Composable
@@ -152,6 +209,7 @@ private fun SessionInfoCardPreview(
             hasInterpretation = item.hasInterpretation,
             category = item.category?.name?.current(),
             seed = 620,
+            onOpenEventMapDialog = {},
             modifier = Modifier.padding(24.dp),
         )
     }
