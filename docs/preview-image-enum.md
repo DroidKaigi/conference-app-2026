@@ -8,8 +8,8 @@ Add the file under `:core:preview:impl`'s Compose Resources:
 
 ```text
 core/preview/impl/src/commonMain/composeResources/drawable/
+    avatar_sample.png
     session_cover.png
-    speaker_avatar_a.png
 ```
 
 ## 2. A Gradle task generates the enum (hooked into compile)
@@ -21,8 +21,8 @@ Each entry also carries a stable `imageUrl` under a dedicated `preview://` schem
 ```kotlin
 // build/generated/.../preview/PreviewImage.kt   (lands in core:preview:api)
 enum class PreviewImage(val imageUrl: String) {
+    AvatarSample("preview://avatar_sample"),
     SessionCover("preview://session_cover"),
-    SpeakerAvatarA("preview://speaker_avatar_a"),
 }
 ```
 
@@ -33,7 +33,7 @@ So adding or removing a drawable changes the enum on the next build; a reference
 Production loads network images with a common `RemoteImage(imageUrl: String)` composable. Sample data feeds it a preview URL instead of a real one:
 
 ```kotlin
-Speaker(avatarUrl = PreviewImage.SpeakerAvatarA.imageUrl)   // "preview://speaker_avatar_a"
+Speaker(avatarUrl = PreviewImage.AvatarSample.imageUrl)   // "preview://avatar_sample"
 ```
 
 `RemoteImage` consults `LocalPreviewImageResolver` first; in a preview / test build it resolves a known preview URL to a local resource, otherwise (production) it loads from the network:
@@ -63,8 +63,8 @@ class DefaultPreviewImageResolver : PreviewImageResolver {
     override fun resolve(imageUrl: String): DrawableResource? {
         val image = PreviewImage.entries.firstOrNull { it.imageUrl == imageUrl } ?: return null
         return when (image) {
+            PreviewImage.AvatarSample -> Res.drawable.avatar_sample
             PreviewImage.SessionCover -> Res.drawable.session_cover
-            PreviewImage.SpeakerAvatarA -> Res.drawable.speaker_avatar_a
         }
     }
 }

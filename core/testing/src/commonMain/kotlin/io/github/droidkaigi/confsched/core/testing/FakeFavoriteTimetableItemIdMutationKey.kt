@@ -14,15 +14,17 @@ import soil.query.buildMutationKey
 @ContributesBinding(TestingScope::class)
 class FakeFavoriteTimetableItemIdMutationKey private constructor(
     extraTag: MutationTag,
-    private val state: FakeMutationState<TimetableItemId>,
+    private val state: FakeMutationState<TimetableItemId, Boolean>,
 ) : FavoriteTimetableItemIdMutationKey by buildMutationKey(
     id = MutationId("fake-favorite-${extraTag.value}"),
     mutate = { id -> state.record(id) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState<TimetableItemId, Boolean>(true))
 
     val invocations: Channel<TimetableItemId> get() = state.invocations
+
+    fun complete(result: Boolean) = state.complete(result)
 
     fun failWith(throwable: Throwable) = state.failWith(throwable)
 }

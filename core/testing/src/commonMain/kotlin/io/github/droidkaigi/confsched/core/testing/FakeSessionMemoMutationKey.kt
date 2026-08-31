@@ -14,13 +14,13 @@ import soil.query.buildMutationKey
 @ContributesBinding(TestingScope::class)
 class FakeSessionMemoMutationKey private constructor(
     extraTag: MutationTag,
-    private val state: FakeMutationState<SessionMemoEdit>,
+    private val state: FakeMutationState<SessionMemoEdit, Unit>,
 ) : SessionMemoMutationKey by buildMutationKey(
     id = MutationId("fake-session-memo-${extraTag.value}"),
     mutate = { edit -> state.record(edit) },
 ) {
     @Inject
-    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState())
+    constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState(Unit))
 
     val invocations: Channel<SessionMemoEdit> get() = state.invocations
 

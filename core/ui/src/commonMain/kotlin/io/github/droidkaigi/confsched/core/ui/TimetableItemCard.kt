@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpSize
@@ -28,21 +29,23 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.designsystem.roomTheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableSpeaker
 import io.github.droidkaigi.confsched.core.model.TimetableSpeakerId
+import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_a
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_b
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_c
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_e
+import io.github.droidkaigi.confsched.core.ui.generated.resources.mascot_f
 import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_meerkat
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_narwhal
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_otter
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_panda
-import io.github.droidkaigi.confsched.core.ui.generated.resources.room_mascot_quail
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -77,27 +80,20 @@ fun TimetableItemCard(
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
     )
-    Box(modifier = modifier.fillMaxWidth()) {
+    // The card itself stays unclipped: sketchBorder strokes the clip outline down its center, so
+    // clipping the whole card would cut the stroke in half. Only the background layer is clipped,
+    // and it carries the click so the ripple and tap target cover the whole card.
+    Box(modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clip(shape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .clickable(onClick = onClick),
         )
-        CardBody(
-            title = title,
-            titleMark = titleMark,
-            room = room,
-            speakers = speakers,
-            language = language,
-            isCancelled = isCancelled,
-            seed = seed,
-            titleMarkSeed = titleMarkSeed,
-            // clip precedes clickable so the ripple follows the sketched round rect
-            modifier = Modifier.clip(shape).clickable(onClick = onClick),
-        )
+        // Drawn before the body so a long title or speaker list stays legible over the mascot
         if (isFavorite) {
-            room.mascot?.let { mascot ->
+            room.mascot.cardArt?.let { mascot ->
                 Icon(
                     painter = painterResource(mascot),
                     contentDescription = null,
@@ -108,6 +104,16 @@ fun TimetableItemCard(
                 )
             }
         }
+        CardBody(
+            title = title,
+            titleMark = titleMark,
+            room = room,
+            speakers = speakers,
+            language = language,
+            isCancelled = isCancelled,
+            seed = seed,
+            titleMarkSeed = titleMarkSeed,
+        )
         FavoriteMark(
             room = room,
             isFavorite = isFavorite,
@@ -116,11 +122,7 @@ fun TimetableItemCard(
                 .align(Alignment.TopEnd)
                 .padding(TimetableItemCardDefaults.favoritePadding),
         )
-        Box(
-            Modifier
-                .matchParentSize()
-                .sketchBorder(shape, MaterialTheme.colorScheme.outline),
-        )
+        Box(Modifier.matchParentSize().sketchBorder(shape, MaterialTheme.colorScheme.outline))
     }
 }
 
@@ -235,15 +237,15 @@ private fun FavoriteMark(
     )
 }
 
-/** The mascot drawn on a saved session's card, or null for a room the design gives none. */
-private val SessionRoom.mascot: DrawableResource?
+/** The card render of a [Mascot], or null for a character the design never draws on cards. */
+private val Mascot.cardArt: DrawableResource?
     get() = when (this) {
-        SessionRoom.NARWHAL -> Res.drawable.room_mascot_narwhal
-        SessionRoom.OTTER -> Res.drawable.room_mascot_otter
-        SessionRoom.PANDA -> Res.drawable.room_mascot_panda
-        SessionRoom.QUAIL -> Res.drawable.room_mascot_quail
-        SessionRoom.MEERKAT -> Res.drawable.room_mascot_meerkat
-        SessionRoom.UNKNOWN -> null
+        Mascot.A -> Res.drawable.card_mascot_a
+        Mascot.B -> Res.drawable.card_mascot_b
+        Mascot.C -> Res.drawable.card_mascot_c
+        Mascot.D -> null
+        Mascot.E -> Res.drawable.card_mascot_e
+        Mascot.F -> Res.drawable.mascot_f
     }
 
 private object TimetableItemCardDefaults {

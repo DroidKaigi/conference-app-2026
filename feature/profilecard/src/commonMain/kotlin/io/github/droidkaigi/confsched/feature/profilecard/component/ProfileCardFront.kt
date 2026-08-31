@@ -401,7 +401,7 @@ private fun ProfileCardFrontPreview(
         ProfileCardFront(
             nickName = "droidkaigi",
             occupation = "Software Engineer",
-            mascot = Mascot.Koala,
+            mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
             taped = true,
             avatarImage = null,

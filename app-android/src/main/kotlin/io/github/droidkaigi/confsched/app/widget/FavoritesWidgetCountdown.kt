@@ -48,7 +48,7 @@ private fun CountdownBody(
         CountdownFigures(state, colors, medium)
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_koala, 28.dp, 30.dp, colors)
+            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
         }
     }
 }
@@ -131,7 +131,7 @@ private fun EventDayBody(colors: FavoritesWidgetColors, medium: Boolean) {
         }
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
-            Mascot(R.drawable.widget_mascot_koala, 28.dp, 30.dp, colors)
+            Mascot(R.drawable.widget_mascot_c, 28.dp, 30.dp, colors)
         }
     }
 }

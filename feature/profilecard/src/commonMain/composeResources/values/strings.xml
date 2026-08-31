@@ -8,11 +8,12 @@
     <string name="add_image_button">Add image</string>
     <string name="remove_image_button">Remove image</string>
     <string name="mascot_label">Mascot</string>
-    <string name="mascot_hall">Hall</string>
-    <string name="mascot_jellyfish">Jellyfish</string>
-    <string name="mascot_koala">Koala</string>
-    <string name="mascot_ladybug">Ladybug</string>
-    <string name="mascot_meerkat">Meerkat</string>
+    <string name="mascot_a">Mascot A</string>
+    <string name="mascot_b">Mascot B</string>
+    <string name="mascot_c">Mascot C</string>
+    <string name="mascot_d">Mascot D</string>
+    <string name="mascot_e">Mascot E</string>
+    <string name="mascot_f">Mascot F</string>
     <string name="sketchiness_label">Sketchiness</string>
     <string name="sketchiness_subtle">Subtle</string>
     <string name="sketchiness_normal">Normal</string>

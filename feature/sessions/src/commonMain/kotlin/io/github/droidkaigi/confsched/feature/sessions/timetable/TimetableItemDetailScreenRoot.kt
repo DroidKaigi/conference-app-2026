@@ -1,6 +1,8 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
@@ -35,9 +37,11 @@ fun TimetableItemDetailScreenRoot(
             retainScreenChannel<TimetableItemDetailScreenAction, TimetableItemDetailScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
+        val hapticFeedback = LocalHapticFeedback.current
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is TimetableItemDetailScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
+                TimetableItemDetailScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
             }
         }
 

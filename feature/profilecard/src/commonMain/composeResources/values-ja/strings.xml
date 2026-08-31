@@ -8,11 +8,12 @@
     <string name="add_image_button">画像を追加</string>
     <string name="remove_image_button">画像を削除</string>
     <string name="mascot_label">マスコット</string>
-    <string name="mascot_hall">ホール</string>
-    <string name="mascot_jellyfish">クラゲ</string>
-    <string name="mascot_koala">コアラ</string>
-    <string name="mascot_ladybug">テントウムシ</string>
-    <string name="mascot_meerkat">ミーアキャット</string>
+    <string name="mascot_a">マスコットA</string>
+    <string name="mascot_b">マスコットB</string>
+    <string name="mascot_c">マスコットC</string>
+    <string name="mascot_d">マスコットD</string>
+    <string name="mascot_e">マスコットE</string>
+    <string name="mascot_f">マスコットF</string>
     <string name="sketchiness_label">手書きの強さ</string>
     <string name="sketchiness_subtle">ひかえめ</string>
     <string name="sketchiness_normal">ふつう</string>

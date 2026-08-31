@@ -60,7 +60,7 @@ private fun StaffItemPreview(
     KaigiPreviewTheme(colorScheme) {
         StaffItem(
             username = "user-a",
-            iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
+            iconUrl = PreviewImage.AvatarSample.imageUrl,
             onStaffClick = {},
         )
     }

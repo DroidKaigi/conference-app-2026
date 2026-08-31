@@ -84,4 +84,49 @@ class TimetableItemDetailScreenPresenterTest {
             )
         }
     }
+
+    @Test
+    fun bookmark_addition_emits_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableItemDetailScreenPresenter(
+                    screenChannel = channel,
+                    detail = timetable.detailOf(TimetableItemId("d1a")),
+                    favoriteIds = persistentSetOf(),
+                    memo = "",
+                    initialDisplayLanguage = DisplayLanguage.Japanese,
+                )
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            val result = results.awaitItem()
+            assertEquals(TimetableItemDetailScreenActionResult.FavoriteAdded, result)
+        }
+    }
+
+    @Test
+    fun bookmark_removal_does_not_emit_FavoriteAdded_on_channel() {
+        graph.favoriteMutationKey.complete(false)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableItemDetailScreenPresenter(
+                    screenChannel = channel,
+                    detail = timetable.detailOf(TimetableItemId("d1a")),
+                    favoriteIds = persistentSetOf(TimetableItemId("d1a")),
+                    memo = "",
+                    initialDisplayLanguage = DisplayLanguage.Japanese,
+                )
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1a")))
+
+            results.expectNoEvents()
+        }
+    }
 }

@@ -116,7 +116,7 @@ internal class TimetableGridScrollState(
             val delta = value - lastValue
             lastValue = value
             lastVelocity = this.velocity
-            if (drag(delta) != delta) cancelAnimation()
+            if (kotlin.math.abs(drag(delta) - delta) > 0.5f) cancelAnimation()
         }
         return velocity - lastVelocity
     }

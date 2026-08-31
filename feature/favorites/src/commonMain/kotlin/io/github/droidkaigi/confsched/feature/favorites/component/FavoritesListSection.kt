@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +31,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.TimetableDayHeader
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
+import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
@@ -94,22 +94,20 @@ private fun FavoriteSessionRow(
             timeRangeState = timeRangeState,
             seed = startsAt.hashCode(),
         )
-        Column(
+        TimetableItemCardsFlowRow(
+            items = items,
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            for (item in items) {
-                FavoriteTimetableItemCard(
-                    id = item.id,
-                    title = item.title.current(),
-                    room = item.room,
-                    speakers = item.speakers,
-                    language = item.language,
-                    isCancelled = item.isCancelled,
-                    onBookmarkClick = { onBookmarkClick(item.id) },
-                    onItemClick = { onItemClick(item.id) },
-                )
-            }
+        ) { item ->
+            FavoriteTimetableItemCard(
+                id = item.id,
+                title = item.title.current(),
+                room = item.room,
+                speakers = item.speakers,
+                language = item.language,
+                isCancelled = item.isCancelled,
+                onBookmarkClick = { onBookmarkClick(item.id) },
+                onItemClick = { onItemClick(item.id) },
+            )
         }
     }
 }

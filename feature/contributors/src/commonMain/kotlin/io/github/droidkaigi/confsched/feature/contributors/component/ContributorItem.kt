@@ -61,7 +61,7 @@ private fun ContributorItemPreview(
     KaigiPreviewTheme(colorScheme) {
         ContributorItem(
             username = "user-a",
-            iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
+            iconUrl = PreviewImage.AvatarSample.imageUrl,
             onContributorClick = {},
         )
     }

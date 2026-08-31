@@ -16,6 +16,6 @@ fun Contributors.Companion.fake(): Contributors = Contributors(
 private fun fakeContributor(id: Long, username: String) = Contributor(
     id = ContributorId(id),
     username = username,
-    iconUrl = PreviewImage.SpeakerAvatarA.imageUrl,
+    iconUrl = PreviewImage.AvatarSample.imageUrl,
     profileUrl = "https://example.com/$username",
 )

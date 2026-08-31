@@ -95,7 +95,7 @@ private fun DayPromptBody(
             modifier = GlanceModifier.fillMaxSize(),
             contentAlignment = Alignment.BottomEnd,
         ) {
-            Mascot(R.drawable.widget_mascot_ladybug, if (medium) 37.dp else 33.dp, if (medium) 34.dp else 30.dp, colors)
+            Mascot(R.drawable.widget_mascot_d, if (medium) 37.dp else 33.dp, if (medium) 34.dp else 30.dp, colors)
         }
     }
 }
