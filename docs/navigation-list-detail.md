@@ -77,7 +77,7 @@ fun paneStartInset(): Dp =
     if (LocalListDetailSceneScope.current != null) LocalPanePartitionSpacerSize.current else 0.dp
 ```
 
-`paneStartInset()` (`core/ui`) is that gate, and a detail pane applies it to everything it draws: `TimetableItemDetailScreen` passes it to each section as padding or as a `startInset` parameter applied between a background and its content, and the other detail panes fold it into the start of a scrolling container's content padding. `KaigiLargeTopAppBar` applies it to its own back control and title, so a screen that uses that bar covers only its content. Nothing enforces the contract mechanically, and a pane that skips it butts its content against the seam.
+`paneStartInset()` (`core/ui`) is that gate, and a detail pane applies it to everything it draws: `TimetableItemDetailScreen` folds it into the `contentInsets` each section applies between its background and its content, and the other detail panes fold it into the start of a scrolling container's content padding. `KaigiLargeTopAppBar` applies it to its own back control and title, so a screen that uses that bar covers only its content. Nothing enforces the contract mechanically, and a pane that skips it butts its content against the seam.
 
 A list pane must not take the inset: `LocalListDetailSceneScope` is non-null for both panes, but only the detail pane's start edge meets the seam.
 
