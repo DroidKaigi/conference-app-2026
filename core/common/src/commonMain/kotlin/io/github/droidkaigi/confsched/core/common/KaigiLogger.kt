@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.common
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import co.touchlab.kermit.Logger
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
@@ -17,6 +18,20 @@ interface KaigiLogger {
     fun warn(message: () -> String)
 
     fun error(throwable: Throwable?, message: () -> String)
+}
+
+// Un-provided it drops everything, so a composable logging through it still renders in
+// previews and tests, which compose outside the app shell.
+val LocalKaigiLogger = staticCompositionLocalOf<KaigiLogger> { SilentKaigiLogger }
+
+private object SilentKaigiLogger : KaigiLogger {
+    override fun debug(message: () -> String) = Unit
+
+    override fun info(message: () -> String) = Unit
+
+    override fun warn(message: () -> String) = Unit
+
+    override fun error(throwable: Throwable?, message: () -> String) = Unit
 }
 
 @Inject

@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.retain.retain
+import io.github.droidkaigi.confsched.core.common.LocalKaigiLogger
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
@@ -33,6 +34,7 @@ fun KaigiApp() {
 
     CompositionLocalProvider(
         LocalDeviceTiltSource provides rememberDeviceTiltSource(),
+        LocalKaigiLogger provides uiGraph.logger,
         LocalPreviewImageResolver provides uiGraph.previewImageResolver,
         LocalSketchBaseSeed provides appSketchBaseSeed,
     ) {
