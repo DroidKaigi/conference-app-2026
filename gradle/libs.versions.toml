@@ -43,7 +43,7 @@ jetwhale = "1.0.0-alpha11"
 # Compose Multiplatform the targeted JetWhale host release itself was built with.
 jetwhaleHostCompose = "1.11.1"
 # Single source of truth for the app version; flows to common Kotlin via the generated BuildKonfig.
-droidkaigiApp = "1.0.0"
+droidkaigiApp = "1.1.0"
 # KMP logger with platform-native writers (Logcat / os_log / SLF4J / console), wasmJs-capable.
 kermit = "2.1.0"
 # QR encoder used for the profile card's back face; only its module matrix is consumed, the drawing
