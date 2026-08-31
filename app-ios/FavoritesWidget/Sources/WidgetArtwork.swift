@@ -5,7 +5,14 @@ struct WidgetArtwork {
     let viewport: CGSize
     let strokeWidth: CGFloat
     let strokes: [String]
-    var fills: [String] = []
+    let fills: [String]
+
+    init(viewport: CGSize, strokeWidth: CGFloat, strokes: [String], fills: [String] = []) {
+        self.viewport = viewport
+        self.strokeWidth = strokeWidth
+        self.strokes = strokes
+        self.fills = fills
+    }
 }
 
 struct WidgetArtworkView: View {
