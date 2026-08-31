@@ -40,17 +40,18 @@ fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
 fun <T : Any> rememberListDetailPaneInsetsNavEntryDecorator(): NavEntryDecorator<T> = remember {
     NavEntryDecorator { entry ->
         val sides = entry.metadata[ListDetailPaneInsetsKey]
-            .takeIf { LocalListDetailSceneScope.current != null }
         if (sides == null) {
             entry.Content()
         } else {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .consumeWindowInsets(
-                        WindowInsets.systemBars.union(WindowInsets.displayCutout).only(sides),
-                    ),
-            ) {
+            // The branch must turn on the entry's own metadata rather than the scene it currently
+            // sits in: moving the Content() call to another call site discards everything the entry
+            // remembers or retains.
+            val consumed = if (LocalListDetailSceneScope.current != null) {
+                WindowInsets.systemBars.union(WindowInsets.displayCutout).only(sides)
+            } else {
+                WindowInsets(0, 0, 0, 0)
+            }
+            Box(Modifier.fillMaxSize().consumeWindowInsets(consumed)) {
                 entry.Content()
             }
         }
