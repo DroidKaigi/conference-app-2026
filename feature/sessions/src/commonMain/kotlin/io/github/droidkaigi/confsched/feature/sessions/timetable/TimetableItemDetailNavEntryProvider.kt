@@ -1,8 +1,6 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.navigation3.runtime.EntryProviderScope
@@ -13,10 +11,10 @@ import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.consumeListDetailPaneInsets
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.common.detailPane
 import io.github.droidkaigi.confsched.core.ui.rememberCalendarEventAdder
 import io.github.droidkaigi.confsched.core.ui.rememberTextSharer
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @ContributesIntoSet(UiScope::class)
 @Inject
 class TimetableItemDetailNavEntryProvider(
@@ -24,7 +22,7 @@ class TimetableItemDetailNavEntryProvider(
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<TimetableItemDetailNavKey>(
-            metadata = ListDetailSceneStrategy.detailPane() + consumeListDetailPaneInsets(WindowInsetsSides.Start),
+            metadata = detailPane() + consumeListDetailPaneInsets(WindowInsetsSides.Start),
         ) { key ->
             val graph = retain(key) { screenGraphFactory.createTimetableItemDetailScreenGraph(key.id) }
             val uriHandler = LocalUriHandler.current
