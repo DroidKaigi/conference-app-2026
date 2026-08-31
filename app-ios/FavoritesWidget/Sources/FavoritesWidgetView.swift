@@ -38,8 +38,17 @@ private func randomMascot(on date: Date) -> WidgetMascot {
     return widgetMascots[Int(seed % UInt64(widgetMascots.count))]
 }
 
-private func mascotClearance(medium: Bool, mascot: WidgetMascot) -> CGFloat {
-    medium ? mascot.size(height: 34).width + gapArt : 0
+private func mascotClearance(medium: Bool, mascot: WidgetMascot, height: CGFloat) -> CGFloat {
+    medium ? mascot.size(height: height).width + gapArt : 0
+}
+
+/// As large as the widget's width allows within bounds, so the character stays a decoration.
+private func mascotHeight(forWidth width: CGFloat) -> CGFloat {
+    min(52, max(30, width * 0.26))
+}
+
+private struct WidgetMascotHeightKey: EnvironmentKey {
+    static let defaultValue: CGFloat = 30
 }
 
 private struct WidgetMascotKey: EnvironmentKey {
@@ -51,6 +60,11 @@ private extension EnvironmentValues {
         get { self[WidgetMascotKey.self] }
         set { self[WidgetMascotKey.self] = newValue }
     }
+
+    var widgetMascotHeight: CGFloat {
+        get { self[WidgetMascotHeightKey.self] }
+        set { self[WidgetMascotHeightKey.self] = newValue }
+    }
 }
 
 struct FavoritesWidgetView: View {
@@ -61,6 +75,7 @@ struct FavoritesWidgetView: View {
     private var colors: FavoritesWidgetSnapshot.Colors { entry.snapshot.colors }
 
     var body: some View {
+        GeometryReader { geometry in
         ZStack {
             SketchFrame(medium: medium)
                 .stroke(
@@ -78,6 +93,9 @@ struct FavoritesWidgetView: View {
         }
         .widgetURL(backgroundURL)
         .containerBackground(Color(argbHex: colors.surface), for: .widget)
+        .environment(\.widgetMascotHeight, mascotHeight(forWidth: geometry.size.width))
+        .frame(width: geometry.size.width, height: geometry.size.height)
+        }
     }
 
     @ViewBuilder
@@ -230,6 +248,7 @@ private struct CountdownFrame<Figures: View>: View {
     let colors: FavoritesWidgetSnapshot.Colors
     let medium: Bool
     @Environment(\.widgetMascot) private var mascot
+    @Environment(\.widgetMascotHeight) private var mascotHeight
     @ViewBuilder let figures: () -> Figures
 
     var body: some View {
@@ -242,7 +261,7 @@ private struct CountdownFrame<Figures: View>: View {
                     Spacer(minLength: 0)
                     Mascot(
                         artwork: mascot.artwork,
-                        size: mascot.size(height: 30),
+                        size: mascot.size(height: mascotHeight),
                         color: Color(argbHex: colors.onSurfaceVariant)
                     )
                 }
@@ -311,6 +330,7 @@ private struct EventDayContent: View {
 
 private struct DayPromptContent: View {
     @Environment(\.widgetMascot) private var mascot
+    @Environment(\.widgetMascotHeight) private var mascotHeight
     let message: String
     let hint: String
     let otherDayFavorites: Int
@@ -344,11 +364,11 @@ private struct DayPromptContent: View {
                     }
                     Spacer(minLength: 0)
                 }
-                .padding(.trailing, mascotClearance(medium: medium, mascot: mascot))
+                .padding(.trailing, mascotClearance(medium: medium, mascot: mascot, height: mascotHeight))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Mascot(
                     artwork: mascot.artwork,
-                    size: mascot.size(height: medium ? 34 : 30),
+                    size: mascot.size(height: mascotHeight),
                     color: Color(argbHex: colors.onSurfaceVariant)
                 )
             }
@@ -361,6 +381,7 @@ private struct DayPromptContent: View {
 
 private struct FarewellContent: View {
     @Environment(\.widgetMascot) private var mascot
+    @Environment(\.widgetMascotHeight) private var mascotHeight
     let message: String
     let secondary: String?
     let colors: FavoritesWidgetSnapshot.Colors
@@ -387,7 +408,7 @@ private struct FarewellContent: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     Mascot(
                         artwork: mascot.artwork,
-                        size: mascot.size(height: 34),
+                        size: mascot.size(height: mascotHeight),
                         color: Color(argbHex: colors.onSurfaceVariant)
                     )
                 }

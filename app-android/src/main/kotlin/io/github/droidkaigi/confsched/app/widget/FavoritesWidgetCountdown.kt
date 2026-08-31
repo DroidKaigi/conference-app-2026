@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
@@ -49,7 +48,8 @@ private fun CountdownBody(
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
             val mascot = LocalWidgetMascot.current
-            Mascot(mascot.resId, mascot.width(30.dp), 30.dp, colors)
+            val mascotHeight = mascotHeight()
+            Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }
 }
@@ -133,7 +133,8 @@ private fun EventDayBody(colors: FavoritesWidgetColors, medium: Boolean) {
         if (medium) {
             Spacer(modifier = GlanceModifier.defaultWeight())
             val mascot = LocalWidgetMascot.current
-            Mascot(mascot.resId, mascot.width(30.dp), 30.dp, colors)
+            val mascotHeight = mascotHeight()
+            Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }
 }

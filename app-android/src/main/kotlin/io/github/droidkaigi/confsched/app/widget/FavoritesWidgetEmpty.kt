@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.app.widget
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
@@ -96,7 +95,7 @@ private fun DayPromptBody(
             contentAlignment = Alignment.BottomEnd,
         ) {
             val mascot = LocalWidgetMascot.current
-            val mascotHeight = if (medium) 34.dp else 30.dp
+            val mascotHeight = mascotHeight()
             Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
         }
     }

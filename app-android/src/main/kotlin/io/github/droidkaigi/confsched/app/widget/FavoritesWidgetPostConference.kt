@@ -106,7 +106,8 @@ private fun FarewellMediumBody(message: String, secondary: String?, colors: Favo
         }
         Spacer(modifier = GlanceModifier.width(GapArt))
         val mascot = LocalWidgetMascot.current
-        Mascot(mascot.resId, mascot.width(34.dp), 34.dp, colors)
+        val mascotHeight = mascotHeight()
+        Mascot(mascot.resId, mascot.width(mascotHeight), mascotHeight, colors)
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.glance.LocalSize
 
 // Spacing follows the widget spec's five-step scale on a 4dp base.
 internal val InsetBleed = 8.dp
@@ -28,4 +29,11 @@ internal const val PREVIEW_HEIGHT_DP = 158
 
 @Composable
 internal fun mascotClearance(medium: Boolean): Dp =
-    if (medium) LocalWidgetMascot.current.width(34.dp) + GapArt else 0.dp
+    if (medium) LocalWidgetMascot.current.width(mascotHeight()) + GapArt else 0.dp
+
+private val MascotMinHeight = 30.dp
+private val MascotMaxHeight = 52.dp
+
+/** As large as the widget's width allows within bounds, so the character stays a decoration. */
+@Composable
+internal fun mascotHeight(): Dp = (LocalSize.current.width * 0.26f).coerceIn(MascotMinHeight, MascotMaxHeight)
