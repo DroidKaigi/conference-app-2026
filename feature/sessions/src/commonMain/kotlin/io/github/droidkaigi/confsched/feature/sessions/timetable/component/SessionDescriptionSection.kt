@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.SCREEN_PREVIEW_WIDTH_DP
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
@@ -66,7 +68,7 @@ internal fun SessionDescriptionSection(
 }
 
 private object SessionDescriptionSectionDefaults {
-    const val COLLAPSED_LINES = 2
+    const val COLLAPSED_LINES = 7
 }
 
 @LocalePreviews
@@ -76,11 +78,17 @@ private fun SessionDescriptionSectionPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         SessionDescriptionSection(
-            description = "本セッションでは、サンプルアプリの設計とその変遷をたどります。折り返しと「もっとみる」の挙動を確かめられるだけの長さを持たせたプレースホルダーの本文です。",
+            description = "本セッションでは、サンプルアプリの設計とその変遷をたどります。" +
+                "画面を構成する各層の役割分担、状態管理の方針、そしてマルチプラットフォーム対応で直面した課題と、" +
+                "その解決に至るまでの試行錯誤を順に紹介します。前半ではアーキテクチャ全体を俯瞰し、" +
+                "依存関係の整理やモジュール分割の考え方を説明します。後半では実際のコードを交えながら、" +
+                "テスト戦略やビルド時間の改善など、開発を続けるうえで効いてきた工夫を取り上げます。" +
+                "折りたたみ表示と「もっとみる」の挙動を確かめられるだけの長さを持たせたプレースホルダーの本文です。",
             isExpanded = false,
             seed = 630,
             onExpansionToggleClick = {},
-            modifier = Modifier.padding(24.dp),
+            // Framed at phone width so the collapsed sample overflows and the toggle shows.
+            modifier = Modifier.width(SCREEN_PREVIEW_WIDTH_DP.dp).padding(24.dp),
         )
     }
 }
