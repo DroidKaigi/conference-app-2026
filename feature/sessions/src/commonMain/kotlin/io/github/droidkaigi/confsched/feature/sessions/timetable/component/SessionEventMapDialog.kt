@@ -13,8 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
-import io.github.droidkaigi.confsched.core.model.Room
-import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.ScreenshotTestExclude
@@ -29,14 +27,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun SessionEventMapDialog(room: Room?, isOpen: Boolean, onDismiss: () -> Unit) {
-    val floor = room?.floor
-    if (isOpen && floor != null) {
-        Dialog(
-            onDismissRequest = onDismiss,
-        ) {
-            FloorMapCard(floor)
-        }
+internal fun SessionEventMapDialog(floor: Floor, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        FloorMapCard(floor)
     }
 }
 
@@ -78,8 +71,7 @@ private fun SessionEventMapDialogPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         SessionEventMapDialog(
-            room = SessionRoom.NARWHAL,
-            isOpen = true,
+            floor = Floor.Basement,
             onDismiss = {},
         )
     }

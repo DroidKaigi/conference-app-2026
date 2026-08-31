@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.MultiLangText
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
@@ -61,7 +62,7 @@ fun TimetableItemDetailScreen(
     val displayLanguage = uiState.displayLanguage
     val isListDetailPane = LocalListDetailSceneScope.current != null
     val paneSpacerInset = if (isListDetailPane) LocalPanePartitionSpacerSize.current else 0.dp
-    var isEventMapDialogOpen by remember { mutableStateOf(false) }
+    var floorForEventMapDialog by remember { mutableStateOf<Floor?>(null) }
 
     Scaffold(
         topBar = {
@@ -131,7 +132,7 @@ fun TimetableItemDetailScreen(
                     hasInterpretation = item.hasInterpretation,
                     category = item.category?.name?.of(displayLanguage),
                     seed = TimetableItemDetailScreenDefaults.INFO_CARD_SEED,
-                    onOpenEventMapDialog = if (item.room.floor == null) null else { -> isEventMapDialogOpen = true },
+                    onOpenEventMapDialog = if (item.room.floor == null) null else { -> floorForEventMapDialog = item.room.floor },
                     modifier = Modifier
                         .padding(start = paneSpacerInset)
                         .padding(
@@ -213,11 +214,12 @@ fun TimetableItemDetailScreen(
                 }
             }
         }
-        SessionEventMapDialog(
-            room = item.room,
-            isOpen = isEventMapDialogOpen,
-            onDismiss = { isEventMapDialogOpen = false },
-        )
+        floorForEventMapDialog?.let {
+            SessionEventMapDialog(
+                floor = it,
+                onDismiss = { floorForEventMapDialog = null },
+            )
+        }
     }
 }
 
