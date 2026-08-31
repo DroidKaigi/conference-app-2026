@@ -29,6 +29,7 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.failed_to_load
 import io.github.droidkaigi.confsched.core.ui.generated.resources.reload
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @Composable
@@ -49,8 +50,9 @@ internal fun ErrorFallback(
         // The text zone keeps its design share of the screen, grows with the font scale, and
         // scrolls once it alone would overflow; the scene takes what remains, sized so its wave
         // edge meets the text zone's top.
+        val textWidth = min(width, TEXT_COLUMN_MAX_WIDTH.roundToPx())
         val text = measurables[1].measure(
-            Constraints(minWidth = width, maxWidth = width, maxHeight = height),
+            Constraints(minWidth = textWidth, maxWidth = textWidth, maxHeight = height),
         )
         val textZoneHeight = max(text.height, (height * TEXT_ZONE_MIN_FRACTION).roundToInt())
         val sceneZoneHeight = height - textZoneHeight
@@ -58,7 +60,7 @@ internal fun ErrorFallback(
         val sceneArt = measurables[0].measure(Constraints.fixed(width, sceneImageHeight))
         layout(width, height) {
             sceneArt.placeRelative(x = 0, y = 0)
-            text.placeRelative(x = 0, y = sceneZoneHeight)
+            text.placeRelative(x = (width - text.width) / 2, y = sceneZoneHeight)
         }
     }
 }
@@ -114,6 +116,10 @@ private fun ErrorFallbackTextZone(
 private const val DESIGN_FRAME_HEIGHT = 892f
 private const val SCENE_ZONE_HEIGHT = 596f
 private const val TEXT_ZONE_MIN_FRACTION = (DESIGN_FRAME_HEIGHT - SCENE_ZONE_HEIGHT) / DESIGN_FRAME_HEIGHT
+
+// The design lays the text section out in a 672 column on wide screens; the phone frame is
+// narrower than that, so the cap only binds beyond it.
+private val TEXT_COLUMN_MAX_WIDTH = 672.dp
 
 private object ErrorFallbackDefaults {
     const val BUTTON_SEED = 5340
