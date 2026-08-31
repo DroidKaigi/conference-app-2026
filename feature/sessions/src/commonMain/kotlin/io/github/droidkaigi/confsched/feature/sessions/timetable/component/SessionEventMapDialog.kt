@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,26 +33,16 @@ internal fun SessionEventMapDialog(floor: Floor, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun FloorMapCard(
-    selectedFloor: Floor,
-    modifier: Modifier = Modifier,
-) {
-    Crossfade(
-        targetState = selectedFloor,
-        modifier = modifier,
-    ) { targetFloor ->
-        SketchCard(
-            color = Color.White,
-        ) {
-            Image(
-                painter = painterResource(targetFloor.mapImage()),
-                contentDescription = stringResource(Res.string.event_map_content_description, targetFloor.label),
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-            )
-        }
+private fun FloorMapCard(selectedFloor: Floor) {
+    SketchCard(color = Color.White) {
+        Image(
+            painter = painterResource(selectedFloor.mapImage()),
+            contentDescription = stringResource(Res.string.event_map_content_description, selectedFloor.label),
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+        )
     }
 }
 
