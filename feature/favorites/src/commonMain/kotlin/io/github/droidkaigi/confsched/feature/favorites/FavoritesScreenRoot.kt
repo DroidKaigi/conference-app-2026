@@ -1,8 +1,6 @@
 package io.github.droidkaigi.confsched.feature.favorites
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
@@ -25,12 +23,10 @@ fun FavoritesScreenRoot(
         val screenChannel = retainScreenChannel<FavoritesScreenAction, FavoritesScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
-        val hapticFeedback = LocalHapticFeedback.current
 
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is FavoritesScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
-                FavoritesScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
             }
         }
 

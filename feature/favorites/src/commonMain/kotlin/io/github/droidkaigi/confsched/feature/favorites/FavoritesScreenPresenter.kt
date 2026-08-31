@@ -7,7 +7,6 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
-import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
@@ -36,13 +35,6 @@ fun favoritesScreenPresenter(
 
     MutationErrorEffect(favoriteMutation) { error ->
         screenChannel.emit(FavoritesScreenActionResult.ShowMessage(error.toUserMessage()))
-        favoriteMutation.reset()
-    }
-
-    MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
-            screenChannel.emit(FavoritesScreenActionResult.FavoriteAdded)
-        }
         favoriteMutation.reset()
     }
 
