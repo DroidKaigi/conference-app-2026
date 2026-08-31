@@ -14,4 +14,6 @@
     <string name="error_internet_connection">No internet connection</string>
     <string name="error_unknown">An unexpected error occurred</string>
     <string name="retry">Retry</string>
+    <string name="loading_headline">Loading</string>
+    <string name="loading_description">Just a moment</string>
 </resources>

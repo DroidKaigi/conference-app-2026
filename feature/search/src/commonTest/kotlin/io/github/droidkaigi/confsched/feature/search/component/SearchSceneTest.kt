@@ -27,6 +27,7 @@ class SearchSceneTest {
         val illustrationColors = KaigiIllustrationColors(
             skyPanel = Color.Black,
             onSkyPanel = Color.White,
+            lanternGlow = Color.Yellow,
         )
 
         SearchSceneDirection.entries.forEach { direction ->
