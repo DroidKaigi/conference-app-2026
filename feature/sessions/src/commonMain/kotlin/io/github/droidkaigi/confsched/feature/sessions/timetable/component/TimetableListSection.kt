@@ -2,13 +2,13 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,6 +25,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
+import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
@@ -92,23 +93,21 @@ private fun SessionRow(
                 translationY = timeRangeTranslationY(size.height)
             },
         )
-        Column(
+        TimetableItemCardsFlowRow(
+            items = slot.items,
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            for (item in slot.items) {
-                TimetableItemCard(
-                    title = item.title.current(),
-                    room = item.room,
-                    speakers = item.speakers,
-                    isCancelled = item.isCancelled,
-                    language = item.language,
-                    isFavorite = item.id in bookmarks,
-                    seed = item.id.value.hashCode(),
-                    onBookmarkClick = { onBookmarkClick(item.id) },
-                    onClick = { onItemClick(item.id) },
-                )
-            }
+        ) { item ->
+            TimetableItemCard(
+                title = item.title.current(),
+                room = item.room,
+                speakers = item.speakers,
+                isCancelled = item.isCancelled,
+                language = item.language,
+                isFavorite = item.id in bookmarks,
+                seed = item.id.value.hashCode(),
+                onBookmarkClick = { onBookmarkClick(item.id) },
+                onClick = { onItemClick(item.id) },
+            )
         }
     }
 }
@@ -161,6 +160,23 @@ private fun TimetableListSectionStickyTimeRangePreview(
                     initialFirstVisibleItemIndex = 1,
                     initialFirstVisibleItemScrollOffset = 100,
                 ),
+            )
+        }
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun TimetableListSectionWidePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        Box(modifier = Modifier.width(1280.dp)) {
+            TimetableListSection(
+                uiState = TimetableListSectionUiState.fake(),
+                contentPadding = PaddingValues(),
+                onBookmarkClick = {},
+                onItemClick = {},
             )
         }
     }
