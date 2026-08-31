@@ -246,10 +246,10 @@ val LocalSketchStrength = staticCompositionLocalOf { SketchStrength.Normal }
 
 /**
  * The app-wide base seed combined with each sketch element's stable seed.
- *
- * Un-provided it reads as 0, so a drawing composed outside [KaigiTheme] still comes out at its own figures.
  */
-val LocalSketchBaseSeed = staticCompositionLocalOf { 0 }
+val LocalSketchBaseSeed = staticCompositionLocalOf<Int> {
+    error("No SketchBaseSeed provided")
+}
 
 /** Illustration-only colors. Morning Mist is the app's light-theme fallback outside [KaigiTheme]. */
 val LocalKaigiIllustrationColors = staticCompositionLocalOf { MorningMistIllustrationColors }
