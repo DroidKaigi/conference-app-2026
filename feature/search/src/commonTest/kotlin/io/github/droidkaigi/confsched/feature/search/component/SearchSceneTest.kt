@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import io.github.droidkaigi.confsched.core.designsystem.KaigiIllustrationColors
 import io.github.droidkaigi.confsched.core.designsystem.toMaterialColorScheme
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.Mascot
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,7 +15,7 @@ class SearchSceneTest {
             expected = SearchSceneSelection(
                 initialDirection = SearchSceneDirection.Magnifier,
                 noMatchDirection = SearchSceneDirection.EmptyBox,
-                mascot = SearchMascot.Ladybug,
+                mascot = Mascot.D,
             ),
             actual = searchSceneSelection(2026),
         )

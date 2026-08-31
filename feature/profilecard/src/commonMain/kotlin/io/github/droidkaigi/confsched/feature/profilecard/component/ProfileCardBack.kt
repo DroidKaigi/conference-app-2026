@@ -389,7 +389,7 @@ private fun ProfileCardBackPreview(
         ProfileCardBack(
             nickName = "droidkaigi",
             link = "https://example.com",
-            mascot = Mascot.Koala,
+            mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
             taped = true,
             modifier = Modifier.padding(24.dp),

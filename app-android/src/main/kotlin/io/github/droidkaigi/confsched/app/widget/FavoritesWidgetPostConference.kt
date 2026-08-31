@@ -105,7 +105,7 @@ private fun FarewellMediumBody(message: String, secondary: String?, colors: Favo
             }
         }
         Spacer(modifier = GlanceModifier.width(GapArt))
-        Mascot(R.drawable.widget_mascot_jellyfish, 37.dp, 34.dp, colors)
+        Mascot(R.drawable.widget_mascot_b, 37.dp, 34.dp, colors)
     }
 }
 

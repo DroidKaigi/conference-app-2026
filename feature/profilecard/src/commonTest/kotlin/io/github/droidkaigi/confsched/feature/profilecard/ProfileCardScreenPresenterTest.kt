@@ -22,7 +22,7 @@ class ProfileCardScreenPresenterTest {
         nickName = "Speaker A",
         occupation = "Software Engineer",
         link = "https://example.com",
-        mascot = Mascot.Ladybug,
+        mascot = Mascot.D,
         sketchiness = Sketchiness.Playful,
         avatarImage = AvatarImage(byteArrayOf(1, 2, 3)),
     )
@@ -45,7 +45,7 @@ class ProfileCardScreenPresenterTest {
         ) {
             val uiState = assertIs<ProfileCardScreenUiState.Card>(uiStates.awaitItem())
             assertEquals("Speaker A", uiState.nickName)
-            assertEquals(Mascot.Ladybug, uiState.mascot)
+            assertEquals(Mascot.D, uiState.mascot)
             assertEquals(Sketchiness.Playful, uiState.sketchiness)
             assertEquals(storedCard.avatarImage, uiState.avatarImage)
         }
@@ -73,7 +73,7 @@ class ProfileCardScreenPresenterTest {
             send(ProfileCardScreenAction.UpdateNickName("Speaker B"))
             send(ProfileCardScreenAction.UpdateOccupation("Designer"))
             send(ProfileCardScreenAction.UpdateLink("https://example.com/b"))
-            send(ProfileCardScreenAction.UpdateMascot(Mascot.Meerkat))
+            send(ProfileCardScreenAction.UpdateMascot(Mascot.E))
             send(ProfileCardScreenAction.UpdateSketchiness(Sketchiness.Subtle))
             send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
             send(ProfileCardScreenAction.Submit)
@@ -82,7 +82,7 @@ class ProfileCardScreenPresenterTest {
                     nickName = "Speaker B",
                     occupation = "Designer",
                     link = "https://example.com/b",
-                    mascot = Mascot.Meerkat,
+                    mascot = Mascot.E,
                     sketchiness = Sketchiness.Subtle,
                     avatarImage = AvatarImage(byteArrayOf(4, 5)),
                 ),
@@ -105,7 +105,7 @@ class ProfileCardScreenPresenterTest {
                     nickName = "Speaker A",
                     occupation = "Software Engineer",
                     link = "https://example.com",
-                    mascot = Mascot.Ladybug,
+                    mascot = Mascot.D,
                     sketchiness = Sketchiness.Playful,
                     avatarImage = storedCard.avatarImage,
                 ),
