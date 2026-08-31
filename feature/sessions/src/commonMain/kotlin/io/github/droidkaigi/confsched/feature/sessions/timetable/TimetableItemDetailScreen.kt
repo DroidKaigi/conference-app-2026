@@ -13,7 +13,7 @@ import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -62,7 +62,7 @@ fun TimetableItemDetailScreen(
     val displayLanguage = uiState.displayLanguage
     val isListDetailPane = LocalListDetailSceneScope.current != null
     val paneSpacerInset = if (isListDetailPane) LocalPanePartitionSpacerSize.current else 0.dp
-    var floorForEventMapDialog by remember { mutableStateOf<Floor?>(null) }
+    var floorForEventMapDialog by rememberSaveable { mutableStateOf<Floor?>(null) }
 
     Scaffold(
         topBar = {
@@ -225,6 +225,7 @@ fun TimetableItemDetailScreen(
 
 // Seeds the design pins in its spec note, so a render matches the hand-drawn borders it shows.
 private object TimetableItemDetailScreenDefaults {
+
     const val HEADER_SEED = 600
     const val INFO_CARD_SEED = 610
     const val ARCHIVE_CARD_SEED = 1301
