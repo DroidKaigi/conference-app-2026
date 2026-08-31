@@ -75,7 +75,8 @@ private fun WidgetPreviewRow(time: String, title: String, room: Room, seed: Int)
             text = time,
             style = kaigiTypography(KaigiFontFamily.CourierPrime).labelMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.width(38.dp),
+            softWrap = false,
+            modifier = Modifier.width(46.dp),
         )
         Text(
             text = title,

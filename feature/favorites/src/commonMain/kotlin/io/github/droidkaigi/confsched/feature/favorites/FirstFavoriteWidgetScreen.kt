@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.favorites
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -57,14 +58,15 @@ fun FirstFavoriteWidgetScreen(
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
-        Box(modifier = Modifier.fillMaxWidth()) {
+        // The mascot peeks past the widget's corner, so the stage keeps room for it below.
+        Box(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
             FirstFavoriteWidgetPreviewCard()
             Image(
                 painter = painterResource(Res.drawable.first_favorite_mascot_e),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 4.dp)
+                    .offset(x = 14.dp, y = 32.dp)
                     .rotate(8f)
                     .size(width = 49.dp, height = 58.dp),
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
