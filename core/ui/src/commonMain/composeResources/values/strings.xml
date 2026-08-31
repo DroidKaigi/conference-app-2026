@@ -1,7 +1,9 @@
 <resources>
     <string name="back">Back</string>
     <string name="close">Close</string>
-    <string name="failed_to_load">Failed to load</string>
+    <string name="failed_to_load">Couldn’t load content</string>
+    <string name="error_fallback_description">Check your connection and try again</string>
+    <string name="reload">Reload</string>
     <string name="add_favorite">Add favorite</string>
     <string name="remove_favorite">Remove favorite</string>
     <string name="live_badge">LIVE</string>

@@ -2,6 +2,8 @@
     <string name="back">戻る</string>
     <string name="close">閉じる</string>
     <string name="failed_to_load">読み込みに失敗しました</string>
+    <string name="error_fallback_description">通信環境をご確認のうえ、もう一度お試しください</string>
+    <string name="reload">再読み込み</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>

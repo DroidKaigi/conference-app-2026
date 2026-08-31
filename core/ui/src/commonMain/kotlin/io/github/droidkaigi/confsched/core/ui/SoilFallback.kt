@@ -1,24 +1,13 @@
 package io.github.droidkaigi.confsched.core.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.progressSemantics
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.common.toAppError
-import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
-import io.github.droidkaigi.confsched.core.ui.generated.resources.failed_to_load
-import io.github.droidkaigi.confsched.core.ui.generated.resources.retry
-import org.jetbrains.compose.resources.stringResource
 
 sealed interface SoilFallback {
     val suspenseFallback: @Composable context(SoilSuspenseContext) BoxScope.() -> Unit
@@ -66,26 +55,17 @@ const val DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG = "DefaultErrorFallbackContent
 
 @Composable
 context(errorContext: SoilErrorContext)
-fun DefaultErrorFallbackContent(modifier: Modifier = Modifier) {
-    val boundary = errorContext.errorBoundaryContext
+fun DefaultErrorFallbackContent(
+    modifier: Modifier = Modifier,
+    scene: ErrorScene = ErrorSceneDefaults.sceneOfLaunch,
+) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .testTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG),
+        modifier = modifier.fillMaxSize().testTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG),
         contentAlignment = Alignment.Center,
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(stringResource(Res.string.failed_to_load))
-            Text(boundary.err.toAppError().localizedMessage())
-            boundary.reset?.let { reset ->
-                Button(onClick = reset) {
-                    Text(stringResource(Res.string.retry))
-                }
-            }
-        }
+        ErrorFallback(
+            reset = errorContext.errorBoundaryContext.reset,
+            scene = scene,
+        )
     }
 }
