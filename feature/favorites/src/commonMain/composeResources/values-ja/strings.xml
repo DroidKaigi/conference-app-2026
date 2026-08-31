@@ -3,7 +3,7 @@
     <string name="day_filter_all">すべて</string>
     <string name="favorites_empty_title">お気に入りがありません</string>
     <string name="favorites_empty_description">気になるセッションをお気に入り登録しましょう</string>
-    <string name="first_favorite_title">はじめてのお気に入り</string>
+    <string name="first_favorite_title">お気に入りに追加しました</string>
     <string name="first_favorite_description">セッションの開始前に、そっとお知らせします。</string>
     <string name="first_favorite_turn_on_notifications">通知をオンにする</string>
     <string name="first_favorite_not_now">あとで</string>

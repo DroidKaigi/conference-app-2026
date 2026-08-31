@@ -82,7 +82,7 @@ private fun FirstFavoriteDialogCardPreview(
     KaigiPreviewTheme(colorScheme) {
         FirstFavoriteDialogCard(seed = 777, modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "FIRST FAVORITE",
+                text = "NICE CHOICE",
                 style = FirstFavoriteDialogDefaults.eyebrowStyle,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

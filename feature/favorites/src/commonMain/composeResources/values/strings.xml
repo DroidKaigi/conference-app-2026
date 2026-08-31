@@ -3,8 +3,8 @@
     <string name="day_filter_all">All</string>
     <string name="favorites_empty_title">No favorites</string>
     <string name="favorites_empty_description">Save the sessions you’re interested in</string>
-    <string name="first_favorite_eyebrow">FIRST FAVORITE</string>
-    <string name="first_favorite_title">Your first favorite</string>
+    <string name="first_favorite_eyebrow">NICE CHOICE</string>
+    <string name="first_favorite_title">Added to your favorites</string>
     <string name="first_favorite_description">We will nudge you shortly before it starts.</string>
     <string name="first_favorite_turn_on_notifications">Turn on notifications</string>
     <string name="first_favorite_not_now">Not now</string>
