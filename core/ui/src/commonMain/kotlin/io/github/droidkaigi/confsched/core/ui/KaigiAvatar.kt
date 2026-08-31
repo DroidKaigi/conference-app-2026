@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,12 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
-import io.github.droidkaigi.confsched.core.designsystem.icon.Person
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.PreviewImage
@@ -116,6 +117,63 @@ fun KaigiPlaceholderAvatar(
     }
 }
 
+/**
+ * The square standing in for a speaker the app has no picture of, holding a drawn face.
+ *
+ * The outline is even rather than sketched, unlike [KaigiPlaceholderAvatar]: a wobbling one
+ * reads as the face itself being misshapen, and at the smallest size it degrades into corners.
+ *
+ * @param size the side of the square.
+ * @param modifier the [Modifier] applied to the avatar.
+ * @param containerColor the colour filling the square behind the face.
+ * @param contentColor the colour the face is drawn in.
+ * @param borderColor the colour of the line around the square.
+ */
+@Composable
+fun KaigiFaceAvatar(
+    size: Dp,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    borderColor: Color = MaterialTheme.colorScheme.outline,
+) {
+    val featureThickness = (size * KaigiAvatarDefaults.FACE_FEATURE_RATIO)
+        .coerceAtLeast(KaigiAvatarDefaults.minFaceFeatureThickness)
+    Canvas(
+        modifier = modifier
+            .size(size)
+            .clip(KaigiAvatarDefaults.shape)
+            .background(containerColor)
+            .border(
+                width = size * KaigiAvatarDefaults.FACE_OUTLINE_RATIO,
+                color = borderColor,
+                shape = KaigiAvatarDefaults.shape,
+            ),
+    ) {
+        val stroke = Stroke(width = featureThickness.toPx(), cap = StrokeCap.Round)
+        val width = this.size.width
+        val height = this.size.height
+        listOf(0.34f, 0.66f).forEach { eyeX ->
+            drawPath(
+                path = Path().apply {
+                    moveTo(width * eyeX, height * 0.38f)
+                    quadraticTo(width * (eyeX + 0.04f), height * 0.43f, width * eyeX, height * 0.48f)
+                },
+                color = contentColor,
+                style = stroke,
+            )
+        }
+        drawPath(
+            path = Path().apply {
+                moveTo(width * 0.33f, height * 0.61f)
+                quadraticTo(width * 0.5f, height * 0.75f, width * 0.67f, height * 0.61f)
+            },
+            color = contentColor,
+            style = stroke,
+        )
+    }
+}
+
 object KaigiAvatarDefaults {
     /** The share of the side the corners are rounded by, the same at every size. */
     const val CORNER_RADIUS_RATIO = 0.4f
@@ -123,6 +181,14 @@ object KaigiAvatarDefaults {
     val shape = RoundedCornerShape(percent = (CORNER_RADIUS_RATIO * 100).toInt())
 
     val borderThickness = 1.5.dp
+
+    /** The share of the side the drawn face's eyes and mouth are stroked at. */
+    const val FACE_FEATURE_RATIO = 0.0375f
+
+    /** The share of the side the line around a drawn face is stroked at. */
+    const val FACE_OUTLINE_RATIO = 0.0125f
+
+    val minFaceFeatureThickness = 0.9.dp
     val roughness: Dp @Composable get() = scaleSketchAmplitude(0.4.dp)
     val tremor: Dp @Composable get() = scaleSketchAmplitude(0.15.dp)
 
@@ -151,20 +217,9 @@ private fun KaigiAvatarPreview(
             KaigiPlaceholderAvatar(seed = 851, size = 100.dp) {
                 Text("C01", style = KaigiAvatarDefaults.initialsStyle)
             }
-            KaigiPlaceholderAvatar(seed = 852, size = 52.dp) {
-                Icon(
-                    imageVector = KaigiIcons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            KaigiPlaceholderAvatar(seed = 853, size = 24.dp) {
-                Icon(
-                    imageVector = KaigiIcons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.size(12.dp),
-                )
-            }
+            KaigiFaceAvatar(size = 100.dp)
+            KaigiFaceAvatar(size = 48.dp)
+            KaigiFaceAvatar(size = 24.dp)
         }
     }
 }

@@ -155,7 +155,7 @@ private fun CardBody(
             textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
         )
         if (speakers.isNotEmpty()) {
-            SpeakerColumn(speakers = speakers, seed = seed)
+            SpeakerColumn(speakers = speakers)
         }
     }
 }
@@ -183,16 +183,16 @@ private fun ChipRow(room: SessionRoom, language: Language, seed: Int) {
 }
 
 @Composable
-private fun SpeakerColumn(speakers: List<TimetableSpeaker>, seed: Int) {
+private fun SpeakerColumn(speakers: List<TimetableSpeaker>) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        speakers.forEachIndexed { index, speaker ->
-            SpeakerRow(speaker = speaker, seed = seed + 3 + index)
+        for (speaker in speakers) {
+            SpeakerRow(speaker = speaker)
         }
     }
 }
 
 @Composable
-private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
+private fun SpeakerRow(speaker: TimetableSpeaker) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -205,12 +205,12 @@ private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
                 size = TimetableItemCardDefaults.avatarSize,
             )
         } else {
-            KaigiPlaceholderAvatar(
-                seed = seed,
+            KaigiFaceAvatar(
                 size = TimetableItemCardDefaults.avatarSize,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                contentColor = MaterialTheme.colorScheme.primaryContainer,
                 borderColor = MaterialTheme.colorScheme.primaryContainer,
-            ) {}
+            )
         }
         Text(
             text = speaker.name,
