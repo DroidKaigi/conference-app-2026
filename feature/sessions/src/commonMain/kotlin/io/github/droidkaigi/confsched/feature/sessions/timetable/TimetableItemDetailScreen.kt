@@ -1,6 +1,8 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -26,7 +29,6 @@ import io.github.droidkaigi.confsched.core.ui.ListDetailSceneAwareBackButton
 import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
-import io.github.droidkaigi.confsched.core.ui.plus
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SameSlotSessionsSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionArchiveSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
@@ -78,13 +80,22 @@ fun TimetableItemDetailScreen(
             )
         },
     ) { innerPadding ->
+        val layoutDirection = LocalLayoutDirection.current
+        val contentInsets = PaddingValues(
+            start = paneSpacerInset + innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection),
+        )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            // Padding the list itself would stop the surfaces at the bars instead of under them.
-            contentPadding = innerPadding + PaddingValues(bottom = TimetableItemDetailScreenDefaults.toolbarClearance),
+            // The items take the horizontal insets themselves, so a surface they fill keeps its
+            // color under a display cutout while its content stays clear of it.
+            contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding(),
+                bottom = innerPadding.calculateBottomPadding() + TimetableItemDetailScreenDefaults.toolbarClearance,
+            ),
         ) {
             if (item.isCancelled) {
-                item { SessionCancelledBanner(startInset = paneSpacerInset) }
+                item { SessionCancelledBanner(contentInsets = contentInsets) }
             }
             item {
                 SessionHeaderView(
@@ -95,7 +106,7 @@ fun TimetableItemDetailScreen(
                     isCancelled = item.isCancelled,
                     speakers = item.speakers,
                     seed = TimetableItemDetailScreenDefaults.HEADER_SEED,
-                    startInset = paneSpacerInset,
+                    contentInsets = contentInsets,
                 )
             }
             item.message?.let { message ->
@@ -105,7 +116,7 @@ fun TimetableItemDetailScreen(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
-                            .padding(start = paneSpacerInset)
+                            .padding(contentInsets)
                             .padding(
                                 start = TimetableItemDetailScreenDefaults.contentInset,
                                 end = TimetableItemDetailScreenDefaults.contentInset,
@@ -125,7 +136,7 @@ fun TimetableItemDetailScreen(
                     category = item.category?.name?.of(displayLanguage),
                     seed = TimetableItemDetailScreenDefaults.INFO_CARD_SEED,
                     modifier = Modifier
-                        .padding(start = paneSpacerInset)
+                        .padding(contentInsets)
                         .padding(
                             start = TimetableItemDetailScreenDefaults.contentInset,
                             end = TimetableItemDetailScreenDefaults.contentInset,
@@ -141,7 +152,7 @@ fun TimetableItemDetailScreen(
                         onVideoClick = onArchiveVideoClick,
                         onSlideClick = onArchiveSlideClick,
                         modifier = Modifier
-                            .padding(start = paneSpacerInset)
+                            .padding(contentInsets)
                             .padding(TimetableItemDetailScreenDefaults.sectionPadding),
                     )
                 }
@@ -153,7 +164,7 @@ fun TimetableItemDetailScreen(
                     seed = TimetableItemDetailScreenDefaults.SHOW_MORE_SEED,
                     onExpansionToggleClick = onDescriptionExpansionToggleClick,
                     modifier = Modifier
-                        .padding(start = paneSpacerInset)
+                        .padding(contentInsets)
                         .padding(TimetableItemDetailScreenDefaults.sectionPadding),
                 )
             }
@@ -161,7 +172,7 @@ fun TimetableItemDetailScreen(
                 SessionTargetAudienceSection(
                     targetAudience = item.targetAudience.of(displayLanguage),
                     modifier = Modifier
-                        .padding(start = paneSpacerInset)
+                        .padding(contentInsets)
                         .padding(TimetableItemDetailScreenDefaults.sectionPadding),
                 )
             }
@@ -171,7 +182,7 @@ fun TimetableItemDetailScreen(
                     seed = TimetableItemDetailScreenDefaults.MEMO_SEED,
                     onMemoChange = onMemoChange,
                     modifier = Modifier
-                        .padding(start = paneSpacerInset)
+                        .padding(contentInsets)
                         .padding(TimetableItemDetailScreenDefaults.sectionPadding),
                 )
             }
@@ -181,7 +192,7 @@ fun TimetableItemDetailScreen(
                         seed = TimetableItemDetailScreenDefaults.DIVIDER_SEED,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = paneSpacerInset)
+                            .padding(contentInsets)
                             .padding(
                                 horizontal = TimetableItemDetailScreenDefaults.contentInset,
                                 vertical = 12.dp,
@@ -195,7 +206,7 @@ fun TimetableItemDetailScreen(
                         onBookmarkClick = onBookmarkClick,
                         onItemClick = onSessionClick,
                         modifier = Modifier
-                            .padding(start = paneSpacerInset)
+                            .padding(contentInsets)
                             .padding(
                                 start = TimetableItemDetailScreenDefaults.contentInset,
                                 end = TimetableItemDetailScreenDefaults.contentInset,
