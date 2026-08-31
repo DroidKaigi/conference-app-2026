@@ -137,9 +137,6 @@ private fun SpeakerFace(iconUrl: String?, mascot: Mascot, modifier: Modifier = M
         contentDescription = null,
         size = SpeakerFaceSize,
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-        borderColor = MaterialTheme.colorScheme.onSecondaryContainer,
     )
 }
 
