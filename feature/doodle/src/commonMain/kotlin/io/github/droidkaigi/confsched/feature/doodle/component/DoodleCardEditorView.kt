@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -43,6 +45,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun DoodleCardEditorView(
     uiState: DoodleScreenUiState.Card,
+    penSize: DoodlePenSize,
+    onPenSizeClick: (DoodlePenSize) -> Unit,
     onSaveClick: (Doodle, Doodle) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -66,20 +70,36 @@ internal fun DoodleCardEditorView(
                         alignment = Alignment.CenterHorizontally,
                     ),
                 ) {
-                    DoodleCardFaceEditorView(
+                    DoodleCardFaceCanvasView(
                         face = DoodleCardFace.Front,
                         doodle = Doodle(strokes = frontStrokes.toList()),
                         card = uiState.card,
+                        penSize = penSize,
                         onStrokeAdd = { frontStrokes += it },
+                        modifier = Modifier.fillMaxHeight().weight(1f),
+                    )
+                    DoodleCardFaceCanvasView(
+                        face = DoodleCardFace.Back,
+                        doodle = Doodle(strokes = backStrokes.toList()),
+                        card = uiState.card,
+                        penSize = penSize,
+                        onStrokeAdd = { backStrokes += it },
+                        modifier = Modifier.fillMaxHeight().weight(1f),
+                    )
+                }
+                DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(DoodleEditSectionSpacing),
+                ) {
+                    DoodleStrokeControlsRow(
+                        canEdit = frontStrokes.isNotEmpty(),
                         onUndoClick = { frontStrokes.removeAt(frontStrokes.lastIndex) },
                         onClearClick = frontStrokes::clear,
                         modifier = Modifier.weight(1f),
                     )
-                    DoodleCardFaceEditorView(
-                        face = DoodleCardFace.Back,
-                        doodle = Doodle(strokes = backStrokes.toList()),
-                        card = uiState.card,
-                        onStrokeAdd = { backStrokes += it },
+                    DoodleStrokeControlsRow(
+                        canEdit = backStrokes.isNotEmpty(),
                         onUndoClick = { backStrokes.removeAt(backStrokes.lastIndex) },
                         onClearClick = backStrokes::clear,
                         modifier = Modifier.weight(1f),
@@ -88,14 +108,20 @@ internal fun DoodleCardEditorView(
             } else {
                 DoodleFaceSwitchRow(selectedFace = selectedFace, onFaceClick = { selectedFace = it })
                 val strokes = if (selectedFace == DoodleCardFace.Front) frontStrokes else backStrokes
-                DoodleCardFaceEditorView(
+                DoodleCardFaceCanvasView(
                     face = selectedFace,
                     doodle = Doodle(strokes = strokes.toList()),
                     card = uiState.card,
+                    penSize = penSize,
                     onStrokeAdd = { strokes += it },
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                )
+                DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
+                DoodleStrokeControlsRow(
+                    canEdit = strokes.isNotEmpty(),
                     onUndoClick = { strokes.removeAt(strokes.lastIndex) },
                     onClearClick = strokes::clear,
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
             KaigiButton(
@@ -131,6 +157,8 @@ private fun DoodleCardEditorViewPreview(
                 card = PlaceholderProfileCard,
                 isSaving = false,
             ),
+            penSize = DoodlePenSize.Normal,
+            onPenSizeClick = {},
             onSaveClick = { _, _ -> },
             modifier = Modifier.fillMaxSize(),
         )

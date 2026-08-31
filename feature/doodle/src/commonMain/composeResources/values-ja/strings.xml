@@ -3,6 +3,9 @@
     <string name="doodle_undo">元に戻す</string>
     <string name="doodle_clear">全部消す</string>
     <string name="doodle_save">保存</string>
+    <string name="doodle_pen_thin">細い</string>
+    <string name="doodle_pen_normal">ふつう</string>
+    <string name="doodle_pen_thick">太い</string>
     <string name="doodle_face_front">表</string>
     <string name="doodle_face_back">裏</string>
 </resources>

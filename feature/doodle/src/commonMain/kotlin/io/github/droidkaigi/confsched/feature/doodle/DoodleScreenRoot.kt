@@ -5,6 +5,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.showSnackbar
 import soil.query.compose.rememberSubscription
@@ -37,6 +38,7 @@ fun DoodleScreenRoot(
         }
         DoodleScreen(
             uiState = uiState,
+            initialPenSize = DoodlePenSize.Normal,
             onSaveWallClick = { screenChannel.send(DoodleScreenAction.SaveWall(it)) },
             onSaveCardClick = { front, back -> screenChannel.send(DoodleScreenAction.SaveCard(front, back)) },
             onBackClick = onNavigateBack,

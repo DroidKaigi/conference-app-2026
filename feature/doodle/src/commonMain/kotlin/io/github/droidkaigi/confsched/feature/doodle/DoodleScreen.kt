@@ -6,11 +6,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSerializable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -18,6 +23,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
+import io.github.droidkaigi.confsched.core.preview.fakeWithThickPen
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.feature.doodle.component.DoodleCardEditorView
@@ -29,10 +35,13 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun DoodleScreen(
     uiState: DoodleScreenUiState,
+    initialPenSize: DoodlePenSize,
     onSaveWallClick: (Doodle) -> Unit,
     onSaveCardClick: (Doodle, Doodle) -> Unit,
     onBackClick: () -> Unit,
 ) {
+    // One pen serves every canvas the screen shows, so it outlives the face a card editor is on.
+    var penSize by rememberSerializable { mutableStateOf(initialPenSize) }
     Scaffold(
         topBar = {
             KaigiLargeTopAppBar(title = stringResource(Res.string.doodle_title), onBackClick = onBackClick)
@@ -42,12 +51,16 @@ fun DoodleScreen(
         when (uiState) {
             is DoodleScreenUiState.Wall -> DoodleWallEditorView(
                 uiState = uiState,
+                penSize = penSize,
+                onPenSizeClick = { penSize = it },
                 onSaveClick = onSaveWallClick,
                 modifier = contentModifier,
             )
 
             is DoodleScreenUiState.Card -> DoodleCardEditorView(
                 uiState = uiState,
+                penSize = penSize,
+                onPenSizeClick = { penSize = it },
                 onSaveClick = onSaveCardClick,
                 modifier = contentModifier,
             )
@@ -66,6 +79,7 @@ private fun DoodleScreenPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleScreen(
             uiState = DoodleScreenUiState.Wall(savedDoodle = Doodle.fake(), isSaving = false),
+            initialPenSize = DoodlePenSize.Normal,
             onSaveWallClick = {},
             onSaveCardClick = { _, _ -> },
             onBackClick = {},
@@ -81,6 +95,7 @@ private fun DoodleScreenEmptyPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleScreen(
             uiState = DoodleScreenUiState.Wall(savedDoodle = Doodle.Empty, isSaving = false),
+            initialPenSize = DoodlePenSize.Normal,
             onSaveWallClick = {},
             onSaveCardClick = { _, _ -> },
             onBackClick = {},
@@ -96,6 +111,7 @@ private fun DoodleScreenCardFrontPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleScreen(
             uiState = cardUiState(DoodleCardFace.Front),
+            initialPenSize = DoodlePenSize.Normal,
             onSaveWallClick = {},
             onSaveCardClick = { _, _ -> },
             onBackClick = {},
@@ -111,6 +127,7 @@ private fun DoodleScreenCardBackPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleScreen(
             uiState = cardUiState(DoodleCardFace.Back),
+            initialPenSize = DoodlePenSize.Normal,
             onSaveWallClick = {},
             onSaveCardClick = { _, _ -> },
             onBackClick = {},
@@ -127,11 +144,28 @@ private fun DoodleScreenCardSideBySidePreview(
         Box(modifier = Modifier.size(ExpandedScreenPreviewSize)) {
             DoodleScreen(
                 uiState = cardUiState(DoodleCardFace.Front),
+                initialPenSize = DoodlePenSize.Normal,
                 onSaveWallClick = {},
                 onSaveCardClick = { _, _ -> },
                 onBackClick = {},
             )
         }
+    }
+}
+
+@LocaleScreenPreviews
+@Composable
+private fun DoodleScreenThickPenPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        DoodleScreen(
+            uiState = DoodleScreenUiState.Wall(savedDoodle = Doodle.fakeWithThickPen(), isSaving = false),
+            initialPenSize = DoodlePenSize.Thick,
+            onSaveWallClick = {},
+            onSaveCardClick = { _, _ -> },
+            onBackClick = {},
+        )
     }
 }
 

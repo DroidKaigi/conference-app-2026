@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.doodle
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodleEdit
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.preview.fake
@@ -13,6 +14,7 @@ import io.github.droidkaigi.confsched.feature.doodle.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_clear
 import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_face_back
 import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_face_front
+import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_pen_thick
 import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_save
 import io.github.droidkaigi.confsched.feature.doodle.generated.resources.doodle_undo
 import kotlin.test.Test
@@ -46,6 +48,34 @@ class DoodleScreenRobotTest : RobotTest() {
                     itShould("save the stroke where it was drawn") {
                         checkWallStrokeDrawnAcrossTheCenter(zoom = 1f)
                     }
+                }
+            }
+            describe("and the canvas is tapped") {
+                doIt { tapCanvas(canvasIndex = 0) }
+                itShould("let the dot the tap left be undone") {
+                    checkButtonEnabled(Res.string.doodle_undo)
+                }
+                describe("and save is tapped") {
+                    doIt { clickButton(Res.string.doodle_save) }
+                    itShould("save a one-point stroke where the canvas was tapped") {
+                        checkWallDotDrawnAtTheCenter()
+                    }
+                }
+            }
+            describe("and a zoom control is tapped") {
+                doIt { clickZoomIn() }
+                itShould("leave the drawing surface untouched") {
+                    checkButtonDisabled(Res.string.doodle_undo)
+                }
+            }
+            describe("and the thick pen is picked before drawing") {
+                doIt {
+                    clickButton(Res.string.doodle_pen_thick)
+                    drawStroke(canvasIndex = 0)
+                    clickButton(Res.string.doodle_save)
+                }
+                itShould("save the stroke at the thick pen's width") {
+                    checkSavedStrokeWidth(DoodleTarget.AboutWall, DoodlePenSize.Thick.width)
                 }
             }
             describe("and the canvas is pinched open") {
@@ -156,6 +186,17 @@ class DoodleScreenRobotTest : RobotTest() {
                     itShould("still hold the stroke drawn on it") {
                         checkButtonEnabled(Res.string.doodle_undo)
                     }
+                }
+            }
+            describe("and the thick pen is picked before switching to the other face") {
+                doIt {
+                    clickButton(Res.string.doodle_pen_thick)
+                    clickButton(Res.string.doodle_face_front)
+                    drawStroke(canvasIndex = 0)
+                    clickButton(Res.string.doodle_save)
+                }
+                itShould("draw on the other face with the pen picked before the switch") {
+                    checkSavedStrokeWidth(DoodleTarget.ProfileCardFront, DoodlePenSize.Thick.width)
                 }
             }
         }

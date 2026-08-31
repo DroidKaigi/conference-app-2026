@@ -49,18 +49,19 @@ fun DoodleLayerView(
     Canvas(modifier = modifier) {
         val unit = density * scale
         val originX = origin.originX(size.width)
-        val paths = doodle.strokes.map { it.toPath(originX, unit) }
-        val strokeWidth = DoodleStrokeWidth.toPx() * scale
+        val drawn = doodle.strokes.map { it.toPath(originX, unit) to it.width * unit }
+        // Every halo is laid down before any ink, so one stroke's rim never covers a neighbour's ink.
         if (haloColor != null) {
-            val halo = Stroke(
-                width = strokeWidth + DoodleHaloWidth.toPx() * scale * 2,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round,
-            )
-            paths.forEach { drawPath(path = it, color = haloColor, style = halo) }
+            val rim = DoodleHaloWidth.toPx() * scale * 2
+            drawn.forEach { (path, width) ->
+                val halo = Stroke(width = width + rim, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                drawPath(path = path, color = haloColor, style = halo)
+            }
         }
-        val stroke = Stroke(width = strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
-        paths.forEach { drawPath(path = it, color = color, style = stroke) }
+        drawn.forEach { (path, width) ->
+            val stroke = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            drawPath(path = path, color = color, style = stroke)
+        }
     }
 }
 
@@ -69,7 +70,6 @@ internal fun DoodleOrigin.originX(width: Float): Float = when (this) {
     DoodleOrigin.TopCenter -> width / 2f
 }
 
-internal val DoodleStrokeWidth = 2.5.dp
 private val DoodleHaloWidth = 1.dp
 
 // Each sampled point becomes the control point of a quadratic through its neighbours' midpoints,

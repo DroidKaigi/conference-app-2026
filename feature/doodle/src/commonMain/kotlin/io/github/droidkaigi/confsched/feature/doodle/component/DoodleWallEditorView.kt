@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -43,6 +44,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun DoodleWallEditorView(
     uiState: DoodleScreenUiState.Wall,
+    penSize: DoodlePenSize,
+    onPenSizeClick: (DoodlePenSize) -> Unit,
     onSaveClick: (Doodle) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -61,6 +64,7 @@ internal fun DoodleWallEditorView(
             origin = target.doodleOrigin,
             inkColor = target.inkColor,
             haloColor = target.haloColor,
+            penSize = penSize,
             onStrokeAdd = { strokes += it },
             modifier = Modifier.fillMaxWidth().weight(1f),
             background = { scale ->
@@ -72,6 +76,7 @@ internal fun DoodleWallEditorView(
                 )
             },
         )
+        DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(DoodleEditControlSpacing),
@@ -105,6 +110,8 @@ private fun DoodleWallEditorViewPreview(
     KaigiPreviewTheme(colorScheme) {
         DoodleWallEditorView(
             uiState = DoodleScreenUiState.Wall(savedDoodle = Doodle.fake(), isSaving = false),
+            penSize = DoodlePenSize.Normal,
+            onPenSizeClick = {},
             onSaveClick = {},
             modifier = Modifier.fillMaxSize(),
         )

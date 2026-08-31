@@ -108,6 +108,15 @@ class DoodleScreenRobot(composeUiTest: ComposeUiTest, private val target: Doodle
         composeUiTest.waitForIdle()
     }
 
+    /** Presses the centre of the [canvasIndex]th canvas and lifts again without travelling. */
+    fun tapCanvas(canvasIndex: Int) {
+        canvas(canvasIndex).performTouchInput {
+            down(Offset(centerX, centerY))
+            up()
+        }
+        composeUiTest.waitForIdle()
+    }
+
     /** Spreads two fingers about the canvas centre, which magnifies by [PINCH_ZOOM_FACTOR]. */
     fun pinchOpen(canvasIndex: Int) {
         canvas(canvasIndex).performTouchInput {
@@ -125,6 +134,11 @@ class DoodleScreenRobot(composeUiTest: ComposeUiTest, private val target: Doodle
 
     fun clickButton(label: StringResource) {
         composeUiTest.onNodeWithText(text(label)).performClick()
+        composeUiTest.waitForIdle()
+    }
+
+    fun clickZoomIn() {
+        composeUiTest.onNodeWithContentDescription("Zoom in").performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -167,6 +181,23 @@ class DoodleScreenRobot(composeUiTest: ComposeUiTest, private val target: Doodle
         assertPointClose(DoodlePoint(x = -halfSpan, y = centerY), stroke.points.first())
         assertPointClose(DoodlePoint(x = 0f, y = centerY), stroke.points[stroke.points.size / 2])
         assertPointClose(DoodlePoint(x = halfSpan, y = centerY), stroke.points.last())
+    }
+
+    /**
+     * Asserts that the stroke saved for [target] is the single point [tapCanvas] pressed, mapped
+     * back into the About hero's own dp space: the middle of that space's top edge, halfway down.
+     */
+    fun checkWallDotDrawnAtTheCenter() {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        val stroke = edits.single { it.target == target }.doodle.strokes.single()
+        val reference = DoodleTarget.AboutWall.referenceSize
+        assertPointClose(DoodlePoint(x = 0f, y = reference.height.value / 2f), stroke.points.single())
+    }
+
+    /** Asserts the single stroke saved for [strokeTarget] was laid down [width] dp wide. */
+    fun checkSavedStrokeWidth(strokeTarget: DoodleTarget, width: Float) {
+        val edits = graph.doodleMutationKey.invocations.tryReceive().getOrThrow()
+        assertEquals(width, edits.single { it.target == strokeTarget }.doodle.strokes.single().width)
     }
 
     /** Asserts one save carried both faces, each with the given number of strokes. */

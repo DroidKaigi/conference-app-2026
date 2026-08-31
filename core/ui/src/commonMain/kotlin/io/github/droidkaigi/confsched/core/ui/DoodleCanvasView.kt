@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodlePoint
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -52,9 +53,10 @@ import kotlin.math.pow
  * user draws over and [overlay] whatever must stay above the strokes; both receive that scale.
  *
  * [transform] magnifies what the frame shows without resizing the frame, so the frame and its
- * sketched border stay where they were laid out. One finger draws; a second finger arriving before
- * the first has travelled the touch slop turns the gesture into a pinch and records no stroke, as
- * does a wheel turned with Ctrl or Meta held.
+ * sketched border stay where they were laid out. One finger draws, or leaves a dot where it is
+ * lifted without travelling; a second finger arriving before the first has travelled the touch slop
+ * turns the gesture into a pinch and records no stroke, as does a wheel turned with Ctrl or Meta
+ * held. Every stroke carries the width [penSize] gives it.
  */
 @Composable
 fun DoodleCanvasView(
@@ -64,6 +66,7 @@ fun DoodleCanvasView(
     origin: DoodleOrigin,
     inkColor: Color,
     haloColor: Color?,
+    penSize: DoodlePenSize,
     onStrokeAdd: (DoodleStroke) -> Unit,
     modifier: Modifier = Modifier,
     transform: DoodleCanvasTransform = rememberDoodleCanvasTransform(),
@@ -74,9 +77,11 @@ fun DoodleCanvasView(
         val scale = minOf(maxWidth / referenceSize.width, maxHeight / referenceSize.height).coerceAtMost(maxScale)
         val points = remember { mutableStateListOf<DoodlePoint>() }
         val currentOnStrokeAdd by rememberUpdatedState(onStrokeAdd)
+        // The gesture detector outlives a pen change, so the width is read when the stroke lands.
+        val currentPenSize by rememberUpdatedState(penSize)
         val commitStroke: () -> Unit = {
             if (points.isNotEmpty()) {
-                currentOnStrokeAdd(DoodleStroke(points.toList()))
+                currentOnStrokeAdd(DoodleStroke(points = points.toList(), width = currentPenSize.width))
                 points.clear()
             }
         }
@@ -122,8 +127,9 @@ fun DoodleCanvasView(
                         scale = scale,
                         modifier = Modifier.matchParentSize(),
                     )
+                    val inProgress = DoodleStroke(points = points.toList(), width = penSize.width)
                     DoodleLayerView(
-                        doodle = Doodle(strokes = listOf(DoodleStroke(points.toList()))),
+                        doodle = Doodle(strokes = listOf(inProgress)),
                         color = inkColor,
                         haloColor = haloColor,
                         origin = origin,
@@ -153,7 +159,8 @@ const val DOODLE_CANVAS_FRAME_TEST_TAG = "DoodleCanvasFrameTestTag"
 /**
  * Splits one gesture between drawing and transforming: the first finger draws once it has travelled
  * the touch slop, and a second finger arriving before that turns the whole gesture into a pinch. A
- * gesture never changes its mind, so a pinch leaves no stroke behind.
+ * gesture never changes its mind, so a pinch leaves no stroke behind, while a finger lifted before
+ * it travelled leaves a stroke holding the single point it was pressed at.
  */
 private suspend fun PointerInputScope.detectDoodleStrokes(
     transform: DoodleCanvasTransform,
@@ -200,7 +207,14 @@ private suspend fun PointerInputScope.detectDoodleStrokes(
                 }
             }
         }
-        if (drawing) onStrokeEnd()
+        when {
+            drawing -> onStrokeEnd()
+
+            !transforming -> {
+                onStrokeStart(transform.toDoodlePoint(down.position, size, origin, unit))
+                onStrokeEnd()
+            }
+        }
     }
 }
 
@@ -263,6 +277,7 @@ private fun DoodleCanvasViewPreview(
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
             haloColor = null,
+            penSize = DoodlePenSize.Normal,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             background = { Box(modifier = Modifier.matchParentSize().background(MaterialTheme.colorScheme.primary)) },
@@ -283,6 +298,7 @@ private fun DoodleCanvasViewMagnifiedPreview(
             origin = DoodleOrigin.TopCenter,
             inkColor = MaterialTheme.colorScheme.onPrimary,
             haloColor = null,
+            penSize = DoodlePenSize.Normal,
             onStrokeAdd = {},
             modifier = Modifier.size(AboutHeroSize),
             transform = rememberDoodleCanvasTransform(initialZoom = 2f, initialOffset = Offset(x = 0.2f, y = -0.3f)),

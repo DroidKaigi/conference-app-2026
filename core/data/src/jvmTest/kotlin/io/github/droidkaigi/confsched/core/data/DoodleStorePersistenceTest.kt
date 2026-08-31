@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.core.data
 
 import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodlePoint
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
@@ -20,13 +21,16 @@ class DoodleStorePersistenceTest {
 
     private val wallDoodle = Doodle(
         strokes = listOf(
-            DoodleStroke(points = listOf(DoodlePoint(x = -12.5f, y = 30f), DoodlePoint(x = 8f, y = 44.25f))),
+            DoodleStroke(
+                points = listOf(DoodlePoint(x = -12.5f, y = 30f), DoodlePoint(x = 8f, y = 44.25f)),
+                width = DoodlePenSize.Thin.width,
+            ),
         ),
     )
 
     private val cardDoodle = Doodle(
         strokes = listOf(
-            DoodleStroke(points = listOf(DoodlePoint(x = 40f, y = 250f))),
+            DoodleStroke(points = listOf(DoodlePoint(x = 40f, y = 250f)), width = DoodlePenSize.Thick.width),
         ),
     )
 
