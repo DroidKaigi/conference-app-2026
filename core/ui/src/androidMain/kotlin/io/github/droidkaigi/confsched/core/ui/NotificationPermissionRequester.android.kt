@@ -33,6 +33,8 @@ actual fun rememberNotificationPermissionRequester(): suspend () -> Unit {
         suspend {
             val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
+            var denied = false
+            var permanentlyDenied = false
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !granted) {
                 val rationaleBefore =
                     activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) == true
@@ -40,21 +42,26 @@ actual fun rememberNotificationPermissionRequester(): suspend () -> Unit {
                 pendingResult = result
                 val requestedAt = TimeSource.Monotonic.markNow()
                 launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                val denied = !result.await()
+                denied = !result.await()
                 // Only a request the system resolved by itself proves a permanent denial. The
                 // rationale flag cannot tell that case apart from a first-time dialog that was
                 // denied or cancelled unseen (the flag is down before and after in both), so the
                 // remaining signal is time: a dialog that appeared cannot report back within the
                 // same instant, while an auto-denied request does.
                 val dialogNeverShown = requestedAt.elapsedNow() < 1.seconds
-                val permanentlyDenied = denied && !rationaleBefore && dialogNeverShown &&
+                permanentlyDenied = denied && !rationaleBefore && dialogNeverShown &&
                     activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) == false
-                if (permanentlyDenied) {
-                    context.startActivity(
-                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
-                    )
-                }
+            }
+            // Notifications can stay off with the permission granted (or below the runtime
+            // permission entirely) when the reader disabled them in system settings, so the
+            // request alone cannot finish the job. A dialog the reader freshly denied is the
+            // one case that must not bounce to settings.
+            val stillDisabled = !NotificationManagerCompat.from(context).areNotificationsEnabled()
+            if (stillDisabled && (!denied || permanentlyDenied)) {
+                context.startActivity(
+                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
+                )
             }
         }
     }
