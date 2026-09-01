@@ -25,6 +25,7 @@ import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteD
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteDialogDefaults
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteMascotImage
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteWidgetPreviewCard
+import io.github.droidkaigi.confsched.feature.favorites.component.firstFavoriteWidthAt
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_not_now
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_add
@@ -39,6 +40,7 @@ private val Mascot.friend: Mascot get() = Mascot.entries[(ordinal + 1) % Mascot.
 
 private const val FIRST_FAVORITE_WIDGET_DIALOG_SEED = 888
 private const val FIRST_FAVORITE_WIDGET_BUTTON_SEED = 779
+private val FRIEND_MASCOT_HEIGHT = 58.dp
 
 @Composable
 fun FirstFavoriteWidgetScreen(
@@ -61,12 +63,15 @@ fun FirstFavoriteWidgetScreen(
         // The mascot peeks past the widget's corner, so the stage keeps room for it below.
         Box(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
             FirstFavoriteWidgetPreviewCard()
+            val friend = uiState.mascot.friend
             FirstFavoriteMascotImage(
-                mascot = uiState.mascot.friend,
-                height = 58.dp,
+                mascot = friend,
+                height = FRIEND_MASCOT_HEIGHT,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .offset(x = 14.dp, y = 32.dp)
+                    // Offset by its own width so the character is placed by its left edge: a wider
+                    // one peeks further past the corner instead of reaching over the widget's chips.
+                    .offset(x = friend.firstFavoriteWidthAt(FRIEND_MASCOT_HEIGHT) - 36.dp, y = 32.dp)
                     .rotate(8f),
             )
         }
