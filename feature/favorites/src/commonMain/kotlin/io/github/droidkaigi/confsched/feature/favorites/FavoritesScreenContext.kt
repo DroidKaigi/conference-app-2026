@@ -9,7 +9,7 @@ import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableIdsSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
 import io.github.droidkaigi.confsched.core.model.FavoritesScreenScope
-import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceConsumedSubscriptionKey
+import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceOfferableSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 
 @Inject
@@ -24,7 +24,7 @@ class FavoritesPresenterContext(
 class FavoritesScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
-    val firstFavoriteGuidanceConsumedSubscriptionKey: FirstFavoriteGuidanceConsumedSubscriptionKey,
+    val firstFavoriteGuidanceOfferableSubscriptionKey: FirstFavoriteGuidanceOfferableSubscriptionKey,
     override val logger: KaigiLogger,
     val presenterContext: FavoritesPresenterContext,
 ) : ScreenContext

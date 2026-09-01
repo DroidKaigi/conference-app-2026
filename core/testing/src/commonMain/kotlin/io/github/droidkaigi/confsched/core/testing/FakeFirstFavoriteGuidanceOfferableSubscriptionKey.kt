@@ -4,18 +4,18 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import dev.zacsweers.metro.binding
-import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceConsumedSubscriptionKey
+import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceOfferableSubscriptionKey
 import kotlinx.coroutines.flow.flow
 import soil.query.SubscriptionId
 import soil.query.buildSubscriptionKey
 
 @SingleIn(TestingScope::class)
-@ContributesBinding(TestingScope::class, binding = binding<FirstFavoriteGuidanceConsumedSubscriptionKey>())
-class FakeFirstFavoriteGuidanceConsumedSubscriptionKey private constructor(
+@ContributesBinding(TestingScope::class, binding = binding<FirstFavoriteGuidanceOfferableSubscriptionKey>())
+class FakeFirstFavoriteGuidanceOfferableSubscriptionKey private constructor(
     fixture: FakeFixture<Boolean>,
 ) : FakeKeyControl<Boolean>(fixture),
-    FirstFavoriteGuidanceConsumedSubscriptionKey by buildSubscriptionKey(
-        id = SubscriptionId("fake-first-favorite-guidance-consumed"),
+    FirstFavoriteGuidanceOfferableSubscriptionKey by buildSubscriptionKey(
+        id = SubscriptionId("fake-first-favorite-guidance-offerable"),
         subscribe = { flow { emit(fixture.await()) } },
     ) {
     @Inject

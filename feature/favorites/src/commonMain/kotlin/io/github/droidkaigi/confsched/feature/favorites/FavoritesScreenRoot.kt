@@ -5,7 +5,6 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
-import io.github.droidkaigi.confsched.core.common.shouldOfferFirstFavoriteGuidance
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
@@ -22,8 +21,8 @@ fun FavoritesScreenRoot(
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
-        state3 = rememberSubscription(screenContext.firstFavoriteGuidanceConsumedSubscriptionKey),
-    ) { timetable, favoriteIds, guidanceConsumed ->
+        state3 = rememberSubscription(screenContext.firstFavoriteGuidanceOfferableSubscriptionKey),
+    ) { timetable, favoriteIds, offersFirstFavoriteGuidance ->
         val screenChannel = retainScreenChannel<FavoritesScreenAction, FavoritesScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
@@ -39,7 +38,7 @@ fun FavoritesScreenRoot(
             favoritesScreenPresenter(
                 screenChannel = screenChannel,
                 timetable = timetable.copy(bookmarks = favoriteIds),
-                offersFirstFavoriteGuidance = shouldOfferFirstFavoriteGuidance(guidanceConsumed),
+                offersFirstFavoriteGuidance = offersFirstFavoriteGuidance,
             )
         }
 

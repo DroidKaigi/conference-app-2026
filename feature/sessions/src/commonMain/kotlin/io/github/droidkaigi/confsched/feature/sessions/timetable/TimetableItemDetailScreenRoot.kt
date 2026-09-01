@@ -7,7 +7,6 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
-import io.github.droidkaigi.confsched.core.common.shouldOfferFirstFavoriteGuidance
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.sessionUrl
@@ -35,8 +34,8 @@ fun TimetableItemDetailScreenRoot(
         ),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
         state3 = rememberSubscription(screenContext.sessionMemosSubscriptionKey),
-        state4 = rememberSubscription(screenContext.firstFavoriteGuidanceConsumedSubscriptionKey),
-    ) { detail, favoriteIds, memos, guidanceConsumed ->
+        state4 = rememberSubscription(screenContext.firstFavoriteGuidanceOfferableSubscriptionKey),
+    ) { detail, favoriteIds, memos, offersFirstFavoriteGuidance ->
         val screenChannel =
             retainScreenChannel<TimetableItemDetailScreenAction, TimetableItemDetailScreenActionResult>()
 
@@ -61,7 +60,7 @@ fun TimetableItemDetailScreenRoot(
                 favoriteIds = favoriteIds,
                 memo = memos[screenContext.timetableItemId].orEmpty(),
                 initialDisplayLanguage = currentDisplayLanguage(),
-                offersFirstFavoriteGuidance = shouldOfferFirstFavoriteGuidance(guidanceConsumed),
+                offersFirstFavoriteGuidance = offersFirstFavoriteGuidance,
             )
         }
         val shareText = "${uiState.item.title.of(uiState.displayLanguage)}\n${sessionUrl(uiState.item.id)}\n$CONFERENCE_HASHTAG"
