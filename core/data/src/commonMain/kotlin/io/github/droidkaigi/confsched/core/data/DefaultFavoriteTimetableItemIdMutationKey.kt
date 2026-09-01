@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.core.data
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
+import io.github.droidkaigi.confsched.core.model.FavoriteToggle
 import io.github.droidkaigi.confsched.core.model.FavoritesScreenScope
 import io.github.droidkaigi.confsched.core.model.MutationTag
 import io.github.droidkaigi.confsched.core.model.SearchScreenScope
@@ -21,5 +22,5 @@ class DefaultFavoriteTimetableItemIdMutationKey(
     private val store: FavoritesStore,
 ) : FavoriteTimetableItemIdMutationKey by buildMutationKey(
     id = SoilIds.favoriteTimetableItemIdMutation(extraTag),
-    mutate = { id -> store.toggle(id) },
+    mutate = { id -> FavoriteToggle(id = id, added = store.toggle(id)) },
 )

@@ -49,7 +49,7 @@ class SearchScreenPresenterTest {
     fun opens_with_nothing_searched_on() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initial = uiStates.awaitItem()
             assertEquals("", initial.queryText)
@@ -61,7 +61,7 @@ class SearchScreenPresenterTest {
     fun a_typed_word_keeps_only_the_sessions_it_matches() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -75,7 +75,7 @@ class SearchScreenPresenterTest {
     fun surrounding_spaces_do_not_change_the_word_being_searched_or_marked() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -92,7 +92,7 @@ class SearchScreenPresenterTest {
     fun a_speaker_name_matches_as_well_as_a_title() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -122,7 +122,7 @@ class SearchScreenPresenterTest {
 
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, timetable) },
+            presenter = { channel -> searchScreenPresenter(channel, timetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -135,7 +135,7 @@ class SearchScreenPresenterTest {
     fun a_word_typed_in_japanese_matches_whichever_language_the_app_runs_in() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -149,7 +149,7 @@ class SearchScreenPresenterTest {
     fun a_word_no_session_matches_reports_no_match() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -162,7 +162,7 @@ class SearchScreenPresenterTest {
     fun clearing_the_query_returns_to_the_opening_state() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -178,7 +178,7 @@ class SearchScreenPresenterTest {
     fun toggle_bookmark_action_forwards_the_id_to_the_mutation() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -192,7 +192,7 @@ class SearchScreenPresenterTest {
         graph.favoriteMutationKey.failWith(IllegalStateException("boom"))
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(SearchScreenAction.ToggleBookmark(TimetableItemId("compose")))
@@ -208,7 +208,7 @@ class SearchScreenPresenterTest {
         graph.favoriteMutationKey.complete(true)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(SearchScreenAction.ToggleBookmark(TimetableItemId("kmp")))
@@ -223,7 +223,7 @@ class SearchScreenPresenterTest {
         graph.favoriteMutationKey.complete(false)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(SearchScreenAction.ToggleBookmark(TimetableItemId("compose")))
@@ -236,7 +236,7 @@ class SearchScreenPresenterTest {
     fun picking_a_day_narrows_the_result_to_it() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -251,7 +251,7 @@ class SearchScreenPresenterTest {
     fun picking_the_same_day_twice_clears_it() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -269,7 +269,7 @@ class SearchScreenPresenterTest {
     fun a_filter_alone_searches_without_a_word_typed() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -283,7 +283,7 @@ class SearchScreenPresenterTest {
     fun picking_a_filter_twice_clears_it() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -301,7 +301,7 @@ class SearchScreenPresenterTest {
     fun a_word_and_a_filter_both_have_to_match() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -317,7 +317,7 @@ class SearchScreenPresenterTest {
     fun the_row_offers_only_the_session_types_the_timetable_holds() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             assertEquals(
                 listOf(SessionType.NORMAL, SessionType.CODELABS),
@@ -330,7 +330,7 @@ class SearchScreenPresenterTest {
     fun a_room_name_matches_as_well_as_a_title() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -344,7 +344,7 @@ class SearchScreenPresenterTest {
     fun clearing_the_filters_keeps_the_word_typed() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable) },
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -392,4 +392,37 @@ class SearchScreenPresenterTest {
         tagLine = "",
         iconUrl = null,
     )
+
+    @Test
+    fun bookmark_addition_offers_the_first_favorite_guidance_while_it_is_pending() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = true) },
+        ) {
+            uiStates.awaitItem()
+            send(SearchScreenAction.ToggleBookmark(TimetableItemId("kmp")))
+
+            assertEquals(SearchScreenActionResult.FavoriteAdded, results.awaitItem())
+            assertEquals(
+                SearchScreenActionResult.OfferFirstFavoriteGuidance(SessionRoom.NARWHAL),
+                results.awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun bookmark_addition_does_not_offer_the_first_favorite_guidance_once_it_was_answered() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> searchScreenPresenter(channel, sampleTimetable, offersFirstFavoriteGuidance = false) },
+        ) {
+            uiStates.awaitItem()
+            send(SearchScreenAction.ToggleBookmark(TimetableItemId("kmp")))
+
+            assertEquals(SearchScreenActionResult.FavoriteAdded, results.awaitItem())
+            results.expectNoEvents()
+        }
+    }
 }

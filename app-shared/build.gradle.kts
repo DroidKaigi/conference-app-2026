@@ -36,6 +36,8 @@ kotlin {
         androidMain.dependencies {
             // LocalActivity and enableEdgeToEdge, for the status bar icon appearance.
             implementation(libs.androidxActivityCompose)
+            // NotificationManagerCompat, for whether the app may post notifications at all.
+            implementation(libs.androidxCore)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

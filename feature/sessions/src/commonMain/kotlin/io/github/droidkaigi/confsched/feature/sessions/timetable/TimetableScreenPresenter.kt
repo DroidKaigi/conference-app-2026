@@ -31,6 +31,7 @@ context(presenterContext: TimetablePresenterContext)
 fun timetableScreenPresenter(
     screenChannel: ScreenChannel<TimetableScreenAction, TimetableScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
@@ -60,9 +61,12 @@ fun timetableScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(TimetableScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(TimetableScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(toggle.id)))
+            }
         }
         favoriteMutation.reset()
     }

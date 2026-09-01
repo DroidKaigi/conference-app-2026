@@ -19,6 +19,7 @@ fun MutationErrorEffect(
     onError: suspend (Throwable) -> Unit,
 ) {
     val mutationState by rememberUpdatedState(mutation)
+    val currentOnError by rememberUpdatedState(onError)
     var lastConsumedKey by rememberSaveable { mutableStateOf<Long?>(null) }
     LaunchedEffect(Unit) {
         snapshotFlow { mutationState as? MutationErrorObject }
@@ -26,7 +27,7 @@ fun MutationErrorEffect(
             .collect {
                 if (lastConsumedKey != it.errorUpdatedAt) {
                     lastConsumedKey = it.errorUpdatedAt
-                    onError(it.error)
+                    currentOnError(it.error)
                 }
             }
     }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import io.github.droidkaigi.confsched.core.common.ActionEffect
 import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
+import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
@@ -21,6 +22,7 @@ context(presenterContext: FavoritesPresenterContext)
 fun favoritesScreenPresenter(
     screenChannel: ScreenChannel<FavoritesScreenAction, FavoritesScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): FavoritesScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDayFilter by retain { mutableStateOf<DroidKaigi2026Day?>(null) }
@@ -35,6 +37,13 @@ fun favoritesScreenPresenter(
 
     MutationErrorEffect(favoriteMutation) { error ->
         screenChannel.emit(FavoritesScreenActionResult.ShowMessage(error.toUserMessage()))
+        favoriteMutation.reset()
+    }
+
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added && offersFirstFavoriteGuidance) {
+            screenChannel.emit(FavoritesScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(toggle.id)))
+        }
         favoriteMutation.reset()
     }
 

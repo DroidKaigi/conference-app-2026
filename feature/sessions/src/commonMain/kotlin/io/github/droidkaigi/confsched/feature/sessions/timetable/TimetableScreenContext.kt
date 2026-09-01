@@ -8,6 +8,7 @@ import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableIdsSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
+import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceOfferableSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 import io.github.droidkaigi.confsched.core.model.TimetableScreenScope
 
@@ -24,6 +25,7 @@ class TimetablePresenterContext(
 class TimetableScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    val firstFavoriteGuidanceOfferableSubscriptionKey: FirstFavoriteGuidanceOfferableSubscriptionKey,
     override val logger: KaigiLogger,
     val presenterContext: TimetablePresenterContext,
 ) : ScreenContext

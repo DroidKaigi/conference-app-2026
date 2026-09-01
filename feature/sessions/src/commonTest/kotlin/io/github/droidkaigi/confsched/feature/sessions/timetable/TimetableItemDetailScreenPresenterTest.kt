@@ -41,6 +41,7 @@ class TimetableItemDetailScreenPresenterTest {
                     favoriteIds = persistentSetOf(TimetableItemId("d1a")),
                     memo = "a note",
                     initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = false,
                 )
             },
         ) {
@@ -64,6 +65,7 @@ class TimetableItemDetailScreenPresenterTest {
                     favoriteIds = persistentSetOf(),
                     memo = "",
                     initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = false,
                 )
             },
         ) {
@@ -98,6 +100,7 @@ class TimetableItemDetailScreenPresenterTest {
                     favoriteIds = persistentSetOf(),
                     memo = "",
                     initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = false,
                 )
             },
         ) {
@@ -121,12 +124,64 @@ class TimetableItemDetailScreenPresenterTest {
                     favoriteIds = persistentSetOf(TimetableItemId("d1a")),
                     memo = "",
                     initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = false,
                 )
             },
         ) {
             uiStates.awaitItem()
             send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1a")))
 
+            results.expectNoEvents()
+        }
+    }
+
+    @Test
+    fun bookmark_addition_offers_the_first_favorite_guidance_while_it_is_pending() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableItemDetailScreenPresenter(
+                    screenChannel = channel,
+                    detail = timetable.detailOf(TimetableItemId("d1a")),
+                    favoriteIds = persistentSetOf(),
+                    memo = "",
+                    initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = true,
+                )
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            assertEquals(TimetableItemDetailScreenActionResult.FavoriteAdded, results.awaitItem())
+            assertEquals(
+                TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance(SessionRoom.OTTER),
+                results.awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun bookmark_addition_does_not_offer_the_first_favorite_guidance_once_it_was_answered() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableItemDetailScreenPresenter(
+                    screenChannel = channel,
+                    detail = timetable.detailOf(TimetableItemId("d1a")),
+                    favoriteIds = persistentSetOf(),
+                    memo = "",
+                    initialDisplayLanguage = DisplayLanguage.Japanese,
+                    offersFirstFavoriteGuidance = false,
+                )
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            assertEquals(TimetableItemDetailScreenActionResult.FavoriteAdded, results.awaitItem())
             results.expectNoEvents()
         }
     }

@@ -3,4 +3,20 @@
     <string name="day_filter_all">すべて</string>
     <string name="favorites_empty_title">お気に入りがありません</string>
     <string name="favorites_empty_description">気になるセッションをお気に入り登録しましょう</string>
+    <string name="first_favorite_title">お気に入りに追加しました</string>
+    <string name="first_favorite_description">セッションの開始前に、そっとお知らせします。</string>
+    <string name="first_favorite_description_notifications_on">セッションの開始前に、そっとお知らせします。通知はすでにオンになっています。</string>
+    <string name="first_favorite_turn_on_notifications">通知をオンにする</string>
+    <string name="first_favorite_next">次へ</string>
+    <string name="first_favorite_not_now">あとで</string>
+    <string name="first_favorite_close">閉じる</string>
+    <string name="first_favorite_widget_title">ウィジェットもどうぞ</string>
+    <string name="first_favorite_widget_description">ホーム画面に置けば、開かなくても当日の進行がわかります。</string>
+    <string name="first_favorite_widget_add">ウィジェットを追加</string>
+    <string name="first_favorite_widget_manual">ホーム画面を長押しし、プラスボタンからウィジェット一覧を開いて、このアプリを選んでください。</string>
+    <string name="first_favorite_widget_ok">OK</string>
+    <string name="first_favorite_widget_preview_heading">お気に入りの予定</string>
+    <string name="first_favorite_widget_preview_session1">セッション 1 — Compose の再入門</string>
+    <string name="first_favorite_widget_preview_session2">セッション 2 — Kotlin Multiplatform 実践</string>
+    <string name="first_favorite_widget_preview_session3">セッション 3 — テストを速くする</string>
 </resources>

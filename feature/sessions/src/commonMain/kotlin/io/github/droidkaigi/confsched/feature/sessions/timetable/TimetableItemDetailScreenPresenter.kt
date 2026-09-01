@@ -12,6 +12,7 @@ import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.SessionMemoEdit
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetail
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import kotlinx.collections.immutable.PersistentSet
@@ -26,6 +27,7 @@ fun timetableItemDetailScreenPresenter(
     favoriteIds: PersistentSet<TimetableItemId>,
     memo: String,
     initialDisplayLanguage: DisplayLanguage,
+    offersFirstFavoriteGuidance: Boolean,
 ): TimetableItemDetailScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     val memoMutation = rememberMutation(presenterContext.sessionMemoMutationKey)
@@ -46,9 +48,12 @@ fun timetableItemDetailScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance(detail.roomOf(toggle.id)))
+            }
         }
         favoriteMutation.reset()
     }
@@ -69,3 +74,6 @@ fun timetableItemDetailScreenPresenter(
         displayLanguage = displayLanguage,
     )
 }
+
+private fun TimetableItemDetail.roomOf(id: TimetableItemId): SessionRoom =
+    (sameSlotItems + item).first { it.id == id }.room

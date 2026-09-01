@@ -25,6 +25,7 @@ context(presenterContext: SearchPresenterContext)
 fun searchScreenPresenter(
     screenChannel: ScreenChannel<SearchScreenAction, SearchScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): SearchScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var query by retain { mutableStateOf(SessionSearchQuery()) }
@@ -47,9 +48,12 @@ fun searchScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(SearchScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(SearchScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(toggle.id)))
+            }
         }
         favoriteMutation.reset()
     }
