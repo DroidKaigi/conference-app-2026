@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CompletableDeferred
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 @Composable
 actual fun rememberNotificationPermissionRequester(): suspend () -> Unit {
@@ -32,13 +34,20 @@ actual fun rememberNotificationPermissionRequester(): suspend () -> Unit {
             val granted = ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !granted) {
+                val rationaleBefore =
+                    activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) == true
                 val result = CompletableDeferred<Boolean>()
                 pendingResult = result
+                val requestedAt = TimeSource.Monotonic.markNow()
                 launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                // A permission the reader has turned down for good returns without the system
-                // dialog ever appearing, and leaves the rationale flag down; system settings is
-                // then the only place it can still be granted.
-                val permanentlyDenied = !result.await() &&
+                val denied = !result.await()
+                // Only a request the system resolved by itself proves a permanent denial. The
+                // rationale flag cannot tell that case apart from a first-time dialog that was
+                // denied or cancelled unseen (the flag is down before and after in both), so the
+                // remaining signal is time: a dialog that appeared cannot report back within the
+                // same instant, while an auto-denied request does.
+                val dialogNeverShown = requestedAt.elapsedNow() < 1.seconds
+                val permanentlyDenied = denied && !rationaleBefore && dialogNeverShown &&
                     activity?.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) == false
                 if (permanentlyDenied) {
                     context.startActivity(
