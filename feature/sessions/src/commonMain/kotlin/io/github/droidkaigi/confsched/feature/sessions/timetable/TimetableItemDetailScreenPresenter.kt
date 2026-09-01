@@ -40,8 +40,7 @@ fun timetableItemDetailScreenPresenter(
             is TimetableItemDetailScreenAction.SaveMemo -> memoMutation.mutateAsync(SessionMemoEdit(detail.item.id, action.text))
 
             is TimetableItemDetailScreenAction.UpdateDescriptionTruncation -> {
-                // Expanding lifts the line limit, so a layout measured while expanded always
-                // reports no overflow and carries no verdict about the collapsed text.
+                // A layout measured while expanded has no line limit to overflow, so it cannot judge the collapsed text.
                 if (descriptionDisplay != DescriptionDisplay.Truncatable.Expanded) {
                     descriptionDisplay = if (action.isTruncated) {
                         DescriptionDisplay.Truncatable.Collapsed
