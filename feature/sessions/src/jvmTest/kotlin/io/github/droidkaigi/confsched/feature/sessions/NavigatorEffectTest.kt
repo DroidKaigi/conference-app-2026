@@ -1,5 +1,8 @@
 package io.github.droidkaigi.confsched.feature.sessions
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.navigation3.runtime.NavBackStack
@@ -114,6 +117,31 @@ class NavigatorEffectTest {
         assertEquals(listOf(TimetableNavKey), backStack.toList())
     }
 
+    @Test
+    fun reselectsTheRootAlreadyOnTopWithoutReorderingTheStack() {
+        val backStack = NavBackStack<NavKey>(TimetableNavKey)
+
+        val reselections = runCapturingReselections(backStack) { navigator ->
+            navigator.moveToTop(TimetableNavKey)
+        }
+
+        assertEquals(listOf(TimetableNavKey), backStack.toList())
+        assertEquals(listOf(TimetableNavKey), reselections)
+    }
+
+    @Test
+    fun movesADeeperRootToTopWithoutReselecting() {
+        val detail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, detail)
+
+        val reselections = runCapturingReselections(backStack) { navigator ->
+            navigator.moveToTop(TimetableNavKey)
+        }
+
+        assertEquals(listOf(detail, TimetableNavKey), backStack.toList())
+        assertEquals(emptyList(), reselections)
+    }
+
     private val entryProvider: (NavKey) -> NavEntry<NavKey> = { key ->
         NavEntry(
             key = key,
@@ -129,6 +157,27 @@ class NavigatorEffectTest {
             commands(navigator)
             waitForIdle()
         }
+    }
+
+    private fun runCapturingReselections(
+        backStack: NavBackStack<NavKey>,
+        commands: (AppNavigator) -> Unit,
+    ): List<NavKey> {
+        val captured = mutableListOf<NavKey>()
+        runComposeUiTest {
+            val logger = SilentLogger()
+            val navigator = AppNavigator(logger)
+            setContent {
+                NavigatorEffect(navigator, backStack, entryProvider, logger)
+                val events = remember { mutableStateListOf<NavKey>() }
+                LaunchedEffect(Unit) { navigator.reselections.collect(events::add) }
+                captured.clear()
+                captured.addAll(events)
+            }
+            commands(navigator)
+            waitForIdle()
+        }
+        return captured
     }
 }
 
