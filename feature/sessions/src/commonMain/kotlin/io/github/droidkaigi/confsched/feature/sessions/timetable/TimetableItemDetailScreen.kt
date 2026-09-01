@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,9 +30,10 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.LanguageToggleButton
 import io.github.droidkaigi.confsched.core.ui.ListDetailSceneAwareBackButton
-import io.github.droidkaigi.confsched.core.ui.LocalPanePartitionSpacerSize
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
+import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SameSlotSessionsSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionArchiveSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
@@ -46,7 +45,6 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Sessi
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionMemoField
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionTargetAudienceSection
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun TimetableItemDetailScreen(
     uiState: TimetableItemDetailScreenUiState,
@@ -63,8 +61,7 @@ fun TimetableItemDetailScreen(
 ) {
     val item = uiState.item
     val displayLanguage = uiState.displayLanguage
-    val isListDetailPane = LocalListDetailSceneScope.current != null
-    val paneSpacerInset = if (isListDetailPane) LocalPanePartitionSpacerSize.current else 0.dp
+    val paneSpacerInset = paneStartInset()
     var floorForEventMapDialog by rememberSaveable { mutableStateOf<Floor?>(null) }
 
     Scaffold(
@@ -98,6 +95,7 @@ fun TimetableItemDetailScreen(
             end = innerPadding.calculateEndPadding(layoutDirection),
         )
         LazyColumn(
+            state = rememberListDetailSceneAwareLazyListState(),
             modifier = Modifier.fillMaxSize(),
             // The items take the horizontal insets themselves, so a surface they fill keeps its
             // color under a display cutout while its content stays clear of it.

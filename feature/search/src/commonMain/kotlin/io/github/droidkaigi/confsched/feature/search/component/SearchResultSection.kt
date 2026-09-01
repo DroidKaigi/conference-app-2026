@@ -42,6 +42,7 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.core.ui.stableSketchSeed
 import io.github.droidkaigi.confsched.core.ui.toTimetableTimeSlots
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
@@ -79,6 +80,7 @@ internal fun SearchResultSection(
                 .semantics { liveRegion = LiveRegionMode.Polite },
         )
         LazyColumn(
+            state = rememberListDetailSceneAwareLazyListState(),
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(

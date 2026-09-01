@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
+import io.github.droidkaigi.confsched.core.common.listPane
 
 @ContributesIntoSet(UiScope::class)
 @Inject
@@ -16,7 +17,10 @@ class EventMapNavEntryProvider(
     private val screenGraphFactory: EventMapScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<EventMapNavKey>(metadata = instantNavTransition()) {
+        entry<EventMapNavKey>(
+            metadata = listPane() +
+                instantNavTransition(),
+        ) {
             val graph = retain(screenGraphFactory::createEventMapScreenGraph)
             context(graph.screenContext) {
                 EventMapScreenRoot(

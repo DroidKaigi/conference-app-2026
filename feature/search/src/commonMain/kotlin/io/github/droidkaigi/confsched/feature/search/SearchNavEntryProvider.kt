@@ -9,6 +9,7 @@ import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.common.listPane
 
 @ContributesIntoSet(UiScope::class)
 @Inject
@@ -17,7 +18,9 @@ class SearchNavEntryProvider(
     private val appNavigator: AppNavigator,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<SearchNavKey> { key ->
+        entry<SearchNavKey>(
+            metadata = listPane(),
+        ) { key ->
             val graph = retain(screenGraphFactory::createSearchScreenGraph)
             context(graph.screenContext) {
                 SearchScreenRoot(

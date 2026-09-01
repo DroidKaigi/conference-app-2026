@@ -3,10 +3,12 @@ package io.github.droidkaigi.confsched.feature.sessions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
+import io.github.droidkaigi.confsched.core.common.detailPane
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
@@ -54,14 +56,35 @@ class NavigatorEffectTest {
     }
 
     @Test
-    fun skipsAPopFromAnEntryNotOnTop() {
+    fun popsAnEntryBelowTheTopTogetherWithEverythingAboveIt() {
         val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
         val topDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
         val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail, topDetail)
 
         runEffect(backStack) { navigator -> navigator.back(origin = firstDetail) }
 
-        assertEquals(listOf(TimetableNavKey, firstDetail, topDetail), backStack.toList())
+        assertEquals(listOf(TimetableNavKey), backStack.toList())
+    }
+
+    @Test
+    fun keepsTheRootOnAPopFromIt() {
+        val detail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, detail)
+
+        runEffect(backStack) { navigator -> navigator.back(origin = TimetableNavKey) }
+
+        assertEquals(listOf(TimetableNavKey, detail), backStack.toList())
+    }
+
+    @Test
+    fun replacesADetailPushedOverAnotherDetail() {
+        val firstDetail = TimetableItemDetailNavKey(TimetableItemId("1"))
+        val nextDetail = TimetableItemDetailNavKey(TimetableItemId("2"))
+        val backStack = NavBackStack<NavKey>(TimetableNavKey, firstDetail)
+
+        runEffect(backStack) { navigator -> navigator.goTo(nextDetail) }
+
+        assertEquals(listOf(TimetableNavKey, nextDetail), backStack.toList())
     }
 
     @Test
@@ -91,11 +114,18 @@ class NavigatorEffectTest {
         assertEquals(listOf(TimetableNavKey), backStack.toList())
     }
 
+    private val entryProvider: (NavKey) -> NavEntry<NavKey> = { key ->
+        NavEntry(
+            key = key,
+            metadata = if (key is TimetableItemDetailNavKey) detailPane() else emptyMap(),
+        ) {}
+    }
+
     private fun runEffect(backStack: NavBackStack<NavKey>, commands: (AppNavigator) -> Unit) {
         runComposeUiTest {
             val logger = SilentLogger()
             val navigator = AppNavigator(logger)
-            setContent { NavigatorEffect(navigator, backStack, logger) }
+            setContent { NavigatorEffect(navigator, backStack, entryProvider, logger) }
             commands(navigator)
             waitForIdle()
         }

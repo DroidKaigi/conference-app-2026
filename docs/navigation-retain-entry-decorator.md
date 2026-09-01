@@ -23,4 +23,12 @@ fun <T : Any> retainNavEntryDecorator(): NavEntryDecorator<T> {
 
 The registry is created **outside** the `decorate` lambda (which runs per entry), so all entries share one registry while each gets a distinct per-key store.
 
+## One call site per entry
+
+Every decorator between `RetainNavEntryDecorator` and the entry content must call `entry.Content()` from a single call site for the entry's whole life. A decorator that picks between two call sites — an `if` around `entry.Content()` whose condition depends on the scene the entry currently sits in, such as `LocalListDetailSceneScope` — moves the content to a new position the moment a detail pane opens beside a list. Compose discards the old position, and every `remember` and `retain` below it is lost.
+
+Retention does not cover that move. The store retains exiting values only while its own provider has left the composition, and the provider stays composed here, so the values are retired instead of kept. Branch on the entry's metadata, which is fixed for the entry, and vary what the single branch passes to its content.
+
+A move the entry does survive still resets some of its state on purpose: for the lazy list and grid states a pane entry must rebuild when it crosses the list-detail boundary, see [Lazy containers in a pane](./navigation-list-detail.md#lazy-containers-in-a-pane).
+
 Related: [Root NavEntry emulation (RootSceneStrategy)](./navigation-predictive-back-tabs.md) · [ScreenContext](./screen-context.md)

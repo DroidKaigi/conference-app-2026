@@ -26,7 +26,7 @@ private data object ListDetailPaneInsetsKey : NavMetadataKey<WindowInsetsSides>
  * another pane: [WindowInsetsSides.Start] for a detail pane, [WindowInsetsSides.End] for a list
  * pane. [rememberListDetailPaneInsetsNavEntryDecorator] applies it.
  */
-fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
+internal fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
     metadata { put(ListDetailPaneInsetsKey, sides) }
 
 /**
@@ -40,17 +40,16 @@ fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
 fun <T : Any> rememberListDetailPaneInsetsNavEntryDecorator(): NavEntryDecorator<T> = remember {
     NavEntryDecorator { entry ->
         val sides = entry.metadata[ListDetailPaneInsetsKey]
-            .takeIf { LocalListDetailSceneScope.current != null }
         if (sides == null) {
             entry.Content()
         } else {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .consumeWindowInsets(
-                        WindowInsets.systemBars.union(WindowInsets.displayCutout).only(sides),
-                    ),
-            ) {
+            // Branching on the scene instead would move Content() and drop the entry's retained state.
+            val consumed = if (LocalListDetailSceneScope.current != null) {
+                WindowInsets.systemBars.union(WindowInsets.displayCutout).only(sides)
+            } else {
+                WindowInsets(0, 0, 0, 0)
+            }
+            Box(Modifier.fillMaxSize().consumeWindowInsets(consumed)) {
                 entry.Content()
             }
         }

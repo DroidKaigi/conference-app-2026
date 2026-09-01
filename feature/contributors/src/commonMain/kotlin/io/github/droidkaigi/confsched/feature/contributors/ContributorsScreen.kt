@@ -21,6 +21,8 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
+import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyGridState
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorItem
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorItemDefaults
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorsCountText
@@ -35,20 +37,22 @@ fun ContributorsScreen(
     onContributorClick: (String) -> Unit,
     onBackClick: () -> Unit,
 ) {
+    val paneSpacerInset = paneStartInset()
     Scaffold(
         topBar = {
             KaigiLargeTopAppBar(title = stringResource(Res.string.contributors), onBackClick = onBackClick)
         },
     ) { innerPadding ->
         if (uiState.contributors.isEmpty()) {
-            ContributorsEmptyView(modifier = Modifier.padding(innerPadding))
+            ContributorsEmptyView(modifier = Modifier.padding(innerPadding).padding(start = paneSpacerInset))
         } else {
             LazyVerticalGrid(
+                state = rememberListDetailSceneAwareLazyGridState(),
                 columns = GridCells.Adaptive(ContributorItemDefaults.avatarSize),
                 horizontalArrangement = Arrangement.spacedBy(ContributorsScreenDefaults.columnSpacing),
                 verticalArrangement = Arrangement.spacedBy(ContributorsScreenDefaults.headerSpacing),
                 contentPadding = PaddingValues(
-                    start = ContributorsScreenDefaults.gridHorizontalPadding,
+                    start = ContributorsScreenDefaults.gridHorizontalPadding + paneSpacerInset,
                     top = ContributorsScreenDefaults.gridTopPadding,
                     end = ContributorsScreenDefaults.gridHorizontalPadding,
                     bottom = ContributorsScreenDefaults.gridBottomPadding,

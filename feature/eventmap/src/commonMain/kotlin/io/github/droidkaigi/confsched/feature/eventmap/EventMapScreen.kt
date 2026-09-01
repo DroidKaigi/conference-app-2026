@@ -26,6 +26,7 @@ import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.eventmap.component.EventItem
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorMapCard
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorTabRow
@@ -49,6 +50,7 @@ fun EventMapScreen(
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->
         LazyColumn(
+            state = rememberListDetailSceneAwareLazyListState(),
             contentPadding = PaddingValues(16.dp).plus(PaddingValues(bottom = 122.dp)),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier

@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
+import io.github.droidkaigi.confsched.core.common.listPane
 
 @ContributesIntoSet(UiScope::class)
 @Inject
@@ -17,7 +18,10 @@ class AboutNavEntryProvider(
     private val screenGraphFactory: AboutScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<AboutNavKey>(metadata = instantNavTransition()) {
+        entry<AboutNavKey>(
+            metadata = listPane() +
+                instantNavTransition(),
+        ) {
             val graph = retain(screenGraphFactory::createAboutScreenGraph)
             val uriHandler = LocalUriHandler.current
             context(graph.screenContext) {

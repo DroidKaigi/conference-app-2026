@@ -17,7 +17,7 @@ A scene that draws more than one entry — a [list-detail](./navigation-list-det
 
 The wrapper `RootTabScene` overrides `content` — the delegate's content with the bar or the rail added, as [Bar or rail](#bar-or-rail) describes — plus `equals` / `hashCode`, so a scene is reused only while the delegate and the selected tab both hold. Everything else delegates to the decorated scene, so the decoration changes no navigation semantics.
 
-> `NavEntry.key` is private in Nav3, so the decorator cannot read the keys out of `Scene.entries`. It takes the back stack and reads `Scene.entries.size` instead: every scene this app forms draws the topmost entries of the stack, so the count names which keys are on screen.
+> `NavEntry.key` is private in Nav3, so the decorator cannot read the keys out of `Scene.entries`. It takes the back stack and reads `Scene.entries.size` instead: every scene this app forms draws the topmost entries of the stack, so the count names which keys are on screen. An overlay entry, such as the prize dialog, is the exception: Nav3 forms the scene below it from the entries beneath it. The decorator therefore resolves the keys at the top of the stack through the entry provider and drops the ones whose entry carries `DialogSceneStrategy.dialog()` metadata before counting — the same declaration that makes the entry a dialog in the first place. Counting them in would name the wrong tab, and the scene under the dialog would change identity the moment the dialog opened, blanking the panes it draws.
 
 ## Bar or rail
 

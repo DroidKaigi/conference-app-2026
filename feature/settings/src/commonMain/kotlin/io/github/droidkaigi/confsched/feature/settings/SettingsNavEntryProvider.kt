@@ -8,6 +8,7 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.common.detailPane
 
 @ContributesIntoSet(UiScope::class)
 @Inject
@@ -15,7 +16,9 @@ class SettingsNavEntryProvider(
     private val screenGraphFactory: SettingsScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<SettingsNavKey> {
+        entry<SettingsNavKey>(
+            metadata = detailPane(),
+        ) {
             val graph = retain(screenGraphFactory::createSettingsScreenGraph)
             context(graph.screenContext) {
                 SettingsScreenRoot(

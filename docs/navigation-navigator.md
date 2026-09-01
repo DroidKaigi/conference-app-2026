@@ -40,21 +40,37 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
 }
 
 @Composable
-fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, logger: KaigiLogger) {
+fun NavigatorEffect(
+    navigator: AppNavigator,
+    backStack: NavBackStack<NavKey>,
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
+    logger: KaigiLogger,
+) {
     LaunchedEffect(navigator, backStack) {
         navigator.commands.collect { command ->
             when (command) {
-                is NavCommand.Push -> if (backStack.lastOrNull() == command.key) {
-                    logger.warn { "Duplicate push of the top NavKey: ${command.key} — likely a caller bug" }
-                } else {
-                    backStack.add(command.key)
+                is NavCommand.Push -> {
+                    val top = backStack.lastOrNull()
+                    when {
+                        top == command.key -> logger.warn { "Duplicate push of the top NavKey: ${command.key}" }
+                        top != null &&
+                            isDetailPane(entryProvider(top).metadata) &&
+                            isDetailPane(entryProvider(command.key).metadata) ->
+                            backStack[backStack.lastIndex] = command.key
+                        else -> backStack.add(command.key)
+                    }
                 }
                 is NavCommand.Pop -> {
-                    val top = backStack.lastOrNull()
-                    if (command.origin != null && command.origin != top) {
-                        logger.warn { "Stale pop from non-top NavKey: ${command.origin}; top is $top" }
-                    } else if (backStack.size > 1) {
-                        backStack.removeLastOrNull()
+                    val origin = command.origin
+                    if (origin == null) {
+                        if (backStack.size > 1) backStack.removeLastOrNull()
+                    } else {
+                        val index = backStack.lastIndexOf(origin)
+                        if (index < 0) {
+                            logger.warn { "Stale pop from a NavKey no longer on the stack: $origin" }
+                        } else if (index > 0) {
+                            backStack.subList(index, backStack.size).clear()
+                        }
                     }
                 }
                 is NavCommand.MoveToTop -> if (backStack.lastOrNull() != command.key) {
@@ -74,7 +90,8 @@ fun NavigatorEffect(navigator: AppNavigator, backStack: NavBackStack<NavKey>, lo
 `NavigatorEffect` is the single point that mutates the back stack, so the guarantees the back stack must hold are expressed there, as conditions on its current state:
 
 - **A `Push` never repeats the key already on top.** A fast double tap on a navigation control fires the same lambda twice — the first tap pushes before the screen leaves composition, and the second repeats it — which would otherwise leave two identical entries on the stack. The key is compared against the top only, so a legitimate cycle still works: with `[A, B]` on the stack, pushing `A` again is a distinct destination and is applied. The skipped push is logged as a warning, because a caller that fires the same push twice is worth seeing.
-- **A screen-originated `Pop` applies only while its origin is still on top.** Each NavEntry passes its own key as the command's `origin`. The first pop removes that entry; a second command from the same rapid tap then finds a different top key, is logged as stale, and is dropped. A valid pop still runs only while `size > 1`, so it can never remove the root.
+- **A `Push` of a detail pane over another replaces it.** The screens a list opens beside it carry the `detailPane()` metadata, which `NavigatorEffect` reads through the entry provider, and the back stack holds at most one of them at a time: opening a second session from a session detail, or another About screen while one is open, swaps the top entry instead of stacking. For the pairs, see [List-detail scenes](./navigation-list-detail.md).
+- **A screen-originated `Pop` removes its origin and everything above it, and only while the origin is still on the stack.** Each NavEntry passes its own key as the command's `origin`. The first pop removes that entry; a second command from the same rapid tap then finds its origin gone, is logged as stale, and is dropped. A list pane's back control tapped while its detail is open beside it pops both. The root is never removed.
 
 `KaigiApp` calls `AppNavigator.back()` without an origin for platform and predictive back. An originless pop bypasses the stale-origin check but still keeps the root, so repeated back gestures can intentionally pop several screens.
 

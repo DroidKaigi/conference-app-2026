@@ -43,7 +43,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.contains
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneDecoratorStrategyScope
@@ -53,6 +56,7 @@ import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_na
 import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
+import io.github.droidkaigi.confsched.core.common.paneEntries
 import io.github.droidkaigi.confsched.core.designsystem.icon.FavoriteBorder
 import io.github.droidkaigi.confsched.core.designsystem.icon.Info
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -103,22 +107,31 @@ private val rootTabsByKey: Map<NavKey, RootTab> = RootTab.entries.associateBy(Ro
  * Every scene this app forms draws the topmost [paneCount] entries of the back stack, so a
  * multi-pane scene keeps the entries below its top one on screen beside it: the list pane of a
  * list-detail scene is a root destination the reader is still looking at, and the tab it belongs to
- * stays the reader's place.
+ * stays the reader's place. An entry marked with [DialogSceneStrategy.dialog] floats above the
+ * scene the entries below it form, so its key is dropped off the top before the panes are counted
+ * and the scene stays the one the reader had open.
  */
-private fun List<NavKey>.rootTabInTopPanes(paneCount: Int): RootTab? =
-    takeLast(paneCount).asReversed().firstNotNullOfOrNull(rootTabsByKey::get)
+internal fun List<NavKey>.rootTabInTopPanes(
+    paneCount: Int,
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
+): RootTab? =
+    dropLastWhile { DialogSceneStrategy.Companion.DialogKey in entryProvider(it).metadata }
+        .takeLast(paneCount)
+        .asReversed()
+        .firstNotNullOfOrNull(rootTabsByKey::get)
 
-/** Whether this scene draws two or more panes, one entry per pane. */
+/** Whether this scene draws two or more panes. */
 private val Scene<NavKey>.isMultiPane: Boolean
-    get() = entries.size > 1
+    get() = paneEntries().size > 1
 
 private class RootTabSceneDecorator(
     private val backStack: List<NavKey>,
+    private val entryProvider: (NavKey) -> NavEntry<NavKey>,
     private val onSelectTab: (RootTab) -> Unit,
 ) : SceneDecoratorStrategy<NavKey> {
 
     override fun SceneDecoratorStrategyScope<NavKey>.decorateScene(scene: Scene<NavKey>): Scene<NavKey> {
-        val currentTab = backStack.rootTabInTopPanes(scene.entries.size)
+        val currentTab = backStack.rootTabInTopPanes(scene.paneEntries().size, entryProvider)
             ?: return scene
         return RootTabScene(scene, currentTab, onSelectTab)
     }
@@ -413,11 +426,12 @@ private object RootTabBarSeeds {
 @Composable
 internal fun rememberRootTabSceneDecorator(
     backStack: NavBackStack<NavKey>,
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
     onSelectTab: (RootTab) -> Unit,
 ): SceneDecoratorStrategy<NavKey>? = if (currentPlatform == TargetPlatform.Ios) {
     null
 } else {
-    remember(backStack, onSelectTab) {
-        RootTabSceneDecorator(backStack, onSelectTab)
+    remember(backStack, entryProvider, onSelectTab) {
+        RootTabSceneDecorator(backStack, entryProvider, onSelectTab)
     }
 }
