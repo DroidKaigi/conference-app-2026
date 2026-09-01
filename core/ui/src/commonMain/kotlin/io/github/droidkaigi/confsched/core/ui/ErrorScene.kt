@@ -42,7 +42,12 @@ internal fun ErrorSceneArt(
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier) {
-        if (maxWidth < WIDE_SCENE_MIN_WIDTH) {
+        // The authored frame is drawn FillBounds, which tolerates only a slight aspect drift; a
+        // shorter area would squash the drawing, so it switches to the composed scenery, which
+        // scales uniformly and fills the width it uncovers.
+        val squashed = maxHeight / SCENE_FRAME_HEIGHT.dp <
+            maxWidth / SCENE_FRAME_WIDTH.dp * AUTHORED_FRAME_MIN_VERTICAL_RATIO
+        if (maxWidth < WIDE_SCENE_MIN_WIDTH && !squashed) {
             when (scene) {
                 ErrorScene.UnpluggedCable -> UnpluggedCableSceneArt(Modifier.fillMaxSize())
                 ErrorScene.Rain -> RainSceneArt(Modifier.fillMaxSize())
@@ -235,3 +240,4 @@ private const val LAMP_SWING_DEGREES = 3f
 
 // The design switches to the full-bleed scenery on expanded layouts.
 private val WIDE_SCENE_MIN_WIDTH = 600.dp
+private const val AUTHORED_FRAME_MIN_VERTICAL_RATIO = 0.9f
