@@ -54,6 +54,7 @@ fun KaigiApp() {
                     NavigatorEffect(
                         navigator = uiGraph.appNavigator,
                         backStack = backStack,
+                        entryProvider = uiGraph.appEntryProvider.entryProvider,
                         logger = uiGraph.logger,
                     )
                     DeepLinkEffect(

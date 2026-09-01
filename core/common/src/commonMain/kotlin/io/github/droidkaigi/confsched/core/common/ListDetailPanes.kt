@@ -39,6 +39,9 @@ fun detailPane(): Map<String, Any> =
         metadata { put(PaneRoleMetadataKey, PaneRole.Detail) } +
         consumeListDetailPaneInsets(WindowInsetsSides.Start)
 
+internal fun isDetailPane(metadata: Map<String, Any>): Boolean =
+    metadata[PaneRoleMetadataKey] == PaneRole.Detail
+
 /**
  * The entries a scene draws, one per pane.
  *

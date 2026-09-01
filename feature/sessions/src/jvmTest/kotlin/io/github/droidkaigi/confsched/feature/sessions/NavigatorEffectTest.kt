@@ -3,10 +3,12 @@ package io.github.droidkaigi.confsched.feature.sessions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.KaigiLogger
 import io.github.droidkaigi.confsched.core.common.NavigatorEffect
+import io.github.droidkaigi.confsched.core.common.detailPane
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailNavKey
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
@@ -112,11 +114,18 @@ class NavigatorEffectTest {
         assertEquals(listOf(TimetableNavKey), backStack.toList())
     }
 
+    private val entryProvider: (NavKey) -> NavEntry<NavKey> = { key ->
+        NavEntry(
+            key = key,
+            metadata = if (key is TimetableItemDetailNavKey) detailPane() else emptyMap(),
+        ) {}
+    }
+
     private fun runEffect(backStack: NavBackStack<NavKey>, commands: (AppNavigator) -> Unit) {
         runComposeUiTest {
             val logger = SilentLogger()
             val navigator = AppNavigator(logger)
-            setContent { NavigatorEffect(navigator, backStack, logger) }
+            setContent { NavigatorEffect(navigator, backStack, entryProvider, logger) }
             commands(navigator)
             waitForIdle()
         }

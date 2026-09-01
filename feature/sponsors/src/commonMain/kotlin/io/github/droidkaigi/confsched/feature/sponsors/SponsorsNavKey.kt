@@ -1,7 +1,7 @@
 package io.github.droidkaigi.confsched.feature.sponsors
 
-import io.github.droidkaigi.confsched.core.common.DetailPaneNavKey
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object SponsorsNavKey : DetailPaneNavKey
+data object SponsorsNavKey : NavKey
