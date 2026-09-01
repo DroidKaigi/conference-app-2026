@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import io.github.droidkaigi.confsched.core.common.LocalKaigiLogger
 
 sealed interface SoilFallback {
     val suspenseFallback: @Composable context(SoilSuspenseContext) BoxScope.() -> Unit
@@ -61,12 +59,6 @@ fun DefaultErrorFallbackContent(
     modifier: Modifier = Modifier,
     scene: ErrorScene = ErrorSceneDefaults.sceneOfLaunch,
 ) {
-    val logger = LocalKaigiLogger.current
-    val error = errorContext.errorBoundaryContext.err
-    // The screen shows only the localized copy; the raw message reaches the logs through here.
-    LaunchedEffect(error) {
-        logger.error(error) { "Showing the error fallback for $error" }
-    }
     Box(
         modifier = modifier.fillMaxSize().testTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG),
         contentAlignment = Alignment.Center,
