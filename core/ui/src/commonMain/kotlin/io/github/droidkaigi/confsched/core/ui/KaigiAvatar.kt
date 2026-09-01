@@ -188,6 +188,8 @@ private fun SpeakerMascot(
         contentAlignment = Alignment.Center,
     ) {
         Image(
+            // Mascot.D has no card render; no room maps to it, so the F art only ever stands in
+            // for a caller outside the room mapping.
             painter = painterResource(mascot.cardArt ?: mascotFArt),
             contentDescription = null,
             modifier = Modifier.fillMaxSize().padding(size * KaigiAvatarDefaults.MASCOT_INSET_RATIO),
