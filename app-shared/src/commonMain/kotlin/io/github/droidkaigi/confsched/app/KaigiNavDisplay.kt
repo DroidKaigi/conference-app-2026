@@ -27,8 +27,8 @@ internal fun KaigiNavDisplay(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
 ) {
     CompositionLocalProvider(LocalPanePartitionSpacerSize provides PanePartitionSpacerSize) {
-        // A themed backdrop behind the transition: while entries cross-fade, both are
-        // translucent and the bare window (white) would show through as a flash.
+        // Nothing above this draws a background, so the bare window (white) would show through
+        // wherever a screen does not paint over it.
         Surface(color = MaterialTheme.colorScheme.background) {
             NavDisplay(
                 backStack = backStack,
@@ -52,6 +52,9 @@ internal fun KaigiNavDisplay(
                         onSelectTab = onSelectTab,
                     ),
                 ),
+                transitionSpec = slideTransitionSpec(),
+                popTransitionSpec = slidePopTransitionSpec(),
+                predictivePopTransitionSpec = slidePredictivePopTransitionSpec(),
                 entryProvider = entryProvider,
             )
         }
