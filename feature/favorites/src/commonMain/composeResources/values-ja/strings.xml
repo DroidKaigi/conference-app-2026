@@ -14,6 +14,7 @@
     <string name="first_favorite_widget_description">ホーム画面に置けば、開かなくても当日の進行がわかります。</string>
     <string name="first_favorite_widget_add">ウィジェットを追加</string>
     <string name="first_favorite_widget_manual">ホーム画面を長押しし、プラスボタンからウィジェット一覧を開いて、このアプリを選んでください。</string>
+    <string name="first_favorite_widget_ok">OK</string>
     <string name="first_favorite_widget_preview_heading">お気に入りの予定</string>
     <string name="first_favorite_widget_preview_session1">セッション 1 — Compose の再入門</string>
     <string name="first_favorite_widget_preview_session2">セッション 2 — Kotlin Multiplatform 実践</string>

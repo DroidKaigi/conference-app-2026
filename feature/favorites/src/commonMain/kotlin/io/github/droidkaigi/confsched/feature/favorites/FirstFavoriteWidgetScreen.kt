@@ -33,6 +33,7 @@ import io.github.droidkaigi.confsched.feature.favorites.generated.resources.firs
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_description
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_eyebrow
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_manual
+import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_ok
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -84,28 +85,49 @@ fun FirstFavoriteWidgetScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
-        if (uiState.canAddWidget) {
-            KaigiButton(
-                onClick = onAddWidgetClick,
-                seed = FIRST_FAVORITE_WIDGET_BUTTON_SEED,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text = stringResource(Res.string.first_favorite_widget_add), style = KaigiButtonDefaults.labelStyle)
+        when (uiState.pinSupport) {
+            FirstFavoriteWidgetPinSupport.Requestable -> {
+                KaigiButton(
+                    onClick = onAddWidgetClick,
+                    seed = FIRST_FAVORITE_WIDGET_BUTTON_SEED,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(Res.string.first_favorite_widget_add), style = KaigiButtonDefaults.labelStyle)
+                }
+                TextButton(onClick = onLaterClick) {
+                    Text(
+                        text = stringResource(Res.string.first_favorite_not_now),
+                        style = FirstFavoriteDialogDefaults.descriptionStyle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
-        } else {
-            Text(
-                text = stringResource(Res.string.first_favorite_widget_manual),
-                style = FirstFavoriteDialogDefaults.descriptionStyle,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
-        TextButton(onClick = onLaterClick) {
-            Text(
-                text = stringResource(Res.string.first_favorite_not_now),
-                style = FirstFavoriteDialogDefaults.descriptionStyle,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+
+            FirstFavoriteWidgetPinSupport.ManualOnly -> {
+                Text(
+                    text = stringResource(Res.string.first_favorite_widget_manual),
+                    style = FirstFavoriteDialogDefaults.descriptionStyle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+                TextButton(onClick = onLaterClick) {
+                    Text(
+                        text = stringResource(Res.string.first_favorite_not_now),
+                        style = FirstFavoriteDialogDefaults.descriptionStyle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            FirstFavoriteWidgetPinSupport.Unsupported -> {
+                KaigiButton(
+                    onClick = onLaterClick,
+                    seed = FIRST_FAVORITE_WIDGET_BUTTON_SEED,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(text = stringResource(Res.string.first_favorite_widget_ok), style = KaigiButtonDefaults.labelStyle)
+                }
+            }
         }
     }
 }
@@ -117,7 +139,27 @@ private fun FirstFavoriteWidgetScreenPreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         FirstFavoriteWidgetScreen(
-            uiState = FirstFavoriteWidgetScreenUiState(canAddWidget = true, mascot = Mascot.E),
+            uiState = FirstFavoriteWidgetScreenUiState(
+                pinSupport = FirstFavoriteWidgetPinSupport.Requestable,
+                mascot = Mascot.E,
+            ),
+            onAddWidgetClick = {},
+            onLaterClick = {},
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun FirstFavoriteWidgetScreenUnsupportedPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        FirstFavoriteWidgetScreen(
+            uiState = FirstFavoriteWidgetScreenUiState(
+                pinSupport = FirstFavoriteWidgetPinSupport.Unsupported,
+                mascot = Mascot.E,
+            ),
             onAddWidgetClick = {},
             onLaterClick = {},
         )

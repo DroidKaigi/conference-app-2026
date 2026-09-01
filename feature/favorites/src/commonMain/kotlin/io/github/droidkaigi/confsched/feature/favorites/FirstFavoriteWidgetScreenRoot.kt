@@ -14,7 +14,7 @@ fun FirstFavoriteWidgetScreenRoot(
     val pinWidget = rememberFavoritesWidgetPinner()
 
     val uiState = context(screenContext.presenterContext) {
-        firstFavoriteWidgetScreenPresenter(canAddWidget = pinWidget != null, mascot = mascot)
+        firstFavoriteWidgetScreenPresenter(canPinWidget = pinWidget != null, mascot = mascot)
     }
     FirstFavoriteWidgetScreen(
         uiState = uiState,

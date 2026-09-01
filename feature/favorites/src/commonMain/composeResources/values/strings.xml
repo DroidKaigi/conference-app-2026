@@ -16,6 +16,7 @@
     <string name="first_favorite_widget_description">Put it on your home screen to follow the day without opening the app.</string>
     <string name="first_favorite_widget_add">Add the widget</string>
     <string name="first_favorite_widget_manual">Touch and hold the home screen, tap the plus button, and pick this app from the widget list.</string>
+    <string name="first_favorite_widget_ok">OK</string>
     <string name="first_favorite_widget_preview_heading">My favorites</string>
     <string name="first_favorite_widget_preview_session1">Session 1 — Getting back into Compose</string>
     <string name="first_favorite_widget_preview_session2">Session 2 — Kotlin Multiplatform in practice</string>
