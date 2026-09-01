@@ -9,7 +9,9 @@ import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
 import io.github.droidkaigi.confsched.core.designsystem.LocalSketchBaseSeed
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
+import io.github.droidkaigi.confsched.core.ui.ErrorScene
 import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
+import io.github.droidkaigi.confsched.core.ui.LocalErrorSceneOfLaunch
 import io.github.droidkaigi.confsched.core.ui.RemoteImageLoaderEffect
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberDeviceTiltSource
@@ -18,6 +20,7 @@ import soil.query.compose.rememberSubscription
 import kotlin.random.Random
 
 private val appSketchBaseSeed = Random.nextInt()
+private val appErrorScene = ErrorScene.entries.random()
 
 @Composable
 context(appGraph: AppGraph)
@@ -33,6 +36,7 @@ fun KaigiApp() {
 
     CompositionLocalProvider(
         LocalDeviceTiltSource provides rememberDeviceTiltSource(),
+        LocalErrorSceneOfLaunch provides appErrorScene,
         LocalPreviewImageResolver provides uiGraph.previewImageResolver,
         LocalSketchBaseSeed provides appSketchBaseSeed,
     ) {
