@@ -2,15 +2,11 @@ package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
-import androidx.compose.ui.graphics.vector.addPathNodes
-import androidx.compose.ui.unit.dp
 
 internal enum class SceneRole {
     Primary,
@@ -44,40 +40,6 @@ internal class SceneColors(
         SceneRole.PrimaryContainer -> primaryContainer
     }
 }
-
-internal fun sceneVector(
-    name: String,
-    groups: List<List<ScenePath>>,
-    colors: SceneColors,
-): ImageVector = ImageVector.Builder(
-    name = name,
-    defaultWidth = SCENE_FRAME_WIDTH.dp,
-    defaultHeight = SCENE_FRAME_HEIGHT.dp,
-    viewportWidth = SCENE_FRAME_WIDTH,
-    viewportHeight = SCENE_FRAME_HEIGHT,
-).apply {
-    for (group in groups) {
-        for (scenePath in group) {
-            val color = colors.resolve(scenePath.role)
-            if (scenePath.fill) {
-                addPath(
-                    pathData = addPathNodes(scenePath.data),
-                    fill = SolidColor(color),
-                    fillAlpha = scenePath.alpha,
-                )
-            } else {
-                addPath(
-                    pathData = addPathNodes(scenePath.data),
-                    stroke = SolidColor(color),
-                    strokeAlpha = scenePath.alpha,
-                    strokeLineWidth = scenePath.strokeWidth,
-                    strokeLineCap = if (scenePath.roundCap) StrokeCap.Round else StrokeCap.Butt,
-                    strokeLineJoin = if (scenePath.roundJoin) StrokeJoin.Round else StrokeJoin.Miter,
-                )
-            }
-        }
-    }
-}.build()
 
 internal class RenderedScenePath(
     val path: Path,

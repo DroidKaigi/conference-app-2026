@@ -7,24 +7,12 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.StartOffset
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
 
 enum class ErrorScene {
     UnpluggedCable,
@@ -35,29 +23,6 @@ enum class ErrorScene {
 // The design fixes one scene per launch: the app shell draws one at random and provides it here,
 // the way the sketch seed travels, so previews and screenshot tests see the same scene every run.
 val LocalErrorSceneOfLaunch = staticCompositionLocalOf { ErrorScene.UnpluggedCable }
-
-@Composable
-internal fun ErrorSceneArt(
-    scene: ErrorScene,
-    modifier: Modifier = Modifier,
-) {
-    BoxWithConstraints(modifier = modifier) {
-        // The authored frame is drawn FillBounds, which tolerates only a slight aspect drift; a
-        // shorter area would squash the drawing, so it switches to the composed scenery, which
-        // scales uniformly and fills the width it uncovers.
-        val squashed = maxHeight / SCENE_FRAME_HEIGHT.dp <
-            maxWidth / SCENE_FRAME_WIDTH.dp * AUTHORED_FRAME_MIN_VERTICAL_RATIO
-        if (maxWidth < WIDE_SCENE_MIN_WIDTH && !squashed) {
-            when (scene) {
-                ErrorScene.UnpluggedCable -> UnpluggedCableSceneArt(Modifier.fillMaxSize())
-                ErrorScene.Rain -> RainSceneArt(Modifier.fillMaxSize())
-                ErrorScene.Backstage -> BackstageSceneArt(Modifier.fillMaxSize())
-            }
-        } else {
-            WideErrorSceneArt(scene, Modifier.fillMaxSize())
-        }
-    }
-}
 
 @Composable
 internal fun rememberSceneColors(): SceneColors {
@@ -110,134 +75,6 @@ internal fun InfiniteTransition.animateLampSwing(): State<Float> = animateFloat(
     label = "LampSwing",
 )
 
-@Composable
-private fun UnpluggedCableSceneArt(modifier: Modifier = Modifier) {
-    val colors = rememberSceneColors()
-    val background = remember(colors) {
-        sceneVector(
-            name = "ErrorSceneUnpluggedCableBackground",
-            groups = listOf(unpluggedCablePanelPaths, unpluggedCableSubjectPaths),
-            colors = colors,
-        )
-    }
-    val plug = remember(colors) {
-        sceneVector(
-            name = "ErrorSceneUnpluggedCablePlug",
-            groups = listOf(unpluggedCablePlugPaths),
-            colors = colors,
-        )
-    }
-    val transition = rememberInfiniteTransition(label = "UnpluggedCableScene")
-    val bob by transition.animatePlugBob()
-    Box(modifier = modifier) {
-        SceneLayer(background)
-        SceneLayer(
-            vector = plug,
-            modifier = Modifier.graphicsLayer {
-                translationY = bob * PLUG_TRAVEL_FRACTION * size.height
-            },
-        )
-    }
-}
-
-@Composable
-private fun RainSceneArt(modifier: Modifier = Modifier) {
-    val colors = rememberSceneColors()
-    val background = remember(colors) {
-        sceneVector(
-            name = "ErrorSceneRainBackground",
-            groups = listOf(rainPanelPaths, rainSubjectPaths),
-            colors = colors,
-        )
-    }
-    val drops = remember(colors) {
-        rainDropsPhasePaths.mapIndexed { index, paths ->
-            sceneVector(
-                name = "ErrorSceneRainDrops$index",
-                groups = listOf(paths),
-                colors = colors,
-            )
-        }
-    }
-    val transition = rememberInfiniteTransition(label = "RainScene")
-    val falls = listOf(
-        transition.animateRainFall(0),
-        transition.animateRainFall(1),
-        transition.animateRainFall(2),
-    )
-    Box(modifier = modifier) {
-        SceneLayer(background)
-        drops.forEachIndexed { index, vector ->
-            val fall by falls[index]
-            SceneLayer(
-                vector = vector,
-                modifier = Modifier.graphicsLayer {
-                    translationY = fall * DROP_TRAVEL_FRACTION * size.height
-                    alpha = 1f - fall
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun BackstageSceneArt(modifier: Modifier = Modifier) {
-    val colors = rememberSceneColors()
-    val background = remember(colors) {
-        sceneVector(
-            name = "ErrorSceneBackstageBackground",
-            groups = listOf(
-                backstageLeftLegPaths,
-                backstageRightLegPaths,
-                backstageValancePaths,
-                backstageStagePaths,
-            ),
-            colors = colors,
-        )
-    }
-    val lamp = remember(colors) {
-        sceneVector(
-            name = "ErrorSceneBackstageLamp",
-            groups = listOf(backstageLampPaths),
-            colors = colors,
-        )
-    }
-    val transition = rememberInfiniteTransition(label = "BackstageScene")
-    val swing by transition.animateLampSwing()
-    Box(modifier = modifier) {
-        SceneLayer(background)
-        SceneLayer(
-            vector = lamp,
-            modifier = Modifier.graphicsLayer {
-                rotationZ = swing
-                transformOrigin = TransformOrigin(
-                    pivotFractionX = BACKSTAGE_LAMP_PIVOT_FRAME_X / SCENE_FRAME_WIDTH,
-                    pivotFractionY = BACKSTAGE_LAMP_PIVOT_FRAME_Y / SCENE_FRAME_HEIGHT,
-                )
-            },
-        )
-    }
-}
-
-// Every layer shares the full design frame, so stacked layers stay registered under any
-// screen size as long as each fills the same bounds.
-@Composable
-private fun SceneLayer(
-    vector: ImageVector,
-    modifier: Modifier = Modifier,
-) {
-    Image(
-        imageVector = vector,
-        contentDescription = null,
-        contentScale = ContentScale.FillBounds,
-        modifier = modifier.fillMaxSize(),
-    )
-}
-
 internal const val PLUG_TRAVEL_FRACTION = 3f / SCENE_FRAME_HEIGHT
 internal const val DROP_TRAVEL_FRACTION = 24f / SCENE_FRAME_HEIGHT
 private const val LAMP_SWING_DEGREES = 3f
-
-// The design switches to the full-bleed scenery on expanded layouts.
-private val WIDE_SCENE_MIN_WIDTH = 600.dp
-private const val AUTHORED_FRAME_MIN_VERTICAL_RATIO = 0.9f

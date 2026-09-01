@@ -635,7 +635,7 @@ private fun cellsFor(perimeter: Float, wavelength: Float, minimumCells: Int): In
  * both `Float` and `double` hold exactly, divided by a power of two so no rounding
  * enters either.
  */
-internal fun hashNoise(seed: Int, index: Int): Float {
+private fun hashNoise(seed: Int, index: Int): Float {
     var h = seed * SEED_MULTIPLIER xor index * INDEX_MULTIPLIER
     h = (h xor (h ushr 13)) * MIX_MULTIPLIER
     h = h xor (h ushr 16)
