@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -28,17 +24,18 @@ import io.github.droidkaigi.confsched.feature.sessions.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.description
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.show_less
 import io.github.droidkaigi.confsched.feature.sessions.generated.resources.show_more
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailScreenUiState.DescriptionDisplay
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun SessionDescriptionSection(
     description: String,
-    isExpanded: Boolean,
+    descriptionDisplay: DescriptionDisplay,
     seed: Int,
+    onDescriptionTruncationChange: (isTruncated: Boolean) -> Unit,
     onExpansionToggleClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isTruncated by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -50,16 +47,23 @@ internal fun SessionDescriptionSection(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            maxLines = if (isExpanded) Int.MAX_VALUE else SessionDescriptionSectionDefaults.COLLAPSED_LINES,
+            maxLines = if (descriptionDisplay == DescriptionDisplay.Truncatable.Expanded) {
+                Int.MAX_VALUE
+            } else {
+                SessionDescriptionSectionDefaults.COLLAPSED_LINES
+            },
             overflow = TextOverflow.Ellipsis,
-            // Latched: expanding removes the overflow, and without the latch the control that
-            // collapses the text again would go with it.
-            onTextLayout = { result -> isTruncated = isTruncated || result.hasVisualOverflow },
+            onTextLayout = { result -> onDescriptionTruncationChange(result.hasVisualOverflow) },
         )
-        if (isTruncated) {
+        if (descriptionDisplay is DescriptionDisplay.Truncatable) {
             KaigiButton(onClick = onExpansionToggleClick, seed = seed, modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = stringResource(if (isExpanded) Res.string.show_less else Res.string.show_more),
+                    text = stringResource(
+                        when (descriptionDisplay) {
+                            DescriptionDisplay.Truncatable.Expanded -> Res.string.show_less
+                            DescriptionDisplay.Truncatable.Collapsed -> Res.string.show_more
+                        },
+                    ),
                     style = KaigiButtonDefaults.labelStyle,
                 )
             }
@@ -84,7 +88,8 @@ private fun SessionDescriptionSectionPreview(
                 "依存関係の整理やモジュール分割の考え方を説明します。後半では実際のコードを交えながら、" +
                 "テスト戦略やビルド時間の改善など、開発を続けるうえで効いてきた工夫を取り上げます。" +
                 "折りたたみ表示と「もっとみる」の挙動を確かめられるだけの長さを持たせたプレースホルダーの本文です。",
-            isExpanded = false,
+            descriptionDisplay = DescriptionDisplay.Truncatable.Collapsed,
+            onDescriptionTruncationChange = {},
             seed = 630,
             onExpansionToggleClick = {},
             // Framed at phone width so the collapsed sample overflows and the toggle shows.

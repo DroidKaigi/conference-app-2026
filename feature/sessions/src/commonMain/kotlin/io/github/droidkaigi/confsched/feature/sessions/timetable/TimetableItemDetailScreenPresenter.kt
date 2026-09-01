@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.SessionMemoEdit
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetail
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailScreenUiState.DescriptionDisplay
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.toPersistentList
 import soil.query.compose.rememberMutation
@@ -29,14 +30,32 @@ fun timetableItemDetailScreenPresenter(
 ): TimetableItemDetailScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     val memoMutation = rememberMutation(presenterContext.sessionMemoMutationKey)
-    var isDescriptionExpanded by retain { mutableStateOf(false) }
+    var descriptionDisplay by retain { mutableStateOf<DescriptionDisplay>(DescriptionDisplay.Unmeasured) }
     var displayLanguage by retain { mutableStateOf(initialDisplayLanguage) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
             is TimetableItemDetailScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+
             is TimetableItemDetailScreenAction.SaveMemo -> memoMutation.mutateAsync(SessionMemoEdit(detail.item.id, action.text))
-            TimetableItemDetailScreenAction.ToggleDescriptionExpansion -> isDescriptionExpanded = !isDescriptionExpanded
+
+            is TimetableItemDetailScreenAction.UpdateDescriptionTruncation -> {
+                // Expanding lifts the line limit, so a layout measured while expanded always
+                // reports no overflow and carries no verdict about the collapsed text.
+                if (descriptionDisplay != DescriptionDisplay.Truncatable.Expanded) {
+                    descriptionDisplay = if (action.isTruncated) {
+                        DescriptionDisplay.Truncatable.Collapsed
+                    } else {
+                        DescriptionDisplay.NotTruncatable
+                    }
+                }
+            }
+
+            TimetableItemDetailScreenAction.ToggleDescriptionExpansion -> {
+                (descriptionDisplay as? DescriptionDisplay.Truncatable)
+                    ?.let { descriptionDisplay = it.toggled() }
+            }
+
             TimetableItemDetailScreenAction.ToggleDisplayLanguage -> displayLanguage = displayLanguage.toggled()
         }
     }
@@ -65,7 +84,7 @@ fun timetableItemDetailScreenPresenter(
             .map { TimetableItemDetailScreenUiState.SameSlotItem(item = it, isFavorite = it.id in favoriteIds) }
             .toPersistentList(),
         memo = memo,
-        isDescriptionExpanded = isDescriptionExpanded,
+        descriptionDisplay = descriptionDisplay,
         displayLanguage = displayLanguage,
     )
 }

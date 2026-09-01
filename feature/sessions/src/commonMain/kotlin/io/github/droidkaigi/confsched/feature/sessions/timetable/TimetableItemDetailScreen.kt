@@ -51,6 +51,7 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Sessi
 fun TimetableItemDetailScreen(
     uiState: TimetableItemDetailScreenUiState,
     onBookmarkClick: (TimetableItemId) -> Unit,
+    onDescriptionTruncationChange: (isTruncated: Boolean) -> Unit,
     onDescriptionExpansionToggleClick: () -> Unit,
     onDisplayLanguageToggleClick: () -> Unit,
     onMemoChange: (String) -> Unit,
@@ -173,8 +174,9 @@ fun TimetableItemDetailScreen(
             item {
                 SessionDescriptionSection(
                     description = item.description.of(displayLanguage),
-                    isExpanded = uiState.isDescriptionExpanded,
+                    descriptionDisplay = uiState.descriptionDisplay,
                     seed = TimetableItemDetailScreenDefaults.SHOW_MORE_SEED,
+                    onDescriptionTruncationChange = onDescriptionTruncationChange,
                     onExpansionToggleClick = onDescriptionExpansionToggleClick,
                     modifier = Modifier
                         .padding(contentInsets)
@@ -262,6 +264,7 @@ private fun TimetableItemDetailScreenPreview(
         TimetableItemDetailScreen(
             uiState = TimetableItemDetailScreenUiState.fake(isCancelled = false, message = null, displayLanguage = currentDisplayLanguage()),
             onBookmarkClick = {},
+            onDescriptionTruncationChange = {},
             onDescriptionExpansionToggleClick = {},
             onDisplayLanguageToggleClick = {},
             onMemoChange = {},
@@ -284,6 +287,7 @@ private fun TimetableItemDetailScreenCancelledPreview(
         TimetableItemDetailScreen(
             uiState = TimetableItemDetailScreenUiState.fake(isCancelled = true, message = null, displayLanguage = currentDisplayLanguage()),
             onBookmarkClick = {},
+            onDescriptionTruncationChange = {},
             onDescriptionExpansionToggleClick = {},
             onDisplayLanguageToggleClick = {},
             onMemoChange = {},
@@ -313,6 +317,7 @@ private fun TimetableItemDetailScreenMessagePreview(
                 displayLanguage = currentDisplayLanguage(),
             ),
             onBookmarkClick = {},
+            onDescriptionTruncationChange = {},
             onDescriptionExpansionToggleClick = {},
             onDisplayLanguageToggleClick = {},
             onMemoChange = {},

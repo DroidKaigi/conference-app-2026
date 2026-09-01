@@ -13,13 +13,30 @@ data class TimetableItemDetailScreenUiState(
     val isFavorite: Boolean,
     val sameSlotItems: PersistentList<SameSlotItem>,
     val memo: String,
-    val isDescriptionExpanded: Boolean,
+    val descriptionDisplay: DescriptionDisplay,
     val displayLanguage: DisplayLanguage,
 ) {
     data class SameSlotItem(
         val item: TimetableItem,
         val isFavorite: Boolean,
     )
+
+    sealed interface DescriptionDisplay {
+        data object Unmeasured : DescriptionDisplay
+
+        data object NotTruncatable : DescriptionDisplay
+
+        sealed interface Truncatable : DescriptionDisplay {
+            data object Collapsed : Truncatable
+
+            data object Expanded : Truncatable
+
+            fun toggled(): Truncatable = when (this) {
+                Collapsed -> Expanded
+                Expanded -> Collapsed
+            }
+        }
+    }
 
     companion object
 }
@@ -37,7 +54,7 @@ internal fun TimetableItemDetailScreenUiState.Companion.fake(
             .map { TimetableItemDetailScreenUiState.SameSlotItem(item = it, isFavorite = false) }
             .toPersistentList(),
         memo = "",
-        isDescriptionExpanded = false,
+        descriptionDisplay = TimetableItemDetailScreenUiState.DescriptionDisplay.Truncatable.Collapsed,
         displayLanguage = displayLanguage,
     )
 }
