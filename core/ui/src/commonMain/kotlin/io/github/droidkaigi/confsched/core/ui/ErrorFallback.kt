@@ -97,7 +97,6 @@ private fun ErrorFallbackTextZone(
             KaigiButton(
                 onClick = reset,
                 seed = ErrorFallbackDefaults.BUTTON_SEED,
-                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
                     text = stringResource(Res.string.reload),
