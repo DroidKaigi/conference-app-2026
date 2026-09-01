@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,6 +48,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
@@ -112,34 +114,38 @@ fun ProfileCardView(
                         alignment = Alignment.CenterHorizontally,
                     ),
                 ) {
-                    ProfileCardDoodleCanvasView(
+                    ProfileCardDoodleFaceColumn(
+                        showsBack = false,
+                        doodle = frontDraft,
                         nickName = uiState.nickName,
                         occupation = uiState.occupation,
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
                         avatarImage = uiState.avatarImage,
-                        showsBack = false,
-                        doodle = frontDraft,
                         penSize = penSize,
                         selectedInk = selectedInk,
                         outlined = outlined,
                         onStrokeAdd = { frontDraft = frontDraft.withStroke(it) },
+                        onUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
+                        onClearClick = { frontDraft = Doodle.Empty },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
-                    ProfileCardDoodleCanvasView(
+                    ProfileCardDoodleFaceColumn(
+                        showsBack = true,
+                        doodle = backDraft,
                         nickName = uiState.nickName,
                         occupation = uiState.occupation,
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
                         avatarImage = uiState.avatarImage,
-                        showsBack = true,
-                        doodle = backDraft,
                         penSize = penSize,
                         selectedInk = selectedInk,
                         outlined = outlined,
                         onStrokeAdd = { backDraft = backDraft.withStroke(it) },
+                        onUndoClick = { backDraft = backDraft.withoutLastStroke() },
+                        onClearClick = { backDraft = Doodle.Empty },
                         modifier = Modifier.fillMaxHeight().weight(1f),
                     )
                 }
@@ -281,11 +287,60 @@ private fun Doodle.withStroke(stroke: DoodleStroke): Doodle = Doodle(strokes = s
 
 private fun Doodle.withoutLastStroke(): Doodle = Doodle(strokes = strokes.dropLast(1))
 
+@Composable
+private fun ProfileCardDoodleFaceColumn(
+    showsBack: Boolean,
+    doodle: Doodle,
+    nickName: String,
+    occupation: String,
+    link: String,
+    mascot: Mascot,
+    sketchiness: Sketchiness,
+    avatarImage: AvatarImage?,
+    penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
+    outlined: Boolean,
+    onStrokeAdd: (DoodleStroke) -> Unit,
+    onUndoClick: () -> Unit,
+    onClearClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.faceControlsSpacing),
+    ) {
+        ProfileCardDoodleCanvasView(
+            nickName = nickName,
+            occupation = occupation,
+            link = link,
+            mascot = mascot,
+            sketchiness = sketchiness,
+            avatarImage = avatarImage,
+            showsBack = showsBack,
+            doodle = doodle,
+            penSize = penSize,
+            selectedInk = selectedInk,
+            outlined = outlined,
+            onStrokeAdd = onStrokeAdd,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+        )
+        DoodleStrokeControlsRow(
+            canEdit = doodle.strokes.isNotEmpty(),
+            onUndoClick = onUndoClick,
+            onClearClick = onClearClick,
+            modifier = Modifier.widthIn(max = ProfileCardViewDefaults.faceControlsMaxWidth).fillMaxWidth(),
+        )
+    }
+}
+
 private object ProfileCardViewDefaults {
     val flipDurationMillis = 500
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
+    val faceControlsSpacing = 12.dp
+    val faceControlsMaxWidth = 360.dp
     val controlsDurationMillis = 220
 
     /** The share of the block's own height the controls slide in over. */

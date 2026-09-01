@@ -36,7 +36,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.do
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * The controls a card being drawn on offers. [sideBySide] says both faces are on screen at once, so
+ * The controls a card being drawn on offers. [sideBySide] says both faces are on screen at once with their own stroke controls under each canvas, so
  * each face takes its own Undo and Clear and there is no face to switch to.
  */
 @Composable
@@ -74,25 +74,12 @@ internal fun ProfileCardDoodleControlsSection(
         )
         DoodleOutlineToggle(outlined = outlined, onOutlinedChange = onOutlinedChange)
         DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(DoodleStrokeControlsSpacing),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (sideBySide) {
-                DoodleStrokeControlsRow(
-                    canEdit = canEditFront,
-                    onUndoClick = onFrontUndoClick,
-                    onClearClick = onFrontClearClick,
-                    modifier = Modifier.weight(1f),
-                )
-                DoodleStrokeControlsRow(
-                    canEdit = canEditBack,
-                    onUndoClick = onBackUndoClick,
-                    onClearClick = onBackClearClick,
-                    modifier = Modifier.weight(1f),
-                )
-            } else {
+        if (!sideBySide) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(DoodleStrokeControlsSpacing),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 DoodleFlipButton(isShowingBack = isShowingBack, onClick = onFlipClick)
                 DoodleStrokeControlsRow(
                     canEdit = if (isShowingBack) canEditBack else canEditFront,
