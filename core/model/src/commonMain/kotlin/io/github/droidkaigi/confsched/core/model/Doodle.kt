@@ -51,6 +51,9 @@ enum class DoodleInk {
 }
 
 /** The widths a stroke can be drawn at, offered as the pens a doodle is drawn with. */
+// On Kotlin/Wasm an enum without the annotation has no serializer, and rememberSerializable
+// throws when this state is first saved.
+@Serializable
 enum class DoodlePenSize(val width: Float) {
     Thin(1.5f),
     Normal(2.5f),
