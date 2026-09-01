@@ -52,7 +52,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.compose.resources.pluralStringResource
 import kotlin.time.Instant
 
-const val SEARCH_RESULT_SECTION_COUNT_TEST_TAG = "SearchResultSectionCountTestTag"
+internal const val SEARCH_RESULT_SECTION_COUNT_TEST_TAG = "SearchResultSectionCountTestTag"
 
 @Composable
 internal fun SearchResultSection(

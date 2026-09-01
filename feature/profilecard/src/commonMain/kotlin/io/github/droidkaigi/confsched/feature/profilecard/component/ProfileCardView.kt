@@ -8,10 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -47,6 +50,9 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ed
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+
+internal const val PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG = "ProfileCardViewShareButtonTestTag"
+internal const val PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG = "ProfileCardViewEditButtonTestTag"
 
 @Composable
 fun ProfileCardView(
@@ -172,7 +178,9 @@ private fun ProfileCardActionsSection(
             onClick = onShareClick,
             seed = ProfileCardViewDefaults.shareButtonSeed,
             enabled = !isSharing,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG),
         ) {
             Icon(
                 imageVector = KaigiIcons.Default.Share,
@@ -180,6 +188,9 @@ private fun ProfileCardActionsSection(
                 modifier = Modifier.size(KaigiButtonDefaults.iconSize),
             )
             Text(stringResource(Res.string.share_button), style = ProfileCardTextStyles.accent)
+            // Balances the leading icon: the row spaces both sides of the label alike, so a
+            // spacer of the icon's width lands the label on the button's center.
+            Spacer(modifier = Modifier.width(KaigiButtonDefaults.iconSize))
         }
         Text(
             text = stringResource(Res.string.edit_button),
@@ -188,6 +199,7 @@ private fun ProfileCardActionsSection(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
                 .clickable(role = Role.Button, onClick = onEditClick)
                 // The design sets the label straight under the button with no chrome of its own;
                 // the padding is what the row is spaced by.

@@ -41,12 +41,12 @@ import org.jetbrains.compose.resources.stringResource
 private const val PRIZE_SEED_BASE = 210
 private const val PRIZE_SEED_STRIDE = 10
 
-const val STAMP_COLLECTING_INTRODUCING_TEST_TAG = "StampCollectingIntroducingTestTag"
-const val STAMP_COLLECTING_EXCHANGE_PLACE_TITLE_TEST_TAG = "StampCollectingExchangePlaceTitleTestTag"
-const val STAMP_COLLECTING_EXHIBITION_AREA_TEST_TAG = "StampCollectingExhibitionAreaTestTag"
-const val STAMP_COLLECTING_EXCHANGE_HOURS_TITLE_TEST_TAG = "StampCollectingExchangeHoursTitleTestTag"
-const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY1_TEST_TAG = "StampCollectingExchangeHoursDay1TestTag"
-const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY2_TEST_TAG = "StampCollectingExchangeHoursDay2TestTag"
+internal const val STAMP_COLLECTING_INTRODUCING_TEST_TAG = "StampCollectingIntroducingTestTag"
+internal const val STAMP_COLLECTING_EXCHANGE_PLACE_TITLE_TEST_TAG = "StampCollectingExchangePlaceTitleTestTag"
+internal const val STAMP_COLLECTING_EXHIBITION_AREA_TEST_TAG = "StampCollectingExhibitionAreaTestTag"
+internal const val STAMP_COLLECTING_EXCHANGE_HOURS_TITLE_TEST_TAG = "StampCollectingExchangeHoursTitleTestTag"
+internal const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY1_TEST_TAG = "StampCollectingExchangeHoursDay1TestTag"
+internal const val STAMP_COLLECTING_EXCHANGE_HOURS_DAY2_TEST_TAG = "StampCollectingExchangeHoursDay2TestTag"
 
 @Composable
 fun StampCollectingScreen(

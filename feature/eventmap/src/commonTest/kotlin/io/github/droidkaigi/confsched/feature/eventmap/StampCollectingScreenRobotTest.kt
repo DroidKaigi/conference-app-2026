@@ -12,13 +12,15 @@ import kotlin.test.Test
 @OptIn(ExperimentalTestApi::class)
 class StampCollectingScreenRobotTest : RobotTest() {
 
+    private val prizes = Prizes.fake()
+
     @Test
     fun stamp_collecting_screen_behaviour() = runRobotTest(
         robotFactory = { StampCollectingScreenRobot(this) },
     ) {
         describe("when the screen opens") {
             doIt {
-                setupPrizes(Prizes.fake())
+                setupPrizes(prizes)
                 setupContent()
             }
             itShould("show where and when a prize can be claimed") {
@@ -31,7 +33,7 @@ class StampCollectingScreenRobotTest : RobotTest() {
                 }
                 itShould("list the first prize group") {
                     checkPrizeGroupDisplayed(PrizeGroup.A)
-                    checkPrizeDisplayed(PrizeId("prize-1"))
+                    checkPrizeDisplayed(prizes.items.first())
                 }
             }
             describe("and a prize card is tapped") {
@@ -58,7 +60,7 @@ class StampCollectingScreenRobotTest : RobotTest() {
                 setupOverlayContent(initialPage = 1)
             }
             itShould("show that prize with its group and its position") {
-                checkPrizePageDisplayed(PrizeId("prize-2"))
+                checkPrizePageDisplayed(prizes.items[1])
                 checkTextDisplayed("2 / 8")
             }
             describe("and close is tapped") {

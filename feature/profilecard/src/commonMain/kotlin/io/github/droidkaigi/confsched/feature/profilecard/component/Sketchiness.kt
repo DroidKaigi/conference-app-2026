@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -52,6 +53,8 @@ private val Sketchiness.drawableResource: DrawableResource
         Sketchiness.Playful -> Res.drawable.sketchiness_playful
     }
 
+internal fun sketchinessOptionTestTag(sketchiness: Sketchiness) = "SketchinessOption:${sketchiness.name}"
+
 /**
  * A row of independent [Sketchiness] chips, each its own rounded-rect outline with a gap to its
  * neighbours, rather than segments sharing one continuous pill border.
@@ -71,7 +74,9 @@ fun SketchinessPicker(
                 sketchiness = sketchiness,
                 selected = sketchiness == selectedSketchiness,
                 onClick = { onSketchinessClick(sketchiness) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag(sketchinessOptionTestTag(sketchiness)),
             )
         }
     }

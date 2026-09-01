@@ -32,7 +32,7 @@ private const val PRIZE_MIN_COLUMNS = 2
 private val PrizeColumnMinWidth = 158.dp
 private val PrizeSpacing = 12.dp
 
-fun prizeGroupSectionTestTag(group: PrizeGroup) = "PrizeGroupSection:${group.name}"
+internal fun prizeGroupSectionTestTag(group: PrizeGroup) = "PrizeGroupSection:${group.name}"
 
 @Composable
 internal fun PrizeGroupSection(
@@ -59,12 +59,13 @@ internal fun PrizeGroupSection(
                 ) {
                     for ((index, prize) in rowPrizes) {
                         PrizeCardItem(
-                            id = prize.id,
                             name = prize.name.current(),
                             imageUrl = prize.imageUrl,
                             seed = seed + index,
                             onClick = { onPrizeClick(prize) },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag(prizeCardItemTestTag(prize.id)),
                         )
                     }
                     repeat(columns - rowPrizes.size) {
