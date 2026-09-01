@@ -25,7 +25,7 @@ fun TimetableItemDetailScreenRoot(
     onOpenUrl: (String) -> Unit,
     onAddCalendarEvent: (CalendarEvent) -> Unit,
     onShareText: (String) -> Unit,
-    onFavoriteAdded: suspend (SessionRoom) -> Unit,
+    onFavoriteAdded: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(

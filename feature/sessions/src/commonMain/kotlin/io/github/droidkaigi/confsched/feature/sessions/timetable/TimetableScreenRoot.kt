@@ -19,7 +19,7 @@ context(screenContext: TimetableScreenContext)
 fun TimetableScreenRoot(
     onNavigateToDetail: (TimetableItemId) -> Unit,
     onNavigateToSearch: () -> Unit,
-    onFavoriteAdded: suspend (SessionRoom) -> Unit,
+    onFavoriteAdded: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),

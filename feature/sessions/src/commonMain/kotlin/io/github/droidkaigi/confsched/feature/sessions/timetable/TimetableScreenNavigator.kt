@@ -9,5 +9,5 @@ interface TimetableScreenNavigator : Navigator {
 
     fun openSearch()
 
-    suspend fun offerFirstFavoriteGuidance(room: SessionRoom)
+    fun offerFirstFavoriteGuidance(room: SessionRoom)
 }

@@ -16,7 +16,7 @@ import soil.query.compose.rememberSubscription
 context(screenContext: FavoritesScreenContext)
 fun FavoritesScreenRoot(
     onNavigateToDetail: (TimetableItemId) -> Unit,
-    onFavoriteAdded: suspend (SessionRoom) -> Unit,
+    onFavoriteAdded: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),

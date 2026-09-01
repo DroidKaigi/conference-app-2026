@@ -10,7 +10,11 @@ import io.github.droidkaigi.confsched.core.data.FirstFavoriteGuidanceStore
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.mascot
 import io.github.droidkaigi.confsched.feature.favorites.FirstFavoriteNotificationNavKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Offers the guidance that follows an added favorite, on the platforms that can act on it: the
@@ -22,9 +26,14 @@ class FirstFavoriteGuidance(
     private val appNavigator: AppNavigator,
     private val firstFavoriteGuidanceStore: FirstFavoriteGuidanceStore,
 ) {
-    suspend fun offer(room: SessionRoom) {
+    // The navigator mutates Compose navigation state, so the flag read resumes on Main.
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    fun offer(room: SessionRoom) {
         if (currentPlatform != TargetPlatform.Android && currentPlatform != TargetPlatform.Ios) return
-        if (firstFavoriteGuidanceStore.consumed().first()) return
-        appNavigator.goTo(FirstFavoriteNotificationNavKey(room.mascot))
+        scope.launch {
+            if (firstFavoriteGuidanceStore.consumed().first()) return@launch
+            appNavigator.goTo(FirstFavoriteNotificationNavKey(room.mascot))
+        }
     }
 }

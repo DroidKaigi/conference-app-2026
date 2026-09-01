@@ -27,7 +27,7 @@ class DefaultSearchScreenNavigator(
         appNavigator.goTo(TimetableItemDetailNavKey(id))
     }
 
-    override suspend fun offerFirstFavoriteGuidance(room: SessionRoom) {
+    override fun offerFirstFavoriteGuidance(room: SessionRoom) {
         firstFavoriteGuidance.offer(room)
     }
 }
