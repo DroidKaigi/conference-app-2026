@@ -8,6 +8,7 @@ import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableIdsSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
+import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceConsumedSubscriptionKey
 import io.github.droidkaigi.confsched.core.model.SearchScreenScope
 import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 
@@ -23,6 +24,7 @@ class SearchPresenterContext(
 class SearchScreenContext(
     val timetableQueryKey: TimetableQueryKey,
     val favoriteTimetableIdsSubscriptionKey: FavoriteTimetableIdsSubscriptionKey,
+    val firstFavoriteGuidanceConsumedSubscriptionKey: FirstFavoriteGuidanceConsumedSubscriptionKey,
     override val logger: KaigiLogger,
     val presenterContext: SearchPresenterContext,
 ) : ScreenContext

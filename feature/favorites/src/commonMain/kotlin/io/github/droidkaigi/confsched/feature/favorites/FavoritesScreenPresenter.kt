@@ -23,6 +23,7 @@ context(presenterContext: FavoritesPresenterContext)
 fun favoritesScreenPresenter(
     screenChannel: ScreenChannel<FavoritesScreenAction, FavoritesScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): FavoritesScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
@@ -48,8 +49,8 @@ fun favoritesScreenPresenter(
 
     MutationSuccessEffect(favoriteMutation) { added ->
         val addedId = toggledFavoriteId.takeIf { added }
-        if (addedId != null) {
-            screenChannel.emit(FavoritesScreenActionResult.FavoriteAdded(timetable.roomOf(addedId)))
+        if (addedId != null && offersFirstFavoriteGuidance) {
+            screenChannel.emit(FavoritesScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(addedId)))
         }
         favoriteMutation.reset()
     }

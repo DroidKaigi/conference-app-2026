@@ -33,7 +33,7 @@ class TimetableNavEntryProvider(
                 TimetableScreenRoot(
                     onNavigateToDetail = graph.screenNavigator::openSessionDetail,
                     onNavigateToSearch = graph.screenNavigator::openSearch,
-                    onFavoriteAdded = graph.screenNavigator::offerFirstFavoriteGuidance,
+                    onOfferFirstFavoriteGuidance = graph.screenNavigator::openFirstFavoriteGuidance,
                 )
             }
         }

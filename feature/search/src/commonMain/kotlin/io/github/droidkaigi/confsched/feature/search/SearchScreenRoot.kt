@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.common.shouldOfferFirstFavoriteGuidance
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
@@ -19,12 +20,13 @@ context(screenContext: SearchScreenContext)
 fun SearchScreenRoot(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (TimetableItemId) -> Unit,
-    onFavoriteAdded: (SessionRoom) -> Unit,
+    onOfferFirstFavoriteGuidance: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
-    ) { timetable, favoriteIds ->
+        state3 = rememberSubscription(screenContext.firstFavoriteGuidanceConsumedSubscriptionKey),
+    ) { timetable, favoriteIds, guidanceConsumed ->
         val screenChannel = retainScreenChannel<SearchScreenAction, SearchScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
@@ -34,10 +36,11 @@ fun SearchScreenRoot(
             when (result) {
                 is SearchScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
 
-                is SearchScreenActionResult.FavoriteAdded -> {
+                is SearchScreenActionResult.FavoriteAdded ->
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                    onFavoriteAdded(result.room)
-                }
+
+                is SearchScreenActionResult.OfferFirstFavoriteGuidance ->
+                    onOfferFirstFavoriteGuidance(result.room)
             }
         }
 
@@ -45,6 +48,7 @@ fun SearchScreenRoot(
             searchScreenPresenter(
                 screenChannel = screenChannel,
                 timetable = timetable.copy(bookmarks = favoriteIds),
+                offersFirstFavoriteGuidance = shouldOfferFirstFavoriteGuidance(guidanceConsumed),
             )
         }
 

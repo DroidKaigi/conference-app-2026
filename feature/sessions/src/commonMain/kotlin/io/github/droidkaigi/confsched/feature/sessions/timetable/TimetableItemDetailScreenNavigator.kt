@@ -7,5 +7,5 @@ import io.github.droidkaigi.confsched.core.model.TimetableItemId
 interface TimetableItemDetailScreenNavigator : Navigator {
     fun openSessionDetail(id: TimetableItemId)
 
-    fun offerFirstFavoriteGuidance(room: SessionRoom)
+    fun openFirstFavoriteGuidance(room: SessionRoom)
 }

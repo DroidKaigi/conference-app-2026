@@ -6,5 +6,7 @@ import io.github.droidkaigi.confsched.core.model.SessionRoom
 sealed interface TimetableScreenActionResult {
     data class ShowMessage(val message: UserMessage) : TimetableScreenActionResult
 
-    data class FavoriteAdded(val room: SessionRoom) : TimetableScreenActionResult
+    data object FavoriteAdded : TimetableScreenActionResult
+
+    data class OfferFirstFavoriteGuidance(val room: SessionRoom) : TimetableScreenActionResult
 }

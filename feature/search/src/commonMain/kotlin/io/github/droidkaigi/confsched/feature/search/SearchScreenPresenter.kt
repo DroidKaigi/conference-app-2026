@@ -26,6 +26,7 @@ context(presenterContext: SearchPresenterContext)
 fun searchScreenPresenter(
     screenChannel: ScreenChannel<SearchScreenAction, SearchScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): SearchScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
@@ -62,7 +63,10 @@ fun searchScreenPresenter(
     MutationSuccessEffect(favoriteMutation) { added ->
         val addedId = toggledFavoriteId.takeIf { added }
         if (addedId != null) {
-            screenChannel.emit(SearchScreenActionResult.FavoriteAdded(timetable.roomOf(addedId)))
+            screenChannel.emit(SearchScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(SearchScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(addedId)))
+            }
         }
         favoriteMutation.reset()
     }

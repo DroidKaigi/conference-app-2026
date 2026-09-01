@@ -23,7 +23,7 @@ class SearchNavEntryProvider(
                 SearchScreenRoot(
                     onNavigateBack = { appNavigator.back(origin = key) },
                     onNavigateToDetail = graph.screenNavigator::openSessionDetail,
-                    onFavoriteAdded = graph.screenNavigator::offerFirstFavoriteGuidance,
+                    onOfferFirstFavoriteGuidance = graph.screenNavigator::openFirstFavoriteGuidance,
                 )
             }
         }

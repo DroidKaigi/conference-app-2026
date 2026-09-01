@@ -33,7 +33,7 @@ class FavoritesScreenPresenterTest {
     fun initial_state_lists_only_favorited_items_grouped_by_day_and_time() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(null, initial.selectedDayFilter)
@@ -58,7 +58,7 @@ class FavoritesScreenPresenterTest {
     fun selecting_a_day_filter_narrows_the_list_to_that_day() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -77,7 +77,7 @@ class FavoritesScreenPresenterTest {
     fun bookmark_action_forwards_the_id_to_the_mutation() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -91,7 +91,7 @@ class FavoritesScreenPresenterTest {
         graph.favoriteMutationKey.failWith(IllegalStateException("boom"))
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
@@ -99,6 +99,41 @@ class FavoritesScreenPresenterTest {
             val result = results.awaitItem()
             assertIs<FavoritesScreenActionResult.ShowMessage>(result)
             assertIs<AppError.UnknownException>(result.message.error)
+        }
+    }
+
+    @Test
+    fun bookmark_addition_offers_the_first_favorite_guidance_while_it_is_pending() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = true)
+            },
+        ) {
+            uiStates.awaitItem()
+            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
+
+            assertEquals(
+                FavoritesScreenActionResult.OfferFirstFavoriteGuidance(SessionRoom.NARWHAL),
+                results.awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun bookmark_addition_does_not_offer_the_first_favorite_guidance_once_it_was_answered() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                favoritesScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false)
+            },
+        ) {
+            uiStates.awaitItem()
+            send(FavoritesScreenAction.Bookmark(TimetableItemId("d1a")))
+
+            results.expectNoEvents()
         }
     }
 }

@@ -56,7 +56,7 @@ class TimetableScreenPresenterTest {
     fun initial_state_and_actions_drive_state_mutation_and_channel() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initial = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day1, initial.day)
@@ -89,7 +89,7 @@ class TimetableScreenPresenterTest {
         )
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = concurrent) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = concurrent, offersFirstFavoriteGuidance = false) },
         ) {
             val slots = uiStates.awaitItem().selectedListSection.timeSlots
             assertEquals(listOf("10:00" to "10:40", "11:00" to "11:40"), slots.map { it.startsAt to it.endsAt })
@@ -103,7 +103,7 @@ class TimetableScreenPresenterTest {
         graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             assertEquals(listOf("d2a"), uiStates.awaitDay(DroidKaigi2026Day.Day2).timetableGridSection.sessions.map { it.id.value })
         }
@@ -114,7 +114,7 @@ class TimetableScreenPresenterTest {
         graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitDay(DroidKaigi2026Day.Day2)
 
@@ -131,7 +131,7 @@ class TimetableScreenPresenterTest {
         graph.dayRequestStore.request(DroidKaigi2026Day.Day2)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitDay(DroidKaigi2026Day.Day2)
 
@@ -145,7 +145,7 @@ class TimetableScreenPresenterTest {
     fun toggling_view_mode_switches_between_list_and_grid() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
 
@@ -162,7 +162,7 @@ class TimetableScreenPresenterTest {
         graph.favoriteMutationKey.failWith(IllegalStateException("boom"))
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(TimetableScreenAction.Bookmark(TimetableItemId("d1a")))
@@ -178,13 +178,13 @@ class TimetableScreenPresenterTest {
         graph.favoriteMutationKey.complete(true)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(TimetableScreenAction.Bookmark(TimetableItemId("d1b")))
 
             val result = results.awaitItem()
-            assertEquals(TimetableScreenActionResult.FavoriteAdded(SessionRoom.OTTER), result)
+            assertEquals(TimetableScreenActionResult.FavoriteAdded, result)
         }
     }
 
@@ -193,7 +193,7 @@ class TimetableScreenPresenterTest {
         graph.favoriteMutationKey.complete(false)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false) },
         ) {
             uiStates.awaitItem()
             send(TimetableScreenAction.Bookmark(TimetableItemId("d1a")))
@@ -244,7 +244,7 @@ class TimetableScreenPresenterTest {
 
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initialState = uiStates.awaitItem()
             assertEquals(1.hours + 30.minutes, initialState.selectedListSection.countdownBannerUiState?.remainingDuration)
@@ -282,7 +282,7 @@ class TimetableScreenPresenterTest {
         graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initialState = uiStates.awaitItem()
             assertEquals(null, initialState.selectedListSection.countdownBannerUiState)
@@ -302,7 +302,7 @@ class TimetableScreenPresenterTest {
         graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
+            presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable, offersFirstFavoriteGuidance = false) },
         ) {
             val initialState = uiStates.awaitItem()
             val bannerState = initialState.selectedListSection.countdownBannerUiState
@@ -323,6 +323,43 @@ class TimetableScreenPresenterTest {
         while (true) {
             val state = awaitItem()
             if (state.day == day) return state
+        }
+    }
+
+    @Test
+    fun bookmark_addition_offers_the_first_favorite_guidance_while_it_is_pending() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = true)
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            assertEquals(TimetableScreenActionResult.FavoriteAdded, results.awaitItem())
+            assertEquals(
+                TimetableScreenActionResult.OfferFirstFavoriteGuidance(SessionRoom.OTTER),
+                results.awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun bookmark_addition_does_not_offer_the_first_favorite_guidance_once_it_was_answered() {
+        graph.favoriteMutationKey.complete(true)
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel ->
+                timetableScreenPresenter(screenChannel = channel, timetable = sampleTimetable, offersFirstFavoriteGuidance = false)
+            },
+        ) {
+            uiStates.awaitItem()
+            send(TimetableScreenAction.Bookmark(TimetableItemId("d1b")))
+
+            assertEquals(TimetableScreenActionResult.FavoriteAdded, results.awaitItem())
+            results.expectNoEvents()
         }
     }
 }

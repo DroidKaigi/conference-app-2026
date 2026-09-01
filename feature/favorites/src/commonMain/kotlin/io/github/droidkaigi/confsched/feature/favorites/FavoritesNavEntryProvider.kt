@@ -21,7 +21,7 @@ class FavoritesNavEntryProvider(
             context(graph.screenContext) {
                 FavoritesScreenRoot(
                     onNavigateToDetail = graph.screenNavigator::openSessionDetail,
-                    onFavoriteAdded = graph.screenNavigator::offerFirstFavoriteGuidance,
+                    onOfferFirstFavoriteGuidance = graph.screenNavigator::openFirstFavoriteGuidance,
                 )
             }
         }

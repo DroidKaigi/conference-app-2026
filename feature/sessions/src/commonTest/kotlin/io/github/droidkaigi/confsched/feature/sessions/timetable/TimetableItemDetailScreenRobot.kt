@@ -42,7 +42,7 @@ class TimetableItemDetailScreenRobot(
                     onOpenUrl = {},
                     onAddCalendarEvent = {},
                     onShareText = {},
-                    onFavoriteAdded = {},
+                    onOfferFirstFavoriteGuidance = {},
                 )
             }
         }

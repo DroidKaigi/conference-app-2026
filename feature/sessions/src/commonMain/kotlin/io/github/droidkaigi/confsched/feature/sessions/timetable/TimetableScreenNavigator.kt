@@ -9,5 +9,5 @@ interface TimetableScreenNavigator : Navigator {
 
     fun openSearch()
 
-    fun offerFirstFavoriteGuidance(room: SessionRoom)
+    fun openFirstFavoriteGuidance(room: SessionRoom)
 }

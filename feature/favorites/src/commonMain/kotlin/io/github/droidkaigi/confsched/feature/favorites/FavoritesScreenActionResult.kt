@@ -6,5 +6,5 @@ import io.github.droidkaigi.confsched.core.model.SessionRoom
 sealed interface FavoritesScreenActionResult {
     data class ShowMessage(val message: UserMessage) : FavoritesScreenActionResult
 
-    data class FavoriteAdded(val room: SessionRoom) : FavoritesScreenActionResult
+    data class OfferFirstFavoriteGuidance(val room: SessionRoom) : FavoritesScreenActionResult
 }

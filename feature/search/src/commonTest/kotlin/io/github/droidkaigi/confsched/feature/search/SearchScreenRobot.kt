@@ -62,7 +62,7 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
                 SearchScreenRoot(
                     onNavigateBack = { backClicked = true },
                     onNavigateToDetail = { openedSessionId = it },
-                    onFavoriteAdded = {},
+                    onOfferFirstFavoriteGuidance = {},
                 )
             }
         }

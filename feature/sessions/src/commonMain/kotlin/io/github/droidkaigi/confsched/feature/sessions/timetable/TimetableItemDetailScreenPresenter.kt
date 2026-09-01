@@ -27,6 +27,7 @@ fun timetableItemDetailScreenPresenter(
     favoriteIds: PersistentSet<TimetableItemId>,
     memo: String,
     initialDisplayLanguage: DisplayLanguage,
+    offersFirstFavoriteGuidance: Boolean,
 ): TimetableItemDetailScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     val memoMutation = rememberMutation(presenterContext.sessionMemoMutationKey)
@@ -58,7 +59,10 @@ fun timetableItemDetailScreenPresenter(
     MutationSuccessEffect(favoriteMutation) { added ->
         val addedId = toggledFavoriteId.takeIf { added }
         if (addedId != null) {
-            screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded(detail.roomOf(addedId)))
+            screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance(detail.roomOf(addedId)))
+            }
         }
         favoriteMutation.reset()
     }
