@@ -1,5 +1,11 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -37,6 +44,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -90,6 +98,9 @@ private fun requireWobble(roughness: Dp, tremor: Dp, sweepWavelength: Dp, tremor
     require(sweepWavelength > 0.dp) { "sweepWavelength must be positive, was $sweepWavelength" }
     require(tremorWavelength > 0.dp) { "tremorWavelength must be positive, was $tremorWavelength" }
 }
+
+// How long one wavelength of the in-progress ripple takes to travel down the line.
+private const val WAVY_PROGRESS_WAVELENGTH_MILLIS = 1500
 
 private val DefaultRoughness = 1.dp
 private val DefaultTremor = 0.3.dp
@@ -296,79 +307,93 @@ fun SketchVerticalWavyProgressLine(
     require(progress in 0f..1f) { "progress must be between 0.0 and 1.0, was $progress" }
 
     val combinedSeed = combineSketchSeed(seed)
+    val cycle = with(LocalDensity.current) { wavelength.toPx() } * WAVY_NOISE_CELLS
+    // Counting down keeps the figure travelling with the line and leaves phase `0` — the static
+    // line — as the frame the loop ends on.
+    val phase by rememberInfiniteTransition(label = "wavyProgressLine").animateFloat(
+        initialValue = cycle,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = WAVY_PROGRESS_WAVELENGTH_MILLIS * WAVY_NOISE_CELLS,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Restart,
+        ),
+        label = "wavyProgressLinePhase",
+    )
 
     Box(
         modifier = modifier
             .width(amplitude * (1f + noiseAmount) * 2 + maxOf(passedThickness, upcomingThickness))
-            .drawWithCache {
+            .drawBehind {
+                val currentPhase = phase
                 val path = sketchVerticalWavyLinePath(
                     height = size.height,
                     centerX = size.width / 2f,
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
-                    phase = 0f,
+                    phase = currentPhase,
                     seed = combinedSeed,
                 )
 
-                onDrawBehind {
-                    val progressY = size.height * progress
-                    val centerX = size.width / 2f
+                val progressY = size.height * progress
+                val centerX = size.width / 2f
 
-                    // Buffer to prevent clipping the StrokeCap.Round at the very top and bottom
-                    val buffer = 50.dp.toPx()
+                // Buffer to prevent clipping the StrokeCap.Round at the very top and bottom
+                val buffer = 50.dp.toPx()
 
-                    // Passed line (thick)
-                    if (progress > 0f) {
-                        clipRect(
-                            left = -buffer,
-                            top = -buffer, // Extend bounds to preserve the top rounded cap
-                            right = size.width + buffer,
-                            bottom = progressY,
-                        ) {
-                            drawPath(
-                                path = path,
-                                color = color,
-                                style = Stroke(width = passedThickness.toPx(), cap = StrokeCap.Round),
-                            )
-                        }
+                // Passed line (thick)
+                if (progress > 0f) {
+                    clipRect(
+                        left = -buffer,
+                        top = -buffer, // Extend bounds to preserve the top rounded cap
+                        right = size.width + buffer,
+                        bottom = progressY,
+                    ) {
+                        drawPath(
+                            path = path,
+                            color = color,
+                            style = Stroke(width = passedThickness.toPx(), cap = StrokeCap.Round),
+                        )
                     }
-
-                    // Upcoming line (thin)
-                    if (progress < 1f) {
-                        clipRect(
-                            left = -buffer,
-                            top = progressY,
-                            right = size.width + buffer,
-                            bottom = size.height + buffer, // Extend bounds to preserve the bottom rounded cap
-                        ) {
-                            drawPath(
-                                path = path,
-                                color = color,
-                                style = Stroke(width = upcomingThickness.toPx(), cap = StrokeCap.Round),
-                            )
-                        }
-                    }
-
-                    // Calculate the exact X-coordinate for the dot
-                    val dotRadius = 3.dp.toPx()
-                    val dotX = sketchVerticalWavyLineXAt(
-                        y = progressY,
-                        centerX = centerX,
-                        amplitude = amplitude,
-                        wavelength = wavelength,
-                        noiseAmount = noiseAmount,
-                        phase = 0f,
-                        seed = combinedSeed,
-                    )
-
-                    // Draw the wobbly dot as a perfect circle covering the flat clipped seam
-                    drawCircle(
-                        color = color,
-                        radius = dotRadius,
-                        center = Offset(x = dotX, y = progressY),
-                    )
                 }
+
+                // Upcoming line (thin)
+                if (progress < 1f) {
+                    clipRect(
+                        left = -buffer,
+                        top = progressY,
+                        right = size.width + buffer,
+                        bottom = size.height + buffer, // Extend bounds to preserve the bottom rounded cap
+                    ) {
+                        drawPath(
+                            path = path,
+                            color = color,
+                            style = Stroke(width = upcomingThickness.toPx(), cap = StrokeCap.Round),
+                        )
+                    }
+                }
+
+                // Calculate the exact X-coordinate for the dot
+                val dotRadius = 3.dp.toPx()
+                val dotX = sketchVerticalWavyLineXAt(
+                    y = progressY,
+                    centerX = centerX,
+                    amplitude = amplitude,
+                    wavelength = wavelength,
+                    noiseAmount = noiseAmount,
+                    phase = currentPhase,
+                    seed = combinedSeed,
+                )
+
+                // Draw the wobbly dot as a perfect circle covering the flat clipped seam
+                drawCircle(
+                    color = color,
+                    radius = dotRadius,
+                    center = Offset(x = dotX, y = progressY),
+                )
             },
     )
 }
