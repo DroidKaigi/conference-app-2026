@@ -103,8 +103,7 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         composeUiTest.waitForIdle()
     }
 
-    // The tag sits on the field's frame, while the text the field carries is on the editable node
-    // the frame wraps.
+    // The text sits on the editable node inside the tagged frame, not on the frame itself.
     private fun editableFieldIn(testTag: String): SemanticsNodeInteraction {
         return composeUiTest.onNode(hasSetTextAction() and hasAnyAncestor(hasTestTag(testTag)))
     }

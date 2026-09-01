@@ -125,8 +125,7 @@ class StampCollectingScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUi
         assertEquals(times, overlayCloseCount)
     }
 
-    // The text a tagged element carries sits on the nodes below it rather than on the tagged node
-    // itself, which the unmerged tree keeps reachable whether or not the tagged node merges them.
+    // The text sits on nodes below the tagged one; the unmerged tree keeps them reachable.
     private fun textIn(testTag: String, text: String, substring: Boolean): SemanticsNodeInteraction {
         return composeUiTest.onNode(
             hasText(text, substring = substring) and hasAnyAncestor(hasTestTag(testTag)),
