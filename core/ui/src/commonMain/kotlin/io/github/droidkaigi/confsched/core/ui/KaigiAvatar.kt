@@ -61,14 +61,12 @@ fun KaigiAvatar(
         contentDescription = contentDescription,
         modifier = modifier
             .size(size)
+            .clip(KaigiAvatarDefaults.shape)
             .border(
                 width = KaigiAvatarDefaults.borderThickness(size),
                 color = borderColor,
                 shape = KaigiAvatarDefaults.shape,
-            )
-            // The line sits around the picture, not over its edge.
-            .padding(KaigiAvatarDefaults.borderThickness(size))
-            .clip(KaigiAvatarDefaults.shape),
+            ),
     )
 }
 
@@ -151,13 +149,12 @@ fun KaigiSpeakerAvatar(
 ) {
     val frame = modifier
         .size(size)
+        .clip(KaigiAvatarDefaults.shape)
         .border(
             width = KaigiAvatarDefaults.borderThickness(size),
             color = borderColor,
             shape = KaigiAvatarDefaults.shape,
         )
-        .padding(KaigiAvatarDefaults.borderThickness(size))
-        .clip(KaigiAvatarDefaults.shape)
     val mascotFace: @Composable () -> Unit = {
         SpeakerMascot(
             mascot = mascot,
