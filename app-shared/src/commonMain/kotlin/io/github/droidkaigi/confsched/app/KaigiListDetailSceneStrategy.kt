@@ -32,6 +32,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.scene.Scene
+import androidx.navigation3.scene.SceneStrategy
+import androidx.navigation3.scene.SceneStrategyScope
+import io.github.droidkaigi.confsched.core.common.instantNavTransition
 
 // The list-detail directive sets its own spacer to zero so pane backgrounds meet edge-to-edge;
 // this is the separation each pane draws itself via LocalPanePartitionSpacerSize.
@@ -39,7 +44,35 @@ internal val PanePartitionSpacerSize = 24.dp
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-internal fun <T : Any> rememberKaigiListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
+internal fun <T : Any> rememberKaigiListDetailSceneStrategy(): SceneStrategy<T> {
+    val delegate = rememberKaigiListDetailPaneStrategy<T>()
+    return remember(delegate) { PaneMotionSceneStrategy(delegate) }
+}
+
+/**
+ * Hands the scaffold sole ownership of the motion between its panes.
+ *
+ * The scaffold animates a pane appearing and disappearing itself, and NavDisplay would otherwise
+ * animate the same navigation a second time as the scene it renders changes.
+ */
+private class PaneMotionSceneStrategy<T : Any>(
+    private val delegate: SceneStrategy<T>,
+) : SceneStrategy<T> {
+    override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? =
+        with(delegate) { calculateScene(entries) }?.let(::PaneMotionScene)
+}
+
+private class PaneMotionScene<T : Any>(private val delegate: Scene<T>) : Scene<T> by delegate {
+    override val metadata: Map<String, Any> = instantNavTransition()
+
+    override fun equals(other: Any?): Boolean = other is PaneMotionScene<*> && delegate == other.delegate
+
+    override fun hashCode(): Int = delegate.hashCode()
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun <T : Any> rememberKaigiListDetailPaneStrategy(): ListDetailSceneStrategy<T> {
     val dragBounds = remember(::PaneExpansionDragBounds)
     val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
     return rememberListDetailSceneStrategy(
