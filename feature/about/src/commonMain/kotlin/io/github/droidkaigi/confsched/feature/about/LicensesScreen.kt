@@ -43,9 +43,7 @@ fun LicensesScreen(
 }
 
 private object LicensesScreenDefaults {
-    // The library tints each license badge with a hue it derives from `primary` and the system
-    // dark-mode flag, which does not follow this app's own color schemes; the badge takes the
-    // scheme's `primary` as is instead.
+    // The library's default badge and row colors do not follow this app's color schemes.
     @Composable
     fun variantColors() = with(MaterialTheme.colorScheme) {
         LibraryDefaults.m3VariantColors(
@@ -58,8 +56,7 @@ private object LicensesScreenDefaults {
         )
     }
 
-    // Only the license dialog reads these; its defaults go through `contentColorFor`, which this
-    // app's color schemes do not map.
+    // Only the license dialog reads these; its defaults do not follow this app's color schemes.
     @Composable
     fun libraryColors() = with(MaterialTheme.colorScheme) {
         LibraryDefaults.libraryColors(
