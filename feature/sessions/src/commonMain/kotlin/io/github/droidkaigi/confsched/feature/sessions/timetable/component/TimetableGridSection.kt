@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.OnTabReselect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
@@ -52,6 +53,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlin.math.abs
@@ -81,6 +83,7 @@ internal fun TimetableGridSection(
     val scrollState = rememberTimetableGridScrollState()
     val visibleNowMinute = uiState.nowMinute.visibleNowMinuteOrNull(endMinute)
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        OnTabReselect(TimetableNavKey) { scrollState.animateScrollToTop() }
         val columnWidth = timetableGridColumnWidth(
             availableWidth = maxWidth - TimetableGridHorizontalPadding * 2 - TimetableGridTimeGutterWidth,
             roomCount = rooms.size,

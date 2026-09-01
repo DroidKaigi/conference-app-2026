@@ -4,12 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.OnTabReselect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.SessionRoom
@@ -35,7 +38,7 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
-import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
+import io.github.droidkaigi.confsched.feature.favorites.FavoritesNavKey
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,33 +50,37 @@ internal fun FavoritesListSection(
     onItemClick: (TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        state = rememberListDetailSceneAwareLazyListState(),
-        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(
-            top = 12.dp,
-            bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
-        ),
-    ) {
-        uiState.timeSlots.groupBy { slot -> slot.day }.forEach { (day, slots) ->
-            if (uiState.dayHeadersVisible) {
-                item(key = "header-$day") {
-                    TimetableDayHeader(day = day)
+    val listState = rememberLazyListState()
+    Box(modifier = modifier.fillMaxSize()) {
+        OnTabReselect(FavoritesNavKey) { listState.animateScrollToItem(0) }
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(
+                top = 12.dp,
+                bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
+            ),
+        ) {
+            uiState.timeSlots.groupBy { slot -> slot.day }.forEach { (day, slots) ->
+                if (uiState.dayHeadersVisible) {
+                    item(key = "header-$day") {
+                        TimetableDayHeader(day = day)
+                    }
                 }
-            }
-            items(
-                items = slots,
-                key = { slot -> "$day-${slot.startsAt}-${slot.endsAt}" },
-            ) { slot ->
-                FavoriteSessionRow(
-                    startsAt = slot.startsAt,
-                    endsAt = slot.endsAt,
-                    timeRangeState = slot.timeRangeState,
-                    items = slot.items,
-                    onBookmarkClick = onBookmarkClick,
-                    onItemClick = onItemClick,
-                )
+                items(
+                    items = slots,
+                    key = { slot -> "$day-${slot.startsAt}-${slot.endsAt}" },
+                ) { slot ->
+                    FavoriteSessionRow(
+                        startsAt = slot.startsAt,
+                        endsAt = slot.endsAt,
+                        timeRangeState = slot.timeRangeState,
+                        items = slot.items,
+                        onBookmarkClick = onBookmarkClick,
+                        onItemClick = onItemClick,
+                    )
+                }
             }
         }
     }

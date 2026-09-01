@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.OnTabReselect
 import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Projects
@@ -26,7 +28,6 @@ import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
-import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.eventmap.component.EventItem
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorMapCard
 import io.github.droidkaigi.confsched.feature.eventmap.component.FloorTabRow
@@ -49,8 +50,10 @@ fun EventMapScreen(
         },
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->
+        val listState = rememberLazyListState()
+        OnTabReselect(EventMapNavKey) { listState.animateScrollToItem(0) }
         LazyColumn(
-            state = rememberListDetailSceneAwareLazyListState(),
+            state = listState,
             contentPadding = PaddingValues(16.dp).plus(PaddingValues(bottom = 122.dp)),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier

@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable.component
 
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.gestures.draggable2D
@@ -62,6 +63,10 @@ internal class TimetableGridScrollState(
         this.maxScrollY = maxScrollY.coerceAtLeast(0f)
         scrollX = scrollX.coerceIn(0f, this.maxScrollX)
         scrollY = scrollY.coerceIn(0f, this.maxScrollY)
+    }
+
+    suspend fun animateScrollToTop() {
+        animate(initialValue = scrollY, targetValue = 0f) { value, _ -> scrollY = value }
     }
 
     fun dragBy(delta: Offset): Offset {
