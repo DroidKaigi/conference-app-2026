@@ -241,7 +241,7 @@ class ProfileCardScreenPresenterTest {
             send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
             uiStates.awaitItem()
             send(ProfileCardScreenAction.AvatarImagePickFailed)
-            send(ProfileCardScreenAction.FlipCard)
+            send(ProfileCardScreenAction.UpdateNickName("a"))
             val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
             assertNull(form.avatarImageError)
         }
