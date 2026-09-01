@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.designsystem.icon.Check
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -30,7 +32,6 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.fake
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.AboutHeroHeight
-import io.github.droidkaigi.confsched.core.ui.AboutHeroSize
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageTopInset
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleCanvasView
@@ -69,19 +70,24 @@ internal fun AboutWallDoodleEditorView(
         verticalArrangement = Arrangement.spacedBy(AboutWallDoodleEditorDefaults.spacing),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        DoodleCanvasView(
-            doodle = draft,
-            referenceSize = AboutHeroSize,
-            maxScale = AboutWallDoodleEditorDefaults.maxScale,
-            origin = DoodleOrigin.TopCenter,
-            palette = palette,
-            penSize = penSize,
-            selectedInk = selectedInk,
-            outlined = outlined,
-            onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
-            modifier = Modifier.fillMaxWidth().height(AboutHeroHeight),
-            background = { scale -> AboutWallHintView(scale = scale, modifier = Modifier.matchParentSize()) },
-        )
+        // The wall spans whatever width the window gives the hero, so the drawing surface takes
+        // the same width at 1:1 rather than the stage's fixed band — what is drawable is exactly
+        // what this window's wall shows.
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            DoodleCanvasView(
+                doodle = draft,
+                referenceSize = DpSize(width = maxWidth, height = AboutHeroHeight),
+                maxScale = 1f,
+                origin = DoodleOrigin.TopCenter,
+                palette = palette,
+                penSize = penSize,
+                selectedInk = selectedInk,
+                outlined = outlined,
+                onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
+                modifier = Modifier.fillMaxWidth().height(AboutHeroHeight),
+                background = { scale -> AboutWallHintView(scale = scale, modifier = Modifier.matchParentSize()) },
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -139,9 +145,6 @@ private object AboutWallDoodleEditorDefaults {
     val inset = 24.dp
     val stageHintAlpha = 0.35f
     val doneButtonSeed = 5575
-
-    /** The wall never enlarges past what the hero itself is drawn at plus a half. */
-    val maxScale = 1.5f
 }
 
 @LocalePreviews
