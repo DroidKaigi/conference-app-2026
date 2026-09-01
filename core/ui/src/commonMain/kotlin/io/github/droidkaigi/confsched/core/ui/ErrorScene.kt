@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -31,10 +32,9 @@ enum class ErrorScene {
     Backstage,
 }
 
-object ErrorSceneDefaults {
-    // The design fixes one scene per launch: picked at random on first use, then kept.
-    val sceneOfLaunch: ErrorScene by lazy(ErrorScene.entries::random)
-}
+// The design fixes one scene per launch: the app shell draws one at random and provides it here,
+// the way the sketch seed travels, so previews and screenshot tests see the same scene every run.
+val LocalErrorSceneOfLaunch = staticCompositionLocalOf { ErrorScene.UnpluggedCable }
 
 @Composable
 internal fun ErrorSceneArt(

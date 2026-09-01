@@ -57,7 +57,7 @@ const val DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG = "DefaultErrorFallbackContent
 context(errorContext: SoilErrorContext)
 fun DefaultErrorFallbackContent(
     modifier: Modifier = Modifier,
-    scene: ErrorScene = ErrorSceneDefaults.sceneOfLaunch,
+    scene: ErrorScene = LocalErrorSceneOfLaunch.current,
 ) {
     Box(
         modifier = modifier.fillMaxSize().testTag(DEFAULT_ERROR_FALLBACK_CONTENT_TEST_TAG),

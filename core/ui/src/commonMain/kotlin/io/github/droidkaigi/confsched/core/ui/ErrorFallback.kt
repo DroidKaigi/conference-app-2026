@@ -3,7 +3,6 @@ package io.github.droidkaigi.confsched.core.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -49,7 +48,8 @@ internal fun ErrorFallback(
         val height = constraints.maxHeight
         // The text zone keeps its design share of the screen, grows with the font scale, and
         // scrolls once it alone would overflow; the scene takes what remains, sized so its wave
-        // edge meets the text zone's top.
+        // edge meets the text zone's top. The scene's size derives from the text's measured
+        // height, which constraints alone cannot see — hence a Layout over BoxWithConstraints.
         val textWidth = min(width, TEXT_COLUMN_MAX_WIDTH.roundToPx())
         val text = measurables[1].measure(
             Constraints(minWidth = textWidth, maxWidth = textWidth, maxHeight = height),
