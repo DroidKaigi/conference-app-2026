@@ -177,4 +177,6 @@ enum as a Swift enum — rather than an Objective-C header. **Swift Package Impo
 way, so Kotlin reaches Apple frameworks without a line of Swift. What is left in Swift is the tab
 bar and an entry point. See [iOS overview](./docs/ios.md).
 
+## Trademarks
+
 Google Play and the Google Play logo are trademarks of Google LLC. Apple and the Apple logo are trademarks of Apple Inc., registered in the U.S. and other countries.
