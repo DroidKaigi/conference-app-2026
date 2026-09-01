@@ -14,7 +14,7 @@ Which key to reach for:
 // :core:model — the contract a feature depends on
 typealias TimetableQueryKey = QueryKey<Timetable>
 typealias FavoriteTimetableIdsSubscriptionKey = SubscriptionKey<PersistentSet<TimetableItemId>>
-typealias FavoriteTimetableItemIdMutationKey = MutationKey<Unit, TimetableItemId>
+typealias FavoriteTimetableItemIdMutationKey = MutationKey<FavoriteToggle, TimetableItemId>
 ```
 
 ```kotlin
@@ -51,7 +51,7 @@ public object SoilIds {
       QueryId("io.github.droidkaigi.confsched.core.model.TimetableQueryKey")
   public val favoriteTimetableIdsSubscription: SubscriptionId<PersistentSet<TimetableItemId>> = …
   // mutations become a factory taking the per-screen MutationTag (see below)
-  public fun favoriteTimetableItemIdMutation(extraTag: MutationTag): MutationId<Unit, TimetableItemId> =
+  public fun favoriteTimetableItemIdMutation(extraTag: MutationTag): MutationId<FavoriteToggle, TimetableItemId> =
       MutationId("io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey", extraTag.value)
 }
 ```
@@ -130,7 +130,7 @@ data class SubmitFeedbackInput(val sessionId: TimetableItemId, val comment: Stri
 data class SubmitFeedbackResult(val id: FeedbackId, val createdAt: Instant)
 ```
 
-A single-value mutation needs no wrappers — the existing `FavoriteTimetableItemIdMutationKey = MutationKey<Unit, TimetableItemId>` (toggle a favorite by id; returns nothing, success observed via the favorites subscription) is the minimal shape.
+A single value needs no wrapper on its side — `FavoriteTimetableItemIdMutationKey = MutationKey<FavoriteToggle, TimetableItemId>` takes the id directly and wraps only its result, which carries both the id and whether the toggle added or removed the favorite.
 
 ## Per-screen mutation tag isolation
 
@@ -150,7 +150,7 @@ class DefaultFavoriteTimetableItemIdMutationKey(
     private val store: FavoritesStore,
 ) : FavoriteTimetableItemIdMutationKey by buildMutationKey(
     id = SoilIds.favoriteTimetableItemIdMutation(extraTag), // generated factory bakes the tag in
-    mutate = { id -> store.toggle(id) },
+    mutate = { id -> FavoriteToggle(id = id, added = store.toggle(id)) },
 )
 ```
 

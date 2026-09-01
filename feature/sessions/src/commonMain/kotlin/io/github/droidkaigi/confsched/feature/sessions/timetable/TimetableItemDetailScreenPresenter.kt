@@ -31,22 +31,14 @@ fun timetableItemDetailScreenPresenter(
 ): TimetableItemDetailScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     val memoMutation = rememberMutation(presenterContext.sessionMemoMutationKey)
-    // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
-    var toggledFavoriteId by retain { mutableStateOf<TimetableItemId?>(null) }
     var isDescriptionExpanded by retain { mutableStateOf(false) }
     var displayLanguage by retain { mutableStateOf(initialDisplayLanguage) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is TimetableItemDetailScreenAction.Bookmark -> {
-                toggledFavoriteId = action.id
-                favoriteMutation.mutateAsync(action.id)
-            }
-
+            is TimetableItemDetailScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
             is TimetableItemDetailScreenAction.SaveMemo -> memoMutation.mutateAsync(SessionMemoEdit(detail.item.id, action.text))
-
             TimetableItemDetailScreenAction.ToggleDescriptionExpansion -> isDescriptionExpanded = !isDescriptionExpanded
-
             TimetableItemDetailScreenAction.ToggleDisplayLanguage -> displayLanguage = displayLanguage.toggled()
         }
     }
@@ -56,12 +48,11 @@ fun timetableItemDetailScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        val addedId = toggledFavoriteId.takeIf { added }
-        if (addedId != null) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded)
             if (offersFirstFavoriteGuidance) {
-                screenChannel.emit(TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance(detail.roomOf(addedId)))
+                screenChannel.emit(TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance(detail.roomOf(toggle.id)))
             }
         }
         favoriteMutation.reset()

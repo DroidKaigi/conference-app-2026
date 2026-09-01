@@ -16,7 +16,6 @@ import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.ConferenceTimeZone
 import io.github.droidkaigi.confsched.core.model.DroidKaigi2026Day
 import io.github.droidkaigi.confsched.core.model.Timetable
-import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.startInstant
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableCountdownBannerUiState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableGridSectionUiState
@@ -35,8 +34,6 @@ fun timetableScreenPresenter(
     offersFirstFavoriteGuidance: Boolean,
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
-    // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
-    var toggledFavoriteId by retain { mutableStateOf<TimetableItemId?>(null) }
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
     var selectedViewMode by retain { mutableStateOf(TimetableViewMode.List) }
     val currentTime = presenterContext.clock.rememberCurrentTime()
@@ -47,10 +44,7 @@ fun timetableScreenPresenter(
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is TimetableScreenAction.Bookmark -> {
-                toggledFavoriteId = action.id
-                favoriteMutation.mutateAsync(action.id)
-            }
+            is TimetableScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
 
             is TimetableScreenAction.SelectDay -> selectedDay = action.day
 
@@ -67,12 +61,11 @@ fun timetableScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        val addedId = toggledFavoriteId.takeIf { added }
-        if (addedId != null) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(TimetableScreenActionResult.FavoriteAdded)
             if (offersFirstFavoriteGuidance) {
-                screenChannel.emit(TimetableScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(addedId)))
+                screenChannel.emit(TimetableScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(toggle.id)))
             }
         }
         favoriteMutation.reset()

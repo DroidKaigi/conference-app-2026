@@ -72,7 +72,7 @@ class DefaultFavoriteTimetableItemIdMutationKey(
     private val store: FavoritesStore,
 ) : FavoriteTimetableItemIdMutationKey by buildMutationKey(
     id = SoilIds.favoriteTimetableItemIdMutation(extraTag),  // tag flows into the id (per-screen isolation)
-    mutate = { id -> store.toggle(id) },
+    mutate = { id -> FavoriteToggle(id = id, added = store.toggle(id)) },
 )
 ```
 
