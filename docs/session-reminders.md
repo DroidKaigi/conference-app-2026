@@ -56,7 +56,7 @@ Authorization (`alert`, `sound`, `badge`) is also requested whenever there is so
 
 The permission is asked for from the first-favorite guidance rather than at launch: it has nothing to carry until there is something to be reminded of, and the dialog says what the notification is for before the system prompt appears.
 
-The first time a favorite is added, `FirstFavoriteGuidanceEffect` (`:app-shared`) pushes a two-step dialog — the notification step, then the home screen widget step, reached with `AppNavigator.replaceTop`. Android and iOS push it; the desktop and the web never do. An explicit answer either way is recorded in `FirstFavoriteGuidanceStore` and the guidance is not offered again, while a dialog closed with back leaves the flag alone, so a later favorite offers it once more.
+A screen that can add a favorite reports the addition as an `ActionResult` carrying the session's room, and its navigator hands the room to `FirstFavoriteGuidance` (`:app-shared`), which pushes a two-step dialog — the notification step, then the home screen widget step, reached with `AppNavigator.replaceTop`. The room picks the mascot the dialog draws. Android and iOS push it; the desktop and the web never do. An explicit answer either way is recorded in `FirstFavoriteGuidanceStore` and the guidance is not offered again, while a dialog closed with back leaves the flag alone, so a later favorite offers it once more.
 
 `rememberNotificationPermissionRequester` (`:core:ui`) is what asks, and returns once the reader has answered: the `POST_NOTIFICATIONS` runtime permission on Android 13 and later, falling back to the app's notification settings where the system prompt can no longer be shown, and `UNUserNotificationCenter` authorization on iOS.
 
