@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.droidkaigi.confsched.core.designsystem.KaigiTextStyles
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -321,11 +321,7 @@ object ProfileCardTextStyles {
         @Composable get() = MaterialTheme.typography.displaySmall
 
     val accent: TextStyle
-        @Composable get() = MaterialTheme.typography.titleSmall.copy(
-            fontFamily = MaterialTheme.typography.displaySmall.fontFamily,
-            fontWeight = FontWeight.Bold,
-            letterSpacing = 0.sp,
-        )
+        @Composable get() = KaigiTextStyles.titleSmallAccent
 
     /** [accent] on the tighter line the event label is set on. */
     val eventLabel: TextStyle
