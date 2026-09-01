@@ -207,7 +207,7 @@ class ProfileCardScreenPresenterTest {
     fun an_image_that_cannot_be_read_is_reported_on_the_form() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
         ) {
             uiStates.awaitItem()
             send(ProfileCardScreenAction.AvatarImagePickFailed)
@@ -221,7 +221,7 @@ class ProfileCardScreenPresenterTest {
     fun picking_a_readable_image_clears_the_unreadable_error() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
         ) {
             uiStates.awaitItem()
             send(ProfileCardScreenAction.AvatarImagePickFailed)
@@ -235,7 +235,7 @@ class ProfileCardScreenPresenterTest {
     fun a_failed_pick_keeps_an_already_chosen_image_valid() {
         runPresenterTest(
             presenterContext = graph.presenterContext,
-            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null, frontDoodle = Doodle.Empty, backDoodle = Doodle.Empty) },
         ) {
             uiStates.awaitItem()
             send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
