@@ -32,7 +32,7 @@ experience:
 
 ### iOS
 
-<a href="https://apps.apple.com/jp/app/id6801159161"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us" height="48" alt="Download on the App Store"></a>
+<a href="https://apps.apple.com/app/id6801159161"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us" height="48" alt="Download on the App Store"></a>
 
 ## Contributing
 
