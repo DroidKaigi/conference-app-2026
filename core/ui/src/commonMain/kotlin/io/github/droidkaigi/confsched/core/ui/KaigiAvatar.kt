@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -226,45 +227,45 @@ private fun KaigiAvatarPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        Row(
+        Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            KaigiAvatar(
-                imageUrl = PreviewImage.AvatarSample.imageUrl,
-                contentDescription = null,
-                size = 100.dp,
-            )
-            KaigiPlaceholderAvatar(seed = 851, size = 100.dp) {
-                Text("C01", style = KaigiAvatarDefaults.initialsStyle)
+            AvatarSizeRow { size ->
+                KaigiAvatar(
+                    imageUrl = PreviewImage.AvatarSample.imageUrl,
+                    contentDescription = null,
+                    size = size,
+                )
             }
-            KaigiSpeakerAvatar(
-                iconUrl = null,
-                mascot = Mascot.A,
-                contentDescription = null,
-                size = 100.dp,
-            )
-            KaigiSpeakerAvatar(
-                iconUrl = null,
-                mascot = Mascot.B,
-                contentDescription = null,
-                size = 48.dp,
-            )
-            KaigiSpeakerAvatar(
-                iconUrl = null,
-                mascot = Mascot.C,
-                contentDescription = null,
-                size = 32.dp,
-            )
-            KaigiSpeakerAvatar(
-                iconUrl = null,
-                mascot = Mascot.E,
-                contentDescription = null,
-                size = 24.dp,
-            )
+            AvatarSizeRow { size ->
+                KaigiSpeakerAvatar(
+                    iconUrl = null,
+                    mascot = Mascot.A,
+                    contentDescription = null,
+                    size = size,
+                )
+            }
+            AvatarSizeRow { size ->
+                KaigiPlaceholderAvatar(seed = 851, size = size) {
+                    Text("C01", style = KaigiAvatarDefaults.initialsStyle)
+                }
+            }
         }
+    }
+}
+
+/** The sizes the avatar is drawn at across the app, largest first. */
+private val previewAvatarSizes = listOf(100.dp, 48.dp, 32.dp, 24.dp)
+
+@Composable
+private fun AvatarSizeRow(avatar: @Composable (Dp) -> Unit) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        previewAvatarSizes.forEach { avatar(it) }
     }
 }
