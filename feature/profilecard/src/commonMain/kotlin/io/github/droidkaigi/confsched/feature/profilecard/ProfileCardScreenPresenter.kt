@@ -46,7 +46,11 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
 
-            ProfileCardScreenAction.AvatarImagePickFailed -> form = form.copy(avatarImageError = ProfileCardFormError.AvatarImageUnreadable)
+            // A failed re-pick keeps the image already on the form valid; only a form with no
+            // image yet has anything to warn about.
+            ProfileCardScreenAction.AvatarImagePickFailed -> if (form.avatarImage == null) {
+                form = form.copy(avatarImageError = ProfileCardFormError.AvatarImageUnreadable)
+            }
 
             ProfileCardScreenAction.RemoveAvatarImage -> form = form.copy(avatarImage = null)
 

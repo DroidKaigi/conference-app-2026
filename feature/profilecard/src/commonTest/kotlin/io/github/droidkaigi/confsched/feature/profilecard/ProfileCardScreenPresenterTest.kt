@@ -232,6 +232,22 @@ class ProfileCardScreenPresenterTest {
     }
 
     @Test
+    fun a_failed_pick_keeps_an_already_chosen_image_valid() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.AvatarImagePickFailed)
+            send(ProfileCardScreenAction.FlipCard)
+            val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertNull(form.avatarImageError)
+        }
+    }
+
+    @Test
     fun turning_the_card_over_swaps_the_face_it_shows() {
         runPresenterTest(
             presenterContext = graph.presenterContext,

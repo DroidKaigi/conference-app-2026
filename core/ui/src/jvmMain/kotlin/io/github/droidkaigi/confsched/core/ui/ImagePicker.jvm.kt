@@ -26,7 +26,8 @@ private fun CoroutineScope.pickImage(onImagePicked: (ByteArray) -> Unit, onImage
     launch {
         // FileDialog blocks until the user is done, so it must not run on the UI thread.
         val file = withContext(Dispatchers.IO) { chooseImage() } ?: return@launch
-        val bytes = withContext(Dispatchers.IO) { file.readBytes().toPickedImageJpeg() }
+        // The chosen file can vanish or lose permission between the dialog and the read.
+        val bytes = withContext(Dispatchers.IO) { runCatching { file.readBytes() }.getOrNull()?.toPickedImageJpeg() }
         if (bytes != null) onImagePicked(bytes) else onImagePickFailed()
     }
 }
