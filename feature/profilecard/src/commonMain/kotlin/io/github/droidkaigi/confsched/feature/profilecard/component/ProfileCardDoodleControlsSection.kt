@@ -22,6 +22,7 @@ import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.DoodleFlipButton
 import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRowSurface
 import io.github.droidkaigi.confsched.core.ui.DoodleOutlineToggle
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
@@ -73,6 +74,7 @@ internal fun ProfileCardDoodleControlsSection(
         DoodleInkRow(
             selectedInk = selectedInk,
             palette = profileCardDoodleInkPalette(),
+            surface = DoodleInkRowSurface.Card,
             onInkClick = onInkClick,
         )
         DoodleOutlineToggle(outlined = outlined, onOutlinedChange = onOutlinedChange)

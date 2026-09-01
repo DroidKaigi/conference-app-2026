@@ -28,6 +28,7 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_ban
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_banner
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_ink
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_paper
+import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_ink_wall
 import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,6 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 fun DoodleInkRow(
     selectedInk: DoodleInk,
     palette: DoodleInkPalette,
+    surface: DoodleInkRowSurface,
     onInkClick: (DoodleInk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,6 +54,7 @@ fun DoodleInkRow(
         palette.distinctInks().forEach { ink ->
             DoodleInkSwatch(
                 ink = ink,
+                surface = surface,
                 color = palette.style(ink).color,
                 selected = ink == selectedInk,
                 onClick = { onInkClick(ink) },
@@ -67,6 +70,7 @@ fun DoodleInkRow(
 @Composable
 private fun DoodleInkSwatch(
     ink: DoodleInk,
+    surface: DoodleInkRowSurface,
     color: Color,
     selected: Boolean,
     onClick: () -> Unit,
@@ -74,7 +78,7 @@ private fun DoodleInkSwatch(
 ) {
     val swatchShape = inkCircleShape(combineSketchSeed(INK_SWATCH_SEED + ink.ordinal))
     val ringShape = inkCircleShape(combineSketchSeed(INK_RING_SEED + ink.ordinal))
-    val description = stringResource(ink.label)
+    val description = stringResource(ink.label(surface))
     Box(
         modifier = modifier
             .size(DoodleInkRowDefaults.touchTargetSize)
@@ -118,13 +122,20 @@ private object DoodleInkRowDefaults {
     val sweepWavelength = 60.dp
 }
 
-private val DoodleInk.label: StringResource
-    get() = when (this) {
-        DoodleInk.Ink -> Res.string.doodle_ink_ink
-        DoodleInk.Band -> Res.string.doodle_ink_band
-        DoodleInk.Paper -> Res.string.doodle_ink_paper
-        DoodleInk.Banner -> Res.string.doodle_ink_banner
-    }
+private fun DoodleInk.label(surface: DoodleInkRowSurface): StringResource = when (this) {
+    DoodleInk.Ink -> Res.string.doodle_ink_ink
+
+    // On the wall the Band slot resolves to the wall's own fill, so the label names what
+    // the user is looking at rather than a card part that is not on screen.
+    DoodleInk.Band -> if (surface == DoodleInkRowSurface.Wall) Res.string.doodle_ink_wall else Res.string.doodle_ink_band
+
+    DoodleInk.Paper -> Res.string.doodle_ink_paper
+
+    DoodleInk.Banner -> Res.string.doodle_ink_banner
+}
+
+/** The surface a [DoodleInkRow] offers inks for; it decides how the Band slot is named. */
+enum class DoodleInkRowSurface { Wall, Card }
 
 private const val INK_SWATCH_SEED = 4371
 
@@ -139,6 +150,7 @@ private fun DoodleInkRowPreview(
         DoodleInkRow(
             selectedInk = DoodleInk.Ink,
             palette = profileCardDoodleInkPalette(),
+            surface = DoodleInkRowSurface.Card,
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),
         )
@@ -154,6 +166,7 @@ private fun DoodleInkRowBandSelectedPreview(
         DoodleInkRow(
             selectedInk = DoodleInk.Band,
             palette = aboutWallDoodleInkPalette(),
+            surface = DoodleInkRowSurface.Wall,
             onInkClick = {},
             modifier = Modifier.padding(DoodleInkRowPreviewPadding),
         )

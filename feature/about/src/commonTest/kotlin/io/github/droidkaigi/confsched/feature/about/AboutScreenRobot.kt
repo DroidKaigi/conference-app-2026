@@ -209,7 +209,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
 private const val STROKE_HALF_SPAN_FRACTION = 0.2f
 
-private const val BAND_INK_DESCRIPTION = "Band color"
+private const val BAND_INK_DESCRIPTION = "Wall color"
 
 private const val PAPER_INK_DESCRIPTION = "Paper color"
 

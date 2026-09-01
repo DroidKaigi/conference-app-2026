@@ -37,6 +37,7 @@ import io.github.droidkaigi.confsched.core.ui.AboutHeroStageTopInset
 import io.github.droidkaigi.confsched.core.ui.AboutHeroStageWidth
 import io.github.droidkaigi.confsched.core.ui.DoodleCanvasView
 import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRowSurface
 import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.DoodleOutlineToggle
 import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
@@ -103,6 +104,7 @@ internal fun AboutWallDoodleEditorView(
             DoodleInkRow(
                 selectedInk = selectedInk,
                 palette = palette,
+                surface = DoodleInkRowSurface.Wall,
                 onInkClick = { selectedInk = it },
             )
             DoodleOutlineToggle(outlined = outlined, onOutlinedChange = { outlined = it })

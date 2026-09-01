@@ -28,11 +28,12 @@
     <string name="doodle_ink_ink">インク</string>
     <string name="doodle_ink_band">帯の色</string>
     <string name="doodle_ink_paper">紙の色</string>
-    <string name="doodle_ink_banner">金色</string>
+    <string name="doodle_ink_banner">バナーの色</string>
     <string name="doodle_outline">輪郭</string>
     <string name="doodle_pen_thin">細い</string>
     <string name="doodle_pen_normal">ふつう</string>
     <string name="doodle_pen_thick">太い</string>
     <string name="doodle_switch_to_back">裏面に切り替える</string>
     <string name="doodle_switch_to_front">表面に切り替える</string>
+    <string name="doodle_ink_wall">壁の色</string>
 </resources>

@@ -76,7 +76,7 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun clickBandInk() = clickDescription("Band color")
 
-    fun clickBannerInk() = clickDescription("Banner gold")
+    fun clickBannerInk() = clickDescription("Banner color")
 
     fun clickOutlineToggle() = clickText("Outline")
 

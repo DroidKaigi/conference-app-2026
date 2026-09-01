@@ -29,11 +29,12 @@
     <string name="doodle_ink_ink">Ink</string>
     <string name="doodle_ink_band">Band color</string>
     <string name="doodle_ink_paper">Paper color</string>
-    <string name="doodle_ink_banner">Banner gold</string>
+    <string name="doodle_ink_banner">Banner color</string>
     <string name="doodle_outline">Outline</string>
     <string name="doodle_pen_thin">Thin</string>
     <string name="doodle_pen_normal">Normal</string>
     <string name="doodle_pen_thick">Thick</string>
     <string name="doodle_switch_to_back">Switch to the back</string>
     <string name="doodle_switch_to_front">Switch to the front</string>
+    <string name="doodle_ink_wall">Wall color</string>
 </resources>
