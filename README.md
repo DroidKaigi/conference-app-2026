@@ -28,11 +28,11 @@ experience:
 
 ### Android
 
-TBD
+<a href="https://play.google.com/store/apps/details?id=io.github.droidkaigi.confsched2026"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70" alt="Get it on Google Play"></a>
 
 ### iOS
 
-TBD
+<a href="https://apps.apple.com/app/id6801159161"><img src="https://toolbox.marketingtools.apple.com/api/v2/badges/download-on-the-app-store/black/en-us" height="48" alt="Download on the App Store"></a>
 
 ## Contributing
 
@@ -176,3 +176,7 @@ idiomatic Swift for the Kotlin that Swift calls — a `Flow` arrives as an `Asyn
 enum as a Swift enum — rather than an Objective-C header. **Swift Package Import** goes the other
 way, so Kotlin reaches Apple frameworks without a line of Swift. What is left in Swift is the tab
 bar and an entry point. See [iOS overview](./docs/ios.md).
+
+## Trademarks
+
+Google Play and the Google Play logo are trademarks of Google LLC. Apple and the Apple logo are trademarks of Apple Inc., registered in the U.S. and other countries.
