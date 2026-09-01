@@ -261,6 +261,7 @@ fun SketchVerticalWavyLine(
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
+                    phase = 0f,
                     seed = combinedSeed,
                 )
                 val stroke = Stroke(width = thickness.toPx(), cap = StrokeCap.Round)
@@ -306,6 +307,7 @@ fun SketchVerticalWavyProgressLine(
                     amplitude = amplitude,
                     wavelength = wavelength,
                     noiseAmount = noiseAmount,
+                    phase = 0f,
                     seed = combinedSeed,
                 )
 
@@ -356,6 +358,7 @@ fun SketchVerticalWavyProgressLine(
                         amplitude = amplitude,
                         wavelength = wavelength,
                         noiseAmount = noiseAmount,
+                        phase = 0f,
                         seed = combinedSeed,
                     )
 
