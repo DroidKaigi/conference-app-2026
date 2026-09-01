@@ -7,10 +7,12 @@ import io.github.droidkaigi.confsched.core.common.PresenterContext
 import io.github.droidkaigi.confsched.core.common.ScreenContext
 import io.github.droidkaigi.confsched.core.model.FirstFavoriteGuidanceMutationKey
 import io.github.droidkaigi.confsched.core.model.FirstFavoriteNotificationScreenScope
+import io.github.droidkaigi.confsched.core.model.NotificationPermissionMutationKey
 
 @Inject
 class FirstFavoriteNotificationPresenterContext(
     val firstFavoriteGuidanceMutationKey: FirstFavoriteGuidanceMutationKey,
+    val notificationPermissionMutationKey: NotificationPermissionMutationKey,
     override val logger: KaigiLogger,
 ) : PresenterContext
 

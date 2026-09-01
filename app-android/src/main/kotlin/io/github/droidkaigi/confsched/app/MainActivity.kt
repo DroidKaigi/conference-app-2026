@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         }
         super.onCreate(savedInstanceState)
+        currentActivityDependencies.currentActivityHolder.register(this)
 
         // Recreation — a configuration change or process death — always delivers a non-null
         // savedInstanceState and redelivers the task's original intent; the restored back stack
@@ -32,6 +33,11 @@ class MainActivity : ComponentActivity() {
                 KaigiApp()
             }
         }
+    }
+
+    override fun onDestroy() {
+        currentActivityDependencies.currentActivityHolder.unregister(this)
+        super.onDestroy()
     }
 
     override fun onNewIntent(intent: Intent) {
