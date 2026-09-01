@@ -8,10 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -180,6 +182,9 @@ private fun ProfileCardActionsSection(
                 modifier = Modifier.size(KaigiButtonDefaults.iconSize),
             )
             Text(stringResource(Res.string.share_button), style = ProfileCardTextStyles.accent)
+            // Balances the leading icon: the row spaces both sides of the label alike, so a
+            // spacer of the icon's width lands the label on the button's center.
+            Spacer(modifier = Modifier.width(KaigiButtonDefaults.iconSize))
         }
         Text(
             text = stringResource(Res.string.edit_button),
