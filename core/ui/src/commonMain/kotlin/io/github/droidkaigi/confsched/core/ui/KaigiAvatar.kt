@@ -202,8 +202,13 @@ object KaigiAvatarDefaults {
 
     val shape = RoundedCornerShape(percent = (CORNER_RADIUS_RATIO * 100).toInt())
 
-    /** The design strokes avatars at one twenty-fourth of the side, so the ring scales with the square. */
-    fun borderThickness(size: Dp): Dp = size / 24
+    /**
+     * The design strokes an avatar at one twenty-fourth of its side, up to the largest square it
+     * draws; past that the line holds at [MAX_BORDER_THICKNESS] instead of growing with the square.
+     */
+    fun borderThickness(size: Dp): Dp = minOf(size / 24, MAX_BORDER_THICKNESS)
+
+    private val MAX_BORDER_THICKNESS = 2.dp
 
     /** The share of the side kept clear around the mascot, the same at every size. */
     const val MASCOT_INSET_RATIO = 0.15f
