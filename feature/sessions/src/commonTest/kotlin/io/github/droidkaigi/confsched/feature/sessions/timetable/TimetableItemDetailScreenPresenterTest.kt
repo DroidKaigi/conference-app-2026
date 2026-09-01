@@ -76,8 +76,13 @@ class TimetableItemDetailScreenPresenterTest {
             send(TimetableItemDetailScreenAction.ToggleDescriptionExpansion)
             assertEquals(DescriptionDisplay.Truncatable.Expanded, uiStates.awaitItem().descriptionDisplay)
 
+            // Expanding lifts the line limit, so the layout it triggers reports no overflow. The
+            // language toggle fences that report: the state it emits shows the expansion outlived it.
+            send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(false))
             send(TimetableItemDetailScreenAction.ToggleDisplayLanguage)
-            assertEquals(DisplayLanguage.English, uiStates.awaitItem().displayLanguage)
+            val afterReport = uiStates.awaitItem()
+            assertEquals(DescriptionDisplay.Truncatable.Expanded, afterReport.descriptionDisplay)
+            assertEquals(DisplayLanguage.English, afterReport.displayLanguage)
 
             send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
             assertEquals(TimetableItemId("d1b"), graph.favoriteMutationKey.invocations.receive())
