@@ -102,6 +102,20 @@ entry<TimetableItemDetailNavKey>(
 
 The wrapper is unconditional because the decision of whether to wrap must not change over an entry's life: see [the single call site rule](./navigation-retain-entry-decorator.md#one-call-site-per-entry).
 
+## Lazy containers in a pane
+
+A pane entry's content lives inside a `movableContentOf`, so opening or closing a detail moves the entry to a new position in the composable call hierarchy instead of recomposing it where it stands (see [the single call site rule](./navigation-retain-entry-decorator.md#one-call-site-per-entry)). Every lazy container a pane entry draws must therefore take its state from `core/ui`:
+
+```kotlin
+LazyColumn(state = rememberListDetailSceneAwareLazyListState()) { ... }
+LazyVerticalGrid(state = rememberListDetailSceneAwareLazyGridState(), columns = ...) { ... }
+```
+
+Both helpers key the state on `LocalListDetailSceneScope`, so the move builds a fresh state and carries the scroll position over. A state kept across the move breaks in two ways:
+
+- The scaffold lays its panes out inside a `LookaheadScope`, and a lazy state latches onto the first lookahead pass it sees. Once the detail closes, no lookahead pass runs again and the state freezes at the values it last saw there, so the list stops scrolling past that offset. The latch has no reset: https://issuetracker.google.com/issues/552354343
+- A prefetch paused mid-composition resumes and applies on a later frame, replaying its recorded operations against the nodes the move has meanwhile detached and reattached, which fails an `onReuse is only expected on attached node` precondition. The helpers cancel every prefetch handle still outstanding as the state is replaced, which happens while the frame that moves the entry is still running and so before the prefetcher's next turn on the main thread.
+
 ## Resizing the split
 
 The scaffold shows a drag handle on the seam (`paneExpansionDragHandle`). Releasing a drag settles the split onto the nearest of three anchors — list at `PaneMinWidth`, 50:50, and detail at `PaneMinWidth` — so the edge anchors are the panes' resting minimum widths. While the pointer is down, `PaneExpansionDragBounds` rubber-bands the seam past the edge anchors through the state's `consumeDragDelta` hook: resistance grows with distance and movement stops entirely at `PaneMaxOvershoot`, while deltas back toward the bounds pass through untouched so the release animation is unaffected.

@@ -29,4 +29,6 @@ Every decorator between `RetainNavEntryDecorator` and the entry content must cal
 
 Retention does not cover that move. The store retains exiting values only while its own provider has left the composition, and the provider stays composed here, so the values are retired instead of kept. Branch on the entry's metadata, which is fixed for the entry, and vary what the single branch passes to its content.
 
+A move the entry does survive still resets some of its state on purpose: for the lazy list and grid states a pane entry must rebuild when it crosses the list-detail boundary, see [Lazy containers in a pane](./navigation-list-detail.md#lazy-containers-in-a-pane).
+
 Related: [Root NavEntry emulation (RootSceneStrategy)](./navigation-predictive-back-tabs.md) · [ScreenContext](./screen-context.md)
