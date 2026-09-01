@@ -19,6 +19,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
 import io.github.droidkaigi.confsched.core.ui.plus
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.about.generated.resources.licenses
 import org.jetbrains.compose.resources.stringResource
@@ -37,6 +38,7 @@ fun LicensesScreen(
         // every link it offers through LocalUriHandler.
         LibrariesContainer(
             libraries = uiState.libs,
+            lazyListState = rememberListDetailSceneAwareLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = innerPadding + PaddingValues(start = paneStartInset()),
             colors = LicensesScreenDefaults.libraryColors(),

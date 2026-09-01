@@ -17,6 +17,7 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyGridState
 import io.github.droidkaigi.confsched.feature.sponsors.component.SPONSOR_GRID_COLUMNS
 import io.github.droidkaigi.confsched.feature.sponsors.component.SponsorsEmptyView
 import io.github.droidkaigi.confsched.feature.sponsors.component.sponsorPlanSection
@@ -40,6 +41,7 @@ fun SponsorsScreen(
             SponsorsEmptyView(modifier = Modifier.padding(innerPadding).padding(start = paneSpacerInset))
         } else {
             LazyVerticalGrid(
+                state = rememberListDetailSceneAwareLazyGridState(),
                 columns = GridCells.Fixed(SPONSOR_GRID_COLUMNS),
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentPadding = PaddingValues(

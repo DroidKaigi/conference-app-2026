@@ -32,6 +32,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_clear_filters
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_initial_constellation_title
@@ -61,6 +62,7 @@ internal fun SearchStateView(
         SearchResultUiState.Empty.NoMatch -> sceneSelection.noMatchDirection
     }
     LazyColumn(
+        state = rememberListDetailSceneAwareLazyListState(),
         modifier = modifier
             .fillMaxSize()
             .semantics { liveRegion = LiveRegionMode.Polite },

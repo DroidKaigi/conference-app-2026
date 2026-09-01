@@ -18,6 +18,7 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyGridState
 import io.github.droidkaigi.confsched.feature.staff.component.StaffItem
 import io.github.droidkaigi.confsched.feature.staff.component.StaffItemDefaults
 import io.github.droidkaigi.confsched.feature.staff.generated.resources.Res
@@ -36,6 +37,7 @@ fun StaffScreen(
         },
     ) { innerPadding ->
         LazyVerticalGrid(
+            state = rememberListDetailSceneAwareLazyGridState(),
             columns = GridCells.Adaptive(StaffItemDefaults.avatarSize),
             horizontalArrangement = Arrangement.spacedBy(StaffScreenDefaults.cellSpacing),
             verticalArrangement = Arrangement.spacedBy(StaffScreenDefaults.cellSpacing),

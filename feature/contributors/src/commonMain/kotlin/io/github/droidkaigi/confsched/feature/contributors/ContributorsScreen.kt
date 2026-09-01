@@ -22,6 +22,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyGridState
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorItem
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorItemDefaults
 import io.github.droidkaigi.confsched.feature.contributors.component.ContributorsCountText
@@ -46,6 +47,7 @@ fun ContributorsScreen(
             ContributorsEmptyView(modifier = Modifier.padding(innerPadding).padding(start = paneSpacerInset))
         } else {
             LazyVerticalGrid(
+                state = rememberListDetailSceneAwareLazyGridState(),
                 columns = GridCells.Adaptive(ContributorItemDefaults.avatarSize),
                 horizontalArrangement = Arrangement.spacedBy(ContributorsScreenDefaults.columnSpacing),
                 verticalArrangement = Arrangement.spacedBy(ContributorsScreenDefaults.headerSpacing),

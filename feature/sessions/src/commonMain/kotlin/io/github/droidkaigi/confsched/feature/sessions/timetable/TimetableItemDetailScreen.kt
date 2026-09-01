@@ -33,6 +33,7 @@ import io.github.droidkaigi.confsched.core.ui.ListDetailSceneAwareBackButton
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.currentDisplayLanguage
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SameSlotSessionsSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionArchiveSection
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.SessionCancelledBanner
@@ -94,6 +95,7 @@ fun TimetableItemDetailScreen(
             end = innerPadding.calculateEndPadding(layoutDirection),
         )
         LazyColumn(
+            state = rememberListDetailSceneAwareLazyListState(),
             modifier = Modifier.fillMaxSize(),
             // The items take the horizontal insets themselves, so a surface they fill keeps its
             // color under a display cutout while its content stays clear of it.

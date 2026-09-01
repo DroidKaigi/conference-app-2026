@@ -22,6 +22,7 @@ import io.github.droidkaigi.confsched.core.preview.LocaleScreenPreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiLargeTopAppBar
 import io.github.droidkaigi.confsched.core.ui.paneStartInset
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.settings.component.ColorSchemeGroupSection
 import io.github.droidkaigi.confsched.feature.settings.component.FontFamilyGroupSection
 import io.github.droidkaigi.confsched.feature.settings.component.SketchStrengthGroupSection
@@ -46,6 +47,7 @@ fun SettingsScreen(
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->
         LazyColumn(
+            state = rememberListDetailSceneAwareLazyListState(),
             modifier = Modifier.fillMaxSize().padding(innerPadding),
             contentPadding = PaddingValues(
                 start = SettingsScreenDefaults.horizontalPadding + paneStartInset(),
