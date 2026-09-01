@@ -51,6 +51,7 @@ internal fun KaigiNavDisplay(
                 sceneDecoratorStrategies = listOfNotNull(
                     rememberRootTabSceneDecorator(
                         backStack = backStack,
+                        entryProvider = entryProvider,
                         onSelectTab = onSelectTab,
                     ),
                 ),
