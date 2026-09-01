@@ -177,7 +177,7 @@ private fun TimetableListSectionWidePreview(
                 contentPadding = PaddingValues(),
                 onBookmarkClick = {},
                 onItemClick = {},
-                listState = rememberLazyListState()
+                listState = rememberLazyListState(),
             )
         }
     }
