@@ -1,7 +1,7 @@
 package io.github.droidkaigi.confsched.feature.eventmap
 
-import androidx.navigation3.runtime.NavKey
+import io.github.droidkaigi.confsched.core.common.OverlayNavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PrizeOverlayNavKey(val page: Int) : NavKey
+data class PrizeOverlayNavKey(val page: Int) : OverlayNavKey

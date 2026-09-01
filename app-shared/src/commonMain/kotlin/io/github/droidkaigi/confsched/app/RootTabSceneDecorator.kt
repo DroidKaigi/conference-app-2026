@@ -51,6 +51,7 @@ import androidx.window.core.layout.WindowSizeClass
 import io.github.droidkaigi.confsched.app_shared.generated.resources.Res
 import io.github.droidkaigi.confsched.app_shared.generated.resources.collapse_navigation_rail
 import io.github.droidkaigi.confsched.app_shared.generated.resources.expand_navigation_rail
+import io.github.droidkaigi.confsched.core.common.OverlayNavKey
 import io.github.droidkaigi.confsched.core.common.TargetPlatform
 import io.github.droidkaigi.confsched.core.common.currentPlatform
 import io.github.droidkaigi.confsched.core.common.paneEntries
@@ -104,10 +105,14 @@ private val rootTabsByKey: Map<NavKey, RootTab> = RootTab.entries.associateBy(Ro
  * Every scene this app forms draws the topmost [paneCount] entries of the back stack, so a
  * multi-pane scene keeps the entries below its top one on screen beside it: the list pane of a
  * list-detail scene is a root destination the reader is still looking at, and the tab it belongs to
- * stays the reader's place.
+ * stays the reader's place. An [OverlayNavKey] floats above the scene the entries below it form,
+ * so the panes are counted from below it and the scene stays the one the reader had open.
  */
-private fun List<NavKey>.rootTabInTopPanes(paneCount: Int): RootTab? =
-    takeLast(paneCount).asReversed().firstNotNullOfOrNull(rootTabsByKey::get)
+internal fun List<NavKey>.rootTabInTopPanes(paneCount: Int): RootTab? =
+    dropLastWhile { it is OverlayNavKey }
+        .takeLast(paneCount)
+        .asReversed()
+        .firstNotNullOfOrNull(rootTabsByKey::get)
 
 /** Whether this scene draws two or more panes. */
 private val Scene<NavKey>.isMultiPane: Boolean
