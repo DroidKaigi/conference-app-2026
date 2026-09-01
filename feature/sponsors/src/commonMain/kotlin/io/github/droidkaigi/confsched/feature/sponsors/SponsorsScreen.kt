@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -32,9 +34,15 @@ fun SponsorsScreen(
     onBackClick: () -> Unit,
 ) {
     val paneSpacerInset = paneStartInset()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            KaigiLargeTopAppBar(title = stringResource(Res.string.sponsors), onBackClick = onBackClick)
+            KaigiLargeTopAppBar(
+                title = stringResource(Res.string.sponsors),
+                onBackClick = onBackClick,
+                scrollBehavior = scrollBehavior,
+            )
         },
     ) { innerPadding ->
         if (uiState.groups.isEmpty()) {

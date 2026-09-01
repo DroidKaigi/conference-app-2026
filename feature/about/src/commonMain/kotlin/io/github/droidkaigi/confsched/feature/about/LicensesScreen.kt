@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
@@ -29,9 +31,15 @@ fun LicensesScreen(
     uiState: LicensesScreenUiState,
     onBackClick: () -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            KaigiLargeTopAppBar(title = stringResource(Res.string.licenses), onBackClick = onBackClick)
+            KaigiLargeTopAppBar(
+                title = stringResource(Res.string.licenses),
+                onBackClick = onBackClick,
+                scrollBehavior = scrollBehavior,
+            )
         },
     ) { innerPadding ->
         // AboutLibraries renders the rows, the inline detail and the license dialog, and opens

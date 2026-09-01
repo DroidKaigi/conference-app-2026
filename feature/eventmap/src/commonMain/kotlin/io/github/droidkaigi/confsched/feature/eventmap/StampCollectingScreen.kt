@@ -11,8 +11,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -56,11 +58,14 @@ fun StampCollectingScreen(
     onBackClick: () -> Unit,
     onPrizeClick: (page: Int) -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             KaigiLargeTopAppBar(
                 title = stringResource(Res.string.stamp_collecting_title),
                 onBackClick = onBackClick,
+                scrollBehavior = scrollBehavior,
             )
         },
     ) { innerPadding ->

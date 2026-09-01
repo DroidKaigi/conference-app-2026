@@ -11,8 +11,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -38,9 +40,15 @@ fun ContributorsScreen(
     onBackClick: () -> Unit,
 ) {
     val paneSpacerInset = paneStartInset()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            KaigiLargeTopAppBar(title = stringResource(Res.string.contributors), onBackClick = onBackClick)
+            KaigiLargeTopAppBar(
+                title = stringResource(Res.string.contributors),
+                onBackClick = onBackClick,
+                scrollBehavior = scrollBehavior,
+            )
         },
     ) { innerPadding ->
         if (uiState.contributors.isEmpty()) {

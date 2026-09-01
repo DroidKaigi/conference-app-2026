@@ -1,31 +1,60 @@
 package io.github.droidkaigi.confsched.core.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowBack
 import io.github.droidkaigi.confsched.core.designsystem.icon.GridView
 import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
@@ -112,18 +141,134 @@ fun KaigiLargeTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    LargeTopAppBar(
-        title = { BarTitle(title, modifier = Modifier.padding(start = paneStartInset())) },
-        modifier = modifier,
-        navigationIcon = { ListDetailSceneAwareBackButton(onClick = onBackClick) },
-        actions = { Actions(actions) },
-        collapsedHeight = KaigiTopAppBarDefaults.height,
-        expandedHeight = KaigiTopAppBarDefaults.largeHeight,
-        windowInsets = windowInsets,
-        colors = KaigiTopAppBarDefaults.colors(containerColor, contentColor),
-        scrollBehavior = scrollBehavior,
+    val density = LocalDensity.current
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    SideEffect {
+        scrollBehavior?.state?.heightOffsetLimit = with(density) {
+            -(KaigiTopAppBarDefaults.largeHeight - KaigiTopAppBarDefaults.height).toPx()
+        }
+    }
+
+    val collapsedFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
+    val scrollProgress = FastOutSlowInEasing.transform(collapsedFraction)
+
+    // As a detail pane the bar spans the pane but its content starts past the boundary, so the
+    // title centres on what is left rather than on the band.
+    val paneStartInset = paneStartInset()
+
+    // BarTitle renders at headlineMedium; the collapsed title scales down from that size.
+    val expandedTitleFontSize = MaterialTheme.typography.headlineMedium.fontSize
+    val collapsedTitleScale = CollapsedTitleFontSize.value / expandedTitleFontSize.value
+    val titleScale = lerp(1f, collapsedTitleScale, scrollProgress)
+
+    val barHeight = with(density) {
+        lerp(
+            KaigiTopAppBarDefaults.largeHeight.toPx(),
+            KaigiTopAppBarDefaults.height.toPx(),
+            collapsedFraction,
+        ).toDp()
+    }
+    var barWidth by remember { mutableFloatStateOf(0f) }
+    var titleWidth by remember { mutableIntStateOf(0) }
+    var titleHeight by remember { mutableIntStateOf(0) }
+    var titleBaseline by remember { mutableFloatStateOf(0f) }
+
+    // Pivot the scale on the title's own baseline and start edge so both hold still while the
+    // glyphs shrink; the translations below are then measured against those fixed lines.
+    val titleScalePivot = TransformOrigin(
+        pivotFractionX = if (isRtl) 1f else 0f,
+        pivotFractionY = if (titleHeight > 0) titleBaseline / titleHeight else 0f,
     )
+
+    // graphicsLayer translationX is geometric (positive is rightward), so the shift to the
+    // horizontal centre mirrors under a right-to-left layout.
+    val titleCentreTranslationX = with(density) {
+        val contentWidth = barWidth - paneStartInset.toPx()
+        val fromStartEdge =
+            (contentWidth - titleWidth * collapsedTitleScale) / 2 - LargeTitleStartInset.toPx()
+        if (isRtl) -fromStartEdge else fromStartEdge
+    }
+
+    // The collapsed title rides one baseline padding above the bar's bottom on its own; this
+    // nudge lands its optical centre on the bar's centre line, shared with the navigation icon.
+    val titleCentreTranslationY = with(density) {
+        val collapsedBarHeight = KaigiTopAppBarDefaults.height.toPx()
+        val restingBaseline = collapsedBarHeight - LargeTitleBaselinePadding.toPx()
+        val centredBaseline =
+            collapsedBarHeight / 2f + collapsedTitleScale * (titleBaseline - titleHeight / 2f)
+        centredBaseline - restingBaseline
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(containerColor)
+            .windowInsetsPadding(windowInsets)
+            .height(barHeight)
+            .clipToBounds()
+            .onSizeChanged { size ->
+                barWidth = size.width.toFloat()
+            },
+    ) {
+        CompositionLocalProvider(LocalContentColor provides contentColor) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .fillMaxWidth()
+                    .height(KaigiTopAppBarDefaults.height)
+                    .padding(horizontal = TopRowHorizontalPadding),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                ListDetailSceneAwareBackButton(onClick = onBackClick)
+                Spacer(Modifier.weight(1f))
+                Actions(actions = actions)
+            }
+
+            BarTitle(
+                title = title,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = paneStartInset + LargeTitleStartInset)
+                    .paddingFromBaseline(bottom = LargeTitleBaselinePadding)
+                    .graphicsLayer(
+                        transformOrigin = titleScalePivot,
+                        scaleX = titleScale,
+                        scaleY = titleScale,
+                        translationX = lerp(0f, titleCentreTranslationX, scrollProgress),
+                        translationY = lerp(0f, titleCentreTranslationY, scrollProgress),
+                    ),
+            ) { textLayoutResult ->
+                titleWidth = textLayoutResult.size.width
+                titleHeight = textLayoutResult.size.height
+                titleBaseline = textLayoutResult.firstBaseline
+            }
+
+            AnimatedVisibility(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                visible = scrollProgress >= DIVIDER_REVEAL_PROGRESS,
+                enter = fadeIn(animationSpec = tween(DIVIDER_FADE_IN_DURATION_MILLIS)),
+            ) {
+                SketchHorizontalDivider(seed = DIVIDER_SKETCH_SEED)
+            }
+        }
+    }
 }
+
+private val CollapsedTitleFontSize = 22.sp
+
+// Aligns the expanded title with Material 3 LargeTopAppBar.
+private val LargeTitleBaselinePadding = 28.dp
+
+private val LargeTitleStartInset = 16.dp
+
+// Matches Material 3 TopAppBarHorizontalPadding.
+private val TopRowHorizontalPadding = 4.dp
+
+private const val DIVIDER_REVEAL_PROGRESS = 0.9f
+
+private const val DIVIDER_FADE_IN_DURATION_MILLIS = 200
+
+private const val DIVIDER_SKETCH_SEED = 650
 
 const val KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG = "KaigiTopAppBarBackButtonTestTag"
 
@@ -152,19 +297,25 @@ fun KaigiTopAppBarBackButton(onClick: () -> Unit, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun BarTitle(title: String, modifier: Modifier = Modifier) {
+private fun BarTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+) {
     Text(
         text = title,
+        modifier = modifier,
         style = MaterialTheme.typography.headlineMedium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier,
+        onTextLayout = onTextLayout,
     )
 }
 
 @Composable
-private fun Actions(actions: @Composable RowScope.() -> Unit) {
+private fun Actions(actions: @Composable RowScope.() -> Unit, modifier: Modifier = Modifier) {
     Row(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(KaigiTopAppBarDefaults.actionSpacing),
         verticalAlignment = Alignment.CenterVertically,
         content = actions,
@@ -224,6 +375,30 @@ private fun KaigiLargeTopAppBarPreview(
             title = "Contributors",
             onBackClick = {},
             windowInsets = WindowInsets(0),
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@LocalePreviews
+@Composable
+private fun KaigiLargeTopAppBarCollapsedPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        val collapsedLimit = with(LocalDensity.current) {
+            -(KaigiTopAppBarDefaults.largeHeight - KaigiTopAppBarDefaults.height).toPx()
+        }
+        KaigiLargeTopAppBar(
+            title = "Contributors",
+            onBackClick = {},
+            windowInsets = WindowInsets(0),
+            scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+                rememberTopAppBarState(
+                    initialHeightOffsetLimit = collapsedLimit,
+                    initialHeightOffset = collapsedLimit,
+                ),
+            ),
         )
     }
 }
