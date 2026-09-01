@@ -58,7 +58,12 @@ object ProfileCardColors {
  */
 @Composable
 fun profileCardDoodleInkPalette(): DoodleInkPalette = DoodleInkPalette(
-    ink = DoodleInkStyle(color = ProfileCardColors.ink, rimColor = ProfileCardColors.plate),
+    // CampfireNight paints the ink and the dusk band with one pigment; the muted ink (the
+    // occupation and date lines) steps in there so every scheme offers four distinct inks.
+    ink = DoodleInkStyle(
+        color = if (ProfileCardColors.ink == ProfileCardColors.duskBand) ProfileCardColors.mutedInk else ProfileCardColors.ink,
+        rimColor = ProfileCardColors.plate,
+    ),
     band = DoodleInkStyle(color = ProfileCardColors.duskBand, rimColor = ProfileCardColors.onDuskBand),
     paper = DoodleInkStyle(color = ProfileCardColors.plate, rimColor = ProfileCardColors.ink),
     banner = DoodleInkStyle(color = ProfileCardColors.banner, rimColor = ProfileCardColors.onBanner),
