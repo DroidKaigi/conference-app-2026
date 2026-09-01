@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.feature.search
 
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -9,7 +8,6 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.AppNavigator
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
-import io.github.droidkaigi.confsched.core.common.consumeListDetailPaneInsets
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.listPane
 
@@ -21,7 +19,7 @@ class SearchNavEntryProvider(
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
         entry<SearchNavKey>(
-            metadata = listPane() + consumeListDetailPaneInsets(WindowInsetsSides.End),
+            metadata = listPane(),
         ) { key ->
             val graph = retain(screenGraphFactory::createSearchScreenGraph)
             context(graph.screenContext) {

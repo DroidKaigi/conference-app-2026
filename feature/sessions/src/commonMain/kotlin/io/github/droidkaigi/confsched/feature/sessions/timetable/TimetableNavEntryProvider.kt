@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.feature.sessions.timetable
 
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.runtime.retain.retain
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
@@ -9,7 +8,6 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.RootSceneStrategy
 import io.github.droidkaigi.confsched.core.common.UiScope
-import io.github.droidkaigi.confsched.core.common.consumeListDetailPaneInsets
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.instantNavTransition
 import io.github.droidkaigi.confsched.core.common.listPane
@@ -23,7 +21,6 @@ class TimetableNavEntryProvider(
         entry<TimetableNavKey>(
             metadata = RootSceneStrategy.root() +
                 listPane() +
-                consumeListDetailPaneInsets(WindowInsetsSides.End) +
                 instantNavTransition(),
         ) {
             val graph = retain(screenGraphFactory::createTimetableScreenGraph)

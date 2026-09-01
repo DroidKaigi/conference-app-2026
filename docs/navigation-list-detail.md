@@ -85,18 +85,15 @@ A list pane must not take the inset: `LocalListDetailSceneScope` is non-null for
 
 `WindowInsets` describe the whole window, so both panes read the same edge values whatever their position. A pane held clear of a window edge by the pane beside it — the detail pane's start, the list pane's end — would still pad its content for that edge's system-bar or display-cutout inset, opening a gap against the seam.
 
-Each entry names the edge it does not touch in its metadata, and one decorator consumes it:
+The pane metadata names the edge the entry does not touch, and one decorator consumes it:
 
 ```kotlin
-entry<TimetableNavKey>(
-    metadata = RootSceneStrategy.root() + listPane() +
-        consumeListDetailPaneInsets(WindowInsetsSides.End),
-) { ... }
+entry<TimetableNavKey>(metadata = RootSceneStrategy.root() + listPane()) { ... }
 
-entry<TimetableItemDetailNavKey>(
-    metadata = detailPane() + consumeListDetailPaneInsets(WindowInsetsSides.Start),
-) { ... }
+entry<TimetableItemDetailNavKey>(metadata = detailPane()) { ... }
 ```
+
+The edge each pane does not touch follows from its role — a list pane's seam is its end edge, a detail pane's its start edge — so `listPane()` and `detailPane()` carry the consumption metadata themselves.
 
 `rememberListDetailPaneInsetsNavEntryDecorator`, in `KaigiNavDisplay`'s `entryDecorators`, wraps every entry that carries the metadata in `Modifier.consumeWindowInsets`, and consumes the named edge only while `LocalListDetailSceneScope` is non-null, so a single-pane screen keeps the full window insets. `Scaffold` and `KaigiTopAppBar` subtract consumed insets, so the screens read their padding unchanged.
 

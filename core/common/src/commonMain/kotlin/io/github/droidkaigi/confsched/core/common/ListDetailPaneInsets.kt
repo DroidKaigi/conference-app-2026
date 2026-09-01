@@ -26,7 +26,7 @@ private data object ListDetailPaneInsetsKey : NavMetadataKey<WindowInsetsSides>
  * another pane: [WindowInsetsSides.Start] for a detail pane, [WindowInsetsSides.End] for a list
  * pane. [rememberListDetailPaneInsetsNavEntryDecorator] applies it.
  */
-fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
+internal fun consumeListDetailPaneInsets(sides: WindowInsetsSides): Map<String, Any> =
     metadata { put(ListDetailPaneInsetsKey, sides) }
 
 /**

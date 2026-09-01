@@ -1,5 +1,6 @@
 package io.github.droidkaigi.confsched.core.common
 
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -18,17 +19,25 @@ private enum class PaneRole { List, Detail }
 private data object PaneRoleMetadataKey : NavMetadataKey<PaneRole>
 
 /**
- * NavEntry metadata for the list of a list-detail pair: [ListDetailSceneStrategy.listPane] together
- * with the role mark [rememberLoneListPaneSceneStrategy] and [paneEntries] read.
+ * NavEntry metadata for the list of a list-detail pair: [ListDetailSceneStrategy.listPane], the
+ * role mark [rememberLoneListPaneSceneStrategy] and [paneEntries] read, and the end-edge inset
+ * consumption a list pane needs, since only its start edge is the window's.
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun listPane(): Map<String, Any> =
-    ListDetailSceneStrategy.listPane() + metadata { put(PaneRoleMetadataKey, PaneRole.List) }
+    ListDetailSceneStrategy.listPane() +
+        metadata { put(PaneRoleMetadataKey, PaneRole.List) } +
+        consumeListDetailPaneInsets(WindowInsetsSides.End)
 
-/** NavEntry metadata for the detail of a list-detail pair, with the role mark [paneEntries] reads. */
+/**
+ * NavEntry metadata for the detail of a list-detail pair: [ListDetailSceneStrategy.detailPane],
+ * the role mark [paneEntries] reads, and the start-edge inset consumption a detail pane needs.
+ */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 fun detailPane(): Map<String, Any> =
-    ListDetailSceneStrategy.detailPane() + metadata { put(PaneRoleMetadataKey, PaneRole.Detail) }
+    ListDetailSceneStrategy.detailPane() +
+        metadata { put(PaneRoleMetadataKey, PaneRole.Detail) } +
+        consumeListDetailPaneInsets(WindowInsetsSides.Start)
 
 /**
  * The entries a scene draws, one per pane.
