@@ -3,8 +3,10 @@ package io.github.droidkaigi.confsched.core.common
 import androidx.navigation3.runtime.NavKey
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 sealed interface NavCommand {
@@ -22,6 +24,13 @@ sealed interface NavCommand {
 class AppNavigator(private val logger: KaigiLogger) : Navigator {
     private val commandChannel = Channel<NavCommand>(Channel.BUFFERED)
     val commands: Flow<NavCommand> = commandChannel.receiveAsFlow()
+
+    // No replay: a screen that starts collecting after a tap must not scroll for a stale event.
+    val reselections: Flow<NavKey>
+        field = MutableSharedFlow<NavKey>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     fun goTo(key: NavKey) {
         logger.debug { "goTo $key" }
@@ -41,5 +50,10 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
     fun replaceTop(key: NavKey) {
         logger.debug { "replaceTop $key" }
         commandChannel.trySend(NavCommand.ReplaceTop(key))
+    }
+
+    fun reselect(key: NavKey) {
+        logger.debug { "reselect $key" }
+        reselections.tryEmit(key)
     }
 }
