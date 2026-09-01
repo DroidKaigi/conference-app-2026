@@ -3,13 +3,11 @@ package io.github.droidkaigi.confsched.feature.profilecard.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +26,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
-import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.KaigiButtonIconLabel
 import io.github.droidkaigi.confsched.core.ui.KaigiOutlinedButton
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
@@ -67,15 +65,11 @@ internal fun ProfileCardActionsSection(
                 .fillMaxWidth()
                 .testTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG),
         ) {
-            Icon(
+            KaigiButtonIconLabel(
                 imageVector = KaigiIcons.Default.Share,
-                contentDescription = null,
-                modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                text = stringResource(Res.string.share_button),
+                textStyle = ProfileCardTextStyles.accent,
             )
-            Text(stringResource(Res.string.share_button), style = ProfileCardTextStyles.accent)
-            // Balances the leading icon: the row spaces both sides of the label alike, so a
-            // spacer of the icon's width lands the label on the button's center.
-            Spacer(modifier = Modifier.width(KaigiButtonDefaults.iconSize))
         }
         KaigiOutlinedButton(
             onClick = onDoodleClick,
@@ -84,12 +78,11 @@ internal fun ProfileCardActionsSection(
                 .fillMaxWidth()
                 .testTag(PROFILE_CARD_VIEW_DOODLE_BUTTON_TEST_TAG),
         ) {
-            Icon(
+            KaigiButtonIconLabel(
                 imageVector = KaigiIcons.Default.Edit,
-                contentDescription = null,
-                modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                text = stringResource(Res.string.doodle_button),
+                textStyle = ProfileCardTextStyles.accent,
             )
-            Text(stringResource(Res.string.doodle_button), style = ProfileCardTextStyles.accent)
         }
         Text(
             text = stringResource(Res.string.edit_button),

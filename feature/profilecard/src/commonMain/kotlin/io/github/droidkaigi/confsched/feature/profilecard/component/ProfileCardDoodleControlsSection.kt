@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +27,7 @@ import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsSpacing
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
-import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.KaigiButtonIconLabel
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
 import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
@@ -109,12 +107,11 @@ internal fun ProfileCardDoodleControlsSection(
             seed = ProfileCardDoodleControlsDefaults.doneButtonSeed,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Icon(
+            KaigiButtonIconLabel(
                 imageVector = KaigiIcons.Default.Check,
-                contentDescription = null,
-                modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                text = stringResource(Res.string.doodle_done),
+                textStyle = ProfileCardTextStyles.accent,
             )
-            Text(stringResource(Res.string.doodle_done), style = ProfileCardTextStyles.accent)
         }
     }
 }

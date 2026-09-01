@@ -8,11 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +41,7 @@ import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
 import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.KaigiButtonIconLabel
 import io.github.droidkaigi.confsched.core.ui.aboutWallDoodleInkPalette
 import io.github.droidkaigi.confsched.core.ui.rememberAboutHeroStage
 import io.github.droidkaigi.confsched.feature.about.generated.resources.Res
@@ -109,12 +107,11 @@ internal fun AboutWallDoodleEditorView(
                 seed = AboutWallDoodleEditorDefaults.doneButtonSeed,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Icon(
+                KaigiButtonIconLabel(
                     imageVector = KaigiIcons.Default.Check,
-                    contentDescription = null,
-                    modifier = Modifier.size(KaigiButtonDefaults.iconSize),
+                    text = stringResource(Res.string.doodle_done),
+                    textStyle = KaigiButtonDefaults.labelStyle,
                 )
-                Text(stringResource(Res.string.doodle_done), style = KaigiButtonDefaults.labelStyle)
             }
         }
     }
