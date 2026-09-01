@@ -23,15 +23,24 @@ fun firstFavoriteNotificationScreenPresenter(
     var isAnswering by retain { mutableStateOf(false) }
 
     ActionEffect(screenChannel) { action ->
-        isAnswering = true
         // An answer either way is the reader deciding, so the guidance is not offered again;
         // a dialog closed without one leaves the flag alone.
-        guidanceMutation.mutateAsync(Unit)
-        if (action == FirstFavoriteNotificationScreenAction.TurnOnNotifications) {
-            requestNotificationPermission()
+        when (action) {
+            FirstFavoriteNotificationScreenAction.TurnOnNotifications -> {
+                isAnswering = true
+                guidanceMutation.mutateAsync(Unit)
+                requestNotificationPermission()
+                isAnswering = false
+                screenChannel.emit(FirstFavoriteNotificationScreenActionResult.Answered)
+            }
+
+            FirstFavoriteNotificationScreenAction.Continue -> {
+                isAnswering = true
+                guidanceMutation.mutateAsync(Unit)
+                isAnswering = false
+                screenChannel.emit(FirstFavoriteNotificationScreenActionResult.Answered)
+            }
         }
-        isAnswering = false
-        screenChannel.emit(FirstFavoriteNotificationScreenActionResult.Answered)
     }
 
     // A dialog has nowhere to show a message, and the guidance being offered twice is a smaller
