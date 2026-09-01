@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ fun ProfileCardScreen(
     onShareClick: (ImageBitmap) -> Unit,
 ) {
     Scaffold(
+        modifier = Modifier.imePadding(),
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.profile_card)) },
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->

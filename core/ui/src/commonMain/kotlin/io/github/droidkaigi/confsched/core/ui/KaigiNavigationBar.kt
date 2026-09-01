@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -322,8 +325,13 @@ object KaigiNavigationBarDefaults {
      * to clear as well.
      */
     val occupiedHeightWithInset: Dp
-        @Composable get() = occupiedHeight +
-            barInsets.asPaddingValues().calculateBottomPadding()
+        @Composable get() = barInsets
+            .add(WindowInsets(bottom = occupiedHeight))
+            // The bar stays behind the keyboard rather than riding above it, so while one is up
+            // the content only has to clear the part of the band the keyboard leaves showing.
+            .exclude(WindowInsets.ime)
+            .asPaddingValues()
+            .calculateBottomPadding()
 
     val cornerRadius = 28.dp
     val indicatorSize = 40.dp

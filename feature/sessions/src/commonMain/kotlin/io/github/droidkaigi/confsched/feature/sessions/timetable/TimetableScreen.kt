@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.sessions.timetable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material3.Scaffold
@@ -73,6 +74,9 @@ fun TimetableScreen(
     }
 
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
         topBar = {
             TimetableHeader(
                 viewMode = uiState.viewMode,
