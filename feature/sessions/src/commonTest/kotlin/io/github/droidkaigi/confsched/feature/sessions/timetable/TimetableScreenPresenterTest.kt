@@ -22,6 +22,7 @@ import io.github.droidkaigi.confsched.core.model.TimetableQueryKey
 import io.github.droidkaigi.confsched.core.testing.FakeKaigiLogger
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import io.github.droidkaigi.confsched.core.testing.testTimetableItem
+import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSectionUiState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -60,15 +61,15 @@ class TimetableScreenPresenterTest {
             val initial = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day1, initial.day)
             assertEquals(TimetableViewMode.List, initial.viewMode)
-            assertEquals(listOf("d1a", "d1b"), initial.timetableListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
+            assertEquals(listOf("d1a", "d1b"), initial.selectedListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
             assertEquals(listOf("d1a", "d1b"), initial.timetableGridSection.sessions.map { it.id.value })
             assertEquals(600, initial.timetableGridSection.nowMinute)
-            assertEquals(setOf(TimetableItemId("d1a")), initial.timetableListSection.bookmarks)
+            assertEquals(setOf(TimetableItemId("d1a")), initial.selectedListSection.bookmarks)
 
             send(TimetableScreenAction.SelectDay(DroidKaigi2026Day.Day2))
             val onDay2 = uiStates.awaitItem()
             assertEquals(DroidKaigi2026Day.Day2, onDay2.day)
-            assertEquals(listOf("d2a"), onDay2.timetableListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
+            assertEquals(listOf("d2a"), onDay2.selectedListSection.timeSlots.flatMap { slot -> slot.items.map { it.id.value } })
             assertEquals(listOf("d2a"), onDay2.timetableGridSection.sessions.map { it.id.value })
             assertEquals(null, onDay2.timetableGridSection.nowMinute)
 
@@ -90,7 +91,7 @@ class TimetableScreenPresenterTest {
             presenterContext = graph.presenterContext,
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = concurrent) },
         ) {
-            val slots = uiStates.awaitItem().timetableListSection.timeSlots
+            val slots = uiStates.awaitItem().selectedListSection.timeSlots
             assertEquals(listOf("10:00" to "10:40", "11:00" to "11:40"), slots.map { it.startsAt to it.endsAt })
             assertEquals(listOf("d1a", "d1b"), slots[0].items.map { it.id.value })
             assertEquals(listOf("d1c"), slots[1].items.map { it.id.value })
@@ -246,26 +247,26 @@ class TimetableScreenPresenterTest {
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
         ) {
             val initialState = uiStates.awaitItem()
-            assertEquals(1.hours + 30.minutes, initialState.timetableListSection.countdownBannerUiState?.remainingDuration)
-            assertEquals("s1", initialState.timetableListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
+            assertEquals(1.hours + 30.minutes, initialState.selectedListSection.countdownBannerUiState?.remainingDuration)
+            assertEquals("s1", initialState.selectedListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
 
             graph.clock.advanceBy(1.hours)
             val at930 = uiStates.awaitItem()
-            assertEquals(30.minutes, at930.timetableListSection.countdownBannerUiState?.remainingDuration)
+            assertEquals(30.minutes, at930.selectedListSection.countdownBannerUiState?.remainingDuration)
 
             graph.clock.advanceBy(40.minutes)
             val at1010 = uiStates.awaitItem()
-            assertEquals(50.minutes, at1010.timetableListSection.countdownBannerUiState?.remainingDuration)
-            assertEquals("s2", at1010.timetableListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
+            assertEquals(50.minutes, at1010.selectedListSection.countdownBannerUiState?.remainingDuration)
+            assertEquals("s2", at1010.selectedListSection.countdownBannerUiState?.nextSessions?.first()?.id?.value)
 
             graph.clock.advanceBy(1.hours)
             val at1110 = uiStates.awaitItem()
-            assertEquals(null, at1110.timetableListSection.countdownBannerUiState)
+            assertEquals(null, at1110.selectedListSection.countdownBannerUiState)
 
             graph.clock.instant = DroidKaigi2026Day.Day1.at(8, 30)
             send(TimetableScreenAction.SelectDay(DroidKaigi2026Day.Day2))
             val atDay2 = uiStates.awaitItem()
-            assertEquals(null, atDay2.timetableListSection.countdownBannerUiState)
+            assertEquals(null, atDay2.selectedListSection.countdownBannerUiState)
         }
     }
 
@@ -284,7 +285,7 @@ class TimetableScreenPresenterTest {
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
         ) {
             val initialState = uiStates.awaitItem()
-            assertEquals(null, initialState.timetableListSection.countdownBannerUiState)
+            assertEquals(null, initialState.selectedListSection.countdownBannerUiState)
         }
     }
 
@@ -304,7 +305,7 @@ class TimetableScreenPresenterTest {
             presenter = { channel -> timetableScreenPresenter(screenChannel = channel, timetable = timetable) },
         ) {
             val initialState = uiStates.awaitItem()
-            val bannerState = initialState.timetableListSection.countdownBannerUiState
+            val bannerState = initialState.selectedListSection.countdownBannerUiState
             assertEquals(1.hours + 30.minutes, bannerState?.remainingDuration)
             assertEquals(listOf("s1", "s2"), bannerState?.nextSessions?.map { it.id.value })
         }
@@ -314,6 +315,9 @@ class TimetableScreenPresenterTest {
     context(_: ScreenContext)
     private fun rememberProbeQueryReply(key: TimetableQueryKey): Reply<Timetable> =
         rememberQuery(key).reply
+
+    private val TimetableScreenUiState.selectedListSection: TimetableListSectionUiState
+        get() = timetableListSections.getValue(day)
 
     private suspend fun ReceiveTurbine<TimetableScreenUiState>.awaitDay(day: DroidKaigi2026Day): TimetableScreenUiState {
         while (true) {
