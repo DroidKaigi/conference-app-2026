@@ -2,17 +2,32 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import dev.zacsweers.metro.createGraph
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
+import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.testing.Robot
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG
+import io.github.droidkaigi.confsched.feature.profilecard.component.mascotOptionTestTag
+import io.github.droidkaigi.confsched.feature.profilecard.component.sketchinessOptionTestTag
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -33,29 +48,44 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         }
     }
 
-    fun inputNickName(text: String) = inputField(NICK_NAME_FIELD_INDEX, text)
+    fun inputNickName(text: String) = inputField(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG, text)
 
-    fun inputOccupation(text: String) = inputField(OCCUPATION_FIELD_INDEX, text)
+    fun inputOccupation(text: String) = inputField(PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG, text)
 
-    fun inputLink(text: String) = inputField(LINK_FIELD_INDEX, text)
+    fun inputLink(text: String) = inputField(PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG, text)
 
-    fun clickMascot(mascotName: String) {
-        composeUiTest.onNodeWithContentDescription(mascotName).performClick()
-        composeUiTest.waitForIdle()
+    fun clickMascot(mascot: Mascot) = clickTag(mascotOptionTestTag(mascot))
+
+    fun clickSketchiness(sketchiness: Sketchiness) = clickTag(sketchinessOptionTestTag(sketchiness))
+
+    fun clickCreate() = clickTag(PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG)
+
+    fun clickEdit() = clickTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
+
+    fun checkFormDisplayed() {
+        editableFieldIn(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
-    fun clickSketchiness(label: String) = clickText(label)
-
-    fun clickCreate() = clickText("Create Card")
-
-    fun clickEdit() = clickText("Edit")
-
-    fun checkTextDisplayed(text: String) {
-        composeUiTest.onNodeWithText(text).assertIsDisplayed()
+    fun checkAddImageButtonDisplayed() {
+        composeUiTest.onNodeWithTag(PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
-    fun checkTextDoesNotExist(text: String) {
-        composeUiTest.onNodeWithText(text).assertDoesNotExist()
+    fun checkFormDoesNotExist() {
+        composeUiTest.onNodeWithTag(PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG).assertDoesNotExist()
+    }
+
+    fun checkNickNameShows(nickName: String) {
+        editableFieldIn(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG).assertTextEquals(nickName)
+    }
+
+    fun checkAvatarImageErrorDisplayed() {
+        composeUiTest.onNodeWithTag(PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG).assertIsDisplayed()
+    }
+
+    fun checkCardDisplayed() {
+        composeUiTest.onNodeWithTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG).assertIsDisplayed()
     }
 
     fun checkCardWritten(card: ProfileCard) {
@@ -66,21 +96,20 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         assertNull(graph.profileCardMutationKey.invocations.tryReceive().getOrNull())
     }
 
-    private fun inputField(index: Int, text: String) {
-        val field = composeUiTest.onAllNodes(hasSetTextAction())[index]
+    private fun inputField(testTag: String, text: String) {
+        val field = editableFieldIn(testTag)
         field.performTextClearance()
         field.performTextInput(text)
         composeUiTest.waitForIdle()
     }
 
-    private fun clickText(text: String) {
-        composeUiTest.onNodeWithText(text).performClick()
-        composeUiTest.waitForIdle()
+    // The text sits on the editable node inside the tagged frame, not on the frame itself.
+    private fun editableFieldIn(testTag: String): SemanticsNodeInteraction {
+        return composeUiTest.onNode(hasSetTextAction() and hasAnyAncestor(hasTestTag(testTag)))
     }
 
-    private companion object {
-        const val NICK_NAME_FIELD_INDEX = 0
-        const val OCCUPATION_FIELD_INDEX = 1
-        const val LINK_FIELD_INDEX = 2
+    private fun clickTag(testTag: String) {
+        composeUiTest.onNodeWithTag(testTag).performClick()
+        composeUiTest.waitForIdle()
     }
 }

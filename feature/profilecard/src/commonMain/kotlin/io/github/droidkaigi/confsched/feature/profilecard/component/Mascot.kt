@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -73,6 +74,8 @@ fun MascotIcon(
     )
 }
 
+internal fun mascotOptionTestTag(mascot: Mascot) = "MascotOption:${mascot.name}"
+
 /** A row letting the user pick one of the five [Mascot]s. */
 @Composable
 fun MascotPicker(
@@ -90,6 +93,7 @@ fun MascotPicker(
                 selected = mascot == selectedMascot,
                 onClick = { onMascotClick(mascot) },
                 seed = mascot.ordinal,
+                modifier = Modifier.testTag(mascotOptionTestTag(mascot)),
             )
         }
     }

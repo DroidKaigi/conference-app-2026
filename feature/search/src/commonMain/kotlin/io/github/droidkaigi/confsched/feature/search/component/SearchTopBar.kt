@@ -60,9 +60,9 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_hint
 import org.jetbrains.compose.resources.stringResource
 
-const val SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG = "SearchTopBarBackButtonTestTag"
-const val SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG = "SearchTopBarQueryFieldTestTag"
-const val SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG = "SearchTopBarClearButtonTestTag"
+internal const val SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG = "SearchTopBarBackButtonTestTag"
+internal const val SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG = "SearchTopBarQueryFieldTestTag"
+internal const val SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG = "SearchTopBarClearButtonTestTag"
 
 @Composable
 internal fun SearchTopBar(

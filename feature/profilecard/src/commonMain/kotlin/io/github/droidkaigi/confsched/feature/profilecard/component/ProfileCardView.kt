@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -49,6 +50,9 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ed
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+
+internal const val PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG = "ProfileCardViewShareButtonTestTag"
+internal const val PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG = "ProfileCardViewEditButtonTestTag"
 
 @Composable
 fun ProfileCardView(
@@ -174,7 +178,9 @@ private fun ProfileCardActionsSection(
             onClick = onShareClick,
             seed = ProfileCardViewDefaults.shareButtonSeed,
             enabled = !isSharing,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG),
         ) {
             Icon(
                 imageVector = KaigiIcons.Default.Share,
@@ -193,6 +199,7 @@ private fun ProfileCardActionsSection(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
                 .clickable(role = Role.Button, onClick = onEditClick)
                 // The design sets the label straight under the button with no chrome of its own;
                 // the padding is what the row is spaced by.

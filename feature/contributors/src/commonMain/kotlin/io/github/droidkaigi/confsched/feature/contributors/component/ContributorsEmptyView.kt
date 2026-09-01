@@ -19,7 +19,7 @@ import io.github.droidkaigi.confsched.feature.contributors.generated.resources.R
 import io.github.droidkaigi.confsched.feature.contributors.generated.resources.contributors_empty
 import org.jetbrains.compose.resources.stringResource
 
-const val CONTRIBUTORS_EMPTY_VIEW_TEST_TAG = "ContributorsEmptyViewTestTag"
+internal const val CONTRIBUTORS_EMPTY_VIEW_TEST_TAG = "ContributorsEmptyViewTestTag"
 
 @Composable
 internal fun ContributorsEmptyView(modifier: Modifier = Modifier) {

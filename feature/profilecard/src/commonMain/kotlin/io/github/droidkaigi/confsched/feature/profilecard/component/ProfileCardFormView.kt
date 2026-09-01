@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -69,6 +70,13 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.stringResource
 
+internal const val PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG = "ProfileCardFormNickNameFieldTestTag"
+internal const val PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG = "ProfileCardFormOccupationFieldTestTag"
+internal const val PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG = "ProfileCardFormLinkFieldTestTag"
+internal const val PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG = "ProfileCardFormAddImageButtonTestTag"
+internal const val PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG = "ProfileCardFormAvatarImageErrorTestTag"
+internal const val PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG = "ProfileCardFormSubmitButtonTestTag"
+
 @Composable
 fun ProfileCardFormView(
     uiState: ProfileCardScreenUiState.Form,
@@ -101,6 +109,7 @@ fun ProfileCardFormView(
                 onValueChange = onNickNameChange,
                 seed = ProfileCardFormViewDefaults.nickNameFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG),
                 isError = uiState.nickNameError != null,
             )
             ProfileCardFormErrorText(uiState.nickNameError)
@@ -111,6 +120,7 @@ fun ProfileCardFormView(
                 onValueChange = onOccupationChange,
                 seed = ProfileCardFormViewDefaults.occupationFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG),
                 isError = uiState.occupationError != null,
             )
             ProfileCardFormErrorText(uiState.occupationError)
@@ -121,6 +131,7 @@ fun ProfileCardFormView(
                 onValueChange = onLinkChange,
                 seed = ProfileCardFormViewDefaults.linkFieldSeed,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG),
                 isError = uiState.linkError != null,
             )
             ProfileCardFormErrorText(uiState.linkError)
@@ -128,7 +139,11 @@ fun ProfileCardFormView(
         ProfileCardFormSection(label = stringResource(Res.string.profile_image_label)) {
             val avatarImage = uiState.avatarImage
             if (avatarImage == null) {
-                KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
+                KaigiOutlinedButton(
+                    onClick = onAddImageClick,
+                    seed = ProfileCardFormViewDefaults.addImageButtonSeed,
+                    modifier = Modifier.testTag(PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG),
+                ) {
                     Icon(
                         imageVector = KaigiIcons.Default.Add,
                         contentDescription = null,
@@ -144,7 +159,10 @@ fun ProfileCardFormView(
                     onRemoveClick = onRemoveAvatarImageClick,
                 )
             }
-            ProfileCardFormErrorText(uiState.avatarImageError)
+            ProfileCardFormErrorText(
+                error = uiState.avatarImageError,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG),
+            )
         }
         ProfileCardFormSection(label = stringResource(Res.string.mascot_label)) {
             MascotPicker(selectedMascot = uiState.mascot, onMascotClick = onMascotClick)
@@ -155,7 +173,9 @@ fun ProfileCardFormView(
         KaigiButton(
             onClick = onSubmitClick,
             seed = ProfileCardFormViewDefaults.submitButtonSeed,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG),
             enabled = !uiState.isSubmitting,
         ) {
             Text(stringResource(Res.string.create_card_button), style = ProfileCardTextStyles.accent)
@@ -250,12 +270,13 @@ private fun ProfileCardFormSection(
 }
 
 @Composable
-private fun ProfileCardFormErrorText(error: ProfileCardFormError?) {
+private fun ProfileCardFormErrorText(error: ProfileCardFormError?, modifier: Modifier = Modifier) {
     if (error == null) return
     Text(
         text = stringResource(error.message),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error,
+        modifier = modifier,
     )
 }
 
