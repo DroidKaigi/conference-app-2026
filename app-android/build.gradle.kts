@@ -23,7 +23,7 @@ android {
         applicationId = "io.github.droidkaigi.confsched2026"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
+        versionCode = 3
         versionName = libs.versions.droidkaigiApp.get()
     }
 
