@@ -13,7 +13,6 @@ import androidx.compose.animation.unveilIn
 import androidx.compose.animation.veilOut
 import androidx.compose.ui.graphics.Color
 import androidx.navigation3.scene.Scene
-import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEvent.SwipeEdge
 
 private const val SLIDE_DURATION_MILLIS = 400
@@ -71,13 +70,13 @@ internal fun <T : Any> slidePopTransitionSpec(): AnimatedContentTransitionScope<
 /**
  * [slidePopTransitionSpec] driven by a back gesture instead of by time.
  *
- * The screen leaves toward the edge the gesture came from, which is a physical edge on every
- * platform, so this spec takes physical directions rather than the layout-direction aware ones.
- * The framework seeks this transition to the gesture's progress, so the easing stays linear:
- * anything else would bend the motion away from the finger.
+ * The popped screen leaves toward the end edge whichever edge the gesture came from — flipping
+ * the direction with the edge would replay the push motion on a right-edge back. The framework
+ * seeks this transition to the gesture's progress, so the easing stays linear: anything else
+ * would bend the motion away from the finger.
  */
-internal fun <T : Any> slidePredictivePopTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>.(@SwipeEdge Int) -> ContentTransform = { edge ->
-    val towards = if (edge == NavigationEvent.EDGE_LEFT) SlideDirection.Right else SlideDirection.Left
+internal fun <T : Any> slidePredictivePopTransitionSpec(): AnimatedContentTransitionScope<Scene<T>>.(@SwipeEdge Int) -> ContentTransform = { _ ->
+    val towards = SlideDirection.End
     ContentTransform(
         targetContentEnter = slideIntoContainer(
             towards = towards,
