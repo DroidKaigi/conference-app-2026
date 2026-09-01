@@ -132,6 +132,25 @@ class ProfileCardScreenRobotTest : RobotTest() {
                         checkLastSavedStrokeOutlines(front = false, back = false)
                     }
                 }
+                describe("and a stroke is still under the finger that started it") {
+                    doIt { startStroke() }
+                    itShould("withhold Done and the flip until the stroke has landed") {
+                        checkDoneDisabled()
+                        checkFlipToBackDisabled()
+                    }
+                    describe("and the finger is lifted") {
+                        doIt { finishStroke() }
+                        itShould("offer Done again") {
+                            checkDoneEnabled()
+                        }
+                        describe("and Done is tapped") {
+                            doIt { clickDone() }
+                            itShould("save the stroke the finger was drawing") {
+                                checkSavedFaceStrokeCounts(front = 5, back = 0)
+                            }
+                        }
+                    }
+                }
                 describe("and back is pressed after a stroke is drawn") {
                     doIt {
                         drawStroke()

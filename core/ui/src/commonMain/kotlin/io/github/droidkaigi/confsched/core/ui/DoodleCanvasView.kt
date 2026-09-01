@@ -58,6 +58,9 @@ import kotlin.math.pow
  * turns the gesture into a pinch and records no stroke, as does a wheel turned with Ctrl or Meta
  * held. Every stroke carries the width [penSize] gives it and the ink [selectedInk] names, drawn as
  * [palette] resolves that ink and rimmed while [outlined].
+ *
+ * [onGestureActiveChange] reports whether a gesture is in flight, so a caller can hold back an
+ * action that would take the surface away from a stroke still being drawn.
  */
 @Composable
 fun DoodleCanvasView(
@@ -70,6 +73,7 @@ fun DoodleCanvasView(
     selectedInk: DoodleInk,
     outlined: Boolean,
     onStrokeAdd: (DoodleStroke) -> Unit,
+    onGestureActiveChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     transform: DoodleCanvasTransform = rememberDoodleCanvasTransform(),
     background: @Composable BoxScope.(scale: Float) -> Unit = {},
@@ -79,6 +83,7 @@ fun DoodleCanvasView(
         val scale = minOf(maxWidth / referenceSize.width, maxHeight / referenceSize.height).coerceAtMost(maxScale)
         val points = remember { mutableStateListOf<DoodlePoint>() }
         val currentOnStrokeAdd by rememberUpdatedState(onStrokeAdd)
+        val currentOnGestureActiveChange by rememberUpdatedState(onGestureActiveChange)
         // The gesture detector outlives a pen change, so the pen is read when the stroke lands.
         val currentPenSize by rememberUpdatedState(penSize)
         val currentInk by rememberUpdatedState(selectedInk)
@@ -96,6 +101,9 @@ fun DoodleCanvasView(
                 points.clear()
             }
         }
+
+        fun reportGestureActive(active: Boolean) = currentOnGestureActiveChange(active)
+
         val shape = SketchRoundRectShape(seed = combineSketchSeed(CANVAS_SEED), borderThickness = 1.5.dp)
         Box(modifier = Modifier.size(referenceSize * scale)) {
             Box(
@@ -115,6 +123,7 @@ fun DoodleCanvasView(
                             },
                             onStrokePoint = points::add,
                             onStrokeEnd = commitStroke,
+                            onGestureActiveChange = ::reportGestureActive,
                         )
                     }
                     .pointerInput(transform) { detectDoodleWheelZoom(transform) },
@@ -175,6 +184,9 @@ const val DOODLE_CANVAS_FRAME_TEST_TAG = "DoodleCanvasFrameTestTag"
  * the touch slop, and a second finger arriving before that turns the whole gesture into a pinch. A
  * gesture never changes its mind, so a pinch leaves no stroke behind, while a finger lifted before
  * it travelled leaves a stroke holding the single point it was pressed at.
+ *
+ * [onGestureActiveChange] brackets the gesture, and is reported from a `finally` so a cancelled
+ * gesture ends it too.
  */
 private suspend fun PointerInputScope.detectDoodleStrokes(
     transform: DoodleCanvasTransform,
@@ -183,51 +195,57 @@ private suspend fun PointerInputScope.detectDoodleStrokes(
     onStrokeStart: (DoodlePoint) -> Unit,
     onStrokePoint: (DoodlePoint) -> Unit,
     onStrokeEnd: () -> Unit,
+    onGestureActiveChange: (Boolean) -> Unit,
 ) {
     awaitEachGesture {
         val down = awaitFirstDown()
+        onGestureActiveChange(true)
         var drawing = false
         var transforming = false
-        while (true) {
-            val event = awaitPointerEvent()
-            if (event.changes.none { it.pressed }) break
-            when {
-                transforming -> {
-                    val zoomChange = event.calculateZoom()
-                    if (zoomChange != 1f) {
-                        transform.zoomBy(zoomChange, event.calculateCentroid().toFrameFraction(size))
+        try {
+            while (true) {
+                val event = awaitPointerEvent()
+                if (event.changes.none { it.pressed }) break
+                when {
+                    transforming -> {
+                        val zoomChange = event.calculateZoom()
+                        if (zoomChange != 1f) {
+                            transform.zoomBy(zoomChange, event.calculateCentroid().toFrameFraction(size))
+                        }
+                        transform.panBy(event.calculatePan().toFrameFraction(size))
+                        event.changes.forEach(PointerInputChange::consume)
                     }
-                    transform.panBy(event.calculatePan().toFrameFraction(size))
-                    event.changes.forEach(PointerInputChange::consume)
-                }
 
-                drawing -> {
-                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                    if (!change.pressed) break
-                    onStrokePoint(transform.toDoodlePoint(change.position, size, origin, unit))
-                    change.consume()
-                }
-
-                event.changes.count { it.pressed } > 1 -> transforming = true
-
-                else -> {
-                    val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                    if ((change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
-                        drawing = true
-                        onStrokeStart(transform.toDoodlePoint(down.position, size, origin, unit))
+                    drawing -> {
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (!change.pressed) break
                         onStrokePoint(transform.toDoodlePoint(change.position, size, origin, unit))
                         change.consume()
                     }
+
+                    event.changes.count { it.pressed } > 1 -> transforming = true
+
+                    else -> {
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if ((change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
+                            drawing = true
+                            onStrokeStart(transform.toDoodlePoint(down.position, size, origin, unit))
+                            onStrokePoint(transform.toDoodlePoint(change.position, size, origin, unit))
+                            change.consume()
+                        }
+                    }
                 }
             }
-        }
-        when {
-            drawing -> onStrokeEnd()
+            when {
+                drawing -> onStrokeEnd()
 
-            !transforming -> {
-                onStrokeStart(transform.toDoodlePoint(down.position, size, origin, unit))
-                onStrokeEnd()
+                !transforming -> {
+                    onStrokeStart(transform.toDoodlePoint(down.position, size, origin, unit))
+                    onStrokeEnd()
+                }
             }
+        } finally {
+            onGestureActiveChange(false)
         }
     }
 }
@@ -294,6 +312,7 @@ private fun DoodleCanvasViewPreview(
             selectedInk = DoodleInk.Ink,
             outlined = true,
             onStrokeAdd = {},
+            onGestureActiveChange = {},
             modifier = Modifier.size(AboutHeroSize),
             background = { Box(modifier = Modifier.matchParentSize().background(MaterialTheme.colorScheme.primary)) },
         )
@@ -316,6 +335,7 @@ private fun DoodleCanvasViewMagnifiedPreview(
             selectedInk = DoodleInk.Ink,
             outlined = true,
             onStrokeAdd = {},
+            onGestureActiveChange = {},
             modifier = Modifier.size(AboutHeroSize),
             transform = rememberDoodleCanvasTransform(initialZoom = 2f, initialOffset = Offset(x = 0.2f, y = -0.3f)),
             background = { Box(modifier = Modifier.matchParentSize().background(MaterialTheme.colorScheme.primary)) },

@@ -5,6 +5,8 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasSetTextAction
@@ -84,7 +86,7 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     /** Draws a horizontal stroke through the centre of the canvas the visible face is drawn on. */
     fun drawStroke() {
-        composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0].performTouchInput {
+        visibleFaceCanvas().performTouchInput {
             down(Offset(centerX - width * STROKE_HALF_SPAN_FRACTION, centerY))
             moveTo(Offset(centerX, centerY))
             moveTo(Offset(centerX + width * STROKE_HALF_SPAN_FRACTION, centerY))
@@ -92,6 +94,24 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
         }
         composeUiTest.waitForIdle()
     }
+
+    /** Presses a pointer down on that canvas and drags it past the touch slop, leaving it down. */
+    fun startStroke() {
+        visibleFaceCanvas().performTouchInput {
+            down(Offset(centerX - width * STROKE_HALF_SPAN_FRACTION, centerY))
+            moveTo(Offset(centerX, centerY))
+        }
+        composeUiTest.waitForIdle()
+    }
+
+    /** Lifts the pointer [startStroke] left down, which ends the stroke it was drawing. */
+    fun finishStroke() {
+        visibleFaceCanvas().performTouchInput { up() }
+        composeUiTest.waitForIdle()
+    }
+
+    private fun visibleFaceCanvas(): SemanticsNodeInteraction =
+        composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0]
 
     fun inputNickName(text: String) = inputField(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG, text)
 
@@ -139,6 +159,18 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun checkTextDisplayed(text: String) {
         composeUiTest.onNodeWithText(text).assertIsDisplayed()
+    }
+
+    fun checkDoneEnabled() {
+        composeUiTest.onNodeWithText("Done").assertIsEnabled()
+    }
+
+    fun checkDoneDisabled() {
+        composeUiTest.onNodeWithText("Done").assertIsNotEnabled()
+    }
+
+    fun checkFlipToBackDisabled() {
+        composeUiTest.onNodeWithContentDescription("Switch to the back").assertIsNotEnabled()
     }
 
     fun checkCardWritten(card: ProfileCard) {

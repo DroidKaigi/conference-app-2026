@@ -16,11 +16,15 @@ import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_switch_
 import io.github.droidkaigi.confsched.core.ui.generated.resources.doodle_switch_to_front
 import org.jetbrains.compose.resources.stringResource
 
-/** Turns a two-faced surface over while it is being drawn on; [isShowingBack] names the face in view. */
+/**
+ * Turns a two-faced surface over while it is being drawn on; [isShowingBack] names the face in view.
+ * While [enabled] is false the turn is withheld, which is what a stroke still under a finger needs.
+ */
 @Composable
 fun DoodleFlipButton(
     isShowingBack: Boolean,
     onClick: () -> Unit,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val description = if (isShowingBack) {
@@ -32,6 +36,7 @@ fun DoodleFlipButton(
         seed = FLIP_BUTTON_SEED,
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         size = KaigiButtonDefaults.height,
         containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -48,7 +53,7 @@ private fun DoodleFlipButtonPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        DoodleFlipButton(isShowingBack = false, onClick = {})
+        DoodleFlipButton(isShowingBack = false, onClick = {}, enabled = true)
     }
 }
 
@@ -58,6 +63,6 @@ private fun DoodleFlipButtonShowingBackPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        DoodleFlipButton(isShowingBack = true, onClick = {})
+        DoodleFlipButton(isShowingBack = true, onClick = {}, enabled = true)
     }
 }

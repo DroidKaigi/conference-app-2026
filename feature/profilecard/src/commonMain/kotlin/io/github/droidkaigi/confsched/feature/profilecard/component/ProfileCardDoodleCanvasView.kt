@@ -43,6 +43,7 @@ internal fun ProfileCardDoodleCanvasView(
     selectedInk: DoodleInk,
     outlined: Boolean,
     onStrokeAdd: (DoodleStroke) -> Unit,
+    onGestureActiveChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     DoodleCanvasView(
@@ -55,6 +56,7 @@ internal fun ProfileCardDoodleCanvasView(
         selectedInk = selectedInk,
         outlined = outlined,
         onStrokeAdd = onStrokeAdd,
+        onGestureActiveChange = onGestureActiveChange,
         modifier = modifier,
         background = {
             if (showsBack) {
@@ -112,6 +114,7 @@ private fun ProfileCardDoodleCanvasViewPreview(
             selectedInk = DoodleInk.Ink,
             outlined = true,
             onStrokeAdd = {},
+            onGestureActiveChange = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
@@ -136,6 +139,7 @@ private fun ProfileCardDoodleCanvasViewBackPreview(
             selectedInk = DoodleInk.Ink,
             outlined = true,
             onStrokeAdd = {},
+            onGestureActiveChange = {},
             modifier = Modifier.fillMaxSize(),
         )
     }

@@ -167,6 +167,24 @@ class AboutScreenRobotTest : RobotTest() {
                         checkSavedWallStrokeOutlines(listOf(true))
                     }
                 }
+                describe("and a stroke is still under the finger that started it") {
+                    doIt { startStroke() }
+                    itShould("withhold Done until the stroke has landed") {
+                        checkButtonDisabled(Res.string.doodle_done)
+                    }
+                    describe("and the finger is lifted") {
+                        doIt { finishStroke() }
+                        itShould("offer Done again") {
+                            checkButtonEnabled(Res.string.doodle_done)
+                        }
+                        describe("and Done is tapped") {
+                            doIt { clickButton(Res.string.doodle_done) }
+                            itShould("save the stroke the finger was drawing") {
+                                checkSavedWallStrokeCount(count = 1)
+                            }
+                        }
+                    }
+                }
                 describe("and a stroke is drawn before back is pressed") {
                     doIt {
                         drawStroke()

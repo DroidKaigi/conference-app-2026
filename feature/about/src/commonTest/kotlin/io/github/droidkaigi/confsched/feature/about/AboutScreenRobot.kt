@@ -3,7 +3,10 @@ package io.github.droidkaigi.confsched.feature.about
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -98,7 +101,7 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     /** Draws a horizontal stroke through the centre of the wall canvas. */
     fun drawStroke() {
-        composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0].performTouchInput {
+        wallCanvas().performTouchInput {
             down(Offset(centerX - width * STROKE_HALF_SPAN_FRACTION, centerY))
             moveTo(Offset(centerX, centerY))
             moveTo(Offset(centerX + width * STROKE_HALF_SPAN_FRACTION, centerY))
@@ -106,6 +109,24 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         }
         composeUiTest.waitForIdle()
     }
+
+    /** Presses a pointer down on the wall canvas and drags it past the touch slop, leaving it down. */
+    fun startStroke() {
+        wallCanvas().performTouchInput {
+            down(Offset(centerX - width * STROKE_HALF_SPAN_FRACTION, centerY))
+            moveTo(Offset(centerX, centerY))
+        }
+        composeUiTest.waitForIdle()
+    }
+
+    /** Lifts the pointer [startStroke] left down, which ends the stroke it was drawing. */
+    fun finishStroke() {
+        wallCanvas().performTouchInput { up() }
+        composeUiTest.waitForIdle()
+    }
+
+    private fun wallCanvas(): SemanticsNodeInteraction =
+        composeUiTest.onAllNodesWithTag(DOODLE_CANVAS_FRAME_TEST_TAG)[0]
 
     fun clickButton(label: StringResource) {
         composeUiTest.onNodeWithText(text(label)).performClick()
@@ -122,6 +143,14 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 
     fun checkButtonDisplayed(label: StringResource) {
         composeUiTest.onNodeWithText(text(label)).assertIsDisplayed()
+    }
+
+    fun checkButtonEnabled(label: StringResource) {
+        composeUiTest.onNodeWithText(text(label)).assertIsEnabled()
+    }
+
+    fun checkButtonDisabled(label: StringResource) {
+        composeUiTest.onNodeWithText(text(label)).assertIsNotEnabled()
     }
 
     fun checkTextDoesNotExist(label: StringResource) {

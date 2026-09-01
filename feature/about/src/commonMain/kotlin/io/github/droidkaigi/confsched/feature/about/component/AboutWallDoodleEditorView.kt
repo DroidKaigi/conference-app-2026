@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,7 +53,8 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * The wall in the hero's place, turned into a drawing surface with its controls under it. The
  * strokes being edited are transient: only Done hands them over, so an edit always starts from
- * [savedDoodle] again.
+ * [savedDoodle] again. Done is withheld while a stroke is still under a finger, so no stroke can be
+ * left out of what it hands over.
  */
 @Composable
 internal fun AboutWallDoodleEditorView(
@@ -64,6 +66,8 @@ internal fun AboutWallDoodleEditorView(
     var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Ink) }
     var outlined by rememberSerializable { mutableStateOf(true) }
     var draft by rememberSerializable(savedDoodle) { mutableStateOf(savedDoodle) }
+    // A gesture belongs to the pointer holding it, not to the edit, so it is never restored.
+    var gestureActive by remember { mutableStateOf(false) }
     val palette = aboutWallDoodleInkPalette()
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -84,6 +88,7 @@ internal fun AboutWallDoodleEditorView(
                 selectedInk = selectedInk,
                 outlined = outlined,
                 onStrokeAdd = { draft = Doodle(strokes = draft.strokes + it) },
+                onGestureActiveChange = { gestureActive = it },
                 modifier = Modifier.fillMaxWidth().height(AboutHeroHeight),
                 background = { scale -> AboutWallHintView(scale = scale, modifier = Modifier.matchParentSize()) },
             )
@@ -111,6 +116,7 @@ internal fun AboutWallDoodleEditorView(
             KaigiButton(
                 onClick = { onDoneClick(draft) },
                 seed = AboutWallDoodleEditorDefaults.doneButtonSeed,
+                enabled = !gestureActive,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 KaigiButtonIconLabel(

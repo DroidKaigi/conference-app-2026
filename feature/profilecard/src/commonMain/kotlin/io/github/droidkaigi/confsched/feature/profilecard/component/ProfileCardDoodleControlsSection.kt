@@ -37,7 +37,9 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * The controls a card being drawn on offers. [sideBySide] says both faces are on screen at once with their own stroke controls under each canvas, so
- * each face takes its own Undo and Clear and there is no face to switch to.
+ * each face takes its own Undo and Clear and there is no face to switch to. While [gestureActive]
+ * names a stroke still under a finger, Done and the flip are withheld: either would take the
+ * surface away from a stroke that has not landed yet.
  */
 @Composable
 internal fun ProfileCardDoodleControlsSection(
@@ -46,6 +48,7 @@ internal fun ProfileCardDoodleControlsSection(
     outlined: Boolean,
     isShowingBack: Boolean,
     sideBySide: Boolean,
+    gestureActive: Boolean,
     canEditFront: Boolean,
     canEditBack: Boolean,
     onPenSizeClick: (DoodlePenSize) -> Unit,
@@ -80,7 +83,7 @@ internal fun ProfileCardDoodleControlsSection(
                 horizontalArrangement = Arrangement.spacedBy(DoodleStrokeControlsSpacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                DoodleFlipButton(isShowingBack = isShowingBack, onClick = onFlipClick)
+                DoodleFlipButton(isShowingBack = isShowingBack, onClick = onFlipClick, enabled = !gestureActive)
                 DoodleStrokeControlsRow(
                     canEdit = if (isShowingBack) canEditBack else canEditFront,
                     onUndoClick = if (isShowingBack) onBackUndoClick else onFrontUndoClick,
@@ -92,6 +95,7 @@ internal fun ProfileCardDoodleControlsSection(
         KaigiButton(
             onClick = onDoneClick,
             seed = ProfileCardDoodleControlsDefaults.doneButtonSeed,
+            enabled = !gestureActive,
             modifier = Modifier.fillMaxWidth(),
         ) {
             KaigiButtonIconLabel(
@@ -124,6 +128,7 @@ private fun ProfileCardDoodleControlsSectionPreview(
             outlined = true,
             isShowingBack = false,
             sideBySide = false,
+            gestureActive = false,
             canEditFront = true,
             canEditBack = false,
             onPenSizeClick = {},
@@ -151,6 +156,7 @@ private fun ProfileCardDoodleControlsSectionSideBySidePreview(
             outlined = false,
             isShowingBack = false,
             sideBySide = true,
+            gestureActive = false,
             canEditFront = true,
             canEditBack = true,
             onPenSizeClick = {},

@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
@@ -77,6 +78,9 @@ fun ProfileCardView(
     // drafts are keyed on the session rather than kept for the life of the screen.
     var frontDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.frontDoodle) }
     var backDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.backDoodle) }
+    // A gesture belongs to the pointer holding it, not to the doodle session, so it is never restored.
+    var frontGestureActive by remember { mutableStateOf(false) }
+    var backGestureActive by remember { mutableStateOf(false) }
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
@@ -127,6 +131,7 @@ fun ProfileCardView(
                         selectedInk = selectedInk,
                         outlined = outlined,
                         onStrokeAdd = { frontDraft = frontDraft.withStroke(it) },
+                        onGestureActiveChange = { frontGestureActive = it },
                         onUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
                         onClearClick = { frontDraft = Doodle.Empty },
                         modifier = Modifier.fillMaxHeight().weight(1f),
@@ -144,6 +149,7 @@ fun ProfileCardView(
                         selectedInk = selectedInk,
                         outlined = outlined,
                         onStrokeAdd = { backDraft = backDraft.withStroke(it) },
+                        onGestureActiveChange = { backGestureActive = it },
                         onUndoClick = { backDraft = backDraft.withoutLastStroke() },
                         onClearClick = { backDraft = Doodle.Empty },
                         modifier = Modifier.fillMaxHeight().weight(1f),
@@ -169,6 +175,13 @@ fun ProfileCardView(
                             frontDraft = frontDraft.withStroke(stroke)
                         }
                     },
+                    onGestureActiveChange = { active ->
+                        if (uiState.isShowingBack) {
+                            backGestureActive = active
+                        } else {
+                            frontGestureActive = active
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
                 )
             }
@@ -190,6 +203,7 @@ fun ProfileCardView(
                         outlined = outlined,
                         isShowingBack = uiState.isShowingBack,
                         sideBySide = sideBySide,
+                        gestureActive = frontGestureActive || backGestureActive,
                         canEditFront = frontDraft.strokes.isNotEmpty(),
                         canEditBack = backDraft.strokes.isNotEmpty(),
                         onPenSizeClick = { penSize = it },
@@ -301,6 +315,7 @@ private fun ProfileCardDoodleFaceColumn(
     selectedInk: DoodleInk,
     outlined: Boolean,
     onStrokeAdd: (DoodleStroke) -> Unit,
+    onGestureActiveChange: (Boolean) -> Unit,
     onUndoClick: () -> Unit,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -323,6 +338,7 @@ private fun ProfileCardDoodleFaceColumn(
             selectedInk = selectedInk,
             outlined = outlined,
             onStrokeAdd = onStrokeAdd,
+            onGestureActiveChange = onGestureActiveChange,
             modifier = Modifier.fillMaxWidth().weight(1f),
         )
         DoodleStrokeControlsRow(
