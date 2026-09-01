@@ -160,7 +160,7 @@ private fun WideBackstageSceneArt(modifier: Modifier = Modifier) {
                     rotationZ = swing
                     transformOrigin = TransformOrigin(
                         pivotFractionX =
-                            (BACKSTAGE_LAMP_PIVOT_FRAME_X + subjectShift(frameWidth)) / frameWidth,
+                        (BACKSTAGE_LAMP_PIVOT_FRAME_X + subjectShift(frameWidth)) / frameWidth,
                         pivotFractionY = BACKSTAGE_LAMP_PIVOT_FRAME_Y / SCENE_FRAME_HEIGHT,
                     )
                 }
