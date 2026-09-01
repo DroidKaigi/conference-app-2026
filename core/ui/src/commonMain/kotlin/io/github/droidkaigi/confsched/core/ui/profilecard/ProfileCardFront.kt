@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.profilecard.component
+package io.github.droidkaigi.confsched.core.ui.profilecard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -39,22 +39,26 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.ByteArrayImage
+import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
+import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.SketchHorizontalDivider
 import io.github.droidkaigi.confsched.core.ui.SketchOutlineShape
+import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_dates
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_event_label
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_greeting
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_venue
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_dates
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_greeting
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_venue
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.PI
 import kotlin.math.cos
@@ -64,7 +68,7 @@ import kotlin.random.Random
 /**
  * The card's front face, a "seal": the chosen mascot as a small badge, the user's photo in a
  * wobbly circular plate (a placeholder face when none was picked), and their nickname/occupation
- * over the event's name, venue, and dates.
+ * over the event's name, venue, and dates, under whatever [doodle] the user has drawn on it.
  */
 @Composable
 fun ProfileCardFront(
@@ -73,6 +77,7 @@ fun ProfileCardFront(
     mascot: Mascot,
     sketchiness: Sketchiness,
     avatarImage: AvatarImage?,
+    doodle: Doodle,
     taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -133,6 +138,13 @@ fun ProfileCardFront(
             sketchiness = sketchiness,
             seed = seed + 4,
             modifier = Modifier.cardOffset(ProfileCardFrontDefaults.sealOffset).rotate(ProfileCardFrontDefaults.sealRotationDegrees),
+        )
+        DoodleLayerView(
+            doodle = doodle,
+            palette = profileCardDoodleInkPalette(),
+            origin = DoodleOrigin.TopStart,
+            scale = 1f,
+            modifier = Modifier.matchParentSize(),
         )
     }
 }
@@ -405,6 +417,7 @@ private fun ProfileCardFrontPreview(
             sketchiness = Sketchiness.Normal,
             taped = true,
             avatarImage = null,
+            doodle = Doodle.fakeOnCardFace(),
             modifier = Modifier.padding(24.dp),
         )
     }

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -39,6 +40,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
  *   so give neighbouring buttons different ones or a row of them reads as a repeat.
  * @param onClick called when the button is clicked.
  * @param modifier the [Modifier] applied to the button.
+ * @param enabled whether the button reacts to a click; while false it also dims.
  * @param size the diameter of the disc.
  * @param containerColor the colour filling the disc.
  * @param contentColor the colour [content] draws in, provided as [LocalContentColor].
@@ -50,6 +52,7 @@ fun KaigiIconButton(
     seed: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     size: Dp = KaigiIconButtonDefaults.size,
     containerColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
     contentColor: Color = MaterialTheme.colorScheme.inverseSurface,
@@ -59,6 +62,7 @@ fun KaigiIconButton(
     Box(
         modifier = modifier
             .size(size)
+            .alpha(if (enabled) 1f else KaigiButtonDefaults.disabledAlpha)
             .clip(
                 SketchRoundRectShape(
                     seed = combinedSeed,
@@ -68,7 +72,7 @@ fun KaigiIconButton(
                 ),
             )
             .background(containerColor)
-            .clickable(role = Role.Button, onClick = onClick),
+            .clickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
@@ -105,6 +109,9 @@ private fun KaigiIconButtonPreview(
                 Icon(KaigiIcons.Default.Search, contentDescription = null)
             }
             KaigiIconButton(seed = 778, onClick = {}) {
+                Icon(KaigiIcons.Default.GridView, contentDescription = null)
+            }
+            KaigiIconButton(seed = 779, onClick = {}, enabled = false) {
                 Icon(KaigiIcons.Default.GridView, contentDescription = null)
             }
         }

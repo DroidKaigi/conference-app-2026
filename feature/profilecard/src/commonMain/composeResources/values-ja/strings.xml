@@ -19,11 +19,6 @@
     <string name="sketchiness_normal">ふつう</string>
     <string name="sketchiness_playful">のびのび</string>
     <string name="create_card_button">カードを作成する</string>
-    <string name="card_event_label">DROIDKAIGI 2026</string>
-    <string name="card_greeting">Hi!!!</string>
-    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
-    <string name="card_dates">2026.09.01 - 09.03</string>
-    <string name="card_scan_me">SCAN ME</string>
     <string name="share_button">共有する</string>
     <string name="share_message">DroidKaigiのプロフィールカードを作成しました！イベントでつながりましょう。#DroidKaigi</string>
     <string name="edit_button">編集する</string>
@@ -32,4 +27,6 @@
     <string name="link_error">リンクを入力してください</string>
     <string name="link_malformed_error">http:// または https:// で始まるリンクを入力してください</string>
     <string name="profile_image_error">画像を追加してください</string>
+    <string name="doodle_button">落書きする</string>
+    <string name="doodle_done">完了</string>
 </resources>

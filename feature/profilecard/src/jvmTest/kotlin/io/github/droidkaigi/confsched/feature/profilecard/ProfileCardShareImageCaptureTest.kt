@@ -8,11 +8,13 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runSkikoComposeUiTest
 import androidx.compose.ui.unit.Density
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTheme
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.SketchStrength
 import io.github.droidkaigi.confsched.core.model.Sketchiness
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardView
 import kotlin.test.Test
@@ -43,11 +45,15 @@ class ProfileCardShareImageCaptureTest {
                         mascot = Mascot.C,
                         sketchiness = Sketchiness.Normal,
                         avatarImage = null,
+                        frontDoodle = Doodle.fakeOnCardFace(),
+                        backDoodle = Doodle.fakeOnCardFace(),
                     ),
                     colorScheme = KaigiColorScheme.MorningMist,
                     onCardClick = {},
                     onEditClick = {},
                     onShareClick = { captured = it },
+                    onStartDoodlingClick = {},
+                    onDoodlesDoneClick = { _, _ -> },
                 )
             }
         }

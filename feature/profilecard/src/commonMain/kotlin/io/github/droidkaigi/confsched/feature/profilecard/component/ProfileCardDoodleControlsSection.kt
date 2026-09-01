@@ -1,0 +1,175 @@
+package io.github.droidkaigi.confsched.feature.profilecard.component
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.icon.Check
+import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
+import io.github.droidkaigi.confsched.core.model.DoodleInk
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
+import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
+import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.DoodleFlipButton
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRow
+import io.github.droidkaigi.confsched.core.ui.DoodleInkRowSurface
+import io.github.droidkaigi.confsched.core.ui.DoodleOutlineToggle
+import io.github.droidkaigi.confsched.core.ui.DoodlePenSizeRow
+import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
+import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsSpacing
+import io.github.droidkaigi.confsched.core.ui.KaigiButton
+import io.github.droidkaigi.confsched.core.ui.KaigiButtonIconLabel
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardDoodleInkPalette
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.doodle_done
+import org.jetbrains.compose.resources.stringResource
+
+/**
+ * The controls a card being drawn on offers. [sideBySide] says both faces are on screen at once with their own stroke controls under each canvas, so
+ * each face takes its own Undo and Clear and there is no face to switch to. While [gestureActive]
+ * names a stroke still under a finger, Done and the flip are withheld: either would take the
+ * surface away from a stroke that has not landed yet.
+ */
+@Composable
+internal fun ProfileCardDoodleControlsSection(
+    penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
+    outlined: Boolean,
+    isShowingBack: Boolean,
+    sideBySide: Boolean,
+    gestureActive: Boolean,
+    canEditFront: Boolean,
+    canEditBack: Boolean,
+    onPenSizeClick: (DoodlePenSize) -> Unit,
+    onInkClick: (DoodleInk) -> Unit,
+    onOutlinedChange: (Boolean) -> Unit,
+    onFlipClick: () -> Unit,
+    onFrontUndoClick: () -> Unit,
+    onFrontClearClick: () -> Unit,
+    onBackUndoClick: () -> Unit,
+    onBackClearClick: () -> Unit,
+    onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .widthIn(max = ProfileCardDoodleControlsDefaults.maxWidth)
+            .fillMaxWidth()
+            .padding(horizontal = ProfileCardDoodleControlsDefaults.inset),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ProfileCardDoodleControlsDefaults.spacing),
+    ) {
+        DoodleInkRow(
+            selectedInk = selectedInk,
+            palette = profileCardDoodleInkPalette(),
+            surface = DoodleInkRowSurface.Card,
+            onInkClick = onInkClick,
+        )
+        DoodleOutlineToggle(outlined = outlined, onOutlinedChange = onOutlinedChange)
+        DoodlePenSizeRow(selectedPenSize = penSize, onPenSizeClick = onPenSizeClick)
+        if (!sideBySide) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(DoodleStrokeControlsSpacing),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                DoodleFlipButton(isShowingBack = isShowingBack, onClick = onFlipClick, enabled = !gestureActive)
+                DoodleStrokeControlsRow(
+                    canEdit = if (isShowingBack) canEditBack else canEditFront,
+                    onUndoClick = if (isShowingBack) onBackUndoClick else onFrontUndoClick,
+                    onClearClick = if (isShowingBack) onBackClearClick else onFrontClearClick,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+        KaigiButton(
+            onClick = onDoneClick,
+            seed = ProfileCardDoodleControlsDefaults.doneButtonSeed,
+            enabled = !gestureActive,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            KaigiButtonIconLabel(
+                imageVector = KaigiIcons.Default.Check,
+                text = stringResource(Res.string.doodle_done),
+                textStyle = ProfileCardTextStyles.accent,
+            )
+        }
+    }
+}
+
+private object ProfileCardDoodleControlsDefaults {
+    val inset = 24.dp
+    val spacing = 12.dp
+
+    /** Two faces' worth of controls, so the block may grow past one card face's width. */
+    val maxWidth = ProfileCardFaceDefaults.size.width * 2
+    val doneButtonSeed = 732
+}
+
+@LocalePreviews
+@Composable
+private fun ProfileCardDoodleControlsSectionPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardDoodleControlsSection(
+            penSize = DoodlePenSize.Normal,
+            selectedInk = DoodleInk.Ink,
+            outlined = true,
+            isShowingBack = false,
+            sideBySide = false,
+            gestureActive = false,
+            canEditFront = true,
+            canEditBack = false,
+            onPenSizeClick = {},
+            onInkClick = {},
+            onOutlinedChange = {},
+            onFlipClick = {},
+            onFrontUndoClick = {},
+            onFrontClearClick = {},
+            onBackUndoClick = {},
+            onBackClearClick = {},
+            onDoneClick = {},
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun ProfileCardDoodleControlsSectionSideBySidePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        ProfileCardDoodleControlsSection(
+            penSize = DoodlePenSize.Thick,
+            selectedInk = DoodleInk.Band,
+            outlined = false,
+            isShowingBack = false,
+            sideBySide = true,
+            gestureActive = false,
+            canEditFront = true,
+            canEditBack = true,
+            onPenSizeClick = {},
+            onInkClick = {},
+            onOutlinedChange = {},
+            onFlipClick = {},
+            onFrontUndoClick = {},
+            onFrontClearClick = {},
+            onBackUndoClick = {},
+            onBackClearClick = {},
+            onDoneClick = {},
+        )
+    }
+}

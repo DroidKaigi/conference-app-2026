@@ -1,58 +1,62 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSerializable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
-import io.github.droidkaigi.confsched.core.designsystem.icon.Share
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
+import io.github.droidkaigi.confsched.core.model.DoodlePenSize
+import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
-import io.github.droidkaigi.confsched.core.ui.KaigiButton
-import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.DoodleStrokeControlsRow
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
+import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.edit_button
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_button
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.stringResource
-
-internal const val PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG = "ProfileCardViewShareButtonTestTag"
-internal const val PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG = "ProfileCardViewEditButtonTestTag"
 
 @Composable
 fun ProfileCardView(
@@ -61,15 +65,28 @@ fun ProfileCardView(
     onCardClick: () -> Unit,
     onEditClick: () -> Unit,
     onShareClick: (ImageBitmap) -> Unit,
+    onStartDoodlingClick: () -> Unit,
+    onDoodlesDoneClick: (Doodle, Doodle) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val shareImageLayer = rememberGraphicsLayer()
     val coroutineScope = rememberCoroutineScope()
-    Box(
+    var penSize by rememberSerializable { mutableStateOf(DoodlePenSize.Normal) }
+    var selectedInk by rememberSerializable { mutableStateOf(DoodleInk.Ink) }
+    var outlined by rememberSerializable { mutableStateOf(true) }
+    // A doodle session starts from what is saved and reaches the data layer only on Done, so the
+    // drafts are keyed on the session rather than kept for the life of the screen.
+    var frontDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.frontDoodle) }
+    var backDraft by rememberSerializable(uiState.isDoodling) { mutableStateOf(uiState.backDoodle) }
+    // A gesture belongs to the pointer holding it, not to the doodle session, so it is never restored.
+    var frontGestureActive by remember { mutableStateOf(false) }
+    var backGestureActive by remember { mutableStateOf(false) }
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
+        val sideBySide = uiState.isDoodling && maxWidth.isExpandedWindowWidth
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,23 +95,136 @@ fun ProfileCardView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.cardSpacing, Alignment.CenterVertically),
         ) {
-            FlippableProfileCard(
-                nickName = uiState.nickName,
-                occupation = uiState.occupation,
-                link = uiState.link,
-                mascot = uiState.mascot,
-                sketchiness = uiState.sketchiness,
-                avatarImage = uiState.avatarImage,
-                isShowingBack = uiState.isShowingBack,
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .clickable(onClick = onCardClick),
-            )
-            ProfileCardActionsSection(
-                isSharing = uiState.isSharing,
-                onShareClick = { coroutineScope.launch { onShareClick(shareImageLayer.toImageBitmap()) } },
-                onEditClick = onEditClick,
-            )
+            if (!uiState.isDoodling) {
+                FlippableProfileCard(
+                    nickName = uiState.nickName,
+                    occupation = uiState.occupation,
+                    link = uiState.link,
+                    mascot = uiState.mascot,
+                    sketchiness = uiState.sketchiness,
+                    avatarImage = uiState.avatarImage,
+                    frontDoodle = uiState.frontDoodle,
+                    backDoodle = uiState.backDoodle,
+                    isShowingBack = uiState.isShowingBack,
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .clickable(onClick = onCardClick),
+                )
+            } else if (sideBySide) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = ProfileCardViewDefaults.cardSpacing,
+                        alignment = Alignment.CenterHorizontally,
+                    ),
+                ) {
+                    ProfileCardDoodleFaceColumn(
+                        showsBack = false,
+                        doodle = frontDraft,
+                        nickName = uiState.nickName,
+                        occupation = uiState.occupation,
+                        link = uiState.link,
+                        mascot = uiState.mascot,
+                        sketchiness = uiState.sketchiness,
+                        avatarImage = uiState.avatarImage,
+                        penSize = penSize,
+                        selectedInk = selectedInk,
+                        outlined = outlined,
+                        onStrokeAdd = { frontDraft = frontDraft.withStroke(it) },
+                        onGestureActiveChange = { frontGestureActive = it },
+                        onUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
+                        onClearClick = { frontDraft = Doodle.Empty },
+                        modifier = Modifier.fillMaxHeight().weight(1f),
+                    )
+                    ProfileCardDoodleFaceColumn(
+                        showsBack = true,
+                        doodle = backDraft,
+                        nickName = uiState.nickName,
+                        occupation = uiState.occupation,
+                        link = uiState.link,
+                        mascot = uiState.mascot,
+                        sketchiness = uiState.sketchiness,
+                        avatarImage = uiState.avatarImage,
+                        penSize = penSize,
+                        selectedInk = selectedInk,
+                        outlined = outlined,
+                        onStrokeAdd = { backDraft = backDraft.withStroke(it) },
+                        onGestureActiveChange = { backGestureActive = it },
+                        onUndoClick = { backDraft = backDraft.withoutLastStroke() },
+                        onClearClick = { backDraft = Doodle.Empty },
+                        modifier = Modifier.fillMaxHeight().weight(1f),
+                    )
+                }
+            } else {
+                ProfileCardDoodleCanvasView(
+                    nickName = uiState.nickName,
+                    occupation = uiState.occupation,
+                    link = uiState.link,
+                    mascot = uiState.mascot,
+                    sketchiness = uiState.sketchiness,
+                    avatarImage = uiState.avatarImage,
+                    showsBack = uiState.isShowingBack,
+                    doodle = if (uiState.isShowingBack) backDraft else frontDraft,
+                    penSize = penSize,
+                    selectedInk = selectedInk,
+                    outlined = outlined,
+                    onStrokeAdd = { stroke ->
+                        if (uiState.isShowingBack) {
+                            backDraft = backDraft.withStroke(stroke)
+                        } else {
+                            frontDraft = frontDraft.withStroke(stroke)
+                        }
+                    },
+                    onGestureActiveChange = { active ->
+                        if (uiState.isShowingBack) {
+                            backGestureActive = active
+                        } else {
+                            frontGestureActive = active
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                )
+            }
+            AnimatedContent(
+                targetState = uiState.isDoodling,
+                transitionSpec = {
+                    val fade = tween<Float>(ProfileCardViewDefaults.controlsDurationMillis)
+                    val slide = tween<IntOffset>(ProfileCardViewDefaults.controlsDurationMillis)
+                    (fadeIn(fade) + slideInVertically(slide) { height -> height / ProfileCardViewDefaults.controlsSlideFraction })
+                        .togetherWith(
+                            fadeOut(fade) + slideOutVertically(slide) { height -> -height / ProfileCardViewDefaults.controlsSlideFraction },
+                        )
+                },
+            ) { doodling ->
+                if (doodling) {
+                    ProfileCardDoodleControlsSection(
+                        penSize = penSize,
+                        selectedInk = selectedInk,
+                        outlined = outlined,
+                        isShowingBack = uiState.isShowingBack,
+                        sideBySide = sideBySide,
+                        gestureActive = frontGestureActive || backGestureActive,
+                        canEditFront = frontDraft.strokes.isNotEmpty(),
+                        canEditBack = backDraft.strokes.isNotEmpty(),
+                        onPenSizeClick = { penSize = it },
+                        onInkClick = { selectedInk = it },
+                        onOutlinedChange = { outlined = it },
+                        onFlipClick = onCardClick,
+                        onFrontUndoClick = { frontDraft = frontDraft.withoutLastStroke() },
+                        onFrontClearClick = { frontDraft = Doodle.Empty },
+                        onBackUndoClick = { backDraft = backDraft.withoutLastStroke() },
+                        onBackClearClick = { backDraft = Doodle.Empty },
+                        onDoneClick = { onDoodlesDoneClick(frontDraft, backDraft) },
+                    )
+                } else {
+                    ProfileCardActionsSection(
+                        isSharing = uiState.isSharing,
+                        onShareClick = { coroutineScope.launch { onShareClick(shareImageLayer.toImageBitmap()) } },
+                        onDoodleClick = onStartDoodlingClick,
+                        onEditClick = onEditClick,
+                    )
+                }
+            }
         }
         // Recorded regardless of which face is turned up, so the share image always carries both.
         RecordedOffScreen(layer = shareImageLayer) { recordingModifier ->
@@ -105,6 +235,8 @@ fun ProfileCardView(
                 mascot = uiState.mascot,
                 sketchiness = uiState.sketchiness,
                 avatarImage = uiState.avatarImage,
+                frontDoodle = uiState.frontDoodle,
+                backDoodle = uiState.backDoodle,
                 colorScheme = colorScheme,
                 modifier = recordingModifier,
             )
@@ -125,6 +257,8 @@ private fun FlippableProfileCard(
     mascot: Mascot,
     sketchiness: Sketchiness,
     avatarImage: AvatarImage?,
+    frontDoodle: Doodle,
+    backDoodle: Doodle,
     isShowingBack: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -145,6 +279,7 @@ private fun FlippableProfileCard(
                 link = link,
                 mascot = mascot,
                 sketchiness = sketchiness,
+                doodle = backDoodle,
                 taped = false,
                 modifier = Modifier.graphicsLayer { rotationY = 180f },
             )
@@ -156,66 +291,76 @@ private fun FlippableProfileCard(
                 sketchiness = sketchiness,
                 taped = false,
                 avatarImage = avatarImage,
+                doodle = frontDoodle,
             )
         }
     }
 }
 
+private fun Doodle.withStroke(stroke: DoodleStroke): Doodle = Doodle(strokes = strokes + stroke)
+
+private fun Doodle.withoutLastStroke(): Doodle = Doodle(strokes = strokes.dropLast(1))
+
 @Composable
-private fun ProfileCardActionsSection(
-    isSharing: Boolean,
-    onShareClick: () -> Unit,
-    onEditClick: () -> Unit,
+private fun ProfileCardDoodleFaceColumn(
+    showsBack: Boolean,
+    doodle: Doodle,
+    nickName: String,
+    occupation: String,
+    link: String,
+    mascot: Mascot,
+    sketchiness: Sketchiness,
+    avatarImage: AvatarImage?,
+    penSize: DoodlePenSize,
+    selectedInk: DoodleInk,
+    outlined: Boolean,
+    onStrokeAdd: (DoodleStroke) -> Unit,
+    onGestureActiveChange: (Boolean) -> Unit,
+    onUndoClick: () -> Unit,
+    onClearClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
-            .widthIn(max = ProfileCardFaceDefaults.size.width)
-            .fillMaxWidth()
-            .padding(horizontal = ProfileCardViewDefaults.actionsInset),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(ProfileCardViewDefaults.faceControlsSpacing),
     ) {
-        KaigiButton(
-            onClick = onShareClick,
-            seed = ProfileCardViewDefaults.shareButtonSeed,
-            enabled = !isSharing,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(PROFILE_CARD_VIEW_SHARE_BUTTON_TEST_TAG),
-        ) {
-            Icon(
-                imageVector = KaigiIcons.Default.Share,
-                contentDescription = null,
-                modifier = Modifier.size(KaigiButtonDefaults.iconSize),
-            )
-            Text(stringResource(Res.string.share_button), style = ProfileCardTextStyles.accent)
-            // Balances the leading icon: the row spaces both sides of the label alike, so a
-            // spacer of the icon's width lands the label on the button's center.
-            Spacer(modifier = Modifier.width(KaigiButtonDefaults.iconSize))
-        }
-        Text(
-            text = stringResource(Res.string.edit_button),
-            style = ProfileCardTextStyles.accent,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(PROFILE_CARD_VIEW_EDIT_BUTTON_TEST_TAG)
-                .clickable(role = Role.Button, onClick = onEditClick)
-                // The design sets the label straight under the button with no chrome of its own;
-                // the padding is what the row is spaced by.
-                .padding(vertical = ProfileCardViewDefaults.actionSpacing),
+        ProfileCardDoodleCanvasView(
+            nickName = nickName,
+            occupation = occupation,
+            link = link,
+            mascot = mascot,
+            sketchiness = sketchiness,
+            avatarImage = avatarImage,
+            showsBack = showsBack,
+            doodle = doodle,
+            penSize = penSize,
+            selectedInk = selectedInk,
+            outlined = outlined,
+            onStrokeAdd = onStrokeAdd,
+            onGestureActiveChange = onGestureActiveChange,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+        )
+        DoodleStrokeControlsRow(
+            canEdit = doodle.strokes.isNotEmpty(),
+            onUndoClick = onUndoClick,
+            onClearClick = onClearClick,
+            modifier = Modifier.widthIn(max = ProfileCardViewDefaults.faceControlsMaxWidth).fillMaxWidth(),
         )
     }
 }
 
 private object ProfileCardViewDefaults {
-    val shareButtonSeed = 730
     val flipDurationMillis = 500
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
-    val actionsInset = 24.dp
-    val actionSpacing = 12.dp
+    val faceControlsSpacing = 12.dp
+    val faceControlsMaxWidth = 360.dp
+    val controlsDurationMillis = 220
+
+    /** The share of the block's own height the controls slide in over. */
+    val controlsSlideFraction = 6
 }
 
 @LocalePreviews
@@ -232,21 +377,43 @@ private fun ProfileCardViewPreview(
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
                 avatarImage = null,
+                frontDoodle = Doodle.fakeOnCardFace(),
+                backDoodle = Doodle.Empty,
             ),
             colorScheme = colorScheme,
             onCardClick = {},
             onEditClick = {},
             onShareClick = {},
+            onStartDoodlingClick = {},
+            onDoodlesDoneClick = { _, _ -> },
         )
     }
 }
 
 @LocalePreviews
 @Composable
-private fun ProfileCardActionsSectionPreview(
+private fun ProfileCardViewDoodlingPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        ProfileCardActionsSection(isSharing = false, onShareClick = {}, onEditClick = {})
+        ProfileCardView(
+            uiState = ProfileCardScreenUiState.Card(
+                nickName = "Speaker A",
+                occupation = "Software Engineer",
+                link = "https://example.com/user",
+                mascot = Mascot.C,
+                sketchiness = Sketchiness.Normal,
+                avatarImage = null,
+                frontDoodle = Doodle.fakeOnCardFace(),
+                backDoodle = Doodle.Empty,
+                isDoodling = true,
+            ),
+            colorScheme = colorScheme,
+            onCardClick = {},
+            onEditClick = {},
+            onShareClick = {},
+            onStartDoodlingClick = {},
+            onDoodlesDoneClick = { _, _ -> },
+        )
     }
 }

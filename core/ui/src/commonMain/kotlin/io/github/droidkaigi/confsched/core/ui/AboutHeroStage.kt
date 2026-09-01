@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.about.component
+package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 /**
@@ -16,7 +17,7 @@ import androidx.compose.ui.unit.dp
  * scene follows the theme. Cached per colour set.
  */
 @Composable
-internal fun rememberAboutHeroStage(): ImageVector {
+fun rememberAboutHeroStage(): ImageVector {
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     val primaryContainer = MaterialTheme.colorScheme.primaryContainer
@@ -529,3 +530,12 @@ internal fun rememberAboutHeroStage(): ImageVector {
         }.build()
     }
 }
+
+val AboutHeroStageWidth = 331.dp
+val AboutHeroStageTopInset = 15.dp
+
+/** Tall enough for the mascots standing at the foot of the stage to clear the wall's lower edge. */
+val AboutHeroHeight = 246.dp
+
+/** The hero's own dp space, which a doodle over the hero is stored and drawn in. */
+val AboutHeroSize = DpSize(AboutHeroStageWidth, AboutHeroHeight)

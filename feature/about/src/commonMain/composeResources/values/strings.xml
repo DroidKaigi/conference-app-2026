@@ -20,4 +20,6 @@
     <string name="about_social_youtube">YouTube</string>
     <string name="about_social_x">X</string>
     <string name="about_social_medium">Medium</string>
+    <string name="about_draw_on_the_wall">Draw on the wall</string>
+    <string name="doodle_done">Done</string>
 </resources>

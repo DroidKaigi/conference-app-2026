@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.profilecard.component
+package io.github.droidkaigi.confsched.core.ui.profilecard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -28,17 +28,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.DoodleLayerView
+import io.github.droidkaigi.confsched.core.ui.DoodleOrigin
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_event_label
+import io.github.droidkaigi.confsched.core.ui.generated.resources.card_scan_me
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_event_label
-import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.card_scan_me
 import org.jetbrains.compose.resources.stringResource
 import qrcode.internals.QRCodeSquare
 import qrcode.raw.ErrorCorrectionLevel
@@ -46,7 +50,8 @@ import qrcode.raw.QRCodeProcessor
 
 /**
  * The card's back face, a "scene": a QR plate encoding the card's link under a banner, and the
- * chosen mascot standing on a gently rolling ground line beside a small flag.
+ * chosen mascot standing on a gently rolling ground line beside a small flag. The QR plate is
+ * drawn last so no stroke of [doodle] can cover the code.
  */
 @Composable
 fun ProfileCardBack(
@@ -54,12 +59,12 @@ fun ProfileCardBack(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    doodle: Doodle,
     taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
     // The face seed is the front's, since the back is that same card turned over.
     val faceSeed = nickName.hashCode()
-    val qrPlateSeed = faceSeed + 100
     ProfileCardFace(sketchiness = sketchiness, outlineSeed = faceSeed, topStartTape = false, bottomEndTape = taped, mirrored = true, modifier = modifier) {
         Box(
             modifier = Modifier
@@ -75,12 +80,6 @@ fun ProfileCardBack(
             style = ProfileCardTextStyles.display,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().cardOffset(ProfileCardBackDefaults.scanMeOffset),
-        )
-        QrPlate(
-            link = link,
-            seed = qrPlateSeed + 1,
-            sketchiness = sketchiness,
-            modifier = Modifier.cardOffset(ProfileCardBackDefaults.qrFrameOffset),
         )
         Sparkles(ProfileCardBackDefaults.bannerSparkles, ProfileCardColors.onBanner)
         Sparkles(ProfileCardBackDefaults.groundSparkles, ProfileCardColors.duskBand)
@@ -102,8 +101,46 @@ fun ProfileCardBack(
                 .cardOffset(ProfileCardBackDefaults.groundLineOffset)
                 .width(ProfileCardBackDefaults.groundLineWidth),
         )
+        DoodleLayerView(
+            doodle = doodle,
+            palette = profileCardDoodleInkPalette(),
+            origin = DoodleOrigin.TopStart,
+            scale = 1f,
+            modifier = Modifier.matchParentSize(),
+        )
+        QrPlate(
+            link = link,
+            seed = qrPlateSeed(nickName),
+            sketchiness = sketchiness,
+            modifier = Modifier.cardOffset(ProfileCardBackDefaults.qrFrameOffset),
+        )
     }
 }
+
+/**
+ * The back face's QR plate on its own, laid out in the card's dp space scaled by [scale] — a
+ * second, opaque copy for drawing over a doodle canvas so a stroke reads as passing under it.
+ */
+@Composable
+fun ProfileCardBackQrPlateView(
+    nickName: String,
+    link: String,
+    sketchiness: Sketchiness,
+    scale: Float,
+    modifier: Modifier = Modifier,
+) {
+    ProfileCardFaceSpace(scale = scale, modifier = modifier) {
+        QrPlate(
+            link = link,
+            seed = qrPlateSeed(nickName),
+            sketchiness = sketchiness,
+            modifier = Modifier.cardOffset(ProfileCardBackDefaults.qrFrameOffset),
+        )
+    }
+}
+
+// Offset from the face seed so the plate's own wobble does not repeat the outline's.
+private fun qrPlateSeed(nickName: String): Int = nickName.hashCode() + 101
 
 /**
  * A thin wobbly frame around a smaller, plate-filled square holding the QR pattern — traced from
@@ -391,6 +428,7 @@ private fun ProfileCardBackPreview(
             link = "https://example.com",
             mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
+            doodle = Doodle.fakeOnCardFace(),
             taped = true,
             modifier = Modifier.padding(24.dp),
         )

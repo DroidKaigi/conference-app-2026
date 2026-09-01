@@ -1,4 +1,4 @@
-package io.github.droidkaigi.confsched.feature.profilecard.component
+package io.github.droidkaigi.confsched.core.ui.profilecard
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -146,6 +146,21 @@ private fun ProfileCardFaceContent(
                     )
                     .rotate(ProfileCardFaceDefaults.bottomEndTapeRotationDegrees),
             )
+        }
+    }
+}
+
+/** Lays [content] out in the card's own fixed dp space, scaled by [scale] the way [ProfileCardFace] does. */
+@Composable
+internal fun ProfileCardFaceSpace(
+    scale: Float,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    val density = LocalDensity.current
+    Box(modifier = modifier) {
+        CompositionLocalProvider(LocalDensity provides Density(density.density * scale, density.fontScale)) {
+            Box(modifier = Modifier.size(ProfileCardFaceDefaults.size), content = content)
         }
     }
 }
@@ -343,14 +358,14 @@ private fun profileCardAmplitude(shortSide: Dp, sketchiness: Sketchiness, filled
     return (if (filled) base * 0.35f else base).dp
 }
 
-internal fun profileCardRoughness(shortSide: Dp, sketchiness: Sketchiness, filled: Boolean = false): Dp =
+fun profileCardRoughness(shortSide: Dp, sketchiness: Sketchiness, filled: Boolean = false): Dp =
     profileCardAmplitude(shortSide, sketchiness, filled) * 0.73f
 
-internal fun profileCardTremor(shortSide: Dp, sketchiness: Sketchiness, filled: Boolean = false): Dp =
+fun profileCardTremor(shortSide: Dp, sketchiness: Sketchiness, filled: Boolean = false): Dp =
     profileCardAmplitude(shortSide, sketchiness, filled) * 0.27f
 
 /** The wobble control-point spacing the design spec's hand-drawn border rule calls for. */
-internal val ProfileCardSweepWavelength = 90.dp
+val ProfileCardSweepWavelength = 90.dp
 
 @Preview
 @Composable

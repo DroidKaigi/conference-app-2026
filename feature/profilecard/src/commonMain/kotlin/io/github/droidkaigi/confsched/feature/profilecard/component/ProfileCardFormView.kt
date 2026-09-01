@@ -47,6 +47,10 @@ import io.github.droidkaigi.confsched.core.ui.KaigiTextField
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.encodeToPng
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardSweepWavelength
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardRoughness
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardTremor
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardFormError
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState

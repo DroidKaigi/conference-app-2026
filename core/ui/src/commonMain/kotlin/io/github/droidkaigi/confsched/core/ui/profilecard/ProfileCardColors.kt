@@ -1,8 +1,10 @@
-package io.github.droidkaigi.confsched.feature.profilecard.component
+package io.github.droidkaigi.confsched.core.ui.profilecard
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import io.github.droidkaigi.confsched.core.ui.DoodleInkPalette
+import io.github.droidkaigi.confsched.core.ui.DoodleInkStyle
 
 /**
  * The finished card's palette, drawn from the app's active [io.github.droidkaigi.confsched.core.model.KaigiColorScheme]
@@ -49,3 +51,20 @@ object ProfileCardColors {
     val hairline: Color
         @Composable get() = MaterialTheme.colorScheme.outline
 }
+
+/**
+ * The inks as a card face draws them: the card's own four colors, each rimmed in the color the
+ * design reads it against, so an outlined stroke carries over both the plate and the dusk band.
+ */
+@Composable
+fun profileCardDoodleInkPalette(): DoodleInkPalette = DoodleInkPalette(
+    // CampfireNight paints the ink and the dusk band with one pigment; the muted ink (the
+    // occupation and date lines) steps in there so every scheme offers four distinct inks.
+    ink = DoodleInkStyle(
+        color = if (ProfileCardColors.ink == ProfileCardColors.duskBand) ProfileCardColors.mutedInk else ProfileCardColors.ink,
+        rimColor = ProfileCardColors.plate,
+    ),
+    band = DoodleInkStyle(color = ProfileCardColors.duskBand, rimColor = ProfileCardColors.onDuskBand),
+    paper = DoodleInkStyle(color = ProfileCardColors.plate, rimColor = ProfileCardColors.ink),
+    banner = DoodleInkStyle(color = ProfileCardColors.banner, rimColor = ProfileCardColors.onBanner),
+)

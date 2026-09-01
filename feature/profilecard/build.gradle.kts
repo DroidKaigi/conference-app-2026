@@ -8,7 +8,6 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:model"))
             implementation(project(":core:ui"))
-            implementation(libs.qrcodeKotlin)
         }
         commonTest.dependencies {
             implementation(project(":core:model"))

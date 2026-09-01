@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -24,7 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
@@ -150,6 +153,30 @@ private fun SketchButton(
             }
         }
         Box(Modifier.matchParentSize().sketchBorder(shape, borderColor))
+    }
+}
+
+/**
+ * An icon-and-label content for [KaigiButton] variants whose label sits on the button's own
+ * center: the icon hangs off the label's start through an offset instead of taking a layout
+ * slot, so it never narrows the room the label can wrap in.
+ */
+@Composable
+fun KaigiButtonIconLabel(
+    imageVector: ImageVector,
+    text: String,
+    textStyle: TextStyle,
+) {
+    Box(contentAlignment = Alignment.Center) {
+        Text(text = text, style = textStyle)
+        Icon(
+            imageVector = imageVector,
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .offset(x = -(KaigiButtonDefaults.iconSize + KaigiButtonDefaults.iconSpacing))
+                .size(KaigiButtonDefaults.iconSize),
+        )
     }
 }
 

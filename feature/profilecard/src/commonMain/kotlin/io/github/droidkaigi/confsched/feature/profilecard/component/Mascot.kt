@@ -1,6 +1,5 @@
 package io.github.droidkaigi.confsched.feature.profilecard.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
@@ -31,7 +28,8 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
-import io.github.droidkaigi.confsched.core.ui.mascotFArt
+import io.github.droidkaigi.confsched.core.ui.profilecard.MascotIcon
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardSweepWavelength
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_a
@@ -40,39 +38,8 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ma
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_d
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_e
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.mascot_f
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
-private val Mascot.drawableResource: DrawableResource
-    get() = when (this) {
-        Mascot.A -> Res.drawable.mascot_a
-        Mascot.B -> Res.drawable.mascot_b
-        Mascot.C -> Res.drawable.mascot_c
-        Mascot.D -> Res.drawable.mascot_d
-        Mascot.E -> Res.drawable.mascot_e
-        Mascot.F -> mascotFArt
-    }
-
-/**
- * Line art for a [Mascot], traced from the Figma source and shipped as SVG. The artwork is a
- * single flat stroke color in the source file, so [color] retints it via [ColorFilter.tint]
- * rather than the mascot needing per-theme variants of the file itself.
- */
-@Composable
-fun MascotIcon(
-    mascot: Mascot,
-    modifier: Modifier = Modifier,
-    color: Color = MaterialTheme.colorScheme.primary,
-) {
-    Image(
-        painter = painterResource(mascot.drawableResource),
-        contentDescription = null,
-        modifier = modifier,
-        colorFilter = ColorFilter.tint(color),
-    )
-}
 
 internal fun mascotOptionTestTag(mascot: Mascot) = "MascotOption:${mascot.name}"
 
@@ -154,20 +121,6 @@ object MascotOptionDefaults {
     val borderThickness = 1.5.dp
     val roughness = 0.4.dp
     val tremor = 0.15.dp
-}
-
-@Preview
-@Composable
-private fun MascotIconPreview(
-    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
-) {
-    KaigiPreviewTheme(colorScheme) {
-        Row(modifier = Modifier.padding(16.dp)) {
-            Mascot.entries.forEach { mascot ->
-                MascotIcon(mascot = mascot, modifier = Modifier.padding(4.dp).size(48.dp))
-            }
-        }
-    }
 }
 
 @LocalePreviews

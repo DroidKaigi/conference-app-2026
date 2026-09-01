@@ -2,11 +2,16 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleInk
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.testing.RobotTest
 import io.github.droidkaigi.confsched.core.testing.runRobotTest
+import kotlinx.collections.immutable.persistentMapOf
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -62,11 +67,110 @@ class ProfileCardScreenRobotTest : RobotTest() {
         describe("when a card is stored") {
             doIt {
                 setupStoredCard(storedCard)
+                setupDoodles(persistentMapOf(DoodleTarget.ProfileCardFront to Doodle.fakeOnCardFace()))
                 setupContent()
             }
             itShould("show the card rather than the form") {
                 checkCardDisplayed()
                 checkFormDoesNotExist()
+            }
+            describe("and the doodle button is tapped") {
+                doIt { clickDoodle() }
+                itShould("swap the card actions for the doodle controls") {
+                    checkTextDisplayed("Done")
+                    checkCardDoesNotExist()
+                }
+                describe("and a stroke is drawn on each face before Done is tapped") {
+                    doIt {
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep both faces' strokes and save them together") {
+                        checkSavedFaceStrokeCounts(front = 5, back = 1)
+                        checkCardDisplayed()
+                    }
+                }
+                describe("and the band ink is picked before a stroke is drawn on each face") {
+                    doIt {
+                        clickBandInk()
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep the band ink across the flip and save both faces in it") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Band, back = DoodleInk.Band)
+                    }
+                }
+                describe("and the banner ink is picked on the back face") {
+                    doIt {
+                        drawStroke()
+                        clickFlipToBack()
+                        clickBannerInk()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("save the back face's stroke in the banner ink") {
+                        checkLastSavedStrokeInks(front = DoodleInk.Ink, back = DoodleInk.Banner)
+                    }
+                }
+                describe("and the outline is turned off before a stroke is drawn on each face") {
+                    doIt {
+                        clickOutlineToggle()
+                        drawStroke()
+                        clickFlipToBack()
+                        drawStroke()
+                        clickFlipToFront()
+                        clickDone()
+                    }
+                    itShould("keep the outline off across the flip and save both faces without one") {
+                        checkLastSavedStrokeOutlines(front = false, back = false)
+                    }
+                }
+                describe("and a stroke is still under the finger that started it") {
+                    doIt { startStroke() }
+                    itShould("withhold Done and the flip until the stroke has landed") {
+                        checkDoneDisabled()
+                        checkFlipToBackDisabled()
+                    }
+                    describe("and the finger is lifted") {
+                        doIt { finishStroke() }
+                        itShould("offer Done again") {
+                            checkDoneEnabled()
+                        }
+                        describe("and Done is tapped") {
+                            doIt { clickDone() }
+                            itShould("save the stroke the finger was drawing") {
+                                checkSavedFaceStrokeCounts(front = 5, back = 0)
+                            }
+                        }
+                    }
+                }
+                describe("and back is pressed after a stroke is drawn") {
+                    doIt {
+                        drawStroke()
+                        pressSystemBack()
+                    }
+                    itShould("discard the stroke and show the card actions again") {
+                        checkNoDoodleSaved()
+                        checkCardDisplayed()
+                    }
+                }
+                describe("and the save fails") {
+                    doIt {
+                        setupFailingDoodleSave()
+                        drawStroke()
+                        clickDone()
+                    }
+                    itShould("stay in the doodle controls") {
+                        checkTextDisplayed("Done")
+                    }
+                }
             }
             describe("and Edit is tapped") {
                 doIt { clickEdit() }
