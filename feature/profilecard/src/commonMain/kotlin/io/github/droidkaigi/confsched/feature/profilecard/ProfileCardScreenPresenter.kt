@@ -46,6 +46,8 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
 
+            ProfileCardScreenAction.AvatarImagePickFailed -> form = form.copy(avatarImageError = ProfileCardFormError.AvatarImageUnreadable)
+
             ProfileCardScreenAction.RemoveAvatarImage -> form = form.copy(avatarImage = null)
 
             ProfileCardScreenAction.Submit -> {

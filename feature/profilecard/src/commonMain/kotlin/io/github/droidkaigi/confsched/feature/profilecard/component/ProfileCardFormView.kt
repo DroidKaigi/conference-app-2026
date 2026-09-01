@@ -67,6 +67,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.oc
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_label
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_unreadable_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.remove_image_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.subtitle
@@ -291,6 +292,7 @@ private val ProfileCardFormError.message: StringResource
         ProfileCardFormError.LinkRequired -> Res.string.link_error
         ProfileCardFormError.LinkMalformed -> Res.string.link_malformed_error
         ProfileCardFormError.AvatarImageRequired -> Res.string.profile_image_error
+        ProfileCardFormError.AvatarImageUnreadable -> Res.string.profile_image_unreadable_error
     }
 
 private object ProfileCardFormViewDefaults {

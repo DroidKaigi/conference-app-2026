@@ -12,10 +12,12 @@ import org.w3c.files.FileReader
 import org.w3c.files.get
 
 @Composable
-actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit =
-    remember(onImagePicked) { { pickImage(onImagePicked) } }
+actual fun rememberImagePicker(
+    onImagePicked: (ByteArray) -> Unit,
+    onImagePickFailed: () -> Unit,
+): () -> Unit = remember(onImagePicked, onImagePickFailed) { { pickImage(onImagePicked, onImagePickFailed) } }
 
-private fun pickImage(onImagePicked: (ByteArray) -> Unit) {
+private fun pickImage(onImagePicked: (ByteArray) -> Unit, onImagePickFailed: () -> Unit) {
     val input = document.createElement("input") as HTMLInputElement
     input.type = "file"
     input.accept = "image/*"
@@ -23,7 +25,11 @@ private fun pickImage(onImagePicked: (ByteArray) -> Unit) {
         val file = input.files?.get(0)
         if (file != null) {
             val reader = FileReader()
-            reader.onload = { readerResultBytes(reader).toByteArray().toPickedImageJpeg()?.let(onImagePicked) }
+            reader.onload = {
+                val bytes = readerResultBytes(reader).toByteArray().toPickedImageJpeg()
+                if (bytes != null) onImagePicked(bytes) else onImagePickFailed()
+            }
+            reader.onerror = { onImagePickFailed() }
             reader.readAsArrayBuffer(file)
         }
     }

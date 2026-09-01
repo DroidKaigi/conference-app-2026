@@ -204,6 +204,34 @@ class ProfileCardScreenPresenterTest {
     }
 
     @Test
+    fun an_image_that_cannot_be_read_is_reported_on_the_form() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.AvatarImagePickFailed)
+            val form = assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem())
+            assertNull(form.avatarImage)
+            assertEquals(ProfileCardFormError.AvatarImageUnreadable, form.avatarImageError)
+        }
+    }
+
+    @Test
+    fun picking_a_readable_image_clears_the_unreadable_error() {
+        runPresenterTest(
+            presenterContext = graph.presenterContext,
+            presenter = { channel -> profileCardScreenPresenter(screenChannel = channel, storedCard = null) },
+        ) {
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.AvatarImagePickFailed)
+            uiStates.awaitItem()
+            send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(byteArrayOf(4, 5))))
+            assertNull(assertIs<ProfileCardScreenUiState.Form>(uiStates.awaitItem()).avatarImageError)
+        }
+    }
+
+    @Test
     fun turning_the_card_over_swaps_the_face_it_shows() {
         runPresenterTest(
             presenterContext = graph.presenterContext,

@@ -12,16 +12,22 @@ import java.awt.Frame
 import java.io.File
 
 @Composable
-actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
+actual fun rememberImagePicker(
+    onImagePicked: (ByteArray) -> Unit,
+    onImagePickFailed: () -> Unit,
+): () -> Unit {
     val coroutineScope = rememberCoroutineScope()
-    return remember(coroutineScope, onImagePicked) { { coroutineScope.pickImage(onImagePicked) } }
+    return remember(coroutineScope, onImagePicked, onImagePickFailed) {
+        { coroutineScope.pickImage(onImagePicked, onImagePickFailed) }
+    }
 }
 
-private fun CoroutineScope.pickImage(onImagePicked: (ByteArray) -> Unit) {
+private fun CoroutineScope.pickImage(onImagePicked: (ByteArray) -> Unit, onImagePickFailed: () -> Unit) {
     launch {
         // FileDialog blocks until the user is done, so it must not run on the UI thread.
-        val bytes = withContext(Dispatchers.IO) { chooseImage()?.readBytes()?.toPickedImageJpeg() }
-        if (bytes != null) onImagePicked(bytes)
+        val file = withContext(Dispatchers.IO) { chooseImage() } ?: return@launch
+        val bytes = withContext(Dispatchers.IO) { file.readBytes().toPickedImageJpeg() }
+        if (bytes != null) onImagePicked(bytes) else onImagePickFailed()
     }
 }
 

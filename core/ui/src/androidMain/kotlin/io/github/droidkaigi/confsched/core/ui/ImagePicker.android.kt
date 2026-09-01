@@ -20,13 +20,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 @Composable
-actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
+actual fun rememberImagePicker(
+    onImagePicked: (ByteArray) -> Unit,
+    onImagePickFailed: () -> Unit,
+): () -> Unit {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) coroutineScope.readImage(context.contentResolver, uri, onImagePicked)
+        if (uri != null) coroutineScope.readImage(context.contentResolver, uri, onImagePicked, onImagePickFailed)
     }
     return remember(launcher) {
         { launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
@@ -35,7 +39,12 @@ actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
 
 // The picked bytes are decoded later with a decoder that neither reads EXIF orientation nor
 // understands HEIF, so the image is normalized to an upright JPEG here.
-private fun CoroutineScope.readImage(resolver: ContentResolver, uri: Uri, onImagePicked: (ByteArray) -> Unit) {
+private fun CoroutineScope.readImage(
+    resolver: ContentResolver,
+    uri: Uri,
+    onImagePicked: (ByteArray) -> Unit,
+    onImagePickFailed: () -> Unit,
+) {
     launch {
         val bytes = withContext(Dispatchers.IO) {
             decodeUpright(resolver, uri)?.squareThumbnail(PICKED_IMAGE_SIDE)?.let { bitmap ->
@@ -43,7 +52,7 @@ private fun CoroutineScope.readImage(resolver: ContentResolver, uri: Uri, onImag
                 if (bitmap.compress(Bitmap.CompressFormat.JPEG, PICKED_IMAGE_JPEG_QUALITY, out)) out.toByteArray() else null
             }
         }
-        if (bytes != null) onImagePicked(bytes)
+        if (bytes != null) onImagePicked(bytes) else onImagePickFailed()
     }
 }
 
@@ -54,12 +63,28 @@ private fun Bitmap.squareThumbnail(maxSide: Int): Bitmap {
     return Bitmap.createBitmap(this, (width - side) / 2, (height - side) / 2, side, side, matrix, true)
 }
 
+// A truncated source - a cloud-backed photograph that never finished downloading, say - makes
+// ImageDecoder throw instead of returning null, so a failed decode is turned into a null here.
 private fun decodeUpright(resolver: ContentResolver, uri: Uri): Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-    ImageDecoder.decodeBitmap(ImageDecoder.createSource(resolver, uri)) { decoder, _, _ ->
-        // Bitmap.compress rejects hardware bitmaps.
-        decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+    try {
+        ImageDecoder.decodeBitmap(ImageDecoder.createSource(resolver, uri)) { decoder, _, _ ->
+            // Bitmap.compress rejects hardware bitmaps.
+            decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+        }
+    } catch (_: ImageDecoder.DecodeException) {
+        null
+    } catch (_: IOException) {
+        null
     }
 } else {
+    try {
+        decodeUprightFromBitmapFactory(resolver, uri)
+    } catch (_: IOException) {
+        null
+    }
+}
+
+private fun decodeUprightFromBitmapFactory(resolver: ContentResolver, uri: Uri): Bitmap? {
     val bitmap = resolver.openInputStream(uri)?.use(BitmapFactory::decodeStream) ?: return null
     val orientation = resolver.openInputStream(uri)?.use { stream ->
         ExifInterface(stream).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
@@ -89,5 +114,5 @@ private fun decodeUpright(resolver: ContentResolver, uri: Uri): Bitmap? = if (Bu
             else -> return bitmap
         }
     }
-    Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }

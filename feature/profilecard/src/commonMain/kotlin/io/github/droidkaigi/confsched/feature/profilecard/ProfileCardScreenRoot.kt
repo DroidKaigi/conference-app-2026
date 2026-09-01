@@ -27,9 +27,10 @@ fun ProfileCardScreenRoot() {
     ) { storedCard, appearance, doodles ->
         val screenChannel = retainScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>()
         val snackbarHostState = LocalSnackbarHostState.current
-        val launchImagePicker = rememberImagePicker { bytes ->
-            screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes)))
-        }
+        val launchImagePicker = rememberImagePicker(
+            onImagePicked = { bytes -> screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes))) },
+            onImagePickFailed = { screenChannel.send(ProfileCardScreenAction.AvatarImagePickFailed) },
+        )
         val shareImage = rememberImageSharer()
         val shareMessage = stringResource(Res.string.share_message)
 
