@@ -13,6 +13,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.PaneExpansionAnchor
 import androidx.compose.material3.adaptive.layout.PaneExpansionState
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
@@ -40,11 +41,17 @@ internal val PanePartitionSpacerSize = 24.dp
 @Composable
 internal fun <T : Any> rememberKaigiListDetailSceneStrategy(): ListDetailSceneStrategy<T> {
     val dragBounds = remember(::PaneExpansionDragBounds)
+    val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
     return rememberListDetailSceneStrategy(
-        directive = calculatePaneScaffoldDirective(
-            currentWindowAdaptiveInfoV2(),
-        ).copy(
+        directive = PaneScaffoldDirective(
+            maxHorizontalPartitions = scaffoldDirective.maxHorizontalPartitions,
             horizontalPartitionSpacerSize = 0.dp,
+            maxVerticalPartitions = scaffoldDirective.maxVerticalPartitions,
+            verticalPartitionSpacerSize = scaffoldDirective.verticalPartitionSpacerSize,
+            defaultPanePreferredWidth = scaffoldDirective.defaultPanePreferredWidth,
+            defaultPanePreferredHeight = scaffoldDirective.defaultPanePreferredHeight,
+            excludedBounds = scaffoldDirective.excludedBounds,
+            shouldAutoFocusCurrentDestination = false,
         ),
         paneExpansionState = rememberPaneExpansionState(
             anchors = listOf(
