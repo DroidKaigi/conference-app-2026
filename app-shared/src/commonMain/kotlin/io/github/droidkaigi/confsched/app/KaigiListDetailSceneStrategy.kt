@@ -17,6 +17,7 @@ import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.rememberPaneExpansionState
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -43,6 +44,9 @@ internal fun <T : Any> rememberKaigiListDetailSceneStrategy(): ListDetailSceneSt
     val dragBounds = remember(::PaneExpansionDragBounds)
     val scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
     return rememberListDetailSceneStrategy(
+        // The default, PopUntilScaffoldValueChange, reports no entry to go back to here: closing
+        // the detail leaves both panes expanded, around the list's placeholder, so back exits.
+        backNavigationBehavior = BackNavigationBehavior.PopLatest,
         directive = PaneScaffoldDirective(
             maxHorizontalPartitions = scaffoldDirective.maxHorizontalPartitions,
             horizontalPartitionSpacerSize = 0.dp,

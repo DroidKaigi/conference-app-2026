@@ -41,6 +41,10 @@ The Timetable entry carries both `RootSceneStrategy.root()` and `listPane()`, so
 
 The scaffold fills every partition the window offers, expanding a detail pane even with no detail entry to put in it, so a list entry on top of the back stack would render at a pane's width against an empty placeholder. `rememberLoneListPaneSceneStrategy` (`core/common`) claims a `listPane()` entry in that position and renders it as a single pane; it comes before the list-detail strategy in `sceneStrategies` for that reason, and after `rootSceneStrategy`, which already claims the Timetable.
 
+## Back with a detail open
+
+Back pops the detail alone and the list takes the whole window, so `rememberKaigiListDetailSceneStrategy` passes `BackNavigationBehavior.PopLatest`. The library default, `PopUntilScaffoldValueChange`, skips back over every entry that leaves the scaffold laid out the same way, and closing a detail does not change that layout — the pane it vacates stays expanded around the list's placeholder — so the scene would report no entry to go back to and the press would leave the app.
+
 ## The adaptive back icon
 
 The same detail screen appears in two situations with different affordances:
