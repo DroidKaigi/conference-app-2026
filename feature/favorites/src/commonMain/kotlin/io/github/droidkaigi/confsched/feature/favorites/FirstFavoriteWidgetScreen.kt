@@ -14,18 +14,19 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.LocalKaigiIllustrationColors
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.FilledMascotImage
 import io.github.droidkaigi.confsched.core.ui.KaigiButton
 import io.github.droidkaigi.confsched.core.ui.KaigiButtonDefaults
+import io.github.droidkaigi.confsched.core.ui.filledMascotWidthAt
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteDialogCard
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteDialogDefaults
-import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteMascotImage
 import io.github.droidkaigi.confsched.feature.favorites.component.FirstFavoriteWidgetPreviewCard
-import io.github.droidkaigi.confsched.feature.favorites.component.firstFavoriteWidthAt
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_not_now
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_widget_add
@@ -64,14 +65,16 @@ fun FirstFavoriteWidgetScreen(
         Box(modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)) {
             FirstFavoriteWidgetPreviewCard()
             val friend = uiState.mascot.friend
-            FirstFavoriteMascotImage(
+            FilledMascotImage(
                 mascot = friend,
                 height = FRIEND_MASCOT_HEIGHT,
+                bodyColor = LocalKaigiIllustrationColors.current.onSkyPanel,
+                lineColor = LocalKaigiIllustrationColors.current.skyPanel,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     // Offset by its own width so the character is placed by its left edge: a wider
                     // one peeks further past the corner instead of reaching over the widget's chips.
-                    .offset(x = friend.firstFavoriteWidthAt(FRIEND_MASCOT_HEIGHT) - 36.dp, y = 32.dp)
+                    .offset(x = friend.filledMascotWidthAt(FRIEND_MASCOT_HEIGHT) - 36.dp, y = 32.dp)
                     .rotate(8f),
             )
         }

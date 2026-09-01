@@ -23,6 +23,8 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.FilledMascotImage
+import io.github.droidkaigi.confsched.core.ui.filledMascotWidthAt
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_hand_bell
 import io.github.droidkaigi.confsched.feature.favorites.generated.resources.first_favorite_hand_bell_body
@@ -40,11 +42,13 @@ internal fun FirstFavoriteHeroView(mascot: Mascot, modifier: Modifier = Modifier
         HeartMark(sizeDp = 15, xDp = 32, yDp = 4, rotationDegrees = 14f)
         HeartMark(sizeDp = 12, xDp = 248, yDp = 7, rotationDegrees = -16f)
         HeartMark(sizeDp = 10, xDp = 7, yDp = 44, rotationDegrees = 8f)
-        FirstFavoriteMascotImage(
+        FilledMascotImage(
             mascot = mascot,
             height = MascotHeight,
+            bodyColor = LocalKaigiIllustrationColors.current.onSkyPanel,
+            lineColor = LocalKaigiIllustrationColors.current.skyPanel,
             modifier = Modifier.offset(
-                x = MascotCenterX - mascot.firstFavoriteWidthAt(MascotHeight) / 2,
+                x = MascotCenterX - mascot.filledMascotWidthAt(MascotHeight) / 2,
                 y = 9.dp,
             ),
         )
