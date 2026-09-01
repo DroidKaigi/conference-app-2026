@@ -133,6 +133,9 @@ private class RootTabScene(
     override val entries get() = delegate.entries
     override val previousEntries get() = delegate.previousEntries
 
+    // Scene metadata carries the transition NavDisplay runs, which decorating must not change.
+    override val metadata: Map<String, Any> get() = delegate.metadata
+
     override val content: @Composable () -> Unit = {
         val isExpanded = currentWindowAdaptiveInfoV2().windowSizeClass
             .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
