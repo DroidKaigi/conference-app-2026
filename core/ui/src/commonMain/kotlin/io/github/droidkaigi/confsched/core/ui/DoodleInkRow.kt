@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -82,6 +83,7 @@ private fun DoodleInkSwatch(
     Box(
         modifier = modifier
             .size(DoodleInkRowDefaults.touchTargetSize)
+            .testTag(doodleInkSwatchTestTag(ink))
             .semantics { contentDescription = description }
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
         contentAlignment = Alignment.Center,
@@ -133,6 +135,8 @@ private fun DoodleInk.label(surface: DoodleInkRowSurface): StringResource = when
 
     DoodleInk.Banner -> Res.string.doodle_ink_banner
 }
+
+fun doodleInkSwatchTestTag(ink: DoodleInk) = "DoodleInkSwatch:${ink.name}"
 
 /** The surface a [DoodleInkRow] offers inks for; it decides how the Band slot is named. */
 enum class DoodleInkRowSurface { Wall, Card }

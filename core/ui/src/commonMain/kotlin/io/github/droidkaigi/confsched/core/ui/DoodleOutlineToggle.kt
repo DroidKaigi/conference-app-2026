@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ fun DoodleOutlineToggle(
         onClick = { onOutlinedChange(!outlined) },
         label = stringResource(Res.string.doodle_outline),
         seed = OUTLINE_TOGGLE_SEED,
-        modifier = modifier,
+        modifier = modifier.testTag(DOODLE_OUTLINE_TOGGLE_TEST_TAG),
         role = Role.Checkbox,
     )
 }
@@ -68,3 +69,5 @@ private fun DoodleOutlineToggleOffPreview(
 }
 
 private val DoodleOutlineTogglePreviewPadding = 16.dp
+
+const val DOODLE_OUTLINE_TOGGLE_TEST_TAG = "DoodleOutlineToggleTestTag"

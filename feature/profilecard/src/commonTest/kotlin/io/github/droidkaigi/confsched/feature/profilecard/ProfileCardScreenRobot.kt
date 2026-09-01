@@ -29,6 +29,8 @@ import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.testing.Robot
 import io.github.droidkaigi.confsched.core.ui.DOODLE_CANVAS_FRAME_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.DOODLE_OUTLINE_TOGGLE_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.doodleInkSwatchTestTag
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG
 import io.github.droidkaigi.confsched.feature.profilecard.component.PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG
@@ -74,11 +76,11 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
 
     fun clickDone() = clickText("Done")
 
-    fun clickBandInk() = clickDescription("Band color")
+    fun clickBandInk() = clickTag(doodleInkSwatchTestTag(DoodleInk.Band))
 
-    fun clickBannerInk() = clickDescription("Banner color")
+    fun clickBannerInk() = clickTag(doodleInkSwatchTestTag(DoodleInk.Banner))
 
-    fun clickOutlineToggle() = clickText("Outline")
+    fun clickOutlineToggle() = clickTag(DOODLE_OUTLINE_TOGGLE_TEST_TAG)
 
     fun clickFlipToBack() = clickDescription("Switch to the back")
 

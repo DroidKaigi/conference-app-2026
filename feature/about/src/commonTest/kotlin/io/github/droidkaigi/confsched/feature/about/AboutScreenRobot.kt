@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -22,6 +23,8 @@ import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.testing.Robot
 import io.github.droidkaigi.confsched.core.ui.DOODLE_CANVAS_FRAME_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.DOODLE_OUTLINE_TOGGLE_TEST_TAG
+import io.github.droidkaigi.confsched.core.ui.doodleInkSwatchTestTag
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.StringResource
@@ -84,18 +87,17 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
         composeUiTest.waitForIdle()
     }
 
-    // The ink and outline labels are :core:ui strings, whose generated resources that module keeps internal.
-    fun clickBandInk() = clickInk(BAND_INK_DESCRIPTION)
+    fun clickBandInk() = clickInk(DoodleInk.Band)
 
-    fun clickPaperInk() = clickInk(PAPER_INK_DESCRIPTION)
+    fun clickPaperInk() = clickInk(DoodleInk.Paper)
 
-    private fun clickInk(description: String) {
-        composeUiTest.onNodeWithContentDescription(description).performClick()
+    private fun clickInk(ink: DoodleInk) {
+        composeUiTest.onNodeWithTag(doodleInkSwatchTestTag(ink)).performClick()
         composeUiTest.waitForIdle()
     }
 
     fun clickOutlineToggle() {
-        composeUiTest.onNodeWithText(OUTLINE_TOGGLE_LABEL).performClick()
+        composeUiTest.onNodeWithTag(DOODLE_OUTLINE_TOGGLE_TEST_TAG).performClick()
         composeUiTest.waitForIdle()
     }
 
@@ -208,9 +210,3 @@ class AboutScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
 }
 
 private const val STROKE_HALF_SPAN_FRACTION = 0.2f
-
-private const val BAND_INK_DESCRIPTION = "Wall color"
-
-private const val PAPER_INK_DESCRIPTION = "Paper color"
-
-private const val OUTLINE_TOGGLE_LABEL = "Outline"
