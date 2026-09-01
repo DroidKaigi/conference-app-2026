@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import io.github.droidkaigi.confsched.core.testing.testTimetableItem
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailScreenUiState.DescriptionDisplay
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
@@ -67,10 +68,13 @@ class TimetableItemDetailScreenPresenterTest {
                 )
             },
         ) {
-            assertEquals(false, uiStates.awaitItem().isDescriptionExpanded)
+            assertEquals(DescriptionDisplay.Unmeasured, uiStates.awaitItem().descriptionDisplay)
+
+            send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(true))
+            assertEquals(DescriptionDisplay.Truncatable.Collapsed, uiStates.awaitItem().descriptionDisplay)
 
             send(TimetableItemDetailScreenAction.ToggleDescriptionExpansion)
-            assertEquals(true, uiStates.awaitItem().isDescriptionExpanded)
+            assertEquals(DescriptionDisplay.Truncatable.Expanded, uiStates.awaitItem().descriptionDisplay)
 
             send(TimetableItemDetailScreenAction.ToggleDisplayLanguage)
             assertEquals(DisplayLanguage.English, uiStates.awaitItem().displayLanguage)
