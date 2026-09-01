@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.common.rememberCurrentTime
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.SessionSearchQuery
 import io.github.droidkaigi.confsched.core.model.Timetable
+import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.toTimetableTimeSlots
 import io.github.droidkaigi.confsched.feature.search.component.SearchFilterRowUiState
 import io.github.droidkaigi.confsched.feature.search.component.SearchResultUiState
@@ -27,17 +28,28 @@ fun searchScreenPresenter(
     timetable: Timetable,
 ): SearchScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
+    // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
+    var toggledFavoriteId by retain { mutableStateOf<TimetableItemId?>(null) }
     var query by retain { mutableStateOf(SessionSearchQuery()) }
     val currentTime = presenterContext.clock.rememberCurrentTime()
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is SearchScreenAction.ToggleBookmark -> favoriteMutation.mutateAsync(action.id)
+            is SearchScreenAction.ToggleBookmark -> {
+                toggledFavoriteId = action.id
+                favoriteMutation.mutateAsync(action.id)
+            }
+
             is SearchScreenAction.ChangeQueryText -> query = query.copy(text = action.text)
+
             is SearchScreenAction.ToggleDay -> query = query.toggleDay(action.day)
+
             is SearchScreenAction.ToggleCategory -> query = query.toggleCategory(action.categoryId)
+
             is SearchScreenAction.ToggleSessionType -> query = query.toggleSessionType(action.sessionType)
+
             is SearchScreenAction.ToggleLanguage -> query = query.toggleLanguage(action.language)
+
             SearchScreenAction.ClearFilters -> query = query.clearFilters()
         }
     }
@@ -48,8 +60,9 @@ fun searchScreenPresenter(
     }
 
     MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
-            screenChannel.emit(SearchScreenActionResult.FavoriteAdded)
+        val addedId = toggledFavoriteId.takeIf { added }
+        if (addedId != null) {
+            screenChannel.emit(SearchScreenActionResult.FavoriteAdded(timetable.roomOf(addedId)))
         }
         favoriteMutation.reset()
     }

@@ -214,7 +214,7 @@ class SearchScreenPresenterTest {
             send(SearchScreenAction.ToggleBookmark(TimetableItemId("kmp")))
 
             val result = results.awaitItem()
-            assertEquals(SearchScreenActionResult.FavoriteAdded, result)
+            assertEquals(SearchScreenActionResult.FavoriteAdded(SessionRoom.NARWHAL), result)
         }
     }
 

@@ -37,6 +37,7 @@ class TimetableItemDetailNavEntryProvider(
                     onOpenUrl = uriHandler::openUri,
                     onAddCalendarEvent = addCalendarEvent,
                     onShareText = shareText,
+                    onFavoriteAdded = graph.screenNavigator::offerFirstFavoriteGuidance,
                 )
             }
         }

@@ -12,6 +12,7 @@ import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
 import io.github.droidkaigi.confsched.core.model.DisplayLanguage
 import io.github.droidkaigi.confsched.core.model.SessionMemoEdit
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemDetail
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import kotlinx.collections.immutable.PersistentSet
@@ -29,14 +30,22 @@ fun timetableItemDetailScreenPresenter(
 ): TimetableItemDetailScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     val memoMutation = rememberMutation(presenterContext.sessionMemoMutationKey)
+    // The mutation reports only the direction of the toggle, so the session it applied to is kept here.
+    var toggledFavoriteId by retain { mutableStateOf<TimetableItemId?>(null) }
     var isDescriptionExpanded by retain { mutableStateOf(false) }
     var displayLanguage by retain { mutableStateOf(initialDisplayLanguage) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
-            is TimetableItemDetailScreenAction.Bookmark -> favoriteMutation.mutateAsync(action.id)
+            is TimetableItemDetailScreenAction.Bookmark -> {
+                toggledFavoriteId = action.id
+                favoriteMutation.mutateAsync(action.id)
+            }
+
             is TimetableItemDetailScreenAction.SaveMemo -> memoMutation.mutateAsync(SessionMemoEdit(detail.item.id, action.text))
+
             TimetableItemDetailScreenAction.ToggleDescriptionExpansion -> isDescriptionExpanded = !isDescriptionExpanded
+
             TimetableItemDetailScreenAction.ToggleDisplayLanguage -> displayLanguage = displayLanguage.toggled()
         }
     }
@@ -47,8 +56,9 @@ fun timetableItemDetailScreenPresenter(
     }
 
     MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
-            screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded)
+        val addedId = toggledFavoriteId.takeIf { added }
+        if (addedId != null) {
+            screenChannel.emit(TimetableItemDetailScreenActionResult.FavoriteAdded(detail.roomOf(addedId)))
         }
         favoriteMutation.reset()
     }
@@ -69,3 +79,6 @@ fun timetableItemDetailScreenPresenter(
         displayLanguage = displayLanguage,
     )
 }
+
+private fun TimetableItemDetail.roomOf(id: TimetableItemId): SessionRoom =
+    (sameSlotItems + item).first { it.id == id }.room

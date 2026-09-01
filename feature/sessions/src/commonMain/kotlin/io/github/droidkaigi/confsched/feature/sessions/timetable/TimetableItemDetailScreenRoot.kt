@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.sessionUrl
 import io.github.droidkaigi.confsched.core.ui.CalendarEvent
@@ -24,6 +25,7 @@ fun TimetableItemDetailScreenRoot(
     onOpenUrl: (String) -> Unit,
     onAddCalendarEvent: (CalendarEvent) -> Unit,
     onShareText: (String) -> Unit,
+    onFavoriteAdded: suspend (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(
@@ -41,7 +43,11 @@ fun TimetableItemDetailScreenRoot(
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is TimetableItemDetailScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
-                TimetableItemDetailScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableItemDetailScreenActionResult.FavoriteAdded -> {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    onFavoriteAdded(result.room)
+                }
             }
         }
 

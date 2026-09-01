@@ -105,7 +105,7 @@ class TimetableItemDetailScreenPresenterTest {
             send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
 
             val result = results.awaitItem()
-            assertEquals(TimetableItemDetailScreenActionResult.FavoriteAdded, result)
+            assertEquals(TimetableItemDetailScreenActionResult.FavoriteAdded(SessionRoom.OTTER), result)
         }
     }
 

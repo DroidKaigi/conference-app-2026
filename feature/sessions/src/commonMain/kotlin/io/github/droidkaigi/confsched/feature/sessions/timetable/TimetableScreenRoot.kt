@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.showSnackbar
@@ -18,6 +19,7 @@ context(screenContext: TimetableScreenContext)
 fun TimetableScreenRoot(
     onNavigateToDetail: (TimetableItemId) -> Unit,
     onNavigateToSearch: () -> Unit,
+    onFavoriteAdded: suspend (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),
@@ -31,7 +33,11 @@ fun TimetableScreenRoot(
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is TimetableScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
-                TimetableScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableScreenActionResult.FavoriteAdded -> {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    onFavoriteAdded(result.room)
+                }
             }
         }
 
