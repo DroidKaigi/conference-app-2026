@@ -18,6 +18,10 @@
     <string name="sketchiness_subtle">Subtle</string>
     <string name="sketchiness_normal">Normal</string>
     <string name="sketchiness_playful">Playful</string>
+    <string name="paper_grain_label">Paper roughness</string>
+    <string name="paper_grain_smooth">Smooth</string>
+    <string name="paper_grain_grained">Grained</string>
+    <string name="paper_grain_rough">Rough</string>
     <string name="create_card_button">Create Card</string>
     <string name="share_button">Share</string>
     <string name="share_message">Check out my DroidKaigi Profile Card! Let's connect at the event. #DroidKaigi</string>

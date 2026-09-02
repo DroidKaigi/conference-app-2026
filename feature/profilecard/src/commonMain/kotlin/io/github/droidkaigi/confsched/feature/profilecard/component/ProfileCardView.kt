@@ -49,6 +49,7 @@ import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -107,6 +108,7 @@ fun ProfileCardView(
                     link = uiState.link,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    paperGrain = uiState.paperGrain,
                     avatarImage = uiState.avatarImage,
                     frontDoodle = uiState.frontDoodle,
                     backDoodle = uiState.backDoodle,
@@ -131,6 +133,7 @@ fun ProfileCardView(
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
+                        paperGrain = uiState.paperGrain,
                         avatarImage = uiState.avatarImage,
                         penSize = penSize,
                         selectedInk = selectedInk,
@@ -149,6 +152,7 @@ fun ProfileCardView(
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
+                        paperGrain = uiState.paperGrain,
                         avatarImage = uiState.avatarImage,
                         penSize = penSize,
                         selectedInk = selectedInk,
@@ -167,6 +171,7 @@ fun ProfileCardView(
                     link = uiState.link,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    paperGrain = uiState.paperGrain,
                     avatarImage = uiState.avatarImage,
                     showsBack = uiState.isShowingBack,
                     doodle = if (uiState.isShowingBack) backDraft else frontDraft,
@@ -239,6 +244,7 @@ fun ProfileCardView(
                 link = uiState.link,
                 mascot = uiState.mascot,
                 sketchiness = uiState.sketchiness,
+                paperGrain = uiState.paperGrain,
                 avatarImage = uiState.avatarImage,
                 frontDoodle = uiState.frontDoodle,
                 backDoodle = uiState.backDoodle,
@@ -261,6 +267,7 @@ private fun FlippableProfileCard(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     frontDoodle: Doodle,
     backDoodle: Doodle,
@@ -312,6 +319,7 @@ private fun FlippableProfileCard(
                     link = link,
                     mascot = mascot,
                     sketchiness = sketchiness,
+                    paperGrain = paperGrain,
                     doodle = backDoodle,
                     taped = false,
                     modifier = Modifier.graphicsLayer { rotationY = 180f },
@@ -322,6 +330,7 @@ private fun FlippableProfileCard(
                     occupation = occupation,
                     mascot = mascot,
                     sketchiness = sketchiness,
+                    paperGrain = paperGrain,
                     taped = false,
                     avatarImage = avatarImage,
                     doodle = frontDoodle,
@@ -344,6 +353,7 @@ private fun ProfileCardDoodleFaceColumn(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
@@ -365,6 +375,7 @@ private fun ProfileCardDoodleFaceColumn(
             link = link,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
             avatarImage = avatarImage,
             showsBack = showsBack,
             doodle = doodle,
@@ -415,6 +426,7 @@ private fun ProfileCardViewPreview(
                 link = "https://example.com/user",
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
+                paperGrain = PaperGrain.Smooth,
                 avatarImage = null,
                 frontDoodle = Doodle.fakeOnCardFace(),
                 backDoodle = Doodle.Empty,
@@ -442,6 +454,7 @@ private fun ProfileCardViewDoodlingPreview(
                 link = "https://example.com/user",
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
+                paperGrain = PaperGrain.Smooth,
                 avatarImage = null,
                 frontDoodle = Doodle.fakeOnCardFace(),
                 backDoodle = Doodle.Empty,

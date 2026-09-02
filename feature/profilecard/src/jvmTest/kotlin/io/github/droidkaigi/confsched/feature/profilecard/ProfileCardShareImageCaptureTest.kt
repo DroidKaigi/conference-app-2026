@@ -12,6 +12,7 @@ import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.KaigiFontFamily
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.SketchStrength
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
@@ -44,6 +45,7 @@ class ProfileCardShareImageCaptureTest {
                         link = "https://example.com",
                         mascot = Mascot.C,
                         sketchiness = Sketchiness.Normal,
+                        paperGrain = PaperGrain.Smooth,
                         avatarImage = null,
                         frontDoodle = Doodle.fakeOnCardFace(),
                         backDoodle = Doodle.fakeOnCardFace(),

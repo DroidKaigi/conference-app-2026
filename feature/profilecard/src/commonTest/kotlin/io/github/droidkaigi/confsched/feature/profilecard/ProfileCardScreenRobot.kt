@@ -16,6 +16,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
@@ -221,7 +222,11 @@ class ProfileCardScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest
     }
 
     private fun clickTag(testTag: String) {
-        composeUiTest.onNodeWithTag(testTag).performClick()
+        composeUiTest.onNodeWithTag(testTag).apply {
+            // The form scrolls, so a tag can sit outside the viewport; a click there lands on nothing.
+            runCatching { performScrollTo() }
+            performClick()
+        }
         composeUiTest.waitForIdle()
     }
 

@@ -8,5 +8,6 @@ fun ProfileCard.Companion.fake(): ProfileCard = ProfileCard(
     link = "https://example.com/speaker-a",
     mascot = ProfileCard.DefaultMascot,
     sketchiness = ProfileCard.DefaultSketchiness,
+    paperGrain = ProfileCard.DefaultPaperGrain,
     avatarImage = null,
 )

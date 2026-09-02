@@ -8,6 +8,7 @@ import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,7 @@ internal data class StoredProfileCard(
     val link: String,
     val mascot: Mascot,
     val sketchiness: Sketchiness,
+    val paperGrain: PaperGrain,
     val avatarImagePath: String?,
 )
 
@@ -36,6 +38,7 @@ class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: Dat
             preferences[LINK_KEY] = card.link
             preferences[MASCOT_KEY] = card.mascot.name
             preferences[SKETCHINESS_KEY] = card.sketchiness.name
+            preferences[PAPER_GRAIN_KEY] = card.paperGrain.name
             if (avatarImagePath == null) {
                 preferences.remove(AVATAR_IMAGE_PATH_KEY)
             } else {
@@ -61,6 +64,9 @@ class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: Dat
             sketchiness = this[SKETCHINESS_KEY]
                 ?.let { name -> Sketchiness.entries.firstOrNull { it.name == name } }
                 ?: ProfileCard.DefaultSketchiness,
+            paperGrain = this[PAPER_GRAIN_KEY]
+                ?.let { name -> PaperGrain.entries.firstOrNull { it.name == name } }
+                ?: ProfileCard.DefaultPaperGrain,
             avatarImagePath = this[AVATAR_IMAGE_PATH_KEY],
         )
     }
@@ -81,6 +87,7 @@ class ProfileCardStore(@ProfileCardDataStoreQualifier private val dataStore: Dat
         val LINK_KEY = stringPreferencesKey("profileCard.link")
         val MASCOT_KEY = stringPreferencesKey("profileCard.mascot")
         val SKETCHINESS_KEY = stringPreferencesKey("profileCard.sketchiness")
+        val PAPER_GRAIN_KEY = stringPreferencesKey("profileCard.paperGrain")
         val AVATAR_IMAGE_PATH_KEY = stringPreferencesKey("profileCard.avatarImagePath")
     }
 }

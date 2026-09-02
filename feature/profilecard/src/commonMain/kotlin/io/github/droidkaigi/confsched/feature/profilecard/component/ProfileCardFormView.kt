@@ -33,6 +33,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
@@ -65,6 +66,7 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ni
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_label
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.paper_grain_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_unreadable_error
@@ -90,6 +92,7 @@ fun ProfileCardFormView(
     onLinkChange: (String) -> Unit,
     onMascotClick: (Mascot) -> Unit,
     onSketchinessClick: (Sketchiness) -> Unit,
+    onPaperGrainClick: (PaperGrain) -> Unit,
     onAddImageClick: () -> Unit,
     onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
@@ -174,6 +177,9 @@ fun ProfileCardFormView(
         }
         ProfileCardFormSection(label = stringResource(Res.string.sketchiness_label)) {
             SketchinessPicker(selectedSketchiness = uiState.sketchiness, onSketchinessClick = onSketchinessClick)
+        }
+        ProfileCardFormSection(label = stringResource(Res.string.paper_grain_label)) {
+            PaperGrainPicker(selectedPaperGrain = uiState.paperGrain, onPaperGrainClick = onPaperGrainClick)
         }
         KaigiButton(
             onClick = onSubmitClick,
@@ -347,6 +353,7 @@ private fun ProfileCardFormViewPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -372,6 +379,7 @@ private fun ProfileCardFormViewErrorPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -397,6 +405,7 @@ private fun ProfileCardFormViewWithImagePreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},

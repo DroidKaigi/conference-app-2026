@@ -6,10 +6,12 @@ data class ProfileCard(
     val link: String,
     val mascot: Mascot,
     val sketchiness: Sketchiness,
+    val paperGrain: PaperGrain,
     val avatarImage: AvatarImage?,
 ) {
     companion object {
         val DefaultMascot = Mascot.C
         val DefaultSketchiness = Sketchiness.Normal
+        val DefaultPaperGrain = PaperGrain.Smooth
     }
 }

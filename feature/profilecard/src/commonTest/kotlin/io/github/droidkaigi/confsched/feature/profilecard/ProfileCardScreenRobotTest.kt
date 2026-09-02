@@ -6,6 +6,7 @@ import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodleInk
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
@@ -23,6 +24,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
         link = "https://example.com/a",
         mascot = Mascot.C,
         sketchiness = Sketchiness.Normal,
+        paperGrain = PaperGrain.Smooth,
         // A 1x1 PNG: the screen only needs a decodable avatar present, not the sample picture.
         avatarImage = AvatarImage(
             byteArrayOf(
@@ -195,6 +197,7 @@ class ProfileCardScreenRobotTest : RobotTest() {
                                 link = "https://example.com/b",
                                 mascot = Mascot.E,
                                 sketchiness = Sketchiness.Playful,
+                                paperGrain = PaperGrain.Smooth,
                                 avatarImage = storedCard.avatarImage,
                             ),
                         )

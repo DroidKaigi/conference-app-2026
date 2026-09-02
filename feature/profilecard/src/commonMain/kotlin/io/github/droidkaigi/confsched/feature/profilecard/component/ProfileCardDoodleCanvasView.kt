@@ -11,6 +11,7 @@ import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -36,6 +37,7 @@ internal fun ProfileCardDoodleCanvasView(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     showsBack: Boolean,
     doodle: Doodle,
@@ -65,6 +67,7 @@ internal fun ProfileCardDoodleCanvasView(
                     link = link,
                     mascot = mascot,
                     sketchiness = sketchiness,
+                    paperGrain = paperGrain,
                     doodle = Doodle.Empty,
                     taped = false,
                     modifier = Modifier.matchParentSize(),
@@ -75,6 +78,7 @@ internal fun ProfileCardDoodleCanvasView(
                     occupation = occupation,
                     mascot = mascot,
                     sketchiness = sketchiness,
+                    paperGrain = paperGrain,
                     avatarImage = avatarImage,
                     doodle = Doodle.Empty,
                     taped = false,
@@ -88,6 +92,7 @@ internal fun ProfileCardDoodleCanvasView(
                 nickName = nickName,
                 link = link,
                 sketchiness = sketchiness,
+                paperGrain = paperGrain,
                 scale = scale,
                 modifier = Modifier.matchParentSize(),
             )
@@ -107,6 +112,7 @@ private fun ProfileCardDoodleCanvasViewPreview(
             link = "https://example.com/user",
             mascot = ProfileCard.DefaultMascot,
             sketchiness = ProfileCard.DefaultSketchiness,
+            paperGrain = ProfileCard.DefaultPaperGrain,
             avatarImage = null,
             showsBack = false,
             doodle = Doodle.fakeOnCardFace(),
@@ -132,6 +138,7 @@ private fun ProfileCardDoodleCanvasViewBackPreview(
             link = "https://example.com/user",
             mascot = ProfileCard.DefaultMascot,
             sketchiness = ProfileCard.DefaultSketchiness,
+            paperGrain = ProfileCard.DefaultPaperGrain,
             avatarImage = null,
             showsBack = true,
             doodle = Doodle.fakeOnCardFace(),

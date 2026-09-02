@@ -18,6 +18,10 @@
     <string name="sketchiness_subtle">ひかえめ</string>
     <string name="sketchiness_normal">ふつう</string>
     <string name="sketchiness_playful">のびのび</string>
+    <string name="paper_grain_label">紙の荒さ</string>
+    <string name="paper_grain_smooth">つるつる</string>
+    <string name="paper_grain_grained">ざらざら</string>
+    <string name="paper_grain_rough">がさがさ</string>
     <string name="create_card_button">カードを作成する</string>
     <string name="share_button">共有する</string>
     <string name="share_message">DroidKaigiのプロフィールカードを作成しました！イベントでつながりましょう。#DroidKaigi</string>

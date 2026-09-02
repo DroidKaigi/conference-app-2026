@@ -3,6 +3,7 @@ package io.github.droidkaigi.confsched.feature.profilecard
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 
@@ -13,6 +14,7 @@ sealed interface ProfileCardScreenUiState {
         val link: String = "",
         val mascot: Mascot = ProfileCard.DefaultMascot,
         val sketchiness: Sketchiness = ProfileCard.DefaultSketchiness,
+        val paperGrain: PaperGrain = ProfileCard.DefaultPaperGrain,
         val avatarImage: AvatarImage? = null,
         val isSubmitting: Boolean = false,
         val nickNameError: ProfileCardFormError? = null,
@@ -27,6 +29,7 @@ sealed interface ProfileCardScreenUiState {
         val link: String,
         val mascot: Mascot,
         val sketchiness: Sketchiness,
+        val paperGrain: PaperGrain,
         val avatarImage: AvatarImage?,
         val frontDoodle: Doodle,
         val backDoodle: Doodle,
