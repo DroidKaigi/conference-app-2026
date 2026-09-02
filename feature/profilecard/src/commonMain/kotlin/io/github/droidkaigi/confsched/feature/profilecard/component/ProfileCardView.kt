@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +31,11 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -55,7 +59,6 @@ import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
-import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import kotlinx.coroutines.launch
@@ -271,16 +274,27 @@ private fun FlippableProfileCard(
     val showsBack = rotation > 90f
     val lean = rememberProfileCardLean()
     Box(modifier = modifier) {
-        // The shadow keeps the card reading as lifted off the page while it sways. It hangs on its
-        // own unrotated layer: an elevation shadow projected from the tilted plane smears far past
-        // the card. The blur absorbs the difference between this rectangle and the sketched outline.
+        // The shadow keeps the card reading as lifted off the page while it sways: a soft round
+        // blot straight behind it, feathered by stacking rounded rectangles, on an unrotated node
+        // because an elevation shadow projected from the tilted plane smears far past the card.
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .graphicsLayer {
-                    shadowElevation = ProfileCardViewDefaults.cardShadowElevation.toPx()
-                    shape = RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius)
-                    clip = false
+                .drawBehind {
+                    val feather = ProfileCardViewDefaults.cardShadowFeatherWidth.toPx()
+                    val drop = ProfileCardViewDefaults.cardShadowDropOffset.toPx()
+                    val corner = CornerRadius(ProfileCardViewDefaults.cardShadowCornerRadius.toPx())
+                    val steps = ProfileCardViewDefaults.cardShadowFeatherSteps
+                    repeat(steps) { step ->
+                        val inset = feather * step / (steps - 1)
+                        drawRoundRect(
+                            color = Color.Black,
+                            topLeft = Offset(inset, inset + drop),
+                            size = Size(size.width - inset * 2, size.height - inset * 2),
+                            cornerRadius = corner,
+                            alpha = ProfileCardViewDefaults.cardShadowAlpha / steps,
+                        )
+                    }
                 },
         )
         Box(
@@ -372,7 +386,11 @@ private fun ProfileCardDoodleFaceColumn(
 
 private object ProfileCardViewDefaults {
     val flipDurationMillis = 500
-    val cardShadowElevation = 8.dp
+    val cardShadowAlpha = 0.25f
+    val cardShadowFeatherWidth = 28.dp
+    val cardShadowDropOffset = 10.dp
+    val cardShadowCornerRadius = 44.dp
+    val cardShadowFeatherSteps = 10
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
