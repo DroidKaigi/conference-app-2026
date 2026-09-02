@@ -309,8 +309,7 @@ private fun FlippableProfileCard(
         )
         Box(
             modifier = Modifier.graphicsLayer {
-                // A graphics layer turns about Y before X, so the lean about the screen's horizontal
-                // axis lands outside the flip and the back face leans the same way the front does.
+                // Y turns before X in a graphics layer, keeping the lean outside the flip on both faces.
                 rotationX = lean.value.pitchDegrees
                 rotationY = rotation + lean.value.rollDegrees
                 cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
