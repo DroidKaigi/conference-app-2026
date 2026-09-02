@@ -115,7 +115,7 @@ fun ProfileCardView(
                     isShowingBack = uiState.isShowingBack,
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .clickable(onClick = onCardClick),
+                        .clickable(interactionSource = null, indication = null, onClick = onCardClick),
                 )
             } else if (sideBySide) {
                 Row(
