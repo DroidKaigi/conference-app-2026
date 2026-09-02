@@ -18,6 +18,7 @@ import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -49,6 +50,7 @@ internal fun ProfileCardShareImage(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     frontDoodle: Doodle,
     backDoodle: Doodle,
@@ -67,6 +69,7 @@ internal fun ProfileCardShareImage(
             occupation = occupation,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
             taped = true,
             avatarImage = avatarImage,
             doodle = frontDoodle,
@@ -80,6 +83,7 @@ internal fun ProfileCardShareImage(
             link = link,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
             doodle = backDoodle,
             taped = true,
             modifier = Modifier.cardSlot(
@@ -145,6 +149,7 @@ private fun ProfileCardShareImagePreview(
             link = "https://example.com",
             mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
+            paperGrain = PaperGrain.Smooth,
             avatarImage = null,
             frontDoodle = Doodle.fakeOnCardFace(),
             backDoodle = Doodle.fakeOnCardFace(),

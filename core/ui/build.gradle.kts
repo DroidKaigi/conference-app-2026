@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.droidkaigiPrimitiveKmp)
     alias(libs.plugins.droidkaigiPrimitiveKmpCompose)
+    alias(libs.plugins.metro)
     alias(libs.plugins.droidkaigiPrimitiveSpotless)
 }
 

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +32,12 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
@@ -44,6 +51,7 @@ import io.github.droidkaigi.confsched.core.model.DoodlePenSize
 import io.github.droidkaigi.confsched.core.model.DoodleStroke
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -54,6 +62,7 @@ import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import kotlinx.coroutines.launch
@@ -102,13 +111,14 @@ fun ProfileCardView(
                     link = uiState.link,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    paperGrain = uiState.paperGrain,
                     avatarImage = uiState.avatarImage,
                     frontDoodle = uiState.frontDoodle,
                     backDoodle = uiState.backDoodle,
                     isShowingBack = uiState.isShowingBack,
                     modifier = Modifier
                         .weight(1f, fill = false)
-                        .clickable(onClick = onCardClick),
+                        .clickable(interactionSource = null, indication = null, onClick = onCardClick),
                 )
             } else if (sideBySide) {
                 Row(
@@ -126,6 +136,7 @@ fun ProfileCardView(
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
+                        paperGrain = uiState.paperGrain,
                         avatarImage = uiState.avatarImage,
                         penSize = penSize,
                         selectedInk = selectedInk,
@@ -144,6 +155,7 @@ fun ProfileCardView(
                         link = uiState.link,
                         mascot = uiState.mascot,
                         sketchiness = uiState.sketchiness,
+                        paperGrain = uiState.paperGrain,
                         avatarImage = uiState.avatarImage,
                         penSize = penSize,
                         selectedInk = selectedInk,
@@ -162,6 +174,7 @@ fun ProfileCardView(
                     link = uiState.link,
                     mascot = uiState.mascot,
                     sketchiness = uiState.sketchiness,
+                    paperGrain = uiState.paperGrain,
                     avatarImage = uiState.avatarImage,
                     showsBack = uiState.isShowingBack,
                     doodle = if (uiState.isShowingBack) backDraft else frontDraft,
@@ -234,6 +247,7 @@ fun ProfileCardView(
                 link = uiState.link,
                 mascot = uiState.mascot,
                 sketchiness = uiState.sketchiness,
+                paperGrain = uiState.paperGrain,
                 avatarImage = uiState.avatarImage,
                 frontDoodle = uiState.frontDoodle,
                 backDoodle = uiState.backDoodle,
@@ -256,6 +270,7 @@ private fun FlippableProfileCard(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     frontDoodle: Doodle,
     backDoodle: Doodle,
@@ -267,32 +282,74 @@ private fun FlippableProfileCard(
         animationSpec = tween(durationMillis = ProfileCardViewDefaults.flipDurationMillis, easing = FastOutSlowInEasing),
     )
     val showsBack = rotation > 90f
-    Box(
-        modifier = modifier.graphicsLayer {
-            rotationY = rotation
-            cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
-        },
-    ) {
-        if (showsBack) {
-            ProfileCardBack(
-                nickName = nickName,
-                link = link,
-                mascot = mascot,
-                sketchiness = sketchiness,
-                doodle = backDoodle,
-                taped = false,
-                modifier = Modifier.graphicsLayer { rotationY = 180f },
-            )
-        } else {
-            ProfileCardFront(
-                nickName = nickName,
-                occupation = occupation,
-                mascot = mascot,
-                sketchiness = sketchiness,
-                taped = false,
-                avatarImage = avatarImage,
-                doodle = frontDoodle,
-            )
+    val lean = rememberProfileCardLean()
+    Box(modifier = modifier) {
+        // The shadow keeps the card reading as lifted off the page while it sways: a soft round
+        // blot straight behind it, feathered by stacking rounded rectangles, on an unrotated node
+        // because an elevation shadow projected from the tilted plane smears far past the card.
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .drawBehind {
+                    val feather = ProfileCardViewDefaults.cardShadowFeatherWidth.toPx()
+                    val drop = ProfileCardViewDefaults.cardShadowDropOffset.toPx()
+                    val corner = CornerRadius(ProfileCardViewDefaults.cardShadowCornerRadius.toPx())
+                    val steps = ProfileCardViewDefaults.cardShadowFeatherSteps
+                    // An overhead light over a card floating at a fixed height: the lean's own
+                    // clamp bounds the slide, so the shadow never stretches away.
+                    val shiftPerDegree = ProfileCardViewDefaults.cardShadowShiftPerLeanDegree.toPx()
+                    val current = lean.value
+                    val shiftX = -current.rollDegrees * shiftPerDegree
+                    val shiftY = current.pitchDegrees * shiftPerDegree
+                    repeat(steps) { step ->
+                        val inset = feather * step / (steps - 1)
+                        drawRoundRect(
+                            color = Color.Black,
+                            topLeft = Offset(inset + shiftX, inset + drop + shiftY),
+                            size = Size(size.width - inset * 2, size.height - inset * 2),
+                            cornerRadius = corner,
+                            alpha = ProfileCardViewDefaults.cardShadowAlpha / steps,
+                        )
+                    }
+                },
+        )
+        Box(
+            modifier = Modifier.graphicsLayer {
+                // Y turns before X in a graphics layer, keeping the lean outside the flip on both faces.
+                rotationX = lean.value.pitchDegrees
+                rotationY = rotation + lean.value.rollDegrees
+                cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
+            },
+        ) {
+            if (showsBack) {
+                ProfileCardBack(
+                    nickName = nickName,
+                    link = link,
+                    mascot = mascot,
+                    sketchiness = sketchiness,
+                    paperGrain = paperGrain,
+                    doodle = backDoodle,
+                    taped = false,
+                    modifier = Modifier.graphicsLayer { rotationY = 180f },
+                )
+            } else {
+                ProfileCardFront(
+                    nickName = nickName,
+                    occupation = occupation,
+                    mascot = mascot,
+                    sketchiness = sketchiness,
+                    paperGrain = paperGrain,
+                    taped = false,
+                    avatarImage = avatarImage,
+                    doodle = frontDoodle,
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius))
+                        .profileCardSheen { lean.value },
+                )
+            }
         }
     }
 }
@@ -310,6 +367,7 @@ private fun ProfileCardDoodleFaceColumn(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     penSize: DoodlePenSize,
     selectedInk: DoodleInk,
@@ -331,6 +389,7 @@ private fun ProfileCardDoodleFaceColumn(
             link = link,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
             avatarImage = avatarImage,
             showsBack = showsBack,
             doodle = doodle,
@@ -352,6 +411,12 @@ private fun ProfileCardDoodleFaceColumn(
 
 private object ProfileCardViewDefaults {
     val flipDurationMillis = 500
+    val cardShadowAlpha = 0.25f
+    val cardShadowFeatherWidth = 28.dp
+    val cardShadowDropOffset = 10.dp
+    val cardShadowCornerRadius = 44.dp
+    val cardShadowFeatherSteps = 10
+    val cardShadowShiftPerLeanDegree = 1.2.dp
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
@@ -376,6 +441,7 @@ private fun ProfileCardViewPreview(
                 link = "https://example.com/user",
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
+                paperGrain = PaperGrain.Smooth,
                 avatarImage = null,
                 frontDoodle = Doodle.fakeOnCardFace(),
                 backDoodle = Doodle.Empty,
@@ -403,6 +469,7 @@ private fun ProfileCardViewDoodlingPreview(
                 link = "https://example.com/user",
                 mascot = Mascot.C,
                 sketchiness = Sketchiness.Normal,
+                paperGrain = PaperGrain.Smooth,
                 avatarImage = null,
                 frontDoodle = Doodle.fakeOnCardFace(),
                 backDoodle = Doodle.Empty,

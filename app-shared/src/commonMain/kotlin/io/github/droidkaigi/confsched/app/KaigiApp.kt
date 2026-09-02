@@ -35,7 +35,7 @@ fun KaigiApp() {
     RemoteImageLoaderEffect()
 
     CompositionLocalProvider(
-        LocalDeviceTiltSource provides rememberDeviceTiltSource(),
+        LocalDeviceTiltSource provides rememberDeviceTiltSource(uiGraph.deviceTiltOverrideSource),
         LocalErrorSceneOfLaunch provides appErrorScene,
         LocalPreviewImageResolver provides uiGraph.previewImageResolver,
         LocalSketchBaseSeed provides appSketchBaseSeed,

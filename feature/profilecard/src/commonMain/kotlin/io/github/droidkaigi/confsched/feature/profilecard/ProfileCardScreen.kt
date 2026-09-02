@@ -16,6 +16,7 @@ import io.github.droidkaigi.confsched.core.common.SystemBackEffect
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -39,6 +40,7 @@ fun ProfileCardScreen(
     onLinkChange: (String) -> Unit,
     onMascotClick: (Mascot) -> Unit,
     onSketchinessClick: (Sketchiness) -> Unit,
+    onPaperGrainClick: (PaperGrain) -> Unit,
     onAddImageClick: () -> Unit,
     onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
@@ -67,6 +69,7 @@ fun ProfileCardScreen(
                 onLinkChange = onLinkChange,
                 onMascotClick = onMascotClick,
                 onSketchinessClick = onSketchinessClick,
+                onPaperGrainClick = onPaperGrainClick,
                 onAddImageClick = onAddImageClick,
                 onRemoveAvatarImageClick = onRemoveAvatarImageClick,
                 onSubmitClick = onSubmitClick,
@@ -107,6 +110,7 @@ private fun ProfileCardScreenFormPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -139,6 +143,7 @@ private fun ProfileCardScreenFormErrorPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -166,6 +171,7 @@ private fun ProfileCardScreenCardPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -193,6 +199,7 @@ private fun ProfileCardScreenCardBackPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -220,6 +227,7 @@ private fun ProfileCardScreenDoodlingPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -248,6 +256,7 @@ private fun ProfileCardScreenDoodlingSideBySidePreview(
                 onLinkChange = {},
                 onMascotClick = {},
                 onSketchinessClick = {},
+                onPaperGrainClick = {},
                 onAddImageClick = {},
                 onRemoveAvatarImageClick = {},
                 onSubmitClick = {},
@@ -281,6 +290,7 @@ private fun ProfileCardScreenFormWithImagePreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -303,6 +313,7 @@ private fun sampleCardUiState(
     link = "https://example.com/user",
     mascot = Mascot.C,
     sketchiness = Sketchiness.Normal,
+    paperGrain = PaperGrain.Smooth,
     avatarImage = null,
     frontDoodle = Doodle.fakeOnCardFace(),
     backDoodle = if (isShowingBack) Doodle.fakeOnCardFace() else Doodle.Empty,

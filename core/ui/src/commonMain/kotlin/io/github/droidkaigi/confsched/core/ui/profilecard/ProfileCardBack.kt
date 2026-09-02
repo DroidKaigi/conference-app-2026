@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -59,13 +60,14 @@ fun ProfileCardBack(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     doodle: Doodle,
     taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
     // The face seed is the front's, since the back is that same card turned over.
     val faceSeed = nickName.hashCode()
-    ProfileCardFace(sketchiness = sketchiness, outlineSeed = faceSeed, topStartTape = false, bottomEndTape = taped, mirrored = true, modifier = modifier) {
+    ProfileCardFace(sketchiness = sketchiness, paperGrain = paperGrain, outlineSeed = faceSeed, topStartTape = false, bottomEndTape = taped, mirrored = true, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,6 +128,7 @@ fun ProfileCardBackQrPlateView(
     nickName: String,
     link: String,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     scale: Float,
     modifier: Modifier = Modifier,
 ) {
@@ -428,6 +431,7 @@ private fun ProfileCardBackPreview(
             link = "https://example.com",
             mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
+            paperGrain = PaperGrain.Smooth,
             doodle = Doodle.fakeOnCardFace(),
             taped = true,
             modifier = Modifier.padding(24.dp),

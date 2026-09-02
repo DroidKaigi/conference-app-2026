@@ -42,6 +42,7 @@ import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
@@ -76,13 +77,14 @@ fun ProfileCardFront(
     occupation: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
     doodle: Doodle,
     taped: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val seed = nickName.hashCode()
-    ProfileCardFace(sketchiness = sketchiness, outlineSeed = seed, topStartTape = taped, bottomEndTape = taped, mirrored = false, modifier = modifier) {
+    ProfileCardFace(sketchiness = sketchiness, paperGrain = paperGrain, outlineSeed = seed, topStartTape = taped, bottomEndTape = taped, mirrored = false, modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -415,6 +417,7 @@ private fun ProfileCardFrontPreview(
             occupation = "Software Engineer",
             mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
+            paperGrain = PaperGrain.Smooth,
             taped = true,
             avatarImage = null,
             doodle = Doodle.fakeOnCardFace(),

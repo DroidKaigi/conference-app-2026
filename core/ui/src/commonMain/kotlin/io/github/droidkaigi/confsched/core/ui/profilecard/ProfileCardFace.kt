@@ -41,11 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.droidkaigi.confsched.core.designsystem.KaigiTextStyles
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.MirroredSketchShape
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.paperGrain
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 /**
@@ -59,6 +61,7 @@ import io.github.droidkaigi.confsched.core.ui.sketchBorder
 @Composable
 fun ProfileCardFace(
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     outlineSeed: Int,
     topStartTape: Boolean,
     bottomEndTape: Boolean,
@@ -83,6 +86,7 @@ fun ProfileCardFace(
             Box(modifier = Modifier.size(ProfileCardFaceDefaults.size)) {
                 ProfileCardFaceContent(
                     sketchiness = sketchiness,
+                    paperGrain = paperGrain,
                     outlineSeed = outlineSeed,
                     topStartTape = topStartTape,
                     bottomEndTape = bottomEndTape,
@@ -97,6 +101,7 @@ fun ProfileCardFace(
 @Composable
 private fun ProfileCardFaceContent(
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     outlineSeed: Int,
     topStartTape: Boolean,
     bottomEndTape: Boolean,
@@ -124,6 +129,10 @@ private fun ProfileCardFaceContent(
             content()
             // The outline goes on last so a band filling an edge cannot paint over it.
             Box(modifier = Modifier.matchParentSize().sketchBorder(shape, ProfileCardColors.ink))
+            if (paperGrain.grainAlpha > 0f) {
+                // Grain over the ink as well: print sits under the paper fibre, not on top of it.
+                Box(modifier = Modifier.matchParentSize().paperGrain(alpha = paperGrain.grainAlpha))
+            }
         }
         if (topStartTape) {
             WashiTape(
@@ -374,7 +383,7 @@ private fun ProfileCardFacePreview(
 ) {
     KaigiPreviewTheme(colorScheme) {
         Box(modifier = Modifier.padding(32.dp)) {
-            ProfileCardFace(sketchiness = Sketchiness.Normal, outlineSeed = 900, topStartTape = true, bottomEndTape = true, mirrored = false) {
+            ProfileCardFace(sketchiness = Sketchiness.Normal, paperGrain = PaperGrain.Rough, outlineSeed = 900, topStartTape = true, bottomEndTape = true, mirrored = false) {
                 EventLabelHeader(text = "DROIDKAIGI 2026", color = ProfileCardColors.ink, centeredLabel = false)
                 Sparkles(
                     placements = listOf(SparklePlacement(x = 280.dp, y = 40.dp, size = 12.dp, rotationDegrees = 12f)),

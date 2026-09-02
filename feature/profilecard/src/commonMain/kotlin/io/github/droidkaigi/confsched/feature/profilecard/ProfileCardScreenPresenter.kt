@@ -44,6 +44,8 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
+            is ProfileCardScreenAction.UpdatePaperGrain -> form = form.copy(paperGrain = action.paperGrain)
+
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
 
             // A failed re-pick keeps the image already on the form valid; only a form with no
@@ -65,6 +67,7 @@ fun profileCardScreenPresenter(
                             link = validated.link,
                             mascot = validated.mascot,
                             sketchiness = validated.sketchiness,
+                            paperGrain = validated.paperGrain,
                             avatarImage = validated.avatarImage,
                         ),
                     )
@@ -130,6 +133,7 @@ fun profileCardScreenPresenter(
             link = storedCard.link,
             mascot = storedCard.mascot,
             sketchiness = storedCard.sketchiness,
+            paperGrain = storedCard.paperGrain,
             avatarImage = storedCard.avatarImage,
             frontDoodle = frontDoodle,
             backDoodle = backDoodle,
@@ -149,6 +153,7 @@ private fun ProfileCard?.toForm(): ProfileCardScreenUiState.Form = if (this == n
         link = link,
         mascot = mascot,
         sketchiness = sketchiness,
+        paperGrain = paperGrain,
         avatarImage = avatarImage,
     )
 }

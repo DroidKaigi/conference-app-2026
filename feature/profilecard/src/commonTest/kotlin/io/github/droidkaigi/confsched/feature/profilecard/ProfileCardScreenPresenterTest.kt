@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.DoodleEdit
 import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
@@ -28,6 +29,7 @@ class ProfileCardScreenPresenterTest {
         link = "https://example.com",
         mascot = Mascot.D,
         sketchiness = Sketchiness.Playful,
+        paperGrain = PaperGrain.Smooth,
         avatarImage = AvatarImage(byteArrayOf(1, 2, 3)),
     )
 
@@ -108,6 +110,7 @@ class ProfileCardScreenPresenterTest {
                     link = "https://example.com/b",
                     mascot = Mascot.E,
                     sketchiness = Sketchiness.Subtle,
+                    paperGrain = PaperGrain.Smooth,
                     avatarImage = AvatarImage(byteArrayOf(4, 5)),
                 ),
                 graph.profileCardMutationKey.invocations.receive(),
@@ -131,6 +134,7 @@ class ProfileCardScreenPresenterTest {
                     link = "https://example.com",
                     mascot = Mascot.D,
                     sketchiness = Sketchiness.Playful,
+                    paperGrain = PaperGrain.Smooth,
                     avatarImage = storedCard.avatarImage,
                 ),
                 uiState,
