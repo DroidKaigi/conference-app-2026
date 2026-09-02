@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.ColorSchemeSetting
@@ -38,9 +40,15 @@ fun SettingsScreen(
     onColorSchemeSettingClick: (ColorSchemeSetting) -> Unit,
     onBackClick: () -> Unit,
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            KaigiLargeTopAppBar(title = stringResource(Res.string.settings_title), onBackClick = onBackClick)
+            KaigiLargeTopAppBar(
+                title = stringResource(Res.string.settings_title),
+                onBackClick = onBackClick,
+                scrollBehavior = scrollBehavior,
+            )
         },
         // Zero here so the bottom inset lands in the list's content padding and the groups
         // scroll under the system bar; the bar applies the top inset itself.
