@@ -52,7 +52,7 @@ class AppNavigator(private val logger: KaigiLogger) : Navigator {
         commandChannel.trySend(NavCommand.ReplaceTop(key))
     }
 
-    fun reselect(key: NavKey) {
+    internal fun reselect(key: NavKey) {
         logger.debug { "reselect $key" }
         reselections.tryEmit(key)
     }
