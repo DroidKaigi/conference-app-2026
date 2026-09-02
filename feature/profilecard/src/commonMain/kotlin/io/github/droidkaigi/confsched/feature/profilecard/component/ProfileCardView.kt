@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +55,7 @@ import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import kotlinx.coroutines.launch
@@ -275,6 +277,11 @@ private fun FlippableProfileCard(
             rotationX = lean.value.pitchDegrees
             rotationY = rotation + lean.value.rollDegrees
             cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
+            // The shadow keeps the card reading as lifted off the page while it sways; the blur
+            // absorbs the difference between this rounded rectangle and the sketched outline.
+            shadowElevation = ProfileCardViewDefaults.cardShadowElevation.toPx()
+            shape = RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius)
+            clip = false
         },
     ) {
         if (showsBack) {
@@ -356,6 +363,7 @@ private fun ProfileCardDoodleFaceColumn(
 
 private object ProfileCardViewDefaults {
     val flipDurationMillis = 500
+    val cardShadowElevation = 8.dp
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
