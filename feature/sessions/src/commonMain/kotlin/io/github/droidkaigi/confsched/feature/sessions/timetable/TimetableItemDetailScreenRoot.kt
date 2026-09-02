@@ -67,6 +67,7 @@ fun TimetableItemDetailScreenRoot(
         TimetableItemDetailScreen(
             uiState = uiState,
             onBookmarkClick = { screenChannel.send(TimetableItemDetailScreenAction.Bookmark(it)) },
+            onDescriptionTruncationChange = { screenChannel.send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(it)) },
             onDescriptionExpansionToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDescriptionExpansion) },
             onDisplayLanguageToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDisplayLanguage) },
             onMemoChange = { screenChannel.send(TimetableItemDetailScreenAction.SaveMemo(it)) },

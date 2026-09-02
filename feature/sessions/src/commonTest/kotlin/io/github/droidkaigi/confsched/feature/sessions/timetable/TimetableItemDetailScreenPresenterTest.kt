@@ -10,6 +10,7 @@ import io.github.droidkaigi.confsched.core.model.Timetable
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.testing.runPresenterTest
 import io.github.droidkaigi.confsched.core.testing.testTimetableItem
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableItemDetailScreenUiState.DescriptionDisplay
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import kotlin.test.Test
@@ -69,13 +70,21 @@ class TimetableItemDetailScreenPresenterTest {
                 )
             },
         ) {
-            assertEquals(false, uiStates.awaitItem().isDescriptionExpanded)
+            assertEquals(DescriptionDisplay.Unmeasured, uiStates.awaitItem().descriptionDisplay)
+
+            send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(true))
+            assertEquals(DescriptionDisplay.Truncatable.Collapsed, uiStates.awaitItem().descriptionDisplay)
 
             send(TimetableItemDetailScreenAction.ToggleDescriptionExpansion)
-            assertEquals(true, uiStates.awaitItem().isDescriptionExpanded)
+            assertEquals(DescriptionDisplay.Truncatable.Expanded, uiStates.awaitItem().descriptionDisplay)
 
+            // Expanding lifts the line limit, so the layout it triggers reports no overflow. The
+            // language toggle fences that report: the state it emits shows the expansion outlived it.
+            send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(false))
             send(TimetableItemDetailScreenAction.ToggleDisplayLanguage)
-            assertEquals(DisplayLanguage.English, uiStates.awaitItem().displayLanguage)
+            val afterReport = uiStates.awaitItem()
+            assertEquals(DescriptionDisplay.Truncatable.Expanded, afterReport.descriptionDisplay)
+            assertEquals(DisplayLanguage.English, afterReport.displayLanguage)
 
             send(TimetableItemDetailScreenAction.Bookmark(TimetableItemId("d1b")))
             assertEquals(TimetableItemId("d1b"), graph.favoriteMutationKey.invocations.receive())
