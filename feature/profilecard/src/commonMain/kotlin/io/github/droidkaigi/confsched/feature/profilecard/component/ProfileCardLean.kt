@@ -34,8 +34,8 @@ internal data class ProfileCardLean(
 
 /**
  * The lean the card is drawn at, springing towards the device's tilt away from where it was held
- * when the card appeared. It stays [ProfileCardLean.Level] under reduced motion and on a platform
- * that reports no tilt.
+ * when the card appeared. It stays [ProfileCardLean.Level] under reduced motion, unless the debug
+ * tooling pins the tilt, and on a platform that reports no tilt.
  *
  * Read the returned value inside `graphicsLayer`: the sensor ticks at tens of hertz, and a read in
  * composition recomposes the card at that rate.
@@ -43,14 +43,15 @@ internal data class ProfileCardLean(
 @Composable
 internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVector2D> {
     val lean = remember { Animatable(ProfileCardLean.Level, ProfileCardLean.VectorConverter) }
-    if (rememberReducedMotion()) {
+    val source = LocalDeviceTiltSource.current
+    val pinned = source.pinnedAsState()
+    // A pin is an explicit debug request for a leaned card, so it wins over reduced motion.
+    if (rememberReducedMotion() && !pinned.value) {
         LaunchedEffect(lean) { lean.snapTo(ProfileCardLean.Level) }
         return lean
     }
 
-    val source = LocalDeviceTiltSource.current
     val tilt = source.tiltAsState()
-    val pinned = source.pinnedAsState()
     LaunchedEffect(lean, tilt, pinned) {
         var baseline: DeviceTilt? = null
         // The source holds DeviceTilt.Level until its first reading, which a measured tilt never
