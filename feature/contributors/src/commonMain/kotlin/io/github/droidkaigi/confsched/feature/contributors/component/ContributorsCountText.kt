@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -86,7 +87,7 @@ internal fun ContributorsCountText(
                 modifier = Modifier.padding(
                     horizontal = ContributorsCountTextDefaults.ornamentHorizontalPadding,
                     vertical = ContributorsCountTextDefaults.ornamentVerticalPadding,
-                ),
+                ).semantics(mergeDescendants = true) {},
             ) {
                 Text(
                     text = stringResource(Res.string.contributors_count_label),
