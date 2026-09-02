@@ -60,7 +60,8 @@ internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVec
         snapshotFlow { tilt.value to pinned.value }.collectLatest { (measured, isPinned) ->
             if (isPinned) {
                 // A pinned tilt is absolute: baselining it against itself would cancel the pin out.
-                lean.animateTo(profileCardLean(DeviceTilt.Level, measured), LeanSpring)
+                // Snapped rather than animated, so a slider drag on the debug host tracks directly.
+                lean.snapTo(profileCardLean(DeviceTilt.Level, measured))
                 return@collectLatest
             }
             if (measured == DeviceTilt.Level && baseline == null) return@collectLatest
