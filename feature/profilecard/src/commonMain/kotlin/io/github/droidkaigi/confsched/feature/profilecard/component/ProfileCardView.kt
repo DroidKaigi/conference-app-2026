@@ -295,11 +295,17 @@ private fun FlippableProfileCard(
                     val drop = ProfileCardViewDefaults.cardShadowDropOffset.toPx()
                     val corner = CornerRadius(ProfileCardViewDefaults.cardShadowCornerRadius.toPx())
                     val steps = ProfileCardViewDefaults.cardShadowFeatherSteps
+                    // An overhead light over a card floating at a fixed height: the lean's own
+                    // clamp bounds the slide, so the shadow never stretches away.
+                    val shiftPerDegree = ProfileCardViewDefaults.cardShadowShiftPerLeanDegree.toPx()
+                    val current = lean.value
+                    val shiftX = -current.rollDegrees * shiftPerDegree
+                    val shiftY = current.pitchDegrees * shiftPerDegree
                     repeat(steps) { step ->
                         val inset = feather * step / (steps - 1)
                         drawRoundRect(
                             color = Color.Black,
-                            topLeft = Offset(inset, inset + drop),
+                            topLeft = Offset(inset + shiftX, inset + drop + shiftY),
                             size = Size(size.width - inset * 2, size.height - inset * 2),
                             cornerRadius = corner,
                             alpha = ProfileCardViewDefaults.cardShadowAlpha / steps,
@@ -410,6 +416,7 @@ private object ProfileCardViewDefaults {
     val cardShadowDropOffset = 10.dp
     val cardShadowCornerRadius = 44.dp
     val cardShadowFeatherSteps = 10
+    val cardShadowShiftPerLeanDegree = 1.2.dp
     val flipCameraDistance = 12f
     val cardSpacePadding = 24.dp
     val cardSpacing = 24.dp
