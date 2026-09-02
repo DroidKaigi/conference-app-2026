@@ -46,6 +46,7 @@ import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.MirroredSketchShape
 import io.github.droidkaigi.confsched.core.ui.SketchRoundRectShape
+import io.github.droidkaigi.confsched.core.ui.paperGrain
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 
 /**
@@ -124,6 +125,8 @@ private fun ProfileCardFaceContent(
             content()
             // The outline goes on last so a band filling an edge cannot paint over it.
             Box(modifier = Modifier.matchParentSize().sketchBorder(shape, ProfileCardColors.ink))
+            // Grain over the ink as well: print sits under the paper fibre, not on top of it.
+            Box(modifier = Modifier.matchParentSize().paperGrain(alpha = ProfileCardFaceDefaults.grainAlpha))
         }
         if (topStartTape) {
             WashiTape(
@@ -305,6 +308,7 @@ object ProfileCardFaceDefaults {
     val size = DpSize(320.dp, 480.dp)
     val maxScale = 1.5f
     val cornerRadius = 16.dp
+    val grainAlpha = 0.08f
     val borderThickness = 2.5.dp
     val tapeWidth = 88.dp
     val tapeHeight = 25.dp
