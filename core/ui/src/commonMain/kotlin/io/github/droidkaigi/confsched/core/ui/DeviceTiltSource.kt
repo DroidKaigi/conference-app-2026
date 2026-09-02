@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
@@ -54,6 +55,27 @@ fun rememberDeviceTiltSource(): DeviceTiltSource {
     val tilts = rememberDeviceTilts()
     val coroutineScope = rememberCoroutineScope()
     return remember(tilts, coroutineScope) { SubscribedDeviceTiltSource(tilts, coroutineScope) }
+}
+
+/** The platform sensor, read through [overrideSource] so the debug tooling can pin the tilt. */
+@Composable
+fun rememberDeviceTiltSource(overrideSource: DeviceTiltOverrideSource): DeviceTiltSource {
+    val sensorSource = rememberDeviceTiltSource()
+    return remember(sensorSource, overrideSource) {
+        OverriddenDeviceTiltSource(sensorSource, overrideSource)
+    }
+}
+
+private class OverriddenDeviceTiltSource(
+    private val sensorSource: DeviceTiltSource,
+    private val overrideSource: DeviceTiltOverrideSource,
+) : DeviceTiltSource {
+    @Composable
+    override fun tiltAsState(): State<DeviceTilt> {
+        val overrideTilt = overrideSource.tilt.collectAsStateWithLifecycle().value
+        // Leaving the sensor branch uncomposed while pinned is what keeps the sensor unregistered.
+        return if (overrideTilt != null) rememberUpdatedState(overrideTilt) else sensorSource.tiltAsState()
+    }
 }
 
 @Composable

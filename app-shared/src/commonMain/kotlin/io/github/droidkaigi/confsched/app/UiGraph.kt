@@ -14,6 +14,7 @@ import io.github.droidkaigi.confsched.core.common.SoilErrorMonitor
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.model.AppearanceSubscriptionKey
 import io.github.droidkaigi.confsched.core.preview.PreviewImageResolver
+import io.github.droidkaigi.confsched.core.ui.DeviceTiltOverrideSource
 import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableDayRequestStore
 import soil.query.SwrClientPlus
 
@@ -32,6 +33,7 @@ interface UiGraph {
     val backStackDebuggingEffect: BackStackDebuggingEffect
     val semanticsDebuggingEffect: SemanticsDebuggingEffect
     val clockOverlay: ClockOverlay
+    val deviceTiltOverrideSource: DeviceTiltOverrideSource
     val soilErrorMonitor: SoilErrorMonitor
     val swrClient: SwrClientPlus
     val appearanceSubscriptionKey: AppearanceSubscriptionKey
