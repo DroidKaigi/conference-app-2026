@@ -270,40 +270,49 @@ private fun FlippableProfileCard(
     )
     val showsBack = rotation > 90f
     val lean = rememberProfileCardLean()
-    Box(
-        modifier = modifier.graphicsLayer {
-            // A graphics layer turns about Y before X, so the lean about the screen's horizontal
-            // axis lands outside the flip and the back face leans the same way the front does.
-            rotationX = lean.value.pitchDegrees
-            rotationY = rotation + lean.value.rollDegrees
-            cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
-            // The shadow keeps the card reading as lifted off the page while it sways; the blur
-            // absorbs the difference between this rounded rectangle and the sketched outline.
-            shadowElevation = ProfileCardViewDefaults.cardShadowElevation.toPx()
-            shape = RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius)
-            clip = false
-        },
-    ) {
-        if (showsBack) {
-            ProfileCardBack(
-                nickName = nickName,
-                link = link,
-                mascot = mascot,
-                sketchiness = sketchiness,
-                doodle = backDoodle,
-                taped = false,
-                modifier = Modifier.graphicsLayer { rotationY = 180f },
-            )
-        } else {
-            ProfileCardFront(
-                nickName = nickName,
-                occupation = occupation,
-                mascot = mascot,
-                sketchiness = sketchiness,
-                taped = false,
-                avatarImage = avatarImage,
-                doodle = frontDoodle,
-            )
+    Box(modifier = modifier) {
+        // The shadow keeps the card reading as lifted off the page while it sways. It hangs on its
+        // own unrotated layer: an elevation shadow projected from the tilted plane smears far past
+        // the card. The blur absorbs the difference between this rectangle and the sketched outline.
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .graphicsLayer {
+                    shadowElevation = ProfileCardViewDefaults.cardShadowElevation.toPx()
+                    shape = RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius)
+                    clip = false
+                },
+        )
+        Box(
+            modifier = Modifier.graphicsLayer {
+                // A graphics layer turns about Y before X, so the lean about the screen's horizontal
+                // axis lands outside the flip and the back face leans the same way the front does.
+                rotationX = lean.value.pitchDegrees
+                rotationY = rotation + lean.value.rollDegrees
+                cameraDistance = ProfileCardViewDefaults.flipCameraDistance * density
+            },
+        ) {
+            if (showsBack) {
+                ProfileCardBack(
+                    nickName = nickName,
+                    link = link,
+                    mascot = mascot,
+                    sketchiness = sketchiness,
+                    doodle = backDoodle,
+                    taped = false,
+                    modifier = Modifier.graphicsLayer { rotationY = 180f },
+                )
+            } else {
+                ProfileCardFront(
+                    nickName = nickName,
+                    occupation = occupation,
+                    mascot = mascot,
+                    sketchiness = sketchiness,
+                    taped = false,
+                    avatarImage = avatarImage,
+                    doodle = frontDoodle,
+                )
+            }
         }
     }
 }

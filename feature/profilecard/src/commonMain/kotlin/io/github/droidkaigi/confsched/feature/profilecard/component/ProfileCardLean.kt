@@ -15,6 +15,9 @@ import io.github.droidkaigi.confsched.core.ui.LocalDeviceTiltSource
 import io.github.droidkaigi.confsched.core.ui.rememberReducedMotion
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.abs
+import kotlin.math.exp
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource
 
 /** How far the card leans out of the screen plane, in degrees. */
 @Immutable
@@ -34,7 +37,8 @@ internal data class ProfileCardLean(
 
 /**
  * The lean the card is drawn at, springing towards the device's tilt away from where it was held
- * when the card appeared. It stays [ProfileCardLean.Level] under reduced motion, unless the debug
+ * when the card appeared; the baseline eases towards a sustained pose, so a change of grip stops
+ * reading as a lean after a while. It stays [ProfileCardLean.Level] under reduced motion, unless the debug
  * tooling pins the tilt, and on a platform that reports no tilt.
  *
  * Read the returned value inside `graphicsLayer`: the sensor ticks at tens of hertz, and a read in
@@ -54,6 +58,7 @@ internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVec
     val tilt = source.tiltAsState()
     LaunchedEffect(lean, tilt, pinned) {
         var baseline: DeviceTilt? = null
+        var mark = TimeSource.Monotonic.markNow()
         // The source holds DeviceTilt.Level until its first reading, which a measured tilt never
         // lands on exactly, so the baseline waits for a measured one rather than starting the card
         // leaned on a device that was already tilted.
@@ -65,7 +70,10 @@ internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVec
                 return@collectLatest
             }
             if (measured == DeviceTilt.Level && baseline == null) return@collectLatest
-            val origin = baseline ?: measured.also { baseline = it }
+            val elapsedSeconds = mark.elapsedNow().toDouble(DurationUnit.SECONDS).toFloat()
+            mark = TimeSource.Monotonic.markNow()
+            val origin = baseline?.let { advanceLeanBaseline(it, measured, elapsedSeconds) } ?: measured
+            baseline = origin
             // collectLatest cancels the running animation, which the spring resumes from at its
             // current velocity, so a stream of readings damps into one continuous motion.
             lean.animateTo(profileCardLean(origin, measured), LeanSpring)
@@ -98,6 +106,18 @@ private fun rollAuthority(pitchDegrees: Float): Float {
     return 1f - fold.coerceIn(0f, 1f)
 }
 
+/**
+ * The baseline eased towards [measured] by the exponential step [elapsedSeconds] covers, so a pose
+ * held for a while becomes the new neutral instead of reading as a lean forever.
+ */
+internal fun advanceLeanBaseline(baseline: DeviceTilt, measured: DeviceTilt, elapsedSeconds: Float): DeviceTilt {
+    val fraction = 1f - exp(-elapsedSeconds / BASELINE_FOLLOW_SECONDS)
+    return DeviceTilt(
+        pitchDegrees = baseline.pitchDegrees + (measured.pitchDegrees - baseline.pitchDegrees) * fraction,
+        rollDegrees = wrapDegrees(baseline.rollDegrees + wrapDegrees(measured.rollDegrees - baseline.rollDegrees) * fraction),
+    )
+}
+
 /** The roll delta as the shorter way round, so a turn across ±180° does not read as a full sweep. */
 private fun wrapDegrees(degrees: Float): Float = when {
     degrees > 180f -> degrees - 360f
@@ -112,5 +132,6 @@ private val LeanSpring = spring<ProfileCardLean>(
 )
 
 private const val MAX_LEAN_DEGREES = 12f
+private const val BASELINE_FOLLOW_SECONDS = 8f
 private const val ROLL_FADE_START_DEGREES = 60f
 private const val ROLL_FADE_END_DEGREES = 85f

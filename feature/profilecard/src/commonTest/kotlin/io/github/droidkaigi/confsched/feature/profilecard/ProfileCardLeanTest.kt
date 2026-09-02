@@ -2,6 +2,7 @@ package io.github.droidkaigi.confsched.feature.profilecard
 
 import io.github.droidkaigi.confsched.core.ui.DeviceTilt
 import io.github.droidkaigi.confsched.feature.profilecard.component.ProfileCardLean
+import io.github.droidkaigi.confsched.feature.profilecard.component.advanceLeanBaseline
 import io.github.droidkaigi.confsched.feature.profilecard.component.profileCardLean
 import kotlin.math.abs
 import kotlin.test.Test
@@ -76,5 +77,24 @@ class ProfileCardLeanTest {
         )
         assertEquals(4f, lean.pitchDegrees, absoluteTolerance = tolerance)
         assertEquals(0f, lean.rollDegrees, absoluteTolerance = tolerance)
+    }
+
+    @Test
+    fun the_baseline_converges_on_a_sustained_pose() {
+        var baseline = DeviceTilt.Level
+        val held = DeviceTilt(pitchDegrees = -40f, rollDegrees = 20f)
+        repeat(600) { baseline = advanceLeanBaseline(baseline, held, elapsedSeconds = 0.1f) }
+        assertEquals(held.pitchDegrees, baseline.pitchDegrees, absoluteTolerance = 0.1f)
+        assertEquals(held.rollDegrees, baseline.rollDegrees, absoluteTolerance = 0.1f)
+    }
+
+    @Test
+    fun the_baseline_follows_the_shorter_way_across_the_half_turn() {
+        val stepped = advanceLeanBaseline(
+            baseline = DeviceTilt(pitchDegrees = 0f, rollDegrees = 170f),
+            measured = DeviceTilt(pitchDegrees = 0f, rollDegrees = -170f),
+            elapsedSeconds = 1f,
+        )
+        assertTrue(stepped.rollDegrees > 170f || stepped.rollDegrees < -170f)
     }
 }
