@@ -9,8 +9,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.common.SystemBackEffect
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
