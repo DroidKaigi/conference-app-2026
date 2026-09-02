@@ -29,4 +29,5 @@
     <string name="profile_image_error">Please add an image</string>
     <string name="doodle_button">Doodle</string>
     <string name="doodle_done">Done</string>
+    <string name="profile_image_unreadable_error">The image could not be read. Please choose another one.</string>
 </resources>

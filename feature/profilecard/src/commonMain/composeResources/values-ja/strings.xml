@@ -29,4 +29,5 @@
     <string name="profile_image_error">画像を追加してください</string>
     <string name="doodle_button">落書きする</string>
     <string name="doodle_done">完了</string>
+    <string name="profile_image_unreadable_error">画像を読み込めませんでした。別の画像を選んでください</string>
 </resources>

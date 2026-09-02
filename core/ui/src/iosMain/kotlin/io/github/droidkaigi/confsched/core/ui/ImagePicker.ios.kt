@@ -25,9 +25,12 @@ import platform.posix.memcpy
 import kotlin.math.min
 
 @Composable
-actual fun rememberImagePicker(onImagePicked: (ByteArray) -> Unit): () -> Unit {
+actual fun rememberImagePicker(
+    onImagePicked: (ByteArray) -> Unit,
+    onImagePickFailed: () -> Unit,
+): () -> Unit {
     // PHPickerViewController holds its delegate weakly, so the composition owns the strong reference.
-    val delegate = remember(onImagePicked) { ImagePickerDelegate(onImagePicked) }
+    val delegate = remember(onImagePicked, onImagePickFailed) { ImagePickerDelegate(onImagePicked, onImagePickFailed) }
     return remember(delegate) { { presentImagePicker(delegate) } }
 }
 
@@ -45,14 +48,15 @@ private const val IMAGE_TYPE_IDENTIFIER = "public.image"
 
 private class ImagePickerDelegate(
     private val onImagePicked: (ByteArray) -> Unit,
+    private val onImagePickFailed: () -> Unit,
 ) : NSObject(),
     PHPickerViewControllerDelegateProtocol {
     override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
         picker.dismissViewControllerAnimated(true, null)
         val itemProvider = (didFinishPicking.firstOrNull() as? PHPickerResult)?.itemProvider ?: return
         itemProvider.loadDataRepresentationForTypeIdentifier(IMAGE_TYPE_IDENTIFIER) { data, _ ->
-            val bytes = data?.let(::uprightJpeg)?.toByteArray() ?: return@loadDataRepresentationForTypeIdentifier
-            dispatch_async(dispatch_get_main_queue()) { onImagePicked(bytes) }
+            val bytes = data?.let(::uprightJpeg)?.toByteArray()
+            dispatch_async(dispatch_get_main_queue()) { if (bytes != null) onImagePicked(bytes) else onImagePickFailed() }
         }
     }
 }

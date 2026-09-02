@@ -42,4 +42,5 @@ enum class ProfileCardFormError {
     LinkRequired,
     LinkMalformed,
     AvatarImageRequired,
+    AvatarImageUnreadable,
 }
