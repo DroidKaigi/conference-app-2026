@@ -24,10 +24,10 @@ internal fun KaigiTiltPluginView(
     onSet: (pitchDegrees: Float, rollDegrees: Float) -> Unit,
     onReset: () -> Unit,
 ) {
-    // Keyed on the state so a reply re-seeds the sliders; the agent replies with the values it
-    // applied, so a re-seed lands on what the last drag chose.
-    var pitch by remember(state) { mutableFloatStateOf(state?.pitchDegrees ?: 0f) }
-    var roll by remember(state) { mutableFloatStateOf(state?.rollDegrees ?: 0f) }
+    // Keyed on overridden rather than the state: replies stream in while a drag is in progress,
+    // and re-seeding on each would snap the slider back to an already-superseded value.
+    var pitch by remember(state?.overridden) { mutableFloatStateOf(state?.pitchDegrees ?: 0f) }
+    var roll by remember(state?.overridden) { mutableFloatStateOf(state?.rollDegrees ?: 0f) }
 
     Column(
         modifier = Modifier
@@ -51,16 +51,20 @@ internal fun KaigiTiltPluginView(
             value = pitch,
             valueRange = -90f..90f,
             enabled = state != null,
-            onValueChange = { pitch = it },
-            onValueChangeFinished = { onSet(pitch, roll) },
+            onValueChange = {
+                pitch = it
+                onSet(it, roll)
+            },
         )
         TiltSlider(
             label = "Roll",
             value = roll,
             valueRange = -180f..180f,
             enabled = state != null,
-            onValueChange = { roll = it },
-            onValueChangeFinished = { onSet(pitch, roll) },
+            onValueChange = {
+                roll = it
+                onSet(pitch, it)
+            },
         )
         TextButton(
             onClick = onReset,
@@ -78,7 +82,6 @@ private fun TiltSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     enabled: Boolean,
     onValueChange: (Float) -> Unit,
-    onValueChangeFinished: () -> Unit,
 ) {
     Column {
         Row(
@@ -93,7 +96,6 @@ private fun TiltSlider(
             onValueChange = onValueChange,
             valueRange = valueRange,
             enabled = enabled,
-            onValueChangeFinished = onValueChangeFinished,
         )
     }
 }

@@ -48,13 +48,20 @@ internal fun rememberProfileCardLean(): Animatable<ProfileCardLean, AnimationVec
         return lean
     }
 
-    val tilt = LocalDeviceTiltSource.current.tiltAsState()
-    LaunchedEffect(lean, tilt) {
+    val source = LocalDeviceTiltSource.current
+    val tilt = source.tiltAsState()
+    val pinned = source.pinnedAsState()
+    LaunchedEffect(lean, tilt, pinned) {
         var baseline: DeviceTilt? = null
         // The source holds DeviceTilt.Level until its first reading, which a measured tilt never
         // lands on exactly, so the baseline waits for a measured one rather than starting the card
         // leaned on a device that was already tilted.
-        snapshotFlow(tilt::value).collectLatest { measured ->
+        snapshotFlow { tilt.value to pinned.value }.collectLatest { (measured, isPinned) ->
+            if (isPinned) {
+                // A pinned tilt is absolute: baselining it against itself would cancel the pin out.
+                lean.animateTo(profileCardLean(DeviceTilt.Level, measured), LeanSpring)
+                return@collectLatest
+            }
             if (measured == DeviceTilt.Level && baseline == null) return@collectLatest
             val origin = baseline ?: measured.also { baseline = it }
             // collectLatest cancels the running animation, which the spring resumes from at its

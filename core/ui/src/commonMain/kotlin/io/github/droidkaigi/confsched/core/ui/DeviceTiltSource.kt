@@ -27,6 +27,17 @@ interface DeviceTiltSource {
     /** The current tilt, updated while the caller is composed and the app is on screen. */
     @Composable
     fun tiltAsState(): State<DeviceTilt>
+
+    /**
+     * True while the debug tooling pins the tilt. A pinned tilt is an absolute pose rather than a
+     * reading to baseline against, so a consumer that keeps a baseline skips it for a pinned value.
+     */
+    @Composable
+    fun pinnedAsState(): State<Boolean> = NotPinned
+}
+
+private val NotPinned = object : State<Boolean> {
+    override val value: Boolean = false
 }
 
 /** Reports [DeviceTilt.Level] and reads no sensor. */
@@ -75,6 +86,12 @@ private class OverriddenDeviceTiltSource(
         val overrideTilt = overrideSource.tilt.collectAsStateWithLifecycle().value
         // Leaving the sensor branch uncomposed while pinned is what keeps the sensor unregistered.
         return if (overrideTilt != null) rememberUpdatedState(overrideTilt) else sensorSource.tiltAsState()
+    }
+
+    @Composable
+    override fun pinnedAsState(): State<Boolean> {
+        val overrideTilt = overrideSource.tilt.collectAsStateWithLifecycle().value
+        return rememberUpdatedState(overrideTilt != null)
     }
 }
 
