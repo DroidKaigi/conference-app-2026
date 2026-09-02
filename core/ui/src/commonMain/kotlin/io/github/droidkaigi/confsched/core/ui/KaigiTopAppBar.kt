@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,8 +52,10 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import io.github.droidkaigi.confsched.core.designsystem.icon.ArrowBack
@@ -158,7 +161,8 @@ fun KaigiLargeTopAppBar(
 
     // BarTitle renders at headlineMedium; the collapsed title scales down from that size.
     val expandedTitleFontSize = MaterialTheme.typography.headlineMedium.fontSize
-    val collapsedTitleScale = CollapsedTitleFontSize.value / expandedTitleFontSize.value
+    val collapsedTitleScale =
+        KaigiTopAppBarDefaults.collapsedTitleFontSize.value / expandedTitleFontSize.value
     val titleScale = lerp(1f, collapsedTitleScale, scrollProgress)
 
     val barHeight = with(density) {
@@ -173,6 +177,8 @@ fun KaigiLargeTopAppBar(
     var titleHeight by remember { mutableIntStateOf(0) }
     var titleBaseline by remember { mutableFloatStateOf(0f) }
 
+    val contentWidth = with(density) { barWidth.toDp() } - paneStartInset
+
     // Pivot the scale on the title's own baseline and start edge so both hold still while the
     // glyphs shrink; the translations below are then measured against those fixed lines.
     val titleScalePivot = TransformOrigin(
@@ -183,9 +189,8 @@ fun KaigiLargeTopAppBar(
     // graphicsLayer translationX is geometric (positive is rightward), so the shift to the
     // horizontal centre mirrors under a right-to-left layout.
     val titleCentreTranslationX = with(density) {
-        val contentWidth = barWidth - paneStartInset.toPx()
-        val fromStartEdge =
-            (contentWidth - titleWidth * collapsedTitleScale) / 2 - LargeTitleStartInset.toPx()
+        val fromStartEdge = (contentWidth.toPx() - titleWidth * collapsedTitleScale) / 2 -
+            KaigiTopAppBarDefaults.largeTitleStartInset.toPx()
         if (isRtl) -fromStartEdge else fromStartEdge
     }
 
@@ -193,10 +198,24 @@ fun KaigiLargeTopAppBar(
     // nudge lands its optical centre on the bar's centre line, shared with the navigation icon.
     val titleCentreTranslationY = with(density) {
         val collapsedBarHeight = KaigiTopAppBarDefaults.height.toPx()
-        val restingBaseline = collapsedBarHeight - LargeTitleBaselinePadding.toPx()
+        val restingBaseline =
+            collapsedBarHeight - KaigiTopAppBarDefaults.largeTitleBaselinePadding.toPx()
         val centredBaseline =
             collapsedBarHeight / 2f + collapsedTitleScale * (titleBaseline - titleHeight / 2f)
         centredBaseline - restingBaseline
+    }
+
+    // One Text serves both states and graphicsLayer does not re-measure, so a single width has to
+    // satisfy the tighter of the two budgets: the expanded insets, and the collapsed clearance read
+    // back through the scale the glyphs will have shrunk to by then.
+    val maxTitleWidth = if (barWidth == 0f) {
+        Dp.Unspecified
+    } else {
+        min(
+            (contentWidth - KaigiTopAppBarDefaults.collapsedTitleClearance * 2) /
+                collapsedTitleScale,
+            contentWidth - KaigiTopAppBarDefaults.largeTitleStartInset * 2,
+        )
     }
 
     Box(
@@ -216,7 +235,7 @@ fun KaigiLargeTopAppBar(
                     .align(Alignment.TopStart)
                     .fillMaxWidth()
                     .height(KaigiTopAppBarDefaults.height)
-                    .padding(horizontal = TopRowHorizontalPadding),
+                    .padding(horizontal = KaigiTopAppBarDefaults.topRowHorizontalPadding),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 ListDetailSceneAwareBackButton(onClick = onBackClick)
@@ -228,8 +247,13 @@ fun KaigiLargeTopAppBar(
                 title = title,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = paneStartInset + LargeTitleStartInset)
-                    .paddingFromBaseline(bottom = LargeTitleBaselinePadding)
+                    .padding(
+                        start = paneStartInset + KaigiTopAppBarDefaults.largeTitleStartInset,
+                    )
+                    .paddingFromBaseline(
+                        bottom = KaigiTopAppBarDefaults.largeTitleBaselinePadding,
+                    )
+                    .widthIn(max = maxTitleWidth)
                     .graphicsLayer(
                         transformOrigin = titleScalePivot,
                         scaleX = titleScale,
@@ -253,16 +277,6 @@ fun KaigiLargeTopAppBar(
         }
     }
 }
-
-private val CollapsedTitleFontSize = 22.sp
-
-// Aligns the expanded title with Material 3 LargeTopAppBar.
-private val LargeTitleBaselinePadding = 28.dp
-
-private val LargeTitleStartInset = 16.dp
-
-// Matches Material 3 TopAppBarHorizontalPadding.
-private val TopRowHorizontalPadding = 4.dp
 
 private const val DIVIDER_REVEAL_PROGRESS = 0.9f
 
@@ -335,6 +349,19 @@ object KaigiTopAppBarDefaults {
      */
     val contentPadding = PaddingValues(end = 12.dp)
 
+    /** Matches Material 3 `TopAppBarHorizontalPadding`. */
+    internal val topRowHorizontalPadding = 4.dp
+
+    internal val largeTitleStartInset = 16.dp
+
+    /** Aligns the expanded title with Material 3 `LargeTopAppBar`. */
+    internal val largeTitleBaselinePadding = 28.dp
+
+    internal val collapsedTitleFontSize = 22.sp
+
+    /** The back arrow's 48.dp button plus a 16.dp gap, kept clear on each side. */
+    internal val collapsedTitleClearance = 64.dp
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     internal fun colors(containerColor: Color, contentColor: Color): TopAppBarColors =
@@ -379,26 +406,62 @@ private fun KaigiLargeTopAppBarPreview(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @LocalePreviews
 @Composable
 private fun KaigiLargeTopAppBarCollapsedPreview(
     @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
 ) {
     KaigiPreviewTheme(colorScheme) {
-        val collapsedLimit = with(LocalDensity.current) {
-            -(KaigiTopAppBarDefaults.largeHeight - KaigiTopAppBarDefaults.height).toPx()
-        }
         KaigiLargeTopAppBar(
             title = "Contributors",
             onBackClick = {},
             windowInsets = WindowInsets(0),
-            scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-                rememberTopAppBarState(
-                    initialHeightOffsetLimit = collapsedLimit,
-                    initialHeightOffset = collapsedLimit,
-                ),
-            ),
+            scrollBehavior = collapsedScrollBehavior(),
         )
     }
+}
+
+@LocalePreviews
+@Composable
+private fun KaigiLargeTopAppBarLongTitlePreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        KaigiLargeTopAppBar(
+            title = LONG_PREVIEW_TITLE,
+            onBackClick = {},
+            windowInsets = WindowInsets(0),
+        )
+    }
+}
+
+@LocalePreviews
+@Composable
+private fun KaigiLargeTopAppBarLongTitleCollapsedPreview(
+    @PreviewParameter(KaigiSchemeProvider::class) colorScheme: KaigiColorScheme,
+) {
+    KaigiPreviewTheme(colorScheme) {
+        KaigiLargeTopAppBar(
+            title = LONG_PREVIEW_TITLE,
+            onBackClick = {},
+            windowInsets = WindowInsets(0),
+            scrollBehavior = collapsedScrollBehavior(),
+        )
+    }
+}
+
+private const val LONG_PREVIEW_TITLE = "A screen title long enough to need truncating"
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun collapsedScrollBehavior(): TopAppBarScrollBehavior {
+    val collapsedLimit = with(LocalDensity.current) {
+        -(KaigiTopAppBarDefaults.largeHeight - KaigiTopAppBarDefaults.height).toPx()
+    }
+    return TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+        rememberTopAppBarState(
+            initialHeightOffsetLimit = collapsedLimit,
+            initialHeightOffset = collapsedLimit,
+        ),
+    )
 }
