@@ -13,7 +13,7 @@ val LocalTabReselectionEvents = staticCompositionLocalOf<Flow<NavKey>>(::emptyFl
 
 /** Runs [onReselect] each time the root [key] is reselected while it already sits on top. */
 @Composable
-fun OnTabReselect(key: NavKey, onReselect: suspend () -> Unit) {
+fun TabReselectEffect(key: NavKey, onReselect: suspend () -> Unit) {
     val reselections = LocalTabReselectionEvents.current
     LaunchedEffect(reselections, key) {
         reselections.filter { it == key }.collect { onReselect() }

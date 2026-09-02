@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.common.OnTabReselect
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -40,40 +40,38 @@ internal fun TimetableListSection(
     onItemClick: (TimetableItemId) -> Unit,
     listState: LazyListState = rememberListDetailSceneAwareLazyListState(),
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        OnTabReselect(TimetableNavKey) { listState.animateScrollToItem(0) }
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            contentPadding = contentPadding + PaddingValues(
-                top = 24.dp,
-                bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
-            ),
-        ) {
-            val hasBanner = uiState.countdownBannerUiState != null
-            uiState.countdownBannerUiState?.let { countdownState ->
-                item(key = "countdown_banner") {
-                    TimetableCountdownBanner(
-                        uiState = countdownState,
-                        seed = countdownState.nextSessions.firstOrNull()?.id?.value?.hashCode() ?: 0,
-                        onItemClick = onItemClick,
-                    )
-                }
-            }
-
-            itemsIndexed(uiState.timeSlots, key = { _, slot -> "${slot.startsAt}-${slot.endsAt}" }) { index, slot ->
-                val layoutIndex = if (hasBanner) index + 1 else index
-                SessionRow(
-                    slot = slot,
-                    bookmarks = uiState.bookmarks,
-                    onBookmarkClick = onBookmarkClick,
+    TabReselectEffect(TimetableNavKey) { listState.animateScrollToItem(0) }
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = contentPadding + PaddingValues(
+            top = 24.dp,
+            bottom = 24.dp + LocalNavigationBarOccupiedHeight.current,
+        ),
+    ) {
+        val hasBanner = uiState.countdownBannerUiState != null
+        uiState.countdownBannerUiState?.let { countdownState ->
+            item(key = "countdown_banner") {
+                TimetableCountdownBanner(
+                    uiState = countdownState,
+                    seed = countdownState.nextSessions.firstOrNull()?.id?.value?.hashCode() ?: 0,
                     onItemClick = onItemClick,
-                    timeRangeTranslationY = { timeRangeHeightPx ->
-                        stickyTimeRangeTranslationY(listState, layoutIndex, timeRangeHeightPx)
-                    },
                 )
             }
+        }
+
+        itemsIndexed(uiState.timeSlots, key = { _, slot -> "${slot.startsAt}-${slot.endsAt}" }) { index, slot ->
+            val layoutIndex = if (hasBanner) index + 1 else index
+            SessionRow(
+                slot = slot,
+                bookmarks = uiState.bookmarks,
+                onBookmarkClick = onBookmarkClick,
+                onItemClick = onItemClick,
+                timeRangeTranslationY = { timeRangeHeightPx ->
+                    stickyTimeRangeTranslationY(listState, layoutIndex, timeRangeHeightPx)
+                },
+            )
         }
     }
 }

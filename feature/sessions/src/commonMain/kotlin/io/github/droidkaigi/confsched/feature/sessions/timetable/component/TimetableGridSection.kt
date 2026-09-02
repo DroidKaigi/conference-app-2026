@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpRect
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
-import io.github.droidkaigi.confsched.core.common.OnTabReselect
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItem
@@ -83,7 +83,7 @@ internal fun TimetableGridSection(
     val scrollState = rememberTimetableGridScrollState()
     val visibleNowMinute = uiState.nowMinute.visibleNowMinuteOrNull(endMinute)
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        OnTabReselect(TimetableNavKey) { scrollState.animateScrollToTop() }
+        TabReselectEffect(TimetableNavKey) { scrollState.animateScrollToTop() }
         val columnWidth = timetableGridColumnWidth(
             availableWidth = maxWidth - TimetableGridHorizontalPadding * 2 - TimetableGridTimeGutterWidth,
             roomCount = rooms.size,
