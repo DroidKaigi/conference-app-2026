@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +36,7 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.favorites.FavoritesNavKey
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
@@ -49,7 +49,7 @@ internal fun FavoritesListSection(
     onItemClick: (TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberListDetailSceneAwareLazyListState()
     TabReselectEffect(FavoritesNavKey) { listState.animateScrollToItem(0) }
     LazyColumn(
         state = listState,
