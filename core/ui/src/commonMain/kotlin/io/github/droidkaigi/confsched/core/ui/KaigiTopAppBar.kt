@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -194,12 +193,22 @@ fun KaigiLargeTopAppBar(
         if (isRtl) -fromStartEdge else fromStartEdge
     }
 
-    // The collapsed title rides one baseline padding above the bar's bottom on its own; this
-    // nudge lands its optical centre on the bar's centre line, shared with the navigation icon.
+    // Mirrors how Material 3 places the expanded title: the bottom padding runs from the title's
+    // baseline, then gives up whatever the second row cannot fit.
+    val titleBottomPadding = with(density) {
+        val rowHeight = (KaigiTopAppBarDefaults.largeHeight - KaigiTopAppBarDefaults.height).toPx()
+        val fromBottom =
+            KaigiTopAppBarDefaults.largeTitleBaselinePadding.toPx() - (titleHeight - titleBaseline)
+        val overflow = fromBottom + titleHeight - rowHeight
+        (if (overflow > 0f) fromBottom - overflow else fromBottom).coerceAtLeast(0f).toDp()
+    }
+
+    // The collapsed title rides its bottom padding above the bar's bottom on its own; this nudge
+    // lands its optical centre on the bar's centre line, shared with the navigation icon.
     val titleCentreTranslationY = with(density) {
         val collapsedBarHeight = KaigiTopAppBarDefaults.height.toPx()
-        val restingBaseline =
-            collapsedBarHeight - KaigiTopAppBarDefaults.largeTitleBaselinePadding.toPx()
+        val restingBaseline = collapsedBarHeight - titleBottomPadding.toPx() -
+            (titleHeight - titleBaseline)
         val centredBaseline =
             collapsedBarHeight / 2f + collapsedTitleScale * (titleBaseline - titleHeight / 2f)
         centredBaseline - restingBaseline
@@ -249,9 +258,7 @@ fun KaigiLargeTopAppBar(
                     .align(Alignment.BottomStart)
                     .padding(
                         start = paneStartInset + KaigiTopAppBarDefaults.largeTitleStartInset,
-                    )
-                    .paddingFromBaseline(
-                        bottom = KaigiTopAppBarDefaults.largeTitleBaselinePadding,
+                        bottom = titleBottomPadding,
                     )
                     .widthIn(max = maxTitleWidth)
                     .graphicsLayer(
@@ -354,7 +361,7 @@ object KaigiTopAppBarDefaults {
 
     internal val largeTitleStartInset = 16.dp
 
-    /** Aligns the expanded title with Material 3 `LargeTopAppBar`. */
+    /** Matches Material 3 `LargeTitleBottomPadding`. */
     internal val largeTitleBaselinePadding = 28.dp
 
     internal val collapsedTitleFontSize = 22.sp
