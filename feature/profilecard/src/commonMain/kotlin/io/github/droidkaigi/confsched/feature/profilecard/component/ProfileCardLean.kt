@@ -107,7 +107,8 @@ private fun wrapDegrees(degrees: Float): Float = when {
 
 private val LeanSpring = spring<ProfileCardLean>(
     dampingRatio = Spring.DampingRatioNoBouncy,
-    stiffness = Spring.StiffnessLow,
+    // Stiff enough to track the hand without a seasick lag, soft enough to damp sensor noise.
+    stiffness = Spring.StiffnessMedium,
 )
 
 private const val MAX_LEAN_DEGREES = 12f
