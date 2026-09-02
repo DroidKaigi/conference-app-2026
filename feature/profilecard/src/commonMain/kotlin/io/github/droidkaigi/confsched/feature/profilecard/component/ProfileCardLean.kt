@@ -131,7 +131,7 @@ private val LeanSpring = spring<ProfileCardLean>(
     stiffness = Spring.StiffnessMedium,
 )
 
-private const val MAX_LEAN_DEGREES = 12f
+internal const val MAX_LEAN_DEGREES = 12f
 private const val BASELINE_FOLLOW_SECONDS = 8f
 private const val ROLL_FADE_START_DEGREES = 60f
 private const val ROLL_FADE_END_DEGREES = 85f

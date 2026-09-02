@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -60,6 +62,7 @@ import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.RecordedOffScreen
 import io.github.droidkaigi.confsched.core.ui.isExpandedWindowWidth
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
 import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
 import kotlinx.coroutines.launch
@@ -334,6 +337,12 @@ private fun FlippableProfileCard(
                     taped = false,
                     avatarImage = avatarImage,
                     doodle = frontDoodle,
+                )
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clip(RoundedCornerShape(ProfileCardFaceDefaults.cornerRadius))
+                        .profileCardSheen { lean.value },
                 )
             }
         }
