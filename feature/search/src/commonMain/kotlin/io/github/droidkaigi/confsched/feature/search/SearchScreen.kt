@@ -2,9 +2,15 @@ package io.github.droidkaigi.confsched.feature.search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -43,27 +49,37 @@ fun SearchScreen(
                 onQueryTextChange = onQueryTextChange,
                 onBackClick = onBackClick,
             )
-            SearchFilterRow(
-                uiState = uiState.filterRow,
-                onDayClick = onDayClick,
-                onCategoryClick = onCategoryClick,
-                onSessionTypeClick = onSessionTypeClick,
-                onLanguageClick = onLanguageClick,
-            )
-            when (val result = uiState.result) {
-                is SearchResultUiState.Empty -> SearchStateView(
-                    uiState = result,
-                    clearFiltersVisible = uiState.hasActiveFilters,
-                    onClearFiltersClick = onClearFiltersClick,
-                    modifier = Modifier.weight(1f),
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .windowInsetsPadding(
+                        WindowInsets.systemBars
+                            .union(WindowInsets.displayCutout)
+                            .only(WindowInsetsSides.Horizontal),
+                    ),
+            ) {
+                SearchFilterRow(
+                    uiState = uiState.filterRow,
+                    onDayClick = onDayClick,
+                    onCategoryClick = onCategoryClick,
+                    onSessionTypeClick = onSessionTypeClick,
+                    onLanguageClick = onLanguageClick,
                 )
+                when (val result = uiState.result) {
+                    is SearchResultUiState.Empty -> SearchStateView(
+                        uiState = result,
+                        clearFiltersVisible = uiState.hasActiveFilters,
+                        onClearFiltersClick = onClearFiltersClick,
+                        modifier = Modifier.weight(1f),
+                    )
 
-                is SearchResultUiState.Found -> SearchResultSection(
-                    uiState = result,
-                    onBookmarkClick = onBookmarkClick,
-                    onItemClick = onItemClick,
-                    modifier = Modifier.weight(1f),
-                )
+                    is SearchResultUiState.Found -> SearchResultSection(
+                        uiState = result,
+                        onBookmarkClick = onBookmarkClick,
+                        onItemClick = onItemClick,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
     }
