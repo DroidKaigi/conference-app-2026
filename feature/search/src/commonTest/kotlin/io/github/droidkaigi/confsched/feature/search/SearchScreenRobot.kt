@@ -8,6 +8,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.onNodeWithTag
@@ -61,6 +62,7 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
                 SearchScreenRoot(
                     onNavigateBack = { backClicked = true },
                     onNavigateToDetail = { openedSessionId = it },
+                    onOfferFirstFavoriteGuidance = {},
                 )
             }
         }
@@ -178,7 +180,10 @@ class SearchScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) {
     }
 
     fun checkResultCountShows(count: Int) {
-        composeUiTest.onNodeWithTag(SEARCH_RESULT_SECTION_COUNT_TEST_TAG).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(SEARCH_RESULT_SECTION_COUNT_TEST_TAG)
+            .assertIsDisplayed()
+            // The count reads the same in every locale, while the words around it do not.
+            .assertTextContains("$count", substring = true)
     }
 
     fun checkDayFilterShows(label: String) {

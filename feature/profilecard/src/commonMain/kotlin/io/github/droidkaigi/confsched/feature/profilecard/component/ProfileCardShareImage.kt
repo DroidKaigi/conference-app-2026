@@ -15,12 +15,18 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
+import io.github.droidkaigi.confsched.core.preview.fakeOnCardFace
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardBack
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFaceDefaults
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardFront
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_background_campfire_night
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.share_background_deep_teal
@@ -44,7 +50,10 @@ internal fun ProfileCardShareImage(
     link: String,
     mascot: Mascot,
     sketchiness: Sketchiness,
+    paperGrain: PaperGrain,
     avatarImage: AvatarImage?,
+    frontDoodle: Doodle,
+    backDoodle: Doodle,
     colorScheme: KaigiColorScheme,
     modifier: Modifier = Modifier,
 ) {
@@ -60,8 +69,10 @@ internal fun ProfileCardShareImage(
             occupation = occupation,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
             taped = true,
             avatarImage = avatarImage,
+            doodle = frontDoodle,
             modifier = Modifier.cardSlot(
                 origin = ProfileCardShareImageDefaults.frontOrigin,
                 rotationDegrees = ProfileCardShareImageDefaults.frontRotationDegrees,
@@ -72,6 +83,8 @@ internal fun ProfileCardShareImage(
             link = link,
             mascot = mascot,
             sketchiness = sketchiness,
+            paperGrain = paperGrain,
+            doodle = backDoodle,
             taped = true,
             modifier = Modifier.cardSlot(
                 origin = ProfileCardShareImageDefaults.backOrigin,
@@ -136,7 +149,10 @@ private fun ProfileCardShareImagePreview(
             link = "https://example.com",
             mascot = Mascot.C,
             sketchiness = Sketchiness.Normal,
+            paperGrain = PaperGrain.Smooth,
             avatarImage = null,
+            frontDoodle = Doodle.fakeOnCardFace(),
+            backDoodle = Doodle.fakeOnCardFace(),
             colorScheme = colorScheme,
         )
     }

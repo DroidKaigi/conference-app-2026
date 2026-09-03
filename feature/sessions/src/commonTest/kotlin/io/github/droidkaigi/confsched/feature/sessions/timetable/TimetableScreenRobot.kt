@@ -44,6 +44,7 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
                 TimetableScreenRoot(
                     onNavigateToDetail = {},
                     onNavigateToSearch = { searchOpened = true },
+                    onOfferFirstFavoriteGuidance = {},
                 )
             }
         }

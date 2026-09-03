@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.model.sessionUrl
 import io.github.droidkaigi.confsched.core.ui.CalendarEvent
@@ -24,6 +25,7 @@ fun TimetableItemDetailScreenRoot(
     onOpenUrl: (String) -> Unit,
     onAddCalendarEvent: (CalendarEvent) -> Unit,
     onShareText: (String) -> Unit,
+    onOfferFirstFavoriteGuidance: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(
@@ -32,7 +34,8 @@ fun TimetableItemDetailScreenRoot(
         ),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
         state3 = rememberSubscription(screenContext.sessionMemosSubscriptionKey),
-    ) { detail, favoriteIds, memos ->
+        state4 = rememberSubscription(screenContext.firstFavoriteGuidanceOfferableSubscriptionKey),
+    ) { detail, favoriteIds, memos, offersFirstFavoriteGuidance ->
         val screenChannel =
             retainScreenChannel<TimetableItemDetailScreenAction, TimetableItemDetailScreenActionResult>()
 
@@ -41,7 +44,12 @@ fun TimetableItemDetailScreenRoot(
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is TimetableItemDetailScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
-                TimetableItemDetailScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableItemDetailScreenActionResult.FavoriteAdded ->
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableItemDetailScreenActionResult.OfferFirstFavoriteGuidance ->
+                    onOfferFirstFavoriteGuidance(result.room)
             }
         }
 
@@ -52,12 +60,14 @@ fun TimetableItemDetailScreenRoot(
                 favoriteIds = favoriteIds,
                 memo = memos[screenContext.timetableItemId].orEmpty(),
                 initialDisplayLanguage = currentDisplayLanguage(),
+                offersFirstFavoriteGuidance = offersFirstFavoriteGuidance,
             )
         }
         val shareText = "${uiState.item.title.of(uiState.displayLanguage)}\n${sessionUrl(uiState.item.id)}\n$CONFERENCE_HASHTAG"
         TimetableItemDetailScreen(
             uiState = uiState,
             onBookmarkClick = { screenChannel.send(TimetableItemDetailScreenAction.Bookmark(it)) },
+            onDescriptionTruncationChange = { screenChannel.send(TimetableItemDetailScreenAction.UpdateDescriptionTruncation(it)) },
             onDescriptionExpansionToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDescriptionExpansion) },
             onDisplayLanguageToggleClick = { screenChannel.send(TimetableItemDetailScreenAction.ToggleDisplayLanguage) },
             onMemoChange = { screenChannel.send(TimetableItemDetailScreenAction.SaveMemo(it)) },

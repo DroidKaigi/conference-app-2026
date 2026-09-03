@@ -2,6 +2,8 @@
     <string name="back">戻る</string>
     <string name="close">閉じる</string>
     <string name="failed_to_load">読み込みに失敗しました</string>
+    <string name="error_fallback_description">通信環境をご確認のうえ、もう一度お試しください</string>
+    <string name="reload">再読み込み</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
     <string name="cancelled_session">このセッションは中止されました / Cancelled</string>
@@ -15,4 +17,25 @@
     <string name="retry">再試行</string>
     <string name="loading_headline">読み込み中</string>
     <string name="loading_description">しばらくお待ちください</string>
+    <string name="card_event_label">DROIDKAIGI 2026</string>
+    <string name="card_greeting">Hi!!!</string>
+    <string name="card_venue">BELLESALLE SHIBUYA GARDEN</string>
+    <string name="card_dates">2026.09.01 - 09.03</string>
+    <string name="card_scan_me">SCAN ME</string>
+    <string name="zoom_in">拡大</string>
+    <string name="zoom_out">縮小</string>
+    <string name="reset_zoom">等倍に戻す</string>
+    <string name="doodle_undo">元に戻す</string>
+    <string name="doodle_clear">全部消す</string>
+    <string name="doodle_ink_ink">インク</string>
+    <string name="doodle_ink_band">帯の色</string>
+    <string name="doodle_ink_paper">紙の色</string>
+    <string name="doodle_ink_banner">バナーの色</string>
+    <string name="doodle_outline">輪郭</string>
+    <string name="doodle_pen_thin">細い</string>
+    <string name="doodle_pen_normal">ふつう</string>
+    <string name="doodle_pen_thick">太い</string>
+    <string name="doodle_switch_to_back">裏面に切り替える</string>
+    <string name="doodle_switch_to_front">表面に切り替える</string>
+    <string name="doodle_ink_wall">壁の色</string>
 </resources>

@@ -27,6 +27,7 @@ class DefaultProfileCardSubscriptionKey(
                     link = it.link,
                     mascot = it.mascot,
                     sketchiness = it.sketchiness,
+                    paperGrain = it.paperGrain,
                     avatarImage = it.avatarImagePath?.let { path -> avatarImageStore.load(path) }?.let(::AvatarImage),
                 )
             }

@@ -12,10 +12,15 @@
         android:theme="@style/Theme.KaigiApp">
         <!-- singleTask: a deep link from the widget brings the existing task forward through
              onNewIntent instead of stacking a second copy of the single-activity app. -->
+        <!-- adjustResize: below API 30 the keyboard inset is only known from the window the
+             system resizes, so this is what lets the content make room there. It also keeps the
+             system from panning the window instead, which carries the top bars off the screen.
+             MainActivity drops the resize from API 30, where the inset arrives on its own. -->
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

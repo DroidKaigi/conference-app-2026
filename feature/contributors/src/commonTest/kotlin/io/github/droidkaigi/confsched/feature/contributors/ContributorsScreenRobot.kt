@@ -4,6 +4,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -50,9 +51,15 @@ class ContributorsScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTes
     }
 
     fun checkCountDisplayed(count: Int) {
-        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG).assertIsDisplayed()
-        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG).assertTextEquals("$count")
-        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG).assertIsDisplayed()
+        val unit = if (count == 1) "person" else "persons"
+        composeUiTest.onNode(
+            matcher = hasText("TOTAL", substring = true) and
+                hasText("$count", substring = true) and
+                hasText(unit, substring = true),
+        ).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG, useUnmergedTree = true).assertIsDisplayed()
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG, useUnmergedTree = true).assertTextEquals("$count")
+        composeUiTest.onNodeWithTag(CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG, useUnmergedTree = true).assertIsDisplayed()
     }
 
     fun checkOpenedProfiles(vararg urls: String) {

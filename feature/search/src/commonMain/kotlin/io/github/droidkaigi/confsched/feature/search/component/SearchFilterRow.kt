@@ -64,18 +64,18 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.compose.resources.stringResource
 
-const val SEARCH_FILTER_DAY_CHIP_TEST_TAG = "SearchFilterDayChipTestTag"
-const val SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG = "SearchFilterCategoryChipTestTag"
-const val SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG = "SearchFilterSessionTypeChipTestTag"
-const val SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG = "SearchFilterLanguageChipTestTag"
+internal const val SEARCH_FILTER_DAY_CHIP_TEST_TAG = "SearchFilterDayChipTestTag"
+internal const val SEARCH_FILTER_CATEGORY_CHIP_TEST_TAG = "SearchFilterCategoryChipTestTag"
+internal const val SEARCH_FILTER_SESSION_TYPE_CHIP_TEST_TAG = "SearchFilterSessionTypeChipTestTag"
+internal const val SEARCH_FILTER_LANGUAGE_CHIP_TEST_TAG = "SearchFilterLanguageChipTestTag"
 
-fun searchFilterDayOptionTestTag(day: DroidKaigi2026Day) = "SearchFilterDayOption:${day.name}"
+internal fun searchFilterDayOptionTestTag(day: DroidKaigi2026Day) = "SearchFilterDayOption:${day.name}"
 
-fun searchFilterCategoryOptionTestTag(categoryId: Long) = "SearchFilterCategoryOption:$categoryId"
+internal fun searchFilterCategoryOptionTestTag(categoryId: Long) = "SearchFilterCategoryOption:$categoryId"
 
-fun searchFilterSessionTypeOptionTestTag(sessionType: SessionType) = "SearchFilterSessionTypeOption:${sessionType.name}"
+internal fun searchFilterSessionTypeOptionTestTag(sessionType: SessionType) = "SearchFilterSessionTypeOption:${sessionType.name}"
 
-fun searchFilterLanguageOptionTestTag(language: Language) = "SearchFilterLanguageOption:${language.name}"
+internal fun searchFilterLanguageOptionTestTag(language: Language) = "SearchFilterLanguageOption:${language.name}"
 
 @Composable
 internal fun SearchFilterRow(

@@ -7,6 +7,8 @@ sealed interface TimetableItemDetailScreenAction {
 
     data class SaveMemo(val text: String) : TimetableItemDetailScreenAction
 
+    data class UpdateDescriptionTruncation(val isTruncated: Boolean) : TimetableItemDetailScreenAction
+
     data object ToggleDescriptionExpansion : TimetableItemDetailScreenAction
 
     data object ToggleDisplayLanguage : TimetableItemDetailScreenAction

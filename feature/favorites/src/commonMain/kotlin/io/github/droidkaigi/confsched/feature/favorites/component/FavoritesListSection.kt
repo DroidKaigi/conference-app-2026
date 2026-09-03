@@ -35,6 +35,7 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ internal fun FavoritesListSection(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
+        state = rememberListDetailSceneAwareLazyListState(),
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(

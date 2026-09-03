@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.droidkaigiPrimitiveKmp)
     alias(libs.plugins.droidkaigiPrimitiveKmpCompose)
+    alias(libs.plugins.metro)
     alias(libs.plugins.droidkaigiPrimitiveSpotless)
 }
 
@@ -23,6 +24,7 @@ kotlin {
             implementation(libs.coilCompose)
             implementation(libs.coilNetworkKtor3)
             implementation(libs.kotlinxDatetime)
+            implementation(libs.qrcodeKotlin)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

@@ -6,6 +6,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.navigationevent.DirectNavigationEventInput
+import androidx.navigationevent.NavigationEventDispatcher
+import androidx.navigationevent.NavigationEventDispatcherOwner
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -19,9 +23,25 @@ import soil.query.compose.SwrClientProvider
 @OptIn(ExperimentalTestApi::class)
 abstract class Robot(protected val composeUiTest: ComposeUiTest) {
 
+    private val navigationEventInput = DirectNavigationEventInput()
+    private val navigationEventDispatcherOwner = object : NavigationEventDispatcherOwner {
+        override val navigationEventDispatcher = NavigationEventDispatcher()
+    }
+
+    init {
+        navigationEventDispatcherOwner.navigationEventDispatcher.addInput(navigationEventInput)
+    }
+
+    /** Completes a system back gesture, which a screen may take for itself before the back stack does. */
+    fun pressSystemBack() {
+        navigationEventInput.backCompleted()
+        composeUiTest.waitForIdle()
+    }
+
     // Stands in for what a nav entry supplies in production: the Soil client and the snackbar host
-    // from snackbarNavEntryDecorator, plus the resolver that turns a fake's preview:// URL into a
-    // local drawable. A fresh client per call lets a scenario set up more than once.
+    // from snackbarNavEntryDecorator, the navigation-event dispatcher the platform host owns, plus
+    // the resolver that turns a fake's preview:// URL into a local drawable. A fresh client per call
+    // lets a scenario set up more than once.
     protected fun setScreenContent(content: @Composable () -> Unit) {
         val clientScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
         val client = SwrCachePlus(clientScope)
@@ -37,6 +57,7 @@ abstract class Robot(protected val composeUiTest: ComposeUiTest) {
                 KaigiPreviewTheme(colorScheme = KaigiColorScheme.MorningMist) {
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHostState,
+                        LocalNavigationEventDispatcherOwner provides navigationEventDispatcherOwner,
                         content = content,
                     )
                 }

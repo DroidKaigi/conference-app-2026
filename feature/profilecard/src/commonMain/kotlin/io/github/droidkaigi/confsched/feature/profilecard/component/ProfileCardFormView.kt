@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -32,6 +33,7 @@ import io.github.droidkaigi.confsched.core.designsystem.icon.KaigiIcons
 import io.github.droidkaigi.confsched.core.model.AvatarImage
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Mascot
+import io.github.droidkaigi.confsched.core.model.PaperGrain
 import io.github.droidkaigi.confsched.core.model.Sketchiness
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalPreviewImageResolver
@@ -46,6 +48,10 @@ import io.github.droidkaigi.confsched.core.ui.KaigiTextField
 import io.github.droidkaigi.confsched.core.ui.LocalNavigationBarOccupiedHeight
 import io.github.droidkaigi.confsched.core.ui.SketchEllipseShape
 import io.github.droidkaigi.confsched.core.ui.encodeToPng
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardSweepWavelength
+import io.github.droidkaigi.confsched.core.ui.profilecard.ProfileCardTextStyles
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardRoughness
+import io.github.droidkaigi.confsched.core.ui.profilecard.profileCardTremor
 import io.github.droidkaigi.confsched.core.ui.sketchBorder
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardFormError
 import io.github.droidkaigi.confsched.feature.profilecard.ProfileCardScreenUiState
@@ -60,14 +66,23 @@ import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.ni
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.nickname_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.occupation_label
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.paper_grain_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_label
+import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.profile_image_unreadable_error
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.remove_image_button
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.sketchiness_label
 import io.github.droidkaigi.confsched.feature.profilecard.generated.resources.subtitle
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.stringResource
+
+internal const val PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG = "ProfileCardFormNickNameFieldTestTag"
+internal const val PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG = "ProfileCardFormOccupationFieldTestTag"
+internal const val PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG = "ProfileCardFormLinkFieldTestTag"
+internal const val PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG = "ProfileCardFormAddImageButtonTestTag"
+internal const val PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG = "ProfileCardFormAvatarImageErrorTestTag"
+internal const val PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG = "ProfileCardFormSubmitButtonTestTag"
 
 @Composable
 fun ProfileCardFormView(
@@ -77,6 +92,7 @@ fun ProfileCardFormView(
     onLinkChange: (String) -> Unit,
     onMascotClick: (Mascot) -> Unit,
     onSketchinessClick: (Sketchiness) -> Unit,
+    onPaperGrainClick: (PaperGrain) -> Unit,
     onAddImageClick: () -> Unit,
     onRemoveAvatarImageClick: () -> Unit,
     onSubmitClick: () -> Unit,
@@ -101,6 +117,7 @@ fun ProfileCardFormView(
                 onValueChange = onNickNameChange,
                 seed = ProfileCardFormViewDefaults.nickNameFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_NICK_NAME_FIELD_TEST_TAG),
                 isError = uiState.nickNameError != null,
             )
             ProfileCardFormErrorText(uiState.nickNameError)
@@ -111,6 +128,7 @@ fun ProfileCardFormView(
                 onValueChange = onOccupationChange,
                 seed = ProfileCardFormViewDefaults.occupationFieldSeed,
                 keyboardOptions = KeyboardOptions.Default,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_OCCUPATION_FIELD_TEST_TAG),
                 isError = uiState.occupationError != null,
             )
             ProfileCardFormErrorText(uiState.occupationError)
@@ -121,6 +139,7 @@ fun ProfileCardFormView(
                 onValueChange = onLinkChange,
                 seed = ProfileCardFormViewDefaults.linkFieldSeed,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_LINK_FIELD_TEST_TAG),
                 isError = uiState.linkError != null,
             )
             ProfileCardFormErrorText(uiState.linkError)
@@ -128,7 +147,11 @@ fun ProfileCardFormView(
         ProfileCardFormSection(label = stringResource(Res.string.profile_image_label)) {
             val avatarImage = uiState.avatarImage
             if (avatarImage == null) {
-                KaigiOutlinedButton(onClick = onAddImageClick, seed = ProfileCardFormViewDefaults.addImageButtonSeed) {
+                KaigiOutlinedButton(
+                    onClick = onAddImageClick,
+                    seed = ProfileCardFormViewDefaults.addImageButtonSeed,
+                    modifier = Modifier.testTag(PROFILE_CARD_FORM_ADD_IMAGE_BUTTON_TEST_TAG),
+                ) {
                     Icon(
                         imageVector = KaigiIcons.Default.Add,
                         contentDescription = null,
@@ -144,7 +167,10 @@ fun ProfileCardFormView(
                     onRemoveClick = onRemoveAvatarImageClick,
                 )
             }
-            ProfileCardFormErrorText(uiState.avatarImageError)
+            ProfileCardFormErrorText(
+                error = uiState.avatarImageError,
+                modifier = Modifier.testTag(PROFILE_CARD_FORM_AVATAR_IMAGE_ERROR_TEST_TAG),
+            )
         }
         ProfileCardFormSection(label = stringResource(Res.string.mascot_label)) {
             MascotPicker(selectedMascot = uiState.mascot, onMascotClick = onMascotClick)
@@ -152,10 +178,15 @@ fun ProfileCardFormView(
         ProfileCardFormSection(label = stringResource(Res.string.sketchiness_label)) {
             SketchinessPicker(selectedSketchiness = uiState.sketchiness, onSketchinessClick = onSketchinessClick)
         }
+        ProfileCardFormSection(label = stringResource(Res.string.paper_grain_label)) {
+            PaperGrainPicker(selectedPaperGrain = uiState.paperGrain, onPaperGrainClick = onPaperGrainClick)
+        }
         KaigiButton(
             onClick = onSubmitClick,
             seed = ProfileCardFormViewDefaults.submitButtonSeed,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(PROFILE_CARD_FORM_SUBMIT_BUTTON_TEST_TAG),
             enabled = !uiState.isSubmitting,
         ) {
             Text(stringResource(Res.string.create_card_button), style = ProfileCardTextStyles.accent)
@@ -250,12 +281,13 @@ private fun ProfileCardFormSection(
 }
 
 @Composable
-private fun ProfileCardFormErrorText(error: ProfileCardFormError?) {
+private fun ProfileCardFormErrorText(error: ProfileCardFormError?, modifier: Modifier = Modifier) {
     if (error == null) return
     Text(
         text = stringResource(error.message),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error,
+        modifier = modifier,
     )
 }
 
@@ -266,6 +298,7 @@ private val ProfileCardFormError.message: StringResource
         ProfileCardFormError.LinkRequired -> Res.string.link_error
         ProfileCardFormError.LinkMalformed -> Res.string.link_malformed_error
         ProfileCardFormError.AvatarImageRequired -> Res.string.profile_image_error
+        ProfileCardFormError.AvatarImageUnreadable -> Res.string.profile_image_unreadable_error
     }
 
 private object ProfileCardFormViewDefaults {
@@ -320,6 +353,7 @@ private fun ProfileCardFormViewPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -345,6 +379,7 @@ private fun ProfileCardFormViewErrorPreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},
@@ -370,6 +405,7 @@ private fun ProfileCardFormViewWithImagePreview(
             onLinkChange = {},
             onMascotClick = {},
             onSketchinessClick = {},
+            onPaperGrainClick = {},
             onAddImageClick = {},
             onRemoveAvatarImageClick = {},
             onSubmitClick = {},

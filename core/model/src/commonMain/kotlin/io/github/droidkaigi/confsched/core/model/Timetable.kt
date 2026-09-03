@@ -32,6 +32,8 @@ data class Timetable(
         )
     }
 
+    fun roomOf(id: TimetableItemId): SessionRoom = items.first { it.id == id }.room
+
     fun search(query: SessionSearchQuery): PersistentList<TimetableItem> =
         items.filter(query::matches).toPersistentList()
 

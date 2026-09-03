@@ -8,6 +8,7 @@ import dev.zacsweers.metro.Inject
 import io.github.droidkaigi.confsched.core.common.NavEntryProvider
 import io.github.droidkaigi.confsched.core.common.UiScope
 import io.github.droidkaigi.confsched.core.common.context
+import io.github.droidkaigi.confsched.core.common.detailPane
 
 @ContributesIntoSet(UiScope::class)
 @Inject
@@ -15,7 +16,9 @@ class LicensesNavEntryProvider(
     private val screenGraphFactory: LicensesScreenGraph.Factory,
 ) : NavEntryProvider {
     override fun EntryProviderScope<NavKey>.register() {
-        entry<LicensesNavKey> { key ->
+        entry<LicensesNavKey>(
+            metadata = detailPane(),
+        ) { key ->
             val graph = retain(screenGraphFactory::createLicensesScreenGraph)
             context(graph.screenContext) {
                 LicensesScreenRoot(onNavigateBack = { graph.screenNavigator.back(origin = key) })

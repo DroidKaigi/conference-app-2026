@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,9 +61,9 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_hint
 import org.jetbrains.compose.resources.stringResource
 
-const val SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG = "SearchTopBarBackButtonTestTag"
-const val SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG = "SearchTopBarQueryFieldTestTag"
-const val SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG = "SearchTopBarClearButtonTestTag"
+internal const val SEARCH_TOP_BAR_BACK_BUTTON_TEST_TAG = "SearchTopBarBackButtonTestTag"
+internal const val SEARCH_TOP_BAR_QUERY_FIELD_TEST_TAG = "SearchTopBarQueryFieldTestTag"
+internal const val SEARCH_TOP_BAR_CLEAR_BUTTON_TEST_TAG = "SearchTopBarClearButtonTestTag"
 
 @Composable
 internal fun SearchTopBar(
@@ -75,7 +76,7 @@ internal fun SearchTopBar(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.inverseSurface)
-            .statusBarsPadding()
+            .windowInsetsPadding(TopAppBarDefaults.windowInsets)
             .padding(
                 horizontal = 16.dp,
                 vertical = 11.dp,

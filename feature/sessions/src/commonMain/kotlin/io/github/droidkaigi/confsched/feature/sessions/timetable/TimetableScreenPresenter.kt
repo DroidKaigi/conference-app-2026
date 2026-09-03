@@ -22,6 +22,7 @@ import io.github.droidkaigi.confsched.feature.sessions.timetable.component.Timet
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.TimetableListSectionUiState
 import io.github.droidkaigi.confsched.feature.sessions.timetable.component.toTimeSlots
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.datetime.toLocalDateTime
 import soil.query.compose.rememberMutation
 
@@ -30,6 +31,7 @@ context(presenterContext: TimetablePresenterContext)
 fun timetableScreenPresenter(
     screenChannel: ScreenChannel<TimetableScreenAction, TimetableScreenActionResult>,
     timetable: Timetable,
+    offersFirstFavoriteGuidance: Boolean,
 ): TimetableScreenUiState {
     val favoriteMutation = rememberMutation(presenterContext.favoriteTimetableItemIdMutationKey)
     var selectedDay by retain { mutableStateOf(DroidKaigi2026Day.Day1) }
@@ -59,55 +61,59 @@ fun timetableScreenPresenter(
         favoriteMutation.reset()
     }
 
-    MutationSuccessEffect(favoriteMutation) { added ->
-        if (added) {
+    MutationSuccessEffect(favoriteMutation) { toggle ->
+        if (toggle.added) {
             screenChannel.emit(TimetableScreenActionResult.FavoriteAdded)
+            if (offersFirstFavoriteGuidance) {
+                screenChannel.emit(TimetableScreenActionResult.OfferFirstFavoriteGuidance(timetable.roomOf(toggle.id)))
+            }
         }
         favoriteMutation.reset()
     }
 
-    val timeSlots = remember(timetable, selectedDay, currentTime) {
-        timetable.itemsOn(selectedDay).toTimeSlots(currentTime)
-    }
-
-    val countdownBannerUiState = remember(timetable, selectedDay, currentTime) {
+    val timetableListSections = remember(timetable, currentTime) {
         val currentDay = DroidKaigi2026Day.ofOrNull(currentTime)
-        if (currentDay == null || selectedDay != currentDay) {
-            return@remember null
-        }
-
-        val favoritedItemsOnDay = timetable.itemsOn(selectedDay)
-            .filter { it.id in timetable.bookmarks }
-
-        val nextFavoritedItems = favoritedItemsOnDay
-            .filter { it.startInstant > currentTime }
-
-        if (nextFavoritedItems.isNotEmpty()) {
-            val firstStartInstant = nextFavoritedItems.minOf { it.startInstant }
-            val sessionsAtFirstStartTime = nextFavoritedItems.filter { it.startInstant == firstStartInstant }
-
-            val diff = firstStartInstant - currentTime
-            TimetableCountdownBannerUiState(
-                nextSessions = sessionsAtFirstStartTime.toPersistentList(),
-                remainingDuration = diff,
+        DroidKaigi2026Day.entries.associateWith { day ->
+            TimetableListSectionUiState(
+                timeSlots = timetable.itemsOn(day).toTimeSlots(currentTime),
+                bookmarks = timetable.bookmarks,
+                countdownBannerUiState = if (day == currentDay) {
+                    timetable.countdownBannerUiState(day, currentTime)
+                } else {
+                    null
+                },
             )
-        } else {
-            null
-        }
+        }.toPersistentMap()
     }
 
     return TimetableScreenUiState(
         day = selectedDay,
         viewMode = selectedViewMode,
-        timetableListSection = TimetableListSectionUiState(
-            timeSlots = timeSlots,
-            bookmarks = timetable.bookmarks,
-            countdownBannerUiState = countdownBannerUiState,
-        ),
+        timetableListSections = timetableListSections,
         timetableGridSection = TimetableGridSectionUiState(
             sessions = timetable.itemsOn(selectedDay),
             nowMinute = currentTime.toTimetableGridNowMinuteOn(selectedDay),
         ),
+    )
+}
+
+private fun Timetable.countdownBannerUiState(
+    day: DroidKaigi2026Day,
+    currentTime: kotlin.time.Instant,
+): TimetableCountdownBannerUiState? {
+    val nextFavoritedItems = itemsOn(day)
+        .asSequence()
+        .filter { it.id in bookmarks }
+        .filter { it.startInstant > currentTime }
+        .toList()
+    if (nextFavoritedItems.isEmpty()) return null
+
+    val firstStartInstant = nextFavoritedItems.minOf { it.startInstant }
+    return TimetableCountdownBannerUiState(
+        nextSessions = nextFavoritedItems
+            .filter { it.startInstant == firstStartInstant }
+            .toPersistentList(),
+        remainingDuration = firstStartInstant - currentTime,
     )
 }
 

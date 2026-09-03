@@ -10,6 +10,9 @@ import io.github.droidkaigi.confsched.core.common.MutationErrorEffect
 import io.github.droidkaigi.confsched.core.common.MutationSuccessEffect
 import io.github.droidkaigi.confsched.core.common.ScreenChannel
 import io.github.droidkaigi.confsched.core.common.toUserMessage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleEdit
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.model.ProfileCard
 import soil.query.compose.rememberMutation
 
@@ -18,12 +21,16 @@ context(presenterContext: ProfileCardPresenterContext)
 fun profileCardScreenPresenter(
     screenChannel: ScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>,
     storedCard: ProfileCard?,
+    frontDoodle: Doodle,
+    backDoodle: Doodle,
 ): ProfileCardScreenUiState {
     val profileCardMutation = rememberMutation(presenterContext.profileCardMutationKey)
     val shareMutation = rememberMutation(presenterContext.shareProfileCardMutationKey)
+    val doodleMutation = rememberMutation(presenterContext.doodleMutationKey)
     var form by retain { mutableStateOf(ProfileCardScreenUiState.Form()) }
     var isEditing by retain { mutableStateOf(false) }
     var isShowingBack by retain { mutableStateOf(false) }
+    var isDoodling by retain { mutableStateOf(false) }
 
     ActionEffect(screenChannel) { action ->
         when (action) {
@@ -37,7 +44,15 @@ fun profileCardScreenPresenter(
 
             is ProfileCardScreenAction.UpdateSketchiness -> form = form.copy(sketchiness = action.sketchiness)
 
+            is ProfileCardScreenAction.UpdatePaperGrain -> form = form.copy(paperGrain = action.paperGrain)
+
             is ProfileCardScreenAction.UpdateAvatarImage -> form = form.copy(avatarImage = action.avatarImage, avatarImageError = null)
+
+            // A failed re-pick keeps the image already on the form valid; only a form with no
+            // image yet has anything to warn about.
+            ProfileCardScreenAction.AvatarImagePickFailed -> if (form.avatarImage == null) {
+                form = form.copy(avatarImageError = ProfileCardFormError.AvatarImageUnreadable)
+            }
 
             ProfileCardScreenAction.RemoveAvatarImage -> form = form.copy(avatarImage = null)
 
@@ -52,6 +67,7 @@ fun profileCardScreenPresenter(
                             link = validated.link,
                             mascot = validated.mascot,
                             sketchiness = validated.sketchiness,
+                            paperGrain = validated.paperGrain,
                             avatarImage = validated.avatarImage,
                         ),
                     )
@@ -61,6 +77,17 @@ fun profileCardScreenPresenter(
             ProfileCardScreenAction.FlipCard -> isShowingBack = !isShowingBack
 
             is ProfileCardScreenAction.Share -> shareMutation.mutateAsync(action.image)
+
+            ProfileCardScreenAction.StartDoodling -> isDoodling = true
+
+            ProfileCardScreenAction.CancelDoodling -> isDoodling = false
+
+            is ProfileCardScreenAction.SaveDoodles -> doodleMutation.mutateAsync(
+                listOf(
+                    DoodleEdit(target = DoodleTarget.ProfileCardFront, doodle = action.front),
+                    DoodleEdit(target = DoodleTarget.ProfileCardBack, doodle = action.back),
+                ),
+            )
 
             ProfileCardScreenAction.EditCard -> {
                 form = storedCard.toForm()
@@ -77,6 +104,15 @@ fun profileCardScreenPresenter(
     MutationErrorEffect(profileCardMutation) { error ->
         screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
         profileCardMutation.reset()
+    }
+
+    MutationSuccessEffect(doodleMutation) {
+        isDoodling = false
+        doodleMutation.reset()
+    }
+    MutationErrorEffect(doodleMutation) { error ->
+        screenChannel.emit(ProfileCardScreenActionResult.ShowMessage(error.toUserMessage()))
+        doodleMutation.reset()
     }
 
     MutationSuccessEffect(shareMutation) { image ->
@@ -97,9 +133,13 @@ fun profileCardScreenPresenter(
             link = storedCard.link,
             mascot = storedCard.mascot,
             sketchiness = storedCard.sketchiness,
+            paperGrain = storedCard.paperGrain,
             avatarImage = storedCard.avatarImage,
+            frontDoodle = frontDoodle,
+            backDoodle = backDoodle,
             isShowingBack = isShowingBack,
             isSharing = shareMutation.isPending,
+            isDoodling = isDoodling,
         )
     }
 }
@@ -113,6 +153,7 @@ private fun ProfileCard?.toForm(): ProfileCardScreenUiState.Form = if (this == n
         link = link,
         mascot = mascot,
         sketchiness = sketchiness,
+        paperGrain = paperGrain,
         avatarImage = avatarImage,
     )
 }

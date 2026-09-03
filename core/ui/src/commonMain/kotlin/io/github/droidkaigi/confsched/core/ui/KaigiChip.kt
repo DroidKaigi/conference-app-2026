@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.designsystem.KaigiTextStyles
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
@@ -76,8 +77,9 @@ object KaigiChipDefaults {
     val roughness: Dp @Composable get() = scaleSketchAmplitude(0.3.dp)
     val tremor: Dp @Composable get() = scaleSketchAmplitude(0.1.dp)
 
+    /** "label/medium - accent": the face the design sets every chip's label in. */
     val labelStyle
-        @Composable get() = MaterialTheme.typography.labelSmall
+        @Composable get() = KaigiTextStyles.labelMediumAccent
 }
 
 @Preview

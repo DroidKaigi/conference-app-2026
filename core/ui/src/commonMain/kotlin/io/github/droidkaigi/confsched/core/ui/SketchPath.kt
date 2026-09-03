@@ -42,6 +42,11 @@ private const val TWO_PI = PI.toFloat() * 2f
 // sine rather than a zigzag.
 private const val POINTS_PER_WAVE = 6
 
+// The wavy line's noise lattice wraps over this many wavelengths, so a phase advanced by that
+// much lands on an identical line, and a loop over it has no seam. Well past the longest line
+// drawn, so the repetition never shows.
+internal const val WAVY_NOISE_CELLS = 16
+
 // Below about four cells the sweep offsets whole edges by a near-constant amount and the
 // rectangle tilts into a skewed quadrilateral. Four is where that stops showing at a
 // roughness well past anything in use; two is unmistakable.
@@ -141,6 +146,10 @@ internal fun Density.sketchVerticalLinePath(
  * [wavelength] sets the pitch of the ripple and [amplitude] its reach.
  * [noiseAmount] modulates that reach point by point, from a mechanical wave
  * at `0` to one whose crests vary widely at `1`.
+ *
+ * [phase] is added to `y` before sampling, so a growing value slides the figure up the line.
+ * The noise wraps every [WAVY_NOISE_CELLS] wavelengths, so phases that many pixels apart
+ * describe the same line.
  */
 internal fun Density.sketchVerticalWavyLinePath(
     height: Float,
@@ -148,6 +157,7 @@ internal fun Density.sketchVerticalWavyLinePath(
     amplitude: Dp,
     wavelength: Dp,
     noiseAmount: Float,
+    phase: Float,
     seed: Int,
 ): Path {
     val pitch = wavelength.toPx()
@@ -160,6 +170,7 @@ internal fun Density.sketchVerticalWavyLinePath(
             amplitude = amplitude,
             wavelength = wavelength,
             noiseAmount = noiseAmount,
+            phase = phase,
             seed = seed,
         )
     }
@@ -177,12 +188,13 @@ internal fun Density.sketchVerticalWavyLineXAt(
     amplitude: Dp,
     wavelength: Dp,
     noiseAmount: Float,
+    phase: Float,
     seed: Int,
 ): Float {
     val reach = amplitude.toPx()
     val pitch = wavelength.toPx()
-    val turns = y / pitch
-    val swell = 1f + coherentNoise(seed, y, pitch) * noiseAmount
+    val turns = (y + phase) / pitch
+    val swell = 1f + coherentNoiseCyclic(seed, turns / WAVY_NOISE_CELLS, WAVY_NOISE_CELLS) * noiseAmount
     return centerX + sin(turns * TWO_PI) * reach * swell
 }
 

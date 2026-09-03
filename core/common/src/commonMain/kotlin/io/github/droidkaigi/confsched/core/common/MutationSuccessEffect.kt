@@ -19,6 +19,9 @@ fun <T> MutationSuccessEffect(
     onSuccess: suspend (T) -> Unit,
 ) {
     val mutationState by rememberUpdatedState(mutation)
+    // The effect outlives the composition that launched it, so it reads the handler through a
+    // state: the one it was launched with holds the values of that first composition.
+    val currentOnSuccess by rememberUpdatedState(onSuccess)
     var lastConsumedKey by rememberSaveable { mutableStateOf<Long?>(null) }
     LaunchedEffect(Unit) {
         snapshotFlow { mutationState as? MutationSuccessObject<T, *> }
@@ -26,7 +29,7 @@ fun <T> MutationSuccessEffect(
             .collect {
                 if (lastConsumedKey != it.replyUpdatedAt) {
                     lastConsumedKey = it.replyUpdatedAt
-                    onSuccess(it.data)
+                    currentOnSuccess(it.data)
                 }
             }
     }

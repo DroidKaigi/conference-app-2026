@@ -32,6 +32,7 @@ import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
 import io.github.droidkaigi.confsched.core.preview.LocalePreviews
 import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
 import io.github.droidkaigi.confsched.feature.search.generated.resources.Res
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_clear_filters
 import io.github.droidkaigi.confsched.feature.search.generated.resources.search_initial_constellation_title
@@ -43,10 +44,10 @@ import io.github.droidkaigi.confsched.feature.search.generated.resources.search_
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
-const val SEARCH_STATE_VIEW_INITIAL_TEST_TAG = "SearchStateViewInitialTestTag"
-const val SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG = "SearchStateViewNoMatchTestTag"
-const val SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG = "SearchStateViewNoMatchDescriptionTestTag"
-const val SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG = "SearchStateViewClearFiltersButtonTestTag"
+internal const val SEARCH_STATE_VIEW_INITIAL_TEST_TAG = "SearchStateViewInitialTestTag"
+internal const val SEARCH_STATE_VIEW_NO_MATCH_TEST_TAG = "SearchStateViewNoMatchTestTag"
+internal const val SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG = "SearchStateViewNoMatchDescriptionTestTag"
+internal const val SEARCH_STATE_VIEW_CLEAR_FILTERS_BUTTON_TEST_TAG = "SearchStateViewClearFiltersButtonTestTag"
 
 @Composable
 internal fun SearchStateView(
@@ -61,6 +62,7 @@ internal fun SearchStateView(
         SearchResultUiState.Empty.NoMatch -> sceneSelection.noMatchDirection
     }
     LazyColumn(
+        state = rememberListDetailSceneAwareLazyListState(),
         modifier = modifier
             .fillMaxSize()
             .semantics { liveRegion = LiveRegionMode.Polite },
@@ -104,8 +106,8 @@ internal fun SearchStateView(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     modifier = when (uiState) {
+                        SearchResultUiState.Empty.Initial -> Modifier
                         SearchResultUiState.Empty.NoMatch -> Modifier.testTag(SEARCH_STATE_VIEW_NO_MATCH_DESCRIPTION_TEST_TAG)
-                        else -> Modifier
                     },
                 )
                 if (uiState == SearchResultUiState.Empty.NoMatch && clearFiltersVisible) {

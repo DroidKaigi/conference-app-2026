@@ -46,12 +46,18 @@ The alarms are inexact on purpose. An exact alarm needs `SCHEDULE_EXACT_ALARM`, 
 
 `SessionReminderReceiver` posts the notification: the session title, "Starts at HH:mm · room (floor)" underneath, and the session deep link as its content intent. It skips posting where `POST_NOTIFICATIONS` is not granted. `BootCompletedReceiver` reschedules after a reboot, which clears every alarm the app set.
 
-`MainActivity` asks for `POST_NOTIFICATIONS` when the favorites first become non-empty — the permission has nothing to carry until there is something to be reminded of — and only where the prompt has never been declined.
-
 ## iOS
 
 `IosSessionReminderScheduler` keeps one `UNTimeIntervalNotificationTrigger` request per reminder, identified by the session id. A round removes the pending requests and the delivered notifications whose id is no longer wanted, and adds a request for each reminder still ahead. A reminder whose `notifyAt` has passed is added with a one-second interval, unless an earlier round already armed it — both platforms keep the ids of their last round in a shared `DataStore` (`ScheduledSessionReminderIds`) for that comparison. iOS keeps at most 64 pending requests per app and drops the rest silently, so the scheduler keeps the 64 earliest.
 
-Authorization (`alert`, `sound`, `badge`) is requested whenever there is something to schedule; the OS shows the prompt once. `SessionReminderNotificationDelegate`, installed from `KaigiAppHost.initialize()`, turns a tap into the session's favorites deep link through `DeepLinkStore` and lets a reminder show as a banner while the app is in the foreground.
+Authorization (`alert`, `sound`, `badge`) is also requested whenever there is something to schedule; the OS shows the prompt once. `SessionReminderNotificationDelegate`, installed from `KaigiAppHost.initialize()`, turns a tap into the session's favorites deep link through `DeepLinkStore` and lets a reminder show as a banner while the app is in the foreground.
+
+## Asking for the permission
+
+The permission is asked for from the first-favorite guidance rather than at launch: it has nothing to carry until there is something to be reminded of, and the dialog says what the notification is for before the system prompt appears.
+
+A screen that can add a favorite reports the addition as an `ActionResult` carrying the session's room, and its navigator pushes `FirstFavoriteNotificationNavKey` (`:app-shared`), the first of a two-step dialog — the notification step, then the home screen widget step, reached with `AppNavigator.replaceTop`. The room picks the mascot the dialog draws. Whether the guidance is still to be offered is one subscribed value, `FirstFavoriteGuidanceOfferableSubscriptionKey`, true only on Android and iOS and only until the guidance has been answered. An explicit answer either way is recorded in `FirstFavoriteGuidanceStore`, while a dialog closed with back leaves the flag alone, so a later favorite offers it once more.
+
+`rememberNotificationPermissionRequester` (`:core:ui`) is what asks, and returns once the reader has answered: the `POST_NOTIFICATIONS` runtime permission on Android 13 and later, falling back to the app's notification settings where the system prompt can no longer be shown, and `UNUserNotificationCenter` authorization on iOS.
 
 Related: [Clock (KaigiClock)](./clock.md) · [AppGraph and UiGraph](./di-app-graph.md) · [Deep links (DeepLinkEffect)](./navigation-deep-links.md)

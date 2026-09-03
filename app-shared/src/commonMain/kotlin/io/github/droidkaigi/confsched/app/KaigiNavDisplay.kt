@@ -13,6 +13,7 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import io.github.droidkaigi.confsched.core.common.rememberListDetailPaneInsetsNavEntryDecorator
+import io.github.droidkaigi.confsched.core.common.rememberLoneListPaneSceneStrategy
 import io.github.droidkaigi.confsched.core.common.rememberRootSceneStrategy
 import io.github.droidkaigi.confsched.core.common.rememberSnackbarNavEntryDecorator
 import io.github.droidkaigi.confsched.core.common.retainNavEntryDecorator
@@ -27,8 +28,8 @@ internal fun KaigiNavDisplay(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
 ) {
     CompositionLocalProvider(LocalPanePartitionSpacerSize provides PanePartitionSpacerSize) {
-        // A themed backdrop behind the transition: while entries cross-fade, both are
-        // translucent and the bare window (white) would show through as a flash.
+        // Nothing above this draws a background, so the bare window (white) would show through
+        // wherever a screen does not paint over it.
         Surface(color = MaterialTheme.colorScheme.background) {
             NavDisplay(
                 backStack = backStack,
@@ -43,15 +44,20 @@ internal fun KaigiNavDisplay(
                     // An overlay strategy has to come before the strategies that claim a pane.
                     DialogSceneStrategy(),
                     rememberRootSceneStrategy(),
+                    rememberLoneListPaneSceneStrategy(),
                     rememberKaigiListDetailSceneStrategy(),
                     SinglePaneSceneStrategy(),
                 ),
                 sceneDecoratorStrategies = listOfNotNull(
                     rememberRootTabSceneDecorator(
                         backStack = backStack,
+                        entryProvider = entryProvider,
                         onSelectTab = onSelectTab,
                     ),
                 ),
+                transitionSpec = slideTransitionSpec(),
+                popTransitionSpec = slidePopTransitionSpec(),
+                predictivePopTransitionSpec = slidePredictivePopTransitionSpec(),
                 entryProvider = entryProvider,
             )
         }

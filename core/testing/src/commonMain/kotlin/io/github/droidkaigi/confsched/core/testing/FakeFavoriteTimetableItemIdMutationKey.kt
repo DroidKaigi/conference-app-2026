@@ -4,6 +4,7 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.github.droidkaigi.confsched.core.model.FavoriteTimetableItemIdMutationKey
+import io.github.droidkaigi.confsched.core.model.FavoriteToggle
 import io.github.droidkaigi.confsched.core.model.MutationTag
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import kotlinx.coroutines.channels.Channel
@@ -17,14 +18,14 @@ class FakeFavoriteTimetableItemIdMutationKey private constructor(
     private val state: FakeMutationState<TimetableItemId, Boolean>,
 ) : FavoriteTimetableItemIdMutationKey by buildMutationKey(
     id = MutationId("fake-favorite-${extraTag.value}"),
-    mutate = { id -> state.record(id) },
+    mutate = { id -> FavoriteToggle(id = id, added = state.record(id)) },
 ) {
     @Inject
     constructor(extraTag: MutationTag) : this(extraTag, FakeMutationState<TimetableItemId, Boolean>(true))
 
     val invocations: Channel<TimetableItemId> get() = state.invocations
 
-    fun complete(result: Boolean) = state.complete(result)
+    fun complete(added: Boolean) = state.complete(added)
 
     fun failWith(throwable: Throwable) = state.failWith(throwable)
 }

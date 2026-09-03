@@ -3,7 +3,7 @@ package io.github.droidkaigi.confsched.jetwhale.host
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +26,6 @@ import kotlin.time.Instant
 @Composable
 internal fun KaigiClockPluginView(
     state: KaigiClockState?,
-    error: String?,
     onShiftTo: (Long) -> Unit,
     onReset: () -> Unit,
     onRefresh: () -> Unit,
@@ -36,7 +35,7 @@ internal fun KaigiClockPluginView(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -48,9 +47,6 @@ internal fun KaigiClockPluginView(
             text = state?.let { offsetLabel(it.offsetMillis) } ?: "",
             style = MaterialTheme.typography.bodyMedium,
         )
-        if (error != null) {
-            Text(text = error, color = MaterialTheme.colorScheme.error)
-        }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             state?.presets.orEmpty().forEach { preset ->
                 Button(

@@ -6,6 +6,8 @@ import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
 import io.github.droidkaigi.confsched.core.model.AvatarImage
+import io.github.droidkaigi.confsched.core.model.Doodle
+import io.github.droidkaigi.confsched.core.model.DoodleTarget
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.rememberImagePicker
 import io.github.droidkaigi.confsched.core.ui.rememberImageSharer
@@ -21,12 +23,14 @@ fun ProfileCardScreenRoot() {
     SoilDataBoundary(
         state1 = rememberSubscription(screenContext.profileCardSubscriptionKey),
         state2 = rememberSubscription(screenContext.appearanceSubscriptionKey),
-    ) { storedCard, appearance ->
+        state3 = rememberSubscription(screenContext.doodlesSubscriptionKey),
+    ) { storedCard, appearance, doodles ->
         val screenChannel = retainScreenChannel<ProfileCardScreenAction, ProfileCardScreenActionResult>()
         val snackbarHostState = LocalSnackbarHostState.current
-        val launchImagePicker = rememberImagePicker { bytes ->
-            screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes)))
-        }
+        val launchImagePicker = rememberImagePicker(
+            onImagePicked = { bytes -> screenChannel.send(ProfileCardScreenAction.UpdateAvatarImage(AvatarImage(bytes))) },
+            onImagePickFailed = { screenChannel.send(ProfileCardScreenAction.AvatarImagePickFailed) },
+        )
         val shareImage = rememberImageSharer()
         val shareMessage = stringResource(Res.string.share_message)
 
@@ -38,7 +42,12 @@ fun ProfileCardScreenRoot() {
         }
 
         val uiState = context(screenContext.presenterContext) {
-            profileCardScreenPresenter(screenChannel = screenChannel, storedCard = storedCard)
+            profileCardScreenPresenter(
+                screenChannel = screenChannel,
+                storedCard = storedCard,
+                frontDoodle = doodles[DoodleTarget.ProfileCardFront] ?: Doodle.Empty,
+                backDoodle = doodles[DoodleTarget.ProfileCardBack] ?: Doodle.Empty,
+            )
         }
         ProfileCardScreen(
             uiState = uiState,
@@ -48,12 +57,16 @@ fun ProfileCardScreenRoot() {
             onLinkChange = { screenChannel.send(ProfileCardScreenAction.UpdateLink(it)) },
             onMascotClick = { screenChannel.send(ProfileCardScreenAction.UpdateMascot(it)) },
             onSketchinessClick = { screenChannel.send(ProfileCardScreenAction.UpdateSketchiness(it)) },
+            onPaperGrainClick = { screenChannel.send(ProfileCardScreenAction.UpdatePaperGrain(it)) },
             onAddImageClick = launchImagePicker,
             onRemoveAvatarImageClick = { screenChannel.send(ProfileCardScreenAction.RemoveAvatarImage) },
             onSubmitClick = { screenChannel.send(ProfileCardScreenAction.Submit) },
             onCardClick = { screenChannel.send(ProfileCardScreenAction.FlipCard) },
             onEditClick = { screenChannel.send(ProfileCardScreenAction.EditCard) },
             onShareClick = { screenChannel.send(ProfileCardScreenAction.Share(it)) },
+            onStartDoodlingClick = { screenChannel.send(ProfileCardScreenAction.StartDoodling) },
+            onCancelDoodlingClick = { screenChannel.send(ProfileCardScreenAction.CancelDoodling) },
+            onDoodlesDoneClick = { front, back -> screenChannel.send(ProfileCardScreenAction.SaveDoodles(front, back)) },
         )
     }
 }

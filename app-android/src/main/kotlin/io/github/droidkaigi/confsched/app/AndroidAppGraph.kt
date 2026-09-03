@@ -11,7 +11,8 @@ import io.github.droidkaigi.confsched.app.widget.WidgetDependencies
 interface AndroidAppGraph :
     AppGraph,
     WidgetDependencies,
-    SessionReminderDependencies {
+    SessionReminderDependencies,
+    CurrentActivityDependencies {
     @DependencyGraph.Factory
     fun interface Factory {
         fun create(@Provides context: Context): AndroidAppGraph

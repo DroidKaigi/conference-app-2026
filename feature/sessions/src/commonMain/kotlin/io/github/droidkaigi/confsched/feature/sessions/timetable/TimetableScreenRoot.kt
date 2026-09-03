@@ -7,6 +7,7 @@ import io.github.droidkaigi.confsched.core.common.ActionResultEffect
 import io.github.droidkaigi.confsched.core.common.LocalSnackbarHostState
 import io.github.droidkaigi.confsched.core.common.context
 import io.github.droidkaigi.confsched.core.common.retainScreenChannel
+import io.github.droidkaigi.confsched.core.model.SessionRoom
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.ui.SoilDataBoundary
 import io.github.droidkaigi.confsched.core.ui.showSnackbar
@@ -18,11 +19,13 @@ context(screenContext: TimetableScreenContext)
 fun TimetableScreenRoot(
     onNavigateToDetail: (TimetableItemId) -> Unit,
     onNavigateToSearch: () -> Unit,
+    onOfferFirstFavoriteGuidance: (SessionRoom) -> Unit,
 ) {
     SoilDataBoundary(
         state1 = rememberQuery(screenContext.timetableQueryKey),
         state2 = rememberSubscription(screenContext.favoriteTimetableIdsSubscriptionKey),
-    ) { timetable, favoriteIds ->
+        state3 = rememberSubscription(screenContext.firstFavoriteGuidanceOfferableSubscriptionKey),
+    ) { timetable, favoriteIds, offersFirstFavoriteGuidance ->
         val screenChannel = retainScreenChannel<TimetableScreenAction, TimetableScreenActionResult>()
 
         val snackbarHostState = LocalSnackbarHostState.current
@@ -31,7 +34,12 @@ fun TimetableScreenRoot(
         ActionResultEffect(screenChannel) { result ->
             when (result) {
                 is TimetableScreenActionResult.ShowMessage -> snackbarHostState.showSnackbar(result.message)
-                TimetableScreenActionResult.FavoriteAdded -> hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableScreenActionResult.FavoriteAdded ->
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                is TimetableScreenActionResult.OfferFirstFavoriteGuidance ->
+                    onOfferFirstFavoriteGuidance(result.room)
             }
         }
 
@@ -39,6 +47,7 @@ fun TimetableScreenRoot(
             timetableScreenPresenter(
                 screenChannel = screenChannel,
                 timetable = timetable.copy(bookmarks = favoriteIds),
+                offersFirstFavoriteGuidance = offersFirstFavoriteGuidance,
             )
         }
 

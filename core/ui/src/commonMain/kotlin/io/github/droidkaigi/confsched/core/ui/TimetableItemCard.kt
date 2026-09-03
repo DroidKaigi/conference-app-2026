@@ -2,6 +2,8 @@ package io.github.droidkaigi.confsched.core.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +16,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,13 +44,7 @@ import io.github.droidkaigi.confsched.core.preview.wrapper.KaigiPreviewTheme
 import io.github.droidkaigi.confsched.core.ui.generated.resources.Res
 import io.github.droidkaigi.confsched.core.ui.generated.resources.add_favorite
 import io.github.droidkaigi.confsched.core.ui.generated.resources.cancelled_session
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_a
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_b
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_c
-import io.github.droidkaigi.confsched.core.ui.generated.resources.card_mascot_e
-import io.github.droidkaigi.confsched.core.ui.generated.resources.mascot_f
 import io.github.droidkaigi.confsched.core.ui.generated.resources.remove_favorite
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -80,16 +78,27 @@ fun TimetableItemCard(
         borderThickness = TimetableItemCardDefaults.borderThickness,
         referenceSize = TimetableItemCardDefaults.referenceSize,
     )
-    // The card itself stays unclipped: sketchBorder strokes the clip outline down its center, so
-    // clipping the whole card would cut the stroke in half. Only the background layer is clipped,
-    // and it carries the click so the ripple and tap target cover the whole card.
-    Box(modifier = modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
+    val interactionSource = remember(::MutableInteractionSource)
+    // The card itself stays unclipped: sketchBorder strokes the clip outline down its center,
+    // so clipping the whole card would cut the stroke in half.
+    // The background layer is clipped to the sketch shape and carries the ripple indication,
+    // while the root Box carries the click action and merges descendants for accessibility.
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick,
+            )
+            .semantics(mergeDescendants = true) {},
+    ) {
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .clip(shape)
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .clickable(onClick = onClick),
+                .indication(interactionSource, ripple()),
         )
         // Drawn before the body so a long title or speaker list stays legible over the mascot
         if (isFavorite) {
@@ -155,7 +164,7 @@ private fun CardBody(
             textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
         )
         if (speakers.isNotEmpty()) {
-            SpeakerColumn(speakers = speakers, seed = seed)
+            SpeakerColumn(speakers = speakers, mascot = room.mascot)
         }
     }
 }
@@ -183,35 +192,26 @@ private fun ChipRow(room: SessionRoom, language: Language, seed: Int) {
 }
 
 @Composable
-private fun SpeakerColumn(speakers: List<TimetableSpeaker>, seed: Int) {
+private fun SpeakerColumn(speakers: List<TimetableSpeaker>, mascot: Mascot) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        speakers.forEachIndexed { index, speaker ->
-            SpeakerRow(speaker = speaker, seed = seed + 3 + index)
+        for (speaker in speakers) {
+            SpeakerRow(speaker = speaker, mascot = mascot)
         }
     }
 }
 
 @Composable
-private fun SpeakerRow(speaker: TimetableSpeaker, seed: Int) {
+private fun SpeakerRow(speaker: TimetableSpeaker, mascot: Mascot) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val iconUrl = speaker.iconUrl
-        if (iconUrl != null) {
-            KaigiAvatar(
-                imageUrl = iconUrl,
-                contentDescription = null,
-                size = TimetableItemCardDefaults.avatarSize,
-            )
-        } else {
-            KaigiPlaceholderAvatar(
-                seed = seed,
-                size = TimetableItemCardDefaults.avatarSize,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                borderColor = MaterialTheme.colorScheme.primaryContainer,
-            ) {}
-        }
+        KaigiSpeakerAvatar(
+            iconUrl = speaker.iconUrl,
+            mascot = mascot,
+            contentDescription = null,
+            size = TimetableItemCardDefaults.avatarSize,
+        )
         Text(
             text = speaker.name,
             style = MaterialTheme.typography.bodySmall,
@@ -236,17 +236,6 @@ private fun FavoriteMark(
             .clickable(onClick = onBookmarkClick),
     )
 }
-
-/** The card render of a [Mascot], or null for a character the design never draws on cards. */
-private val Mascot.cardArt: DrawableResource?
-    get() = when (this) {
-        Mascot.A -> Res.drawable.card_mascot_a
-        Mascot.B -> Res.drawable.card_mascot_b
-        Mascot.C -> Res.drawable.card_mascot_c
-        Mascot.D -> null
-        Mascot.E -> Res.drawable.card_mascot_e
-        Mascot.F -> Res.drawable.mascot_f
-    }
 
 private object TimetableItemCardDefaults {
     val cornerRadius = 24.dp

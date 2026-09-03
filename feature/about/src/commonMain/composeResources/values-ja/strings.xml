@@ -19,4 +19,6 @@
     <string name="about_social_youtube">YouTube</string>
     <string name="about_social_x">X</string>
     <string name="about_social_medium">Medium</string>
+    <string name="about_draw_on_the_wall">壁に落書きする</string>
+    <string name="doodle_done">完了</string>
 </resources>

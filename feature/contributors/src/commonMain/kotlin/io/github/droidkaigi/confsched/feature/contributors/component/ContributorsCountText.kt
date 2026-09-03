@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -45,9 +46,9 @@ import io.github.droidkaigi.confsched.feature.contributors.generated.resources.c
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
-const val CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG = "ContributorsCountTextLabelTestTag"
-const val CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG = "ContributorsCountTextCountTestTag"
-const val CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG = "ContributorsCountTextUnitTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_LABEL_TEST_TAG = "ContributorsCountTextLabelTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_COUNT_TEST_TAG = "ContributorsCountTextCountTestTag"
+internal const val CONTRIBUTORS_COUNT_TEXT_UNIT_TEST_TAG = "ContributorsCountTextUnitTestTag"
 
 @Composable
 internal fun ContributorsCountText(
@@ -86,7 +87,7 @@ internal fun ContributorsCountText(
                 modifier = Modifier.padding(
                     horizontal = ContributorsCountTextDefaults.ornamentHorizontalPadding,
                     vertical = ContributorsCountTextDefaults.ornamentVerticalPadding,
-                ),
+                ).semantics(mergeDescendants = true) {},
             ) {
                 Text(
                     text = stringResource(Res.string.contributors_count_label),

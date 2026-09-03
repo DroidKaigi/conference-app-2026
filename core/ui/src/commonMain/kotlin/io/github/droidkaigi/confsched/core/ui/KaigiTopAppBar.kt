@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -63,7 +67,7 @@ fun KaigiTopAppBar(
     navigationIcon: @Composable () -> Unit = {},
     containerColor: Color = MaterialTheme.colorScheme.inverseSurface,
     contentColor: Color = MaterialTheme.colorScheme.inverseOnSurface,
-    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    windowInsets: WindowInsets = KaigiTopAppBarDefaults.windowInsets,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
@@ -86,17 +90,18 @@ fun KaigiTopAppBar(
  *
  * Handed a [scrollBehavior] it collapses onto the one row as the content scrolls under it.
  *
- * A screen only reaches this bar from another one, so it always leads with the back arrow and
- * takes the click rather than the control.
+ * A screen only reaches this bar from another one, so it always leads with the back control and
+ * takes the click rather than the control. As the detail pane of a list-detail scene the bar
+ * closes rather than returns, and holds its content clear of the boundary it shares with the list.
  *
  * @param title the text naming the screen.
- * @param onBackClick called when the back arrow is clicked.
+ * @param onBackClick called when the back control is clicked.
  * @param modifier the [Modifier] applied to the bar.
  * @param containerColor the colour filling the band.
- * @param contentColor the colour the title, the back arrow and [actions] draw in.
+ * @param contentColor the colour the title, the back control and [actions] draw in.
  * @param windowInsets the insets the bar holds its content clear of.
  * @param scrollBehavior how the bar answers the content scrolling under it.
- * @param actions the controls trailing the back arrow.
+ * @param actions the controls trailing the back control.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,9 +116,9 @@ fun KaigiLargeTopAppBar(
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     LargeTopAppBar(
-        title = { BarTitle(title) },
+        title = { BarTitle(title, modifier = Modifier.padding(start = paneStartInset())) },
         modifier = modifier,
-        navigationIcon = { KaigiTopAppBarBackButton(onClick = onBackClick) },
+        navigationIcon = { ListDetailSceneAwareBackButton(onClick = onBackClick) },
         actions = { Actions(actions) },
         collapsedHeight = KaigiTopAppBarDefaults.height,
         expandedHeight = KaigiTopAppBarDefaults.largeHeight,
@@ -129,8 +134,8 @@ const val KAIGI_TOP_APP_BAR_BACK_BUTTON_TEST_TAG = "KaigiTopAppBarBackButtonTest
  * The back arrow every screen reached from another leads its bar with, sized and described the
  * same way in each of them.
  *
- * [KaigiLargeTopAppBar] draws this itself. Reach for it directly only where the control has to
- * change with the screen's state, as a bar that dismisses rather than returns does.
+ * [ListDetailSceneAwareBackButton] wraps this for a screen that may be shown as a pane; reach for
+ * this one directly only where the control cannot be either.
  *
  * @param onClick called when the arrow is clicked.
  * @param modifier the [Modifier] applied to the button.
@@ -150,12 +155,13 @@ fun KaigiTopAppBarBackButton(onClick: () -> Unit, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun BarTitle(title: String) {
+private fun BarTitle(title: String, modifier: Modifier = Modifier) {
     Text(
         text = title,
         style = MaterialTheme.typography.headlineMedium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+        modifier = modifier,
     )
 }
 
@@ -192,6 +198,10 @@ object KaigiTopAppBarDefaults {
             titleContentColor = contentColor,
             actionIconContentColor = contentColor,
         )
+
+    val windowInsets: WindowInsets
+        @Composable
+        get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.End)
 }
 
 @Preview
