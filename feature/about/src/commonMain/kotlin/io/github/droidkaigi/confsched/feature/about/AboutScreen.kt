@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import io.github.droidkaigi.confsched.core.common.SystemBackEffect
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.Doodle
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -45,14 +46,16 @@ fun AboutScreen(
     onDoodleDoneClick: (Doodle) -> Unit,
 ) {
     SystemBackEffect(enabled = uiState.isDoodlingWall, onBack = onCancelDoodlingClick)
+    val scrollState = rememberScrollState()
     Scaffold(
         topBar = { KaigiTopAppBar(title = stringResource(Res.string.about_title)) },
     ) { innerPadding ->
+        TabReselectEffect(AboutNavKey) { scrollState.animateScrollTo(0) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState(), enabled = !uiState.isDoodlingWall),
+                .verticalScroll(scrollState, enabled = !uiState.isDoodlingWall),
         ) {
             if (uiState.isDoodlingWall) {
                 AboutWallDoodleEditorView(savedDoodle = uiState.doodle, onDoneClick = onDoodleDoneClick)

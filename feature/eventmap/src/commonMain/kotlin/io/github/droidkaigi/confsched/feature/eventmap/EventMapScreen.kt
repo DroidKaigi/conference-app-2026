@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.Floor
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Projects
@@ -49,8 +50,10 @@ fun EventMapScreen(
         },
         contentWindowInsets = WindowInsets(),
     ) { innerPadding ->
+        val listState = rememberListDetailSceneAwareLazyListState()
+        TabReselectEffect(EventMapNavKey) { listState.animateScrollToItem(0) }
         LazyColumn(
-            state = rememberListDetailSceneAwareLazyListState(),
+            state = listState,
             contentPadding = PaddingValues(16.dp).plus(PaddingValues(bottom = 122.dp)),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier

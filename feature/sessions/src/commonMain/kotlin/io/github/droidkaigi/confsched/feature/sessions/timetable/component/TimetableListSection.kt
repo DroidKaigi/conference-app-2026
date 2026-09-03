@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.TimetableItemId
 import io.github.droidkaigi.confsched.core.preview.KaigiSchemeProvider
@@ -28,6 +29,8 @@ import io.github.droidkaigi.confsched.core.ui.TimetableItemCard
 import io.github.droidkaigi.confsched.core.ui.TimetableItemCardsFlowRow
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
+import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
+import io.github.droidkaigi.confsched.feature.sessions.timetable.TimetableNavKey
 
 @Composable
 internal fun TimetableListSection(
@@ -35,8 +38,9 @@ internal fun TimetableListSection(
     contentPadding: PaddingValues,
     onBookmarkClick: (TimetableItemId) -> Unit,
     onItemClick: (TimetableItemId) -> Unit,
-    listState: LazyListState,
+    listState: LazyListState = rememberListDetailSceneAwareLazyListState(),
 ) {
+    TabReselectEffect(TimetableNavKey) { listState.animateScrollToItem(0) }
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
@@ -138,7 +142,6 @@ private fun TimetableListSectionPreview(
             contentPadding = PaddingValues(),
             onBookmarkClick = {},
             onItemClick = {},
-            listState = rememberLazyListState(),
         )
     }
 }
@@ -177,7 +180,6 @@ private fun TimetableListSectionWidePreview(
                 contentPadding = PaddingValues(),
                 onBookmarkClick = {},
                 onItemClick = {},
-                listState = rememberLazyListState(),
             )
         }
     }

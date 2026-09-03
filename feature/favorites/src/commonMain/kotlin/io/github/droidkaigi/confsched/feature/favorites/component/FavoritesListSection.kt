@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import io.github.droidkaigi.confsched.core.common.TabReselectEffect
 import io.github.droidkaigi.confsched.core.model.KaigiColorScheme
 import io.github.droidkaigi.confsched.core.model.Language
 import io.github.droidkaigi.confsched.core.model.SessionRoom
@@ -36,6 +37,7 @@ import io.github.droidkaigi.confsched.core.ui.TimetableLineState
 import io.github.droidkaigi.confsched.core.ui.TimetableTimeRange
 import io.github.droidkaigi.confsched.core.ui.current
 import io.github.droidkaigi.confsched.core.ui.rememberListDetailSceneAwareLazyListState
+import io.github.droidkaigi.confsched.feature.favorites.FavoritesNavKey
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,8 +49,10 @@ internal fun FavoritesListSection(
     onItemClick: (TimetableItemId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberListDetailSceneAwareLazyListState()
+    TabReselectEffect(FavoritesNavKey) { listState.animateScrollToItem(0) }
     LazyColumn(
-        state = rememberListDetailSceneAwareLazyListState(),
+        state = listState,
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         contentPadding = PaddingValues(

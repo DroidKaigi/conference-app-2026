@@ -41,6 +41,7 @@ Tab taps are propagated out of the decorator as events; `KaigiApp` turns them in
 - selecting **About** from `[Timetable]` pushes it: `[Timetable, About]`;
 - selecting **Timetable** again reorders: `[About, Timetable]` — About survives underneath;
 - selecting **About** again: `[Timetable, About]`, with About's state intact.
+- selecting the tab that already sits on top reorders nothing — `NavigatorEffect` emits a reselection on `AppNavigator.reselections` instead, which a screen observes through `TabReselectEffect` to scroll its content back to the top.
 
 The selected item reflects the topmost root the current scene shows. Back falls out of the single stack via `NavDisplay`'s `onBack`: it reaches whichever root is stashed directly beneath the top one; from the home root it exits, even with a tab stashed beneath it, because [`RootSceneStrategy`](./navigation-predictive-back-tabs.md) empties its `previousEntries`.
 

@@ -20,7 +20,7 @@ flowchart TD
 
 ## AppNavigator + NavigatorEffect (core)
 
-`AppNavigator` and `NavigatorEffect` are the primitive navigation mechanism, handling `NavCommand`s (`Push` / `Pop` / `MoveToTop`): `AppNavigator` emits them, and `NavigatorEffect` applies them to the back stack. `MoveToTop` is the [root tab bar](./navigation-root-tab-bar.md)'s command — it reorders the stack rather than popping it.
+`AppNavigator` and `NavigatorEffect` are the primitive navigation mechanism, handling `NavCommand`s (`Push` / `Pop` / `MoveToTop`): `AppNavigator` emits them, and `NavigatorEffect` applies them to the back stack. `MoveToTop` is the [root tab bar](./navigation-root-tab-bar.md)'s command — it reorders the stack rather than popping it. Beside `commands`, `AppNavigator` exposes a second output, `reselections`: when a `MoveToTop` targets the key already on top, `NavigatorEffect` emits it there instead, and a screen observes it through `TabReselectEffect` to scroll back to the top.
 
 ```kotlin
 sealed interface NavCommand {
@@ -34,6 +34,7 @@ sealed interface NavCommand {
 class AppNavigator(private val logger: KaigiLogger) : Navigator {
     private val commandChannel = Channel<NavCommand>(Channel.BUFFERED)
     val commands: Flow<NavCommand> = commandChannel.receiveAsFlow()
+    val reselections: Flow<NavKey> // emitted by NavigatorEffect when a MoveToTop hits the top key
     fun goTo(key: NavKey) { commandChannel.trySend(NavCommand.Push(key)) }
     override fun back(origin: NavKey? = null) { commandChannel.trySend(NavCommand.Pop(origin)) }
     fun moveToTop(key: NavKey) { commandChannel.trySend(NavCommand.MoveToTop(key)) }
