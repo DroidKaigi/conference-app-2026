@@ -210,6 +210,12 @@ private class TimetableGridLayout(
                 ),
             )
         }
+        val headerBottom = TimetableGridVerticalPadding + TimetableGridHeaderHeight
+        add(
+            TimetableGridLayoutItem.RoomHeaderRule(
+                bounds = DpRect(0.dp, headerBottom, roomsWidth, headerBottom + TimetableGridHourRuleHeight),
+            ),
+        )
         sessions.forEach { item ->
             val columnIndex = rooms.indexOf(item.room)
             if (columnIndex < 0) return@forEach
@@ -270,6 +276,10 @@ private sealed interface TimetableGridLayoutItem {
         override val key: Any = "roomHeader:${room.name}"
     }
 
+    class RoomHeaderRule(override val bounds: DpRect) : TimetableGridLayoutItem {
+        override val key: Any = "roomHeaderRule"
+    }
+
     class Session(val item: TimetableItem, override val bounds: DpRect) : TimetableGridLayoutItem {
         override val key: Any = "session:${item.id.value}"
     }
@@ -287,8 +297,12 @@ private fun Density.toIntRect(bounds: DpRect): IntRect = IntRect(
 )
 
 /**
- * Lays out only the items that intersect the viewport; the hour rules wobble past their measured
- * height, so the viewport is padded before the intersection test.
+ * Lays out the items that intersect the viewport, plus the room header row, which stays pinned to
+ * the top whatever the scroll position. The hour rules wobble past their measured height, so the
+ * viewport is padded before the intersection test.
+ *
+ * Draw order is fixed in three passes: hour rules and sessions scroll under the pinned header row,
+ * the header row and its bottom rule sit above them, and the now line is drawn over everything.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -327,17 +341,45 @@ private fun TimetableGridRooms(
                 right = scrollX + viewportWidth + slack,
                 bottom = scrollY + viewportHeight + slack,
             )
-            val placements = buildList {
-                layout.items.forEachIndexed { index, item ->
-                    val bounds = toIntRect(item.bounds)
-                    if (!bounds.overlaps(viewport)) return@forEachIndexed
-                    val placeables = measure(index, Constraints.fixed(bounds.width, bounds.height))
-                    add(Triple(placeables, bounds.left - scrollX, bounds.top - scrollY))
+            val headerHeightPx = TimetableGridHeaderHeight.roundToPx()
+            // The header row leaves content coordinates once the grid scrolls up: it clamps to the
+            // top of the viewport while still tracking horizontal scroll with its columns.
+            val pinnedHeaderTop = (TimetableGridVerticalPadding.roundToPx() - scrollY).coerceAtLeast(0)
+
+            val under = mutableListOf<Triple<List<Placeable>, Int, Int>>()
+            val pinned = mutableListOf<Triple<List<Placeable>, Int, Int>>()
+            val over = mutableListOf<Triple<List<Placeable>, Int, Int>>()
+            layout.items.forEachIndexed { index, item ->
+                val bounds = toIntRect(item.bounds)
+                when (item) {
+                    is TimetableGridLayoutItem.RoomHeader -> {
+                        val placeables = compose(index).map { it.measure(Constraints.fixed(bounds.width, bounds.height)) }
+                        pinned.add(Triple(placeables, bounds.left - scrollX, pinnedHeaderTop))
+                    }
+
+                    is TimetableGridLayoutItem.RoomHeaderRule -> {
+                        val placeables = compose(index).map { it.measure(Constraints.fixed(bounds.width, bounds.height)) }
+                        pinned.add(Triple(placeables, bounds.left - scrollX, pinnedHeaderTop + headerHeightPx))
+                    }
+
+                    is TimetableGridLayoutItem.NowLine -> {
+                        if (!bounds.overlaps(viewport)) return@forEachIndexed
+                        val placeables = compose(index).map { it.measure(Constraints.fixed(bounds.width, bounds.height)) }
+                        over.add(Triple(placeables, bounds.left - scrollX, bounds.top - scrollY))
+                    }
+
+                    else -> {
+                        if (!bounds.overlaps(viewport)) return@forEachIndexed
+                        val placeables = compose(index).map { it.measure(Constraints.fixed(bounds.width, bounds.height)) }
+                        under.add(Triple(placeables, bounds.left - scrollX, bounds.top - scrollY))
+                    }
                 }
             }
             layout(viewportWidth, viewportHeight) {
-                placements.forEach { (placeables, x, y) ->
-                    placeables.forEach { placeable: Placeable -> placeable.place(x, y) }
+                for (bucket in listOf(under, pinned, over)) {
+                    bucket.forEach { (placeables, x, y) ->
+                        placeables.forEach { placeable: Placeable -> placeable.place(x, y) }
+                    }
                 }
             }
         }
@@ -356,6 +398,8 @@ private fun TimetableGridLayoutItemContent(
 ) {
     when (item) {
         is TimetableGridLayoutItem.HourRule -> TimetableGridHourRule(seed = item.minute)
+
+        is TimetableGridLayoutItem.RoomHeaderRule -> TimetableGridHourRule(seed = TimetableGridRoomHeaderRuleSeed)
 
         is TimetableGridLayoutItem.RoomHeader -> TimetableGridRoomHeader(room = item.room)
 
@@ -451,6 +495,9 @@ private fun BoxScope.TimetableGridNowLabel(
 
 private val TimetableGridHorizontalPadding = 16.dp
 private val TimetableGridHourRuleHeight = 1.dp
+
+// Hour rules seed on their minute of day; the pinned header rule takes a value outside that range.
+private val TimetableGridRoomHeaderRuleSeed = -1
 private val TimetableGridNowLineHeight = 2.dp
 private val TimetableGridHourLabelHeight = 16.dp
 private val TimetableGridNowLabelWidth = 42.dp

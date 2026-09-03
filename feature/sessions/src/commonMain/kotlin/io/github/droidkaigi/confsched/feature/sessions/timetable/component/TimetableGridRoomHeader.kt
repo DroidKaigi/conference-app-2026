@@ -38,7 +38,8 @@ internal fun TimetableGridRoomHeader(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(TimetableGridHeaderHeight),
+            .height(TimetableGridHeaderHeight)
+            .background(MaterialTheme.colorScheme.surface),
     ) {
         Row(
             modifier = Modifier
@@ -56,13 +57,6 @@ internal fun TimetableGridRoomHeader(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .fillMaxWidth()
-                .height(2.dp)
-                .background(theme.accent),
-        )
     }
 }
 
