@@ -31,6 +31,7 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
     private val graph = createGraph<TimetableScreenTestGraph>()
 
     private var restingDayTabsTop: Dp = Dp.Unspecified
+    private var restingRoomHeaderTop: Dp = Dp.Unspecified
     private var searchOpened = false
 
     fun setupTimetable(timetable: Timetable) {
@@ -101,6 +102,19 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
         restingDayTabsTop = dayTabsBounds().top
     }
 
+    fun recordRoomHeaderPosition(roomName: String) {
+        restingRoomHeaderTop = roomHeaderBounds(roomName).top
+    }
+
+    fun checkRoomHeaderPinnedToTop(roomName: String) {
+        composeUiTest.onNodeWithText(roomName).assertIsDisplayed()
+        assertEquals(
+            expected = restingRoomHeaderTop,
+            actual = roomHeaderBounds(roomName).top,
+            message = "Room header '$roomName' did not stay pinned after the grid scrolled",
+        )
+    }
+
     // Both swipes stay in the lower half of the window: a gesture starting at the top edge would
     // begin on the app bar, which does not scroll, and never reach the list.
     fun scrollDown() {
@@ -131,4 +145,7 @@ class TimetableScreenRobot(composeUiTest: ComposeUiTest) : Robot(composeUiTest) 
 
     private fun dayTabsBounds(): DpRect =
         composeUiTest.onNodeWithText(DroidKaigi2026Day.Day1.label).getUnclippedBoundsInRoot()
+
+    private fun roomHeaderBounds(roomName: String): DpRect =
+        composeUiTest.onNodeWithText(roomName).getUnclippedBoundsInRoot()
 }

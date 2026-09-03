@@ -60,6 +60,19 @@ class TimetableScreenRobotTest : RobotTest() {
                 itShould("show the switch to list view action") {
                     checkSwitchToListViewActionDisplayed()
                 }
+                describe("and the grid is scrolled down") {
+                    doIt {
+                        // First scroll settles the collapsing day-tab header; the room header
+                        // position is recorded afterwards so only grid-internal scroll is measured.
+                        scrollDown()
+                        recordRoomHeaderPosition("NARWHAL")
+                        scrollDown()
+                    }
+                    itShould("keep the room header pinned to the top while sessions scroll under it") {
+                        checkSessionDoesNotExist("Day1 A")
+                        checkRoomHeaderPinnedToTop("NARWHAL")
+                    }
+                }
             }
             describe("and the Day2 tab is tapped") {
                 doIt {
