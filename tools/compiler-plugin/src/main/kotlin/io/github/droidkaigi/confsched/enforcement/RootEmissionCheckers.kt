@@ -9,46 +9,30 @@ import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.cfa.util.previousCfgNodes
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirCatch
-import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.expressions.unwrapArgument
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.PostponedLambdaExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.SplitPostponedLambdasNode
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.isUnit
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.math.max
 
 private val LAYOUT_PACKAGE = FqName("androidx.compose.foundation.layout")
 
@@ -67,23 +51,37 @@ private val LAYOUT_SCOPE_IDS = setOf(
     ClassId(FqName("androidx.compose.foundation.pager"), Name.identifier("PagerScope")),
 )
 
-private const val EFFECT_NAME_SUFFIX = "Effect"
-
 // A repeated emitter saturates here rather than being counted: the rule only asks whether a path
 // carries two, and an iteration count is not known statically.
 private const val SATURATED_EMISSION_COUNT = 2
 
-internal object SingleRootEmissionChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirNamedFunction) {
-        val session = context.session
-        if (!declaration.symbol.hasAnnotation(COMPOSABLE_ANNOTATION_ID, session)) return
-        if (declaration.declaresLayoutScope(session)) return
-        val body = declaration.body ?: return
+private val FUNCTION_GRAPH_KINDS = setOf(ControlFlowGraph.Kind.Function, ControlFlowGraph.Kind.LocalFunction)
 
-        if (body.emissions(session, declaration).worstPath < 2) return
-        reporter.reportOn(declaration.source, RootEmissionErrors.COMPOSABLE_EMITS_FLAT_SIBLINGS, context)
+internal object SingleRootEmissionChecker : FirControlFlowChecker(MppCheckerKind.Platform) {
+    context(reporter: DiagnosticReporter, context: CheckerContext)
+    override fun analyze(graph: ControlFlowGraph) {
+        val session = context.session
+        for (function in graph.functionGraphs()) {
+            val declaration = function.declaration as? FirNamedFunction ?: continue
+            if (!declaration.symbol.hasAnnotation(COMPOSABLE_ANNOTATION_ID, session)) continue
+            if (declaration.declaresLayoutScope(session)) continue
+            if (!function.emitsFlatSiblings(session)) continue
+            reporter.reportOn(declaration.source, RootEmissionErrors.COMPOSABLE_EMITS_FLAT_SIBLINGS, context)
+        }
     }
+}
+
+// Only a graph nothing enters reaches a control-flow checker on its own, so a function nested in
+// another declaration — a local function, or a member of a local class — is reached from here.
+private fun ControlFlowGraph.functionGraphs(): List<ControlFlowGraph> {
+    val found = mutableListOf<ControlFlowGraph>()
+
+    fun collect(graph: ControlFlowGraph, isRoot: Boolean) {
+        if (graph.kind in FUNCTION_GRAPH_KINDS && (isRoot || graph.isSubGraph)) found += graph
+        for (sub in graph.subGraphs) collect(sub, isRoot = false)
+    }
+    collect(this, isRoot = true)
+    return found
 }
 
 private fun FirNamedFunction.declaresLayoutScope(session: FirSession): Boolean {
@@ -104,158 +102,90 @@ private fun FirClassSymbol<*>.isLayoutScope(session: FirSession): Boolean {
         .any { it.classId in LAYOUT_SCOPE_IDS }
 }
 
-// Emissions counted along control flow, each field the largest count its kind of path carries.
-// `fallthrough` continues into whatever follows and is null when no path does; `exited` leaves the
-// checked function; `left` completes the nearest enclosing lambda, which resumes the caller; `broke`
-// leaves the loop it names, and `continued` returns to that loop's head. Null means no path of that
-// kind ends here.
-private data class Emissions(
-    val fallthrough: Int?,
-    val exited: Int? = null,
-    val left: Int? = null,
-    val broke: Map<FirLoop, Int> = emptyMap(),
-    val continued: Map<FirLoop, Int> = emptyMap(),
-) {
-    val worstPath: Int
-        get() = maxOf(
-            fallthrough ?: 0,
-            exited ?: 0,
-            left ?: 0,
-            broke.values.maxOrNull() ?: 0,
-            continued.values.maxOrNull() ?: 0,
-        )
-}
-
-private val EMITS_NOTHING = Emissions(fallthrough = 0)
-
-private fun FirStatement.emissions(session: FirSession, root: FirNamedFunction): Emissions = when (this) {
-    is FirBlock -> statements.map { it.emissions(session, root) }.sequence()
-
-    is FirWhenExpression -> branchEmissions(session, root)
-
-    is FirTryExpression ->
-        (listOf(tryBlock) + catches.map(FirCatch::block)).map { it.emissions(session, root) }.merge()
-
-    is FirLoop -> block.emissions(session, root).loopEmissions(this)
-
-    // A lambda body ends in a return targeting the lambda, so the target separates leaving the
-    // function from completing the lambda.
-    is FirReturnExpression -> result.emissions(session, root).worstPath.let { carried ->
-        if (target.labeledElement === root) {
-            Emissions(fallthrough = null, exited = carried)
-        } else {
-            Emissions(fallthrough = null, left = carried)
+// Forward analysis over the graph: every node holds the largest number of emissions a live path
+// reaching it has produced, joined by taking the larger and saturating at two. A loop is a back
+// edge, so the sweep repeats until no value moves.
+private fun ControlFlowGraph.emitsFlatSiblings(session: FirSession): Boolean {
+    val paths = emissionPaths(session)
+    val nodes = paths.counted.keys.flatMap(ControlFlowGraph::nodes)
+    val reached = HashMap<CFGNode<*>, Int>(nodes.size)
+    var changed = true
+    while (changed) {
+        changed = false
+        for (node in nodes) {
+            if (node.isDead) continue
+            val incoming = paths.predecessorsOf(node).maxOfOrNull { reached[it] ?: 0 } ?: 0
+            val emitted = if (paths.counts(node) && node.emitsNode(session)) 1 else 0
+            val value = minOf(incoming + emitted, SATURATED_EMISSION_COUNT)
+            if (reached.put(node, value) != value) changed = true
         }
     }
-
-    is FirThrowExpression -> Emissions(fallthrough = null, exited = 0)
-
-    is FirBreakExpression -> Emissions(fallthrough = null, broke = mapOf(target.labeledElement to 0))
-
-    is FirContinueExpression -> Emissions(fallthrough = null, continued = mapOf(target.labeledElement to 0))
-
-    is FirProperty -> initializer?.emissions(session, root) ?: EMITS_NOTHING
-
-    is FirFunctionCall -> callEmissions(session, root)
-
-    else -> EMITS_NOTHING
+    return reached.any { (node, value) -> value >= SATURATED_EMISSION_COUNT && paths.counts(node) }
 }
 
-// A call that emits owns whatever its lambdas emit; one that does not passes them through, which is
-// how an inline non-composable lambda such as `run` carries emissions to the call site. Completing
-// a lambda resumes the caller, so `left` turns back into a fallthrough here.
-private fun FirFunctionCall.callEmissions(session: FirSession, root: FirNamedFunction): Emissions {
-    if (emitsNode(session)) return Emissions(fallthrough = 1)
-    val inside = arguments
-        .mapNotNull { (it.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction?.body }
-        .map { it.emissions(session, root) }
-        .ifEmpty { return EMITS_NOTHING }
-        .merge()
-    return Emissions(
-        fallthrough = maxOf(inside.fallthrough ?: 0, inside.left ?: 0),
-        exited = inside.exited,
-        broke = inside.broke,
-        continued = inside.continued,
-    )
-}
+// Every graph the analysis walks, each mapped to whether its own emissions belong to the checked
+// function, together with the edges the builder leaves out between a lambda and the call holding it.
+private class EmissionPaths(
+    val counted: Map<ControlFlowGraph, Boolean>,
+    private val resumedBy: Map<CFGNode<*>, CFGNode<*>>,
+) {
+    fun counts(node: CFGNode<*>): Boolean = counted.getValue(node.owner)
 
-// A path reaches the loop head by falling off the body's end or by `continue`; either way, what it
-// carries repeats.
-private fun Emissions.loopEmissions(loop: FirLoop): Emissions = Emissions(
-    fallthrough = maxOf(
-        if (maxOf(fallthrough ?: 0, continued[loop] ?: 0) > 0) SATURATED_EMISSION_COUNT else 0,
-        broke[loop] ?: 0,
-    ),
-    exited = exited,
-    left = left,
-    broke = broke - loop,
-    continued = continued - loop,
-)
-
-private fun FirWhenExpression.branchEmissions(session: FirSession, root: FirNamedFunction): Emissions {
-    val paths = branches.map { it.result.emissions(session, root) }
-    // A `when` that does not cover its subject has a path that runs none of the branches.
-    val uncovered = exhaustivenessStatus is ExhaustivenessStatus.NotExhaustive
-    return (if (uncovered) paths + EMITS_NOTHING else paths).merge()
-}
-
-// Alternatives: the paths never meet, so each way of ending takes the worst of its own kind.
-private fun List<Emissions>.merge(): Emissions = Emissions(
-    fallthrough = mapNotNull(Emissions::fallthrough).maxOrNull(),
-    exited = mapNotNull(Emissions::exited).maxOrNull(),
-    left = mapNotNull(Emissions::left).maxOrNull(),
-    broke = flatMap { it.broke.entries }
-        .groupBy({ it.key }, { it.value })
-        .mapValues { (_, counts) -> counts.max() },
-    continued = flatMap { it.continued.entries }
-        .groupBy({ it.key }, { it.value })
-        .mapValues { (_, counts) -> counts.max() },
-)
-
-// One after another: what the earlier ones carried offsets every way the later ones can end.
-private fun List<Emissions>.sequence(): Emissions {
-    var reached = 0
-    var exited: Int? = null
-    var left: Int? = null
-    val broke = mutableMapOf<FirLoop, Int>()
-    val continued = mutableMapOf<FirLoop, Int>()
-
-    for (emissions in this) {
-        emissions.exited?.let { exited = max(exited ?: 0, reached + it) }
-        emissions.left?.let { left = max(left ?: 0, reached + it) }
-        for ((loop, count) in emissions.broke) broke[loop] = max(broke[loop] ?: 0, reached + count)
-        for ((loop, count) in emissions.continued) continued[loop] = max(continued[loop] ?: 0, reached + count)
-
-        val fallthrough = emissions.fallthrough ?: return Emissions(null, exited, left, broke, continued)
-        reached += fallthrough
+    fun predecessorsOf(node: CFGNode<*>): List<CFGNode<*>> {
+        val entered = node.previousCfgNodes.filterNot { node.repeatsContentFrom(it) }
+        return resumedBy[node]?.let { entered + it } ?: entered
     }
-    return Emissions(reached, exited, left, broke, continued)
 }
 
-private fun FirFunctionCall.emitsNode(session: FirSession): Boolean {
-    if (!resolvedType.isUnit) return false
-    val symbol = calleeReference.toResolvedCallableSymbol() ?: return false
-    if (isEffectCall(symbol)) return false
-    if (symbol.hasAnnotation(COMPOSABLE_ANNOTATION_ID, session)) return true
-    val invoked = invokedValue ?: return false
-    return invoked.resolvedType.isComposableFunctionType(session)
-}
+// Two edges stand for a lambda its callee may run any number of times: a back edge into the call
+// holding it, and, where the callee is not known to run it in place, one from the lambda's own exit
+// to its enter. Such repetition belongs to the callee, which is handed one content per call site.
+private fun CFGNode<*>.repeatsContentFrom(predecessor: CFGNode<*>): Boolean =
+    (this is SplitPostponedLambdasNode && edgeFrom(predecessor).kind.isBack) ||
+        (this === owner.enterNode && predecessor === owner.exitNode)
 
-// An `invoke` call carries no name of its own, so the effect naming is read from the declarations
-// around it: the type holding the `invoke` for a `fun interface`, and the invoked value itself for
-// a plain function type, whose holder is only ever `FunctionN`.
-private fun FirFunctionCall.isEffectCall(symbol: FirCallableSymbol<*>): Boolean {
-    if (symbol.name != OperatorNameConventions.INVOKE) {
-        return symbol.name.asString().endsWith(EFFECT_NAME_SUFFIX)
+private fun ControlFlowGraph.emissionPaths(session: FirSession): EmissionPaths {
+    val counted = LinkedHashMap<ControlFlowGraph, Boolean>()
+    val resumedBy = HashMap<CFGNode<*>, CFGNode<*>>()
+
+    fun collect(graph: ControlFlowGraph, counts: Boolean) {
+        if (counted.put(graph, counts) != null) return
+        for (node in graph.nodes) {
+            if (node !is CFGNodeWithSubgraphs<*>) continue
+            val kind = node.callEmissionKind(session)
+            for (sub in node.subGraphs) {
+                val calledInPlace = sub.kind == ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace
+                // A call that emits owns its lambdas: they are the content of the node it places.
+                // Anything else leaves their emissions flat in the caller, but only a lambda called
+                // in place is on the caller's path already; a transparent call's content joins it
+                // here, at the node where an in-place lambda would resume.
+                if (kind == EmissionKind.Transparent && !calledInPlace) {
+                    node.resumptionOf(sub)?.let { resumedBy[it] = sub.exitNode }
+                }
+                val flat = kind == EmissionKind.Transparent || (calledInPlace && kind != EmissionKind.Node)
+                collect(sub, counts && flat)
+            }
+        }
     }
-    val invoked = invokedValue ?: return false
-    if (invoked.resolvedType.classId?.shortClassName?.asString()?.endsWith(EFFECT_NAME_SUFFIX) == true) return true
-    val valueName = (invoked as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedCallableSymbol()?.name
-    return valueName?.asString()?.endsWith(EFFECT_NAME_SUFFIX) == true
+    collect(this, counts = true)
+    return EmissionPaths(counted, resumedBy)
 }
 
-private val FirFunctionCall.invokedValue: FirExpression?
-    get() = explicitReceiver ?: dispatchReceiver
+private fun CFGNodeWithSubgraphs<*>.resumptionOf(subGraph: ControlFlowGraph): CFGNode<*>? = followingNodes
+    .firstOrNull { it is PostponedLambdaExitNode && it.fir.anonymousFunction === subGraph.declaration }
+
+private fun CFGNodeWithSubgraphs<*>.callEmissionKind(session: FirSession): EmissionKind? =
+    ((this as? SplitPostponedLambdasNode)?.fir as? FirFunctionCall)?.emissionKind(session)
+
+private fun CFGNode<*>.emitsNode(session: FirSession): Boolean =
+    this is FunctionCallExitNode && fir.emissionKind(session) == EmissionKind.Node
+
+private fun FirFunctionCall.emissionKind(session: FirSession): EmissionKind =
+    if (invokesComposableValue(session)) {
+        if (invokesValueNamedAsEffect()) EmissionKind.None else EmissionKind.Node
+    } else {
+        session.composableEmissionKinds.kindOf(this)
+    }
 
 object RootEmissionErrors : KtDiagnosticsContainer() {
     val COMPOSABLE_EMITS_FLAT_SIBLINGS by error0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
@@ -271,7 +201,7 @@ object RootEmissionErrorMessages : BaseDiagnosticRendererFactory() {
             "This composable emits more than one node at its root, so the caller decides how they " +
                 "are laid out. Wrap them in a layout, or declare a layout scope — ColumnScope, " +
                 "BoxScope, and the like, as a receiver or a context parameter — to hand placement " +
-                "to the caller. A composable that only runs work is named with the Effect suffix.",
+                "to the caller.",
         )
     }
 }
