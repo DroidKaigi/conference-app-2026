@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.enforcement
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -9,6 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
@@ -25,6 +27,9 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             MutationCallConfinementChecker,
             MutationEffectMustResetChecker,
             ComposableLambdaMustBeTrailingChecker,
+        )
+        override val basicExpressionCheckers: Set<FirBasicExpressionChecker> = setOf(
+            SamConversionApplierChecker,
         )
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
             NoDirectMutateChecker,
@@ -49,6 +54,9 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             ComposableNestingDepthChecker,
             UiComponentTakesWhatItReadsChecker,
             NoCallerSuppliedCallbackArgumentChecker,
+            AbstractComposableApplierChecker,
+        )
+        override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
             SingleRootEmissionChecker,
         )
         override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(

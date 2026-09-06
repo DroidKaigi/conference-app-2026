@@ -1,6 +1,8 @@
 package androidx.compose.material3
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposableInferredTarget
+import androidx.compose.runtime.ComposableTarget
 
 class ColorScheme
 
@@ -22,26 +24,32 @@ object MaterialTheme {
 class PaddingValues
 
 @Composable
+@ComposableTarget("androidx.compose.ui.UiComposable")
 fun Text(text: String) {
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Button(onClick: () -> Unit, content: @Composable () -> Unit) {
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Card(content: @Composable () -> Unit) {
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Column(content: @Composable () -> Unit) {
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Row(content: @Composable () -> Unit) {
 }
 
 @Composable
+@ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
 fun Scaffold(content: @Composable (PaddingValues) -> Unit) {
 }
 
@@ -51,5 +59,6 @@ class LazyListScope {
 }
 
 @Composable
+@ComposableTarget("androidx.compose.ui.UiComposable")
 fun LazyColumn(content: LazyListScope.() -> Unit) {
 }

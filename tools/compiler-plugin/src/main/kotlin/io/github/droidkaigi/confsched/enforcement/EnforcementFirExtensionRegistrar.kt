@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 class EnforcementFirExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::EnforcementCheckersExtension
+        +::ComposableEmissionKinds
         registerDiagnosticContainers(
             NoDirectMutateErrors,
             RoleContextErrors,
@@ -31,6 +32,8 @@ class EnforcementFirExtensionRegistrar : FirExtensionRegistrar() {
             ComposableTrailingLambdaErrors,
             RememberBindingErrors,
             StateDelegationErrors,
+            RootEmissionErrors,
+            DeclaredApplierErrors,
         )
     }
 }
