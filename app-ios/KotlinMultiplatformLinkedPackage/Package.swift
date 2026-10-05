@@ -16,14 +16,16 @@ let package = Package(
     .package(
       url: "https://github.com/firebase/firebase-ios-sdk",
       from: "12.0.0"
-    ),
-    .package(path: "subpackages/KotlinMultiplatformLinkedPackageDylib")
+    )
   ],
   targets: [
     .target(
       name: "KotlinMultiplatformLinkedPackage",
       dependencies: [
-        .product(name: "KotlinMultiplatformLinkedPackageDylib", package: "KotlinMultiplatformLinkedPackageDylib")
+        .product(
+          name: "FirebaseCrashlytics",
+          package: "firebase-ios-sdk"
+        )
       ]
     )
   ]

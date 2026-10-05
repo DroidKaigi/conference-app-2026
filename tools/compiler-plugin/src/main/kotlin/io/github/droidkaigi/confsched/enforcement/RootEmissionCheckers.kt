@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -73,7 +73,7 @@ private const val EFFECT_NAME_SUFFIX = "Effect"
 // carries two, and an iteration count is not known statically.
 private const val SATURATED_EMISSION_COUNT = 2
 
-internal object SingleRootEmissionChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+internal object SingleRootEmissionChecker : FirNamedFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val session = context.session

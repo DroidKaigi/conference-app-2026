@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
@@ -40,7 +40,7 @@ private fun FirCallableSymbol<*>.declaresContextOf(target: ClassId, session: Fir
         classSymbol.classId == target || target in classSymbol.superTypeClassIds(session)
     }
 
-internal object PresenterMustNotDeclareScreenContextChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+internal object PresenterMustNotDeclareScreenContextChecker : FirNamedFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val session = context.session

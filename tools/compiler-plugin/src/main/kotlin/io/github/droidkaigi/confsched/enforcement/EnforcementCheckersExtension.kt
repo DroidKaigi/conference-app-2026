@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousFuncti
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFileChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
@@ -40,7 +40,7 @@ class EnforcementCheckersExtension(session: FirSession) : FirAdditionalCheckersE
             NavigatorConfinedToNavEntryClassChecker,
             ScreenContextMustNotBePresenterContextChecker,
         )
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> = setOf(
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
             NavigatorConfinedToNavEntryFunctionChecker,
             PresenterMustNotDeclareScreenContextChecker,
             PreviewRequiresWrapperChecker,

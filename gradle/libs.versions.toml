@@ -1,9 +1,9 @@
 # Version catalog — the single source of truth for dependency + plugin versions across all modules.
 # Aliases follow the 2025 app convention: flat camelCase (one accessor segment under `libs.`).
 [versions]
-kotlin = "2.4.0"
-jetbrainsCompose = "1.12.0-beta02"
-metro = "1.2.1"
+kotlin = "2.4.20"
+jetbrainsCompose = "1.12.1"
+metro = "1.4.5"
 coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
 kotlinxCollectionsImmutable = "0.5.0"
@@ -31,7 +31,7 @@ androidxCore = "1.16.0"
 androidxGlance = "1.2.0-rc01"
 androidxWork = "2.10.5"
 # KSP 2.3.x is decoupled from the Kotlin compiler version (KSP2 standalone Analysis-API backend), so a
-# single 2.3.x release runs against Kotlin 2.4.0.
+# single 2.3.x release runs against the Kotlin 2.4 line.
 ksp = "2.3.9"
 kotlinPoet = "2.3.0"
 buildkonfig = "0.22.0"

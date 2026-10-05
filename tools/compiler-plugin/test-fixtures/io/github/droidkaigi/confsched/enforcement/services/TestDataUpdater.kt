@@ -1,7 +1,6 @@
 package io.github.droidkaigi.confsched.enforcement.services
 
 import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoRenderer
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
@@ -16,7 +15,7 @@ internal const val UPDATE_TEST_DATA_PROPERTY = "enforcement.test.updateTestData"
  * -Penforcement.updateTestData=true`; review the resulting diff before committing it.
  */
 class TestDataUpdater(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun check(failedAssertions: List<WrappedException>) {
+    override fun check(thereWereFailures: Boolean) {
         if (System.getProperty(UPDATE_TEST_DATA_PROPERTY) != "true") return
 
         val handler = testServices.globalMetadataInfoHandler
